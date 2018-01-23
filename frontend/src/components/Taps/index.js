@@ -6,7 +6,7 @@ import './Taps.css';
 
 const App = () => (
   <div className="Taps">
-    <Header title="Choose a tap" />
+    <Header>Choose a tap</Header>
     <div className="body">
       <p>
         <span className="emphasis">Taps</span> extract data from any source.
