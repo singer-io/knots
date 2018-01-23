@@ -30,7 +30,7 @@ sudo pip install virtualenv
 Create a virtual environment for the app to run in
 
 ```bash
-virtualenv env
+virtualenv --python=/usr/local/bin/python3 env
 source env/bin/activate
 ```
 
@@ -45,5 +45,30 @@ pip install -r requirements.txt
 From the root directory:
 
 ```bash
-python manage.py runserver
+python3 manage.py runserver
 ```
+
+Access the app at `http://127.0.0.1:8000/`
+
+### Run in development mode
+
+Install frontend dependencies
+
+```bash
+cd frontend
+yarn
+```
+
+Run the app in watch mode
+
+```bash
+python3 manage.py runserver
+```
+
+On a different terminal
+
+```bash
+yarn start
+```
+
+Access the app at `http://localhost:3000/`
