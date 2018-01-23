@@ -30,7 +30,7 @@ sudo pip install virtualenv
 Create a virtual environment for the app to run in
 
 ```bash
-virtualenv env
+virtualenv --python=/usr/local/bin/python3 env
 source env/bin/activate
 ```
 
