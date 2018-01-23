@@ -1,0 +1,49 @@
+## Running locally
+
+### Clone the repository
+
+```bash
+git clone https://github.com/datadotworld/knot.git
+cd knot
+```
+
+### Set up Python
+
+Install Python 3
+
+```bash
+brew install python3
+```
+
+Install `pip`
+
+```bash
+sudo easy_install pip
+```
+
+Install `virtualenv`
+
+```bash
+sudo pip install virtualenv
+```
+
+Create a virtual environment for the app to run in
+
+```bash
+virtualenv env
+source env/bin/activate
+```
+
+Install app requirements
+
+```
+pip install -r requirements.txt
+```
+
+### Run the app
+
+From the root directory:
+
+```bash
+python manage.py runserver
+```
