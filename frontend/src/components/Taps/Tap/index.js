@@ -5,7 +5,7 @@ import './Tap.css';
 const Tap = ({ logo, name, repo }) => (
   <Link to="/connection" className="Tap">
     <div className="logo">
-      <img src={logo} />
+      <img className="logo" src={logo} />
     </div>
     <div className="info">
       <div className="name">{name}</div>
