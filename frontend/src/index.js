@@ -7,6 +7,7 @@ import Taps from './components/Taps';
 import Connection from './components/Connection';
 import Schema from './components/Schema';
 import Dataworld from './components/Dataworld';
+import Finish from './components/Finish';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
@@ -17,6 +18,7 @@ ReactDOM.render(
       <Route path="/connection" component={Connection} />
       <Route path="/schema" component={Schema} />
       <Route path="/dataworld" component={Dataworld} />
+      <Route path="/finish" component={Finish} />
     </div>
   </Router>,
   document.getElementById('root')
