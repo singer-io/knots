@@ -53,7 +53,8 @@ const Schema = () => (
       <div className="navigation">
         <Link to="/connection">
           <Button>
-            <i className="fa fa-long-arrow-left" aria-hidden="true" />Back: Taps
+            <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
+            Connection
           </Button>
         </Link>
         <Link to="/dataworld">

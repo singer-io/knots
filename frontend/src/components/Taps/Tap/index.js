@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import './Tap.css';
 
 const Tap = ({ logo, name, repo }) => (
-  <Link to="/configure" className="Tap">
+  <Link to="/connection" className="Tap">
     <div className="logo">
       <img src={logo} />
     </div>
