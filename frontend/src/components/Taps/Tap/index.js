@@ -11,7 +11,7 @@ const Tap = ({ logo, name, repo }) => (
     <div className="info">
       <div className="name">{name}</div>
       <div className="repo">
-        <a href={repo}>View repo</a>
+        <span href={repo}>View repo</span>
       </div>
     </div>
   </Link>
