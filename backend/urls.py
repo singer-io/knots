@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path('tap/', views.taps, name='tap'),
+    path('taps/', views.taps, name='tap'),
     path('tap/<slug:tap>/schema/', views.schema_config, name='tap-schema'),
     path('tap/<slug:tap>/selected/', views.selected_fields, name='field-selected'),
     path('target/', views.target_config, name='target'),
