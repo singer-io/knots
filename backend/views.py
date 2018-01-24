@@ -6,6 +6,7 @@ import zipfile
 import shutil
 import io
 import yaml
+import requests
 
 from django.views.generic import View
 from django.http import HttpResponse
@@ -77,7 +78,7 @@ def taps(request):
 
 
 @api_view(['POST'])
-def post_config(request, tap):
+def schema_config(request, tap):
     f = open(r'properties.json','w')
     with open('config.json', 'w') as outfile:
         json.dump(request.data, outfile)
@@ -90,7 +91,7 @@ def post_config(request, tap):
 
 
 @api_view(['POST'])
-def post_selected_fields(request):
+def selected_fields(request):
     selected_fields = request.data
     if selected_fields:
         with open('catalog.json', 'w') as outfile:
@@ -101,7 +102,7 @@ def post_selected_fields(request):
 
 
 @api_view(['POST'])
-def post_target_config(request):
+def target_config(request):
     target_config = request.data
     if target_config:
         with open('target_config.json', 'w') as outfile:
@@ -109,6 +110,24 @@ def post_target_config(request):
         content = {"successful": "configuration set successfully"}
         return Response(content, status=status.HTTP_200_OK)
     return Response(content, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def access_token(request):
+    data = request.data
+    url = 'https://data.world/oauth/access_token'
+    dw_code = data.get('code', None)
+    client_id = os.environ['KNOT_CLIENT_ID']
+    client_secret = os.environ['KNOT_CLIENT_SECRET']
+    payload = {
+        'code': dw_code,
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'grant_type': "authorization_code"
+    }
+    response = requests.post(url, params=payload)
+    return Response(response)
+
 
 
 @api_view(['POST'])
