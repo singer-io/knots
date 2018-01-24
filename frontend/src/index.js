@@ -10,12 +10,14 @@ import Dataworld from './components/Dataworld';
 import Finish from './components/Finish';
 import Callback from './components/Callback';
 import registerServiceWorker from './registerServiceWorker';
+
 import usersStore from './stores/user';
+import tapsStore from './stores/taps';
 
 import './index.css';
 
 ReactDOM.render(
-  <Provider userStore={usersStore}>
+  <Provider userStore={usersStore} tapsStore={tapsStore}>
     <Router>
       <div>
         <Route exact path="/" component={Home} />
