@@ -30,12 +30,12 @@ SUPPORTED_TAPS = [
 TAP_CONFIG = [
     {
         'tap-redshift': [
-            'host',
-            'port',
-            'dbname',
-            'user',
-            'password',
-            'schema'
+            {'key':'host', 'name':'Hostname'},
+            {'key': 'port', 'name': 'Port'},
+            {'key': 'dbname', 'name': 'Database'},
+            {'key': 'user', 'name': 'User name'},
+            {'key': 'password', 'name': 'Password'},
+            {'key': 'schema', 'name': 'Schema'}
         ]
     }
 ]
@@ -72,12 +72,11 @@ def taps(request):
                 content = dict(install = 'pip install {}'.format(specific_tap))
                 with open('Makefile', 'w') as outfile:
                     yaml.dump(content, outfile, default_flow_style=False)
-                desired_config = [config[key] for config in TAP_CONFIG for key in config if key == 'tap-redshift']
+                desired_config = [config[key] for config in TAP_CONFIG for key in config if key == specific_tap]
                 data = {'config' : desired_config[0]}
                 return Response(data)
-            else:
-                content = {'please move along': 'nothing to see here'}
-                return Response(content, status=status.HTTP_404_NOT_FOUND)
+        content = {'please move along': 'nothing to see here'}
+        return Response(content, status=status.HTTP_404_NOT_FOUND)
 
     data = SUPPORTED_TAPS
     return Response(data)
