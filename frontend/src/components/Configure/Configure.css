@@ -1,0 +1,32 @@
+.emphasis {
+  font-weight: bold;
+}
+
+.normal {
+  font-weight: normal;
+}
+
+.body {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.control-label {
+  margin-top: 20px;
+}
+
+.navigation {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.fa-long-arrow-right {
+  margin-left: 10px;
+}
+
+.fa-long-arrow-left {
+  margin-right: 10px;
+}

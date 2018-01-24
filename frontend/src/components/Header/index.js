@@ -1,9 +1,9 @@
 import React from 'react';
 import './Header.css';
 
-const Header = ({ title }) => (
+const Header = ({ children }) => (
   <div className="Header">
-    <h2 className="title">{title}</h2>
+    <h2 className="title">{children}</h2>
   </div>
 );
 
