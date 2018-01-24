@@ -18,13 +18,18 @@ from rest_framework.decorators import api_view
 import tap_redshift
 
 
-SUPPORTED_TAPS = {
-    'TAP_REDSHIFT': 'tap-redshift'
-}
+SUPPORTED_TAPS = [
+    {
+        'name': 'Redshift',
+        'key': 'tap-redshift',
+        'repo': 'https://github.com/datadotworld/tap-redshift',
+        'logo': 'https://cdn.zapier.com/storage/services/1e66b95901e0564c9e990c320705b69a.128x128.png'
+    }
+]
 
 TAP_CONFIG = [
     {
-        SUPPORTED_TAPS['TAP_REDSHIFT']: [
+        'tap-redshift': [
             'host',
             'port',
             'dbname',
@@ -62,16 +67,17 @@ class FrontendAppView(View):
 def taps(request):
     if request.method == 'POST':
         specific_tap = next(iter(request.data.values()))
-        if specific_tap and specific_tap in SUPPORTED_TAPS.values():
-            content = dict(install = 'pip install {}'.format(specific_tap))
-            with open('Makefile', 'w') as outfile:
-                yaml.dump(content, outfile, default_flow_style=False)
-            desired_config = [config[key] for config in TAP_CONFIG for key in config if key == 'tap-redshift']
-            data = {'config' : desired_config[0]}
-            return Response(data)
-        else:
-            content = {'please move along': 'nothing to see here'}
-            return Response(content, status=status.HTTP_404_NOT_FOUND)
+        for k in SUPPORTED_TAPS:
+            if specific_tap and specific_tap in k['key']:
+                content = dict(install = 'pip install {}'.format(specific_tap))
+                with open('Makefile', 'w') as outfile:
+                    yaml.dump(content, outfile, default_flow_style=False)
+                desired_config = [config[key] for config in TAP_CONFIG for key in config if key == 'tap-redshift']
+                data = {'config' : desired_config[0]}
+                return Response(data)
+            else:
+                content = {'please move along': 'nothing to see here'}
+                return Response(content, status=status.HTTP_404_NOT_FOUND)
 
     data = SUPPORTED_TAPS
     return Response(data)
