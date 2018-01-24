@@ -1,16 +1,10 @@
 import React from 'react';
-import {
-  FormGroup,
-  HelpBlock,
-  FormControl,
-  ControlLabel,
-  Button
-} from 'react-bootstrap';
+import { Button, ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Header from '../Header';
-import './Configure.css';
+import './Connection.css';
 
-const Configure = () => (
+const Connection = () => (
   <div className="Taps">
     <Header>
       Configure <span className="emphasis">Redshift</span> Connection
@@ -35,12 +29,15 @@ const Configure = () => (
       <div className="navigation">
         <Link to="/taps">
           <Button>
-            <i class="fa fa-long-arrow-left" aria-hidden="true" />Back: Taps
+            <i className="fa fa-long-arrow-left" aria-hidden="true" />Back: Taps
           </Button>
         </Link>
         <Link to="/schema">
           <Button bsStyle="primary">
-            Next: Schema<i class="fa fa-long-arrow-right" aria-hidden="true" />
+            Next: Schema<i
+              className="fa fa-long-arrow-right"
+              aria-hidden="true"
+            />
           </Button>
         </Link>
       </div>
@@ -48,4 +45,4 @@ const Configure = () => (
   </div>
 );
 
-export default Configure;
+export default Connection;

@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import './index.css';
 import Home from './components/Home';
 import Taps from './components/Taps';
-import Configure from './components/Configure';
+import Connection from './components/Connection';
+import Schema from './components/Schema';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
@@ -12,7 +13,8 @@ ReactDOM.render(
     <div>
       <Route exact path="/" component={Home} />
       <Route path="/taps" component={Taps} />
-      <Route path="/configure" component={Configure} />
+      <Route path="/connection" component={Connection} />
+      <Route path="/schema" component={Schema} />
     </div>
   </Router>,
   document.getElementById('root')
