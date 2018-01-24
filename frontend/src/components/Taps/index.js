@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, TabPane } from 'react-bootstrap';
 import Header from '../Header';
 import Tap from './Tap';
 import './Taps.css';

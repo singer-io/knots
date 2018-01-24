@@ -10,11 +10,11 @@ a:hover {
   text-decoration: none;
 }
 
-.logo {
+.logo-container {
   margin: 5px;
 }
 
-logo {
+.logo {
   height: 70px;
   width: 70px;
 }

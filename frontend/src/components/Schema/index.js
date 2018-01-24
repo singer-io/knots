@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  ControlLabel,
-  FormControl,
-  FormGroup,
-  Table,
-  DropdownButton,
-  MenuItem
-} from 'react-bootstrap';
+import { Button, ControlLabel, Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import Header from '../Header';
 import './Schema.css';
