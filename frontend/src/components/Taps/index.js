@@ -27,6 +27,7 @@ class Taps extends Component {
                 name={tap.name}
                 logo={tap.logo}
                 repo={tap.repo}
+                tap={tap.key}
               />
             ))}
           </div>

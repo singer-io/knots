@@ -45,7 +45,7 @@ pip install -r requirements.txt
 From the root directory:
 
 ```bash
-python3 manage.py runserver
+export KNOT_CLIENT_ID=knot-local&&export KNOT_CLIENT_SECRET=iEcKy7joLVrJgtbm6YzzhTuxwsxU.jVb&&python3 manage.py runserver
 ```
 
 Access the app at `http://127.0.0.1:8000/`
@@ -62,12 +62,13 @@ yarn
 Run the app in watch mode
 
 ```bash
-python3 manage.py runserver
+export KNOT_CLIENT_ID=knot-local&&export KNOT_CLIENT_SECRET=iEcKy7joLVrJgtbm6YzzhTuxwsxU.jVb&&python3 manage.py runserver
 ```
 
 On a different terminal
 
 ```bash
+echo "REACT_APP_OAUTH_AUTH_URL=https://data.world/oauth/authorize?client_id=knot-local&redirect_uri=http://localhost:3000/callback&response_type=code" >> .env
 yarn start
 ```
 

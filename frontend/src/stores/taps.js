@@ -4,7 +4,8 @@ import axios from 'axios';
 class Taps {
   constructor() {
     extendObservable(this, {
-      taps: []
+      taps: [],
+      tapFields: []
     });
   }
 
@@ -14,6 +15,18 @@ class Taps {
         this.taps = response.data;
       });
     });
+  }
+
+  getTapFields(tap) {
+    axios
+      .post('/taps/', {
+        key: tap
+      })
+      .then((response) => {
+        runInAction(() => {
+          this.tapFields = response.data.config;
+        });
+      });
   }
 }
 
