@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { observer, inject } from 'mobx-react';
 import { ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 
 import './ConnectionForm.css';
 
-const ConnectionForm = ({ fields }) => (
+const ConnectionForm = (props) => (
   <form>
     <FormGroup controlId="formBasicText">
-      {fields.map((field) => (
+      {props.fields.map((field) => (
         <div key={field.key}>
           <ControlLabel className="control-label">
             {field.label}
@@ -15,7 +16,11 @@ const ConnectionForm = ({ fields }) => (
               {field.required ? '' : ' (optional)'}
             </span>
           </ControlLabel>
-          <FormControl type="text" value="" onChange={this.handleChange} />
+          <FormControl
+            name={field.key}
+            type="text"
+            onChange={props.handleChange}
+          />
         </div>
       ))}
     </FormGroup>
@@ -24,7 +29,8 @@ const ConnectionForm = ({ fields }) => (
 
 ConnectionForm.propTypes = {
   /* eslint-disable react/forbid-prop-types */
-  fields: PropTypes.object.isRequired // fields is a mobx array
+  fields: PropTypes.object.isRequired, // fields is a mobx array
+  handleChange: PropTypes.func.isRequired
 };
 
-export default ConnectionForm;
+export default inject('tapsStore')(observer(ConnectionForm));

@@ -14,7 +14,7 @@ const Navigation = ({ back, next }) => (
       </Button>
     </Link>
     <Link to={next.path}>
-      <Button bsStyle="primary">
+      <Button bsStyle="primary" onClick={next.onClick}>
         {`Next: ${next.name}`}
         <i className="fa fa-long-arrow-right" aria-hidden="true" />
       </Button>
@@ -29,7 +29,8 @@ Navigation.propTypes = {
   }).isRequired,
   next: PropTypes.shape({
     name: PropTypes.string,
-    path: PropTypes.string
+    path: PropTypes.string,
+    onClick: PropTypes.func
   }).isRequired
 };
 

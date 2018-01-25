@@ -1,11 +1,13 @@
-import { extendObservable, runInAction } from 'mobx';
+import { extendObservable, runInAction, toJS } from 'mobx';
 import axios from 'axios';
 
 class Taps {
   constructor() {
     extendObservable(this, {
       taps: [],
-      tapFields: []
+      tapFields: [],
+      fieldValues: { schema: '' },
+      loading: false
     });
   }
 
@@ -27,6 +29,23 @@ class Taps {
           this.tapFields = response.data.config;
         });
       });
+  }
+
+  setTapFields(field, value) {
+    runInAction(() => {
+      this.fieldValues[field] = value;
+    });
+  }
+
+  submitFields() {
+    runInAction(() => {
+      this.loading = true;
+    });
+    axios.post('/tap/tap-redshift/schema/', toJS(this.fieldValues)).then(() => {
+      runInAction(() => {
+        this.loading = false;
+      });
+    });
   }
 }
 
