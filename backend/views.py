@@ -91,7 +91,7 @@ def schema_config(request, tap):
     success = subprocess.call('tap-redshift --config config.json -d', shell=True, stdout=f)
     f.close()
     with open('properties.json', 'r') as catalog:
-        data = catalog.read()
+        data = json.loads(catalog.read())
     return Response(data)
 
 

@@ -8,10 +8,25 @@ import Navigtion from '../Navigation';
 import './Connection.css';
 
 class Connection extends Component {
+  constructor() {
+    super();
+
+    this.handleFieldChange = this.handleFieldChange.bind(this);
+    this.submit = this.submit.bind(this);
+  }
+
   componentWillMount() {
-    console.log('These are the props', this.props);
     const { tap } = queryString.parse(this.props.location.search);
     this.props.tapsStore.getTapFields(tap);
+  }
+
+  handleFieldChange(e) {
+    const { name, value } = e.target;
+    this.props.tapsStore.setTapFields(name, value);
+  }
+
+  submit() {
+    this.props.tapsStore.submitFields();
   }
 
   render() {
@@ -21,10 +36,13 @@ class Connection extends Component {
           Configure <span className="emphasis">Redshift</span> Connection
         </Header>
         <div className="body">
-          <ConnectionForm fields={this.props.tapsStore.tapFields} />
+          <ConnectionForm
+            fields={this.props.tapsStore.tapFields}
+            handleChange={this.handleFieldChange}
+          />
           <Navigtion
             back={{ name: 'Taps', path: '/taps' }}
-            next={{ name: 'Schema', path: '/schema' }}
+            next={{ name: 'Schema', path: '/schema', onClick: this.submit }}
           />
         </div>
       </div>
@@ -36,7 +54,8 @@ Connection.propTypes = {
   tapsStore: PropTypes.shape({
     tapFields: PropTypes.object,
     getTapFields: PropTypes.func,
-    setTapName: PropTypes.func
+    setTapFields: PropTypes.func,
+    submitFields: PropTypes.func
   }).isRequired,
   location: PropTypes.shape({
     search: PropTypes.string
