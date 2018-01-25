@@ -30,12 +30,12 @@ SUPPORTED_TAPS = [
 TAP_CONFIG = [
     {
         'tap-redshift': [
-            {'key': 'host', 'label':'Hostname'},
-            {'key': 'port', 'label': 'Port'},
-            {'key': 'dbname', 'label': 'Database'},
-            {'key': 'user', 'label': 'User name'},
-            {'key': 'password', 'label': 'Password'},
-            {'key': 'schema', 'label': 'Schema'}
+            {'key': 'host', 'label':'Hostname', 'required': True},
+            {'key': 'user', 'label': 'User name', 'required': True},
+            {'key': 'password', 'label': 'Password', 'required': True},
+            {'key': 'dbname', 'label': 'Database', 'required': True},
+            {'key': 'port', 'label': 'Port', 'required': True},
+            {'key': 'schema', 'label': 'Schema', 'required': False}
         ]
     }
 ]
