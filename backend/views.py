@@ -2,11 +2,12 @@ import logging
 import os
 import json
 import subprocess
-import zipfile
 import shutil
 import io
-import yaml
+import ruamel.yaml as yaml
 import requests
+import tarfile
+import fileinput
 
 from django.views.generic import View
 from django.http import HttpResponse
@@ -63,9 +64,13 @@ class FrontendAppView(View):
             )
 
 
+api_token = None
+
 @api_view(['GET', 'POST'])
 def taps(request):
     if request.method == 'POST':
+        if not request.data:
+            return Response({'Supply a tap'}, status=status.HTTP_400_BAD_REQUEST)
         specific_tap = next(iter(request.data.values()))
         for k in SUPPORTED_TAPS:
             if specific_tap and specific_tap in k['key']:
@@ -74,44 +79,52 @@ def taps(request):
                     yaml.dump(content, outfile, default_flow_style=False)
                 desired_config = [config[key] for config in TAP_CONFIG for key in config if key == specific_tap]
                 data = {'config' : desired_config[0]}
-                return Response(data)
-        content = {'please move along': 'nothing to see here'}
+                generate_make_file(specific_tap)
+                return Response(data, status=status.HTTP_200_OK)
+        content = {'Tap {}'.format(specific_tap): 'Not available'}
         return Response(content, status=status.HTTP_404_NOT_FOUND)
 
     data = SUPPORTED_TAPS
-    return Response(data)
+    return Response(data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
 def schema_config(request, tap):
-    f = open(r'properties.json','w')
-    with open('config.json', 'w') as outfile:
-        json.dump(request.data, outfile)
-    # TODO: catch exceptions
-    success = subprocess.call('tap-redshift --config config.json -d', shell=True, stdout=f)
-    f.close()
-    with open('properties.json', 'r') as catalog:
-        data = json.loads(catalog.read())
-    return Response(data)
+    f = open(r'catalog.json','w')
+    req_data = request.data
+    if req_data:
+        with open('config.json', 'w') as outfile:
+            json.dump(req_data, outfile)
+        # TODO: catch exceptions
+        success = subprocess.call('tap-redshift --config config.json -d', shell=True, stdout=f)
+        f.close()
+        if success == 0:
+            with open('catalog.json', 'r') as catalog:
+                data = json.loads(catalog.read())
+            return Response(data, status=status.HTTP_200_OK)
+        return Response({'failed': 'Bad request - Make sure you are supplying the right and all keys.'}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'failed': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 def selected_fields(request):
     selected_fields = request.data
     if selected_fields:
-        with open('catalog.json', 'w') as outfile:
+        with open('properties.json', 'w') as outfile:
             json.dump(selected_fields, outfile)
-        content = {"successful": "selected fields ready for sync"}
+        content = {"Successful": "Selected fields ready for sync"}
         return Response(content, status=status.HTTP_200_OK)
-    return Response(content, status=status.HTTP_400_BAD_REQUEST)
+    return Response({'failed': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])
 def target_config(request):
     target_config = request.data
     if target_config:
+        target_config['api_token'] = api_token
         with open('target_config.json', 'w') as outfile:
             json.dump(target_config, outfile)
+
         content = {"successful": "configuration set successfully"}
         return Response(content, status=status.HTTP_200_OK)
     return Response(content, status=status.HTTP_400_BAD_REQUEST)
@@ -131,40 +144,74 @@ def access_token(request):
         'grant_type': "authorization_code"
     }
     response = requests.post(url, params=payload)
+    api_token = response.access_token
     return Response(response)
 
 
 
-@api_view(['POST'])
-def zip_file_generator(request):
+def generate_make_file(tap):
+    # We need to create a makefile that looks like;
+    # install:
+        # virtualenv --python=/usr/local/bin/python3 env-tap; \
+        # source env/bin/activate; \
+        # pip install tap;
+
+        # virtualenv --python=/usr/local/bin/python3 env-target; \
+        # source env/bin/activate; \
+        # pip install target;
+    # full-sync:
+        # tap-redshift -c config.json --properties properties.json | target-datadotworld -c config_target.json
+    # sync:
+        # tap-redshift -c config.json --properties properties.json --state state.json | target-datadotworld -c config_target.json
+    target = 'target-datadotworld'
+
+    install_cmd = """\
+    install: |
+        virtualenv --python=/usr/local/bin/python3 env-{}; \\
+        source env-{}/bin/activate; \\
+        pip install {};
+        virtualenv --python=/usr/local/bin/python3 env-{}; \\
+        source env-{}/bin/activate; \\
+        pip install {};
+    full-sync: |
+        {} -c config.json --properties properties.json | {} -c target_config.json
+    sync: |
+        {} -c config.json --properties properties.json --state state.json | {} -c target_config.json
+    """.format(tap, tap, tap, target, target, target, tap, target, tap, target)
+
+    with open('Makefile', 'w') as outfile:
+        yaml.round_trip_dump(yaml.round_trip_load(install_cmd), outfile, default_flow_style=False, indent=4)
+
+
+@api_view(['GET'])
+def tar_file_generator(request):
+
+    # We need to convert spaces to tabs for the Makefile
+    # since only tabs are allowed in Makefile otherwise spaces
+    # will cause errors when trying to run make command after
+    # the packaged files are unpacked.
+    for line in fileinput.FileInput("Makefile", inplace=4):
+        print(line.replace("    ","\t"))
 
     # filenames = path to the files
-    filenames = ["catalog.json", "config.json", "target_config.json", "Makefile"]
+    filenames = ["catalog.json", "properties.json", "config.json", "target_config.json", "Makefile"]
 
-    # Folder name in ZIP archive which contains the above files
-    # E.g [thearchive.zip]/somefiles/file2.txt
-    zip_subdir = "redshift+dw-singer"
-    zip_filename = "%s.zip" % zip_subdir
+    # Folder name in tar archive which contains the above files
+    tar_subir = "redshift+dw-singer"
+    tar_filname = "%s.tar.gz" % tar_subir
 
-    # Open BytesIO to grab in-memory ZIP contents
+    # Open BytesIO to grab in-memory tar contents
     s = io.BytesIO()
-    # The zip compressor
-    zf = zipfile.ZipFile(s, "w")
+    tf = tarfile.open(mode = "w:gz", fileobj = s)
 
     for fpath in filenames:
-        # Calculate path for file in zip
         fdir, fname = os.path.split(fpath)
-        zip_path = os.path.join(zip_subdir, fname)
+        tar_path = os.path.join(tar_subir, fname)
+        tf.add(fpath, tar_path)
 
-        # Add file, at correct path
-        zf.write(fpath, zip_path)
+    tf.close()
 
-    # Must close zip for all contents to be written
-    zf.close()
-
-    # Grab ZIP file from in-memory, make response with correct MIME-type
-    resp = HttpResponse(s.getvalue(), content_type = "application/x-zip-compressed")
-    # ..and correct content-disposition
-    resp['Content-Disposition'] = 'attachment; filename=%s' % zip_filename
-    s.tell()
+    # Grab tar file from in-memory, make response with correct MIME-type
+    resp = HttpResponse(s.getvalue(), content_type = 'application/tgz')
+    resp['Content-Disposition'] = 'attachment; filename=%s' % tar_filname
     return resp
