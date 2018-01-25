@@ -18,6 +18,7 @@ pytz==2017.3
 pytzdata==2017.3.1
 PyYAML==3.12
 requests==2.18.4
+ruamel.yaml==0.15.35
 simplejson==3.11.1
 singer-python==5.0.4
 six==1.11.0
@@ -25,5 +26,4 @@ static3==0.7.0
 tap-redshift==1.0.0b1
 tzlocal==1.5.1
 urllib3==1.22
-wheel==0.24.0
 whitenoise==3.3.1
