@@ -26,7 +26,9 @@ staticfiles
 venv
 Makefile
 config.json
+target_config.json
 properties.json
+catalog.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
