@@ -6,7 +6,7 @@ import Home from './components/Home';
 import Taps from './components/Taps';
 import Connection from './components/Connection';
 import Schema from './components/Schema';
-import Dataworld from './components/Dataworld';
+import DataWorld from './components/DataWorld';
 import Finish from './components/Finish';
 import Callback from './components/Callback';
 import registerServiceWorker from './registerServiceWorker';
@@ -24,7 +24,7 @@ ReactDOM.render(
         <Route path="/taps" component={Taps} />
         <Route path="/connection" component={Connection} />
         <Route path="/schema" component={Schema} />
-        <Route path="/dataworld" component={Dataworld} />
+        <Route path="/dataworld" component={DataWorld} />
         <Route path="/finish" component={Finish} />
         <Route path="/callback" component={Callback} />
       </div>

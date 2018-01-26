@@ -13,14 +13,21 @@ class Taps {
   }
 
   getTaps() {
+    runInAction(() => {
+      this.loading = true;
+    });
     axios.get('/taps/').then((response) => {
       runInAction(() => {
         this.taps = response.data;
+        this.loading = false;
       });
     });
   }
 
   getTapFields(tap) {
+    runInAction(() => {
+      this.loading = true;
+    });
     axios
       .post('/taps/', {
         key: tap
@@ -28,6 +35,7 @@ class Taps {
       .then((response) => {
         runInAction(() => {
           this.tapFields = response.data.config;
+          this.loading = false;
         });
       });
   }
