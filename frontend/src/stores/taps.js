@@ -74,6 +74,17 @@ class Taps {
       default:
     }
   }
+
+  submitSchema() {
+    console.log('These are the fields', toJS(this.tapSchema));
+    axios
+      .post('/tap/tap-redshift/selected/', {
+        streams: JSON.stringify({ streams: toJS(this.tapSchema) })
+      })
+      .then((res) => {
+        console.log('This is the response', res);
+      });
+  }
 }
 
 export default new Taps();

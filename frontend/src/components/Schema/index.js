@@ -14,10 +14,15 @@ class Schema extends Component {
     super();
 
     this.handleChange = this.handleChange.bind(this);
+    this.submitSchema = this.submitSchema.bind(this);
   }
 
   handleChange(index, field, value) {
     this.props.tapsStore.editField(index, field, value);
+  }
+
+  submitSchema() {
+    this.props.tapsStore.submitSchema();
   }
 
   render() {
@@ -73,7 +78,7 @@ class Schema extends Component {
                   </Button>
                 </Link>
                 <Link to="/dataworld">
-                  <Button bsStyle="primary">
+                  <Button bsStyle="primary" onClick={this.submitSchema}>
                     Next: data.world<i
                       className="fa fa-long-arrow-right"
                       aria-hidden="true"
@@ -93,6 +98,7 @@ Schema.propTypes = {
   tapsStore: PropTypes.shape({
     tapSchema: PropTypes.object.isRequired,
     editField: PropTypes.func.isRequired,
+    submitSchema: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired
   }).isRequired
 };
