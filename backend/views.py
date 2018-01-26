@@ -167,12 +167,7 @@ def generate_make_file(tap):
 
     install_cmd = """\
     install: |
-        virtualenv --python=/usr/local/bin/python3 env-{}; \\
-        source env-{}/bin/activate; \\
-        pip install {};
-        virtualenv --python=/usr/local/bin/python3 env-{}; \\
-        source env-{}/bin/activate; \\
-        pip install {};
+        virtualenv --python=/usr/local/bin/python3 env-{}&&source env-{}/bin/activate&&pip install {}&&deactivate&&virtualenv --python=/usr/local/bin/python3 env-{}&&source env-{}/bin/activate&&pip install {}
     full-sync: |
         {} -c config.json --properties properties.json | {} -c target_config.json
     sync: |

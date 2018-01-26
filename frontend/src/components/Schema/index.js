@@ -59,6 +59,8 @@ class Schema extends Component {
                         <td className="replication">
                           <Dropdown
                             columns={Object.keys(row.schema.properties)}
+                            index={index}
+                            handleChange={this.handleChange}
                           />
                         </td>
                       </tr>
