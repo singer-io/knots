@@ -5,7 +5,8 @@ class User {
   constructor() {
     extendObservable(this, {
       datasets: [],
-      token: ''
+      token: '',
+      dataset: ''
     });
   }
 
@@ -42,6 +43,23 @@ class User {
         this.loading = false;
       });
     });
+  }
+
+  setDataset(dataset) {
+    runInAction(() => {
+      this.dataset = dataset;
+    });
+  }
+
+  submitDataset() {
+    axios
+      .post('/target/', {
+        dataset_id: this.dataset,
+        api_token: this.token
+      })
+      .then((response) => {
+        console.log('Final response', response);
+      });
   }
 }
 
