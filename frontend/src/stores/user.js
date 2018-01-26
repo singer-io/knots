@@ -19,7 +19,7 @@ class User {
       })
       .then((response) => {
         runInAction(() => {
-          this.token = JSON.parse(response.data).access_token;
+          this.token = response.data;
           this.loading = false;
         });
       });
