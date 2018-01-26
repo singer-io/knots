@@ -7,11 +7,28 @@ import Header from '../Header';
 import './DataWorld.css';
 
 class DataWorld extends Component {
+  constructor() {
+    super();
+
+    this.handleChange = this.handleChange.bind(this);
+    this.submitDataset = this.submitDataset.bind(this);
+  }
+
   componentWillMount() {
     this.props.userStore.getDatasets();
   }
 
+  handleChange(e) {
+    const { value } = e.target;
+    this.props.userStore.setDataset(value);
+  }
+
+  submitDataset() {
+    this.props.userStore.submitDataset();
+  }
+
   render() {
+    this.props.userStore.setDataset(this.props.userStore.datasets[0] || '');
     return (
       <div className="Taps">
         <Header>
@@ -20,7 +37,7 @@ class DataWorld extends Component {
 
         <div className="body">
           <ControlLabel>Dataset</ControlLabel>
-          <select>
+          <select onChange={this.handleChange}>
             {this.props.userStore.datasets.map((dataset) => (
               <option key={dataset} value={dataset}>
                 {dataset}
@@ -35,7 +52,7 @@ class DataWorld extends Component {
               </Button>
             </Link>
             <Link to="/finish">
-              <Button bsStyle="primary">
+              <Button bsStyle="primary" onClick={this.submitDataset}>
                 Next: Finish<i
                   className="fa fa-long-arrow-right"
                   aria-hidden="true"
@@ -52,6 +69,8 @@ class DataWorld extends Component {
 DataWorld.propTypes = {
   userStore: PropTypes.shape({
     getDatasets: PropTypes.func,
+    setDataset: PropTypes.func,
+    submitDataset: PropTypes.func,
     datasets: PropTypes.object
   }).isRequired
 };

@@ -108,7 +108,7 @@ def schema_config(request, tap):
 
 @api_view(['POST'])
 def selected_fields(request, tap):
-    selected_fields = json.loads(request.data)
+    selected_fields = json.loads(request.data['streams'])
     if selected_fields:
         with open('properties.json', 'w') as outfile:
             json.dump(selected_fields, outfile)
@@ -121,7 +121,6 @@ def selected_fields(request, tap):
 def target_config(request):
     target_config = request.data
     if target_config:
-        target_config['api_token'] = api_token
         with open('target_config.json', 'w') as outfile:
             json.dump(target_config, outfile)
 
