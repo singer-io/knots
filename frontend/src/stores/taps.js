@@ -71,12 +71,20 @@ class Taps {
           this.loading = false;
         });
         break;
+      case 'replication_key':
+        runInAction(() => {
+          this.loading = true;
+          this.tapSchema[index].replication_key = value;
+        });
+        runInAction(() => {
+          this.loading = false;
+        });
+        break;
       default:
     }
   }
 
   submitSchema() {
-    console.log('These are the fields', toJS(this.tapSchema));
     axios
       .post('/tap/tap-redshift/selected/', {
         streams: JSON.stringify({ streams: toJS(this.tapSchema) })

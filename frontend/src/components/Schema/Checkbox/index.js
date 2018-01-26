@@ -16,7 +16,6 @@ class Checkbox extends Component {
   render() {
     return (
       // eslint-disable-next-line
-
       <div className="checkbox" onClick={this.toggle}>
         {this.props.checked && <i className="fa fa-check" aria-hidden="true" />}
       </div>
