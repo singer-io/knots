@@ -12,10 +12,12 @@ const Finish = () => (
         <span className="emphasis">Success! </span>
         Your pipeline is ready to be downloaded and executed.
       </p>
-      <Button className="download" bsStyle="primary">
-        <p className="download-text">Download</p>
-        <p className="filename">(redshift+dw-singer.tar.gz)</p>
-      </Button>
+      <a href="http://localhost:8000/zip/download/">
+        <Button className="download" bsStyle="primary">
+          <p className="download-text">Download</p>
+          <p className="filename">(redshift+dw-singer.tar.gz)</p>
+        </Button>
+      </a>
       <p className="emphasis">
         Once the file has been saved to the local file system
       </p>
