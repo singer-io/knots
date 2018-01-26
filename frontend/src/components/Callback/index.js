@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
 import { Redirect } from 'react-router-dom';
 import queryString from 'query-string';
+import Loader from '../Loader';
 
 const Callback = (props) => {
   const { code } = queryString.parse(props.location.search);
@@ -13,7 +14,7 @@ const Callback = (props) => {
 
   if (code) {
     props.userStore.getToken(code);
-    return <div>Loading</div>;
+    return <Loader />;
   }
   return <Redirect push to="/" />;
 };

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
 import queryString from 'query-string';
 import Header from '../Header';
+import Loader from '../Loader';
 import ConnectionForm from './ConnectionForm';
 import Navigtion from '../Navigation';
 import './Connection.css';
@@ -36,14 +37,19 @@ class Connection extends Component {
           Configure <span className="emphasis">Redshift</span> Connection
         </Header>
         <div className="body">
-          <ConnectionForm
-            fields={this.props.tapsStore.tapFields}
-            handleChange={this.handleFieldChange}
-          />
-          <Navigtion
-            back={{ name: 'Taps', path: '/taps' }}
-            next={{ name: 'Schema', path: '/schema', onClick: this.submit }}
-          />
+          {this.props.tapsStore.loading && <Loader />}
+          {!this.props.tapsStore.loading && (
+            <div>
+              <ConnectionForm
+                fields={this.props.tapsStore.tapFields}
+                handleChange={this.handleFieldChange}
+              />
+              <Navigtion
+                back={{ name: 'Taps', path: '/taps' }}
+                next={{ name: 'Schema', path: '/schema', onClick: this.submit }}
+              />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -55,7 +61,8 @@ Connection.propTypes = {
     tapFields: PropTypes.object,
     getTapFields: PropTypes.func,
     setTapFields: PropTypes.func,
-    submitFields: PropTypes.func
+    submitFields: PropTypes.func,
+    loading: PropTypes.bool
   }).isRequired,
   location: PropTypes.shape({
     search: PropTypes.string

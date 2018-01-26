@@ -24,3 +24,9 @@ select {
 .date {
   display: block;
 }
+
+.loader {
+  display: flex;
+  justify-content: center;
+  margin-top: 30%;
+}
