@@ -107,8 +107,8 @@ def schema_config(request, tap):
 
 
 @api_view(['POST'])
-def selected_fields(request):
-    selected_fields = request.data
+def selected_fields(request, tap):
+    selected_fields = json.loads(request.data)
     if selected_fields:
         with open('properties.json', 'w') as outfile:
             json.dump(selected_fields, outfile)
