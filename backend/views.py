@@ -144,7 +144,9 @@ def access_token(request):
         'grant_type': "authorization_code"
     }
     response = requests.post(url, params=payload)
-    return Response(response)
+    json_res = response.json()
+    api_token = json_res['access_token']
+    return Response(api_token)
 
 
 
