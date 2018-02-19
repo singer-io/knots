@@ -8,15 +8,28 @@
     "client": "cd app && yarn && BROWSER=none yarn start",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "start": "concurrently \"yarn dev\" \"wait-on http://localhost:3000 && electron .\""
+    "start":
+      "concurrently \"yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "dependencies": {
+    "electron": "^1.8.2",
     "express": "^4.16.2"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
-    "electron": "^1.8.2",
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-react": "^7.4.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.1.1",
     "nodemon": "^1.15.0",
+    "prettier": "1.10.2",
     "wait-on": "^2.1.0"
   }
 }
