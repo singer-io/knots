@@ -8,8 +8,7 @@
     "client": "cd app && yarn && BROWSER=none yarn start",
     "server": "nodemon server.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
-    "start":
-      "concurrently \"yarn dev\" \"wait-on http://localhost:3000 && electron .\"",
+    "start": "concurrently \"yarn dev\" \"electron .\"",
     "precommit": "lint-staged"
   },
   "lint-staged": {
