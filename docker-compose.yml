@@ -1,0 +1,19 @@
+version: "2"
+services:
+  target:
+    build: ./docker/target
+    image: target
+    ports:
+      - "8080:1337"
+    depends_on:
+      - tap
+  tap:
+    build:
+      context: ./docker/tap
+      args:
+        - state=--state ../state/state.json
+        - discovery=-d
+        - properties=--properties tap/properties.json
+    image: tap
+    ports:
+      - "6379:6379"
