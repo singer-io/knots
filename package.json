@@ -4,9 +4,8 @@
   "private": true,
   "main": "main.js",
   "scripts": {
-    "elec": "electron .",
     "client": "cd app && yarn && BROWSER=none yarn start",
-    "server": "nodemon server.js",
+    "server": "nodemon backend/index.js",
     "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
     "start": "concurrently \"yarn dev\" \"electron .\"",
     "precommit": "lint-staged"

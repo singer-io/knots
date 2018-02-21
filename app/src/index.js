@@ -6,10 +6,12 @@ import Home from './components/Home';
 import Taps from './components/Taps';
 import registerServiceWorker from './registerServiceWorker';
 
+import tapsStore from './stores/taps';
+
 import './index.css';
 
 ReactDOM.render(
-  <Provider>
+  <Provider tapsStore={tapsStore}>
     <Router>
       <div>
         <Route exact path="/" component={Home} />
