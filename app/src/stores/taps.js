@@ -9,7 +9,8 @@ class Taps {
       tapFields: [],
       fieldValues: { schema: '' },
       loading: false,
-      tapSchema: []
+      tapSchema: [],
+      dockerInstalled: true
     });
   }
 
@@ -18,7 +19,6 @@ class Taps {
       this.loading = true;
     });
     axios.get('/taps/').then((response) => {
-      console.log('This is the response', response);
       runInAction(() => {
         this.activeTaps = response.data.activeTaps;
         this.inactiveTaps = response.data.inactiveTaps;
@@ -36,7 +36,13 @@ class Taps {
         key: tap
       })
       .then((response) => {
-        runInAction(() => {
+        if (!response.data.docker) {
+          return runInAction(() => {
+            this.dockerInstalled = false;
+            this.loading = false;
+          });
+        }
+        return runInAction(() => {
           this.tapFields = response.data.config;
           this.loading = false;
         });

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './Tap.css';
 
 const Tap = ({ tap, logo, name, repo }) => (
-  <Link to={`/connection/?tap=${tap}`} className="Tap">
+  <Link to={`/connect/?tap=${tap}`} className="Tap">
     <div className="logo-container">
       <img className="logo" src={logo} alt="Tap logo" />
     </div>
