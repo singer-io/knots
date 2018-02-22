@@ -1,0 +1,23 @@
+.emphasis {
+  font-weight: bold;
+}
+
+.normal {
+  font-weight: normal;
+}
+
+.connect-body {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.docker {
+  margin-top: 10%;
+  text-align: center;
+}
+
+.docker-button {
+  margin-top: 15px;
+}
