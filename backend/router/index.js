@@ -13,7 +13,7 @@ router.get('/taps', (req, res) => {
 router.post('/taps/', (req, res) => {
   detectDocker()
     .then(() => {
-      res.send('Seems you have Docker');
+      res.json({ docker: true });
     })
     .catch(() => {
       res.json({ docker: false });

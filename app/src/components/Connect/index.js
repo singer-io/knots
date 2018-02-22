@@ -16,11 +16,12 @@ class Connection extends Component {
 
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.submit = this.submit.bind(this);
+    this.fetchFields = this.fetchFields.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
 
   componentWillMount() {
-    const { tap } = queryString.parse(this.props.location.search);
-    this.props.tapsStore.getTapFields(tap);
+    this.fetchFields();
   }
 
   handleFieldChange(e) {
@@ -32,8 +33,18 @@ class Connection extends Component {
     this.props.tapsStore.submitFields();
   }
 
+  refresh() {
+    this.fetchFields();
+  }
+
+  fetchFields() {
+    const { tap } = queryString.parse(this.props.location.search);
+    this.props.tapsStore.getTapFields(tap);
+  }
+
   render() {
-    const { dockerInstalled } = this.props.tapsStore.dockerInstalled;
+    const { dockerInstalled } = this.props.tapsStore;
+    console.log('The props', this.props);
     if (dockerInstalled) {
       return (
         <div className="Connect">
@@ -77,7 +88,9 @@ class Connection extends Component {
             </a>{' '}
             to continue
           </div>
-          <Button className="docker-button">Ok I have installed Docker</Button>
+          <Button className="docker-button" onClick={this.refresh}>
+            Ok I have installed Docker
+          </Button>
         </div>
       </div>
     );

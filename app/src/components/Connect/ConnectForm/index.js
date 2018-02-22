@@ -5,7 +5,7 @@ import { ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 
 import './ConnectForm.css';
 
-const ConnectionForm = (props) => (
+const ConnectForm = (props) => (
   <form>
     <FormGroup controlId="formBasicText">
       {props.fields.map((field) => (
@@ -27,10 +27,10 @@ const ConnectionForm = (props) => (
   </form>
 );
 
-ConnectionForm.propTypes = {
+ConnectForm.propTypes = {
   /* eslint-disable react/forbid-prop-types */
   fields: PropTypes.object.isRequired, // fields is a mobx array
   handleChange: PropTypes.func.isRequired
 };
 
-export default inject('tapsStore')(observer(ConnectionForm));
+export default inject('tapsStore')(observer(ConnectForm));

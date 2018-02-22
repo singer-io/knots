@@ -43,7 +43,8 @@ class Taps {
           });
         }
         return runInAction(() => {
-          this.tapFields = response.data.config;
+          this.dockerInstalled = true;
+          this.tapFields = response.data.config || [];
           this.loading = false;
         });
       });
