@@ -12,3 +12,12 @@
   margin: 0 auto;
   padding-top: 10px;
 }
+
+.docker {
+  margin-top: 10%;
+  text-align: center;
+}
+
+.docker-button {
+  margin-top: 15px;
+}

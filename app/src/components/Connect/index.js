@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { Button } from 'react-bootstrap';
 import { observer, inject } from 'mobx-react';
 import queryString from 'query-string';
 import Header from '../Header';
@@ -61,7 +62,25 @@ class Connection extends Component {
         </div>
       );
     }
-    return <div>Install Docker to continue</div>;
+    return (
+      <div>
+        <Header>Install Docker</Header>
+        <div className="docker">
+          <div className="docker-text">
+            Install Docker from{' '}
+            <a
+              href="https://www.docker.com/community-edition#/download"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Docker Download
+            </a>{' '}
+            to continue
+          </div>
+          <Button className="docker-button">Ok I have installed Docker</Button>
+        </div>
+      </div>
+    );
   }
 }
 
