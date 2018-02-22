@@ -36,6 +36,7 @@ class Taps {
         key: tap
       })
       .then((response) => {
+        console.log('This is the res', response);
         if (!response.data.docker) {
           return runInAction(() => {
             this.dockerInstalled = false;
