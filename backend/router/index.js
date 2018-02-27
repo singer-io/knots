@@ -32,7 +32,6 @@ router.post('/taps/', (req, res) => {
     });
 });
 
-// define the about route
 router.post('/tap/schema', (req, res) => {
   writeFile('config.json', JSON.stringify(req.body))
     .then((result) => {

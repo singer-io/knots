@@ -19,20 +19,21 @@ const detectDocker = () =>
 
 const installTap = () =>
   new Promise((resolve, reject) => {
-    // Run `docker -v` on the user's shell
-    const docker = spawn('docker-compose', ['build', 'tap']);
+    // Install the tap image
+    const docker = spawn('docker-compose', ['run', 'tap']);
 
-    // A version number was returned, docker is installed
+    // TODO: Send shell output
     docker.stdout.on('data', (data) => {
       console.log('The data', data.toString());
     });
 
-    // Threw error, no Docker
+    // TODO: Inform user of error
     docker.on('error', (data) => {
       console.log('The data', data.toString());
       reject();
     });
 
+    // Complete, move on
     docker.on('close', (code) => {
       console.log(`child process exited with code ${code}`);
       resolve();
@@ -45,7 +46,7 @@ const writeFile = (fileName, content) => {
       if (error) {
         console.log('Creation error', error);
       }
-      fs.writeFile(`taps/${fileName}`, content, (err) => {
+      fs.writeFile(`docker/tap/${fileName}`, content, (err) => {
         if (err) {
           return reject(err);
         }
