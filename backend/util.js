@@ -1,4 +1,5 @@
 const { spawn } = require('child_process');
+const fs = require('fs');
 
 const detectDocker = () =>
   new Promise((resolve, reject) => {
@@ -38,7 +39,25 @@ const installTap = () =>
     });
   });
 
+const writeFile = (fileName, content) => {
+  return new Promise((resolve, reject) => {
+    fs.mkdir('taps', (error) => {
+      if (error) {
+        console.log('Creation error', error);
+      }
+      fs.writeFile(`taps/${fileName}`, content, (err) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve('Success');
+      });
+    });
+  });
+};
+
 module.exports = {
   detectDocker,
-  installTap
+  installTap,
+  writeFile
 };

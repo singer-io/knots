@@ -2,7 +2,7 @@ const express = require('express');
 const { taps } = require('../constants');
 
 const router = express.Router();
-const { detectDocker, installTap } = require('../util');
+const { detectDocker, installTap, writeFile } = require('../util');
 
 router.get('/taps', (req, res) => {
   res.json(taps);
@@ -29,6 +29,17 @@ router.post('/taps/', (req, res) => {
     })
     .catch(() => {
       res.json({ docker: false });
+    });
+});
+
+// define the about route
+router.post('/tap/schema', (req, res) => {
+  writeFile('config.json', JSON.stringify(req.body))
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.send(error);
     });
 });
 

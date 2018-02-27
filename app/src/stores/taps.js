@@ -58,17 +58,16 @@ class Taps {
   }
 
   submitFields() {
+    console.log('These are the field values', toJS(this.fieldValues));
     runInAction(() => {
       this.loading = true;
     });
-    axios
-      .post('/tap/tap-redshift/schema/', toJS(this.fieldValues))
-      .then((res) => {
-        runInAction(() => {
-          this.loading = false;
-          this.tapSchema = res.data.streams;
-        });
+    axios.post('/tap/schema/', toJS(this.fieldValues)).then((res) => {
+      runInAction(() => {
+        this.loading = false;
+        this.tapSchema = res.data.streams;
       });
+    });
   }
 
   editField(field, index, value) {
