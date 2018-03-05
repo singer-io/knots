@@ -4,7 +4,7 @@ MAINTAINER 'data.world, Inc.(http://data.world/)'
 # Create app directory
 RUN pip install tap-redshift==1.0.0b3
 
-COPY ./ /app/docker/tap
+COPY ./ /app/tap-redshift
 WORKDIR /app
 
-CMD ["bash"]
+CMD ["tap-redshift"]
