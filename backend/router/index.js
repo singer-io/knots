@@ -10,9 +10,10 @@ router.get('/taps', (req, res) => {
 
 // define the about route
 router.post('/taps/', (req, res) => {
+  const tap = req.body.key;
   detectDocker()
     .then(() => {
-      installTap().then(() =>
+      installTap(tap).then(() =>
         res.json({
           docker: true,
           // Hard code fields for now

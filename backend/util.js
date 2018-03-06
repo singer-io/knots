@@ -17,10 +17,13 @@ const detectDocker = () =>
     });
   });
 
-const installTap = () =>
+const installTap = (selected_tap) =>
   new Promise((resolve, reject) => {
+    const capitalized_tap_name = selected_tap.toUpperCase();
+    const tap_env_version = process.env[capitalized_tap_name];
+    const docker_image = 'gbolahan/' + selected_tap + ':' + tap_env_version;
     // Install the tap image
-    const docker = spawn('docker-compose', ['run', 'tap']);
+    const docker = spawn('docker', ['run', docker_image]);
 
     // TODO: Send shell output
     docker.stdout.on('data', (data) => {
