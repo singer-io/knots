@@ -4,17 +4,23 @@ import PropTypes from 'prop-types';
 import './Tap.css';
 
 const Tap = ({ tap, logo, name, repo }) => (
-  <Link to={`/connect/?tap=${tap}`} className="Tap">
-    <div className="logo-container">
-      <img className="logo" src={logo} alt="Tap logo" />
-    </div>
+  <div className="Tap">
+    <Link to={`/connect/?tap=${tap}`}>
+      <div className="logo-container">
+        <img className="logo" src={logo} alt="Tap logo" />
+      </div>
+    </Link>
     <div className="info">
-      <div className="name">{name}</div>
+      <Link to={`/connect/?tap=${tap}`}>
+        <div className="name">{name}</div>
+      </Link>
       <div className="repo">
-        <span href={repo}>View repo</span>
+        <a href={repo} target="_blank">
+          View repo
+        </a>
       </div>
     </div>
-  </Link>
+  </div>
 );
 
 Tap.propTypes = {
