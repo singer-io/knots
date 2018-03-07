@@ -38,13 +38,12 @@ class Connection extends Component {
   }
 
   fetchFields() {
-    const { tap } = queryString.parse(this.props.location.search);
-    this.props.tapsStore.getTapFields(tap);
+    const { tap, version } = queryString.parse(this.props.location.search);
+    this.props.tapsStore.getTapFields(tap, version);
   }
 
   render() {
     const { dockerInstalled } = this.props.tapsStore;
-    console.log('The props', this.props);
     if (dockerInstalled) {
       return (
         <div className="Connect">

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import './Tap.css';
 
-const Tap = ({ tap, logo, name, repo }) => (
+const Tap = ({ tap, logo, name, repo, version }) => (
   <div className="Tap">
     <Link to={`/connect/?tap=${tap}`}>
       <div className="logo-container">
@@ -11,7 +11,7 @@ const Tap = ({ tap, logo, name, repo }) => (
       </div>
     </Link>
     <div className="info">
-      <Link to={`/connect/?tap=${tap}`}>
+      <Link to={`/connect/?tap=${tap}&version=${version}`}>
         <div className="name">{name}</div>
       </Link>
       <div className="repo">
@@ -27,7 +27,8 @@ Tap.propTypes = {
   logo: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   repo: PropTypes.string.isRequired,
-  tap: PropTypes.string.isRequired
+  tap: PropTypes.string.isRequired,
+  version: PropTypes.string.isRequired
 };
 
 export default Tap;

@@ -27,16 +27,16 @@ class Taps {
     });
   }
 
-  getTapFields(tap) {
+  getTapFields(tap, version) {
     runInAction(() => {
       this.loading = true;
     });
     axios
       .post('/taps/', {
-        key: tap
+        tap,
+        version
       })
       .then((response) => {
-        console.log('This is the res', response);
         if (!response.data.docker) {
           return runInAction(() => {
             this.dockerInstalled = false;
