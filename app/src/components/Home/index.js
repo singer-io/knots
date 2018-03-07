@@ -1,24 +1,41 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
-import { Button } from 'react-bootstrap';
 
-import Header from '../Header';
+import Knots from './Knots';
+import Create from './Create';
+
 import './Home.css';
 
-const Home = () => (
-  <div className="Home">
-    <Header>My Knots</Header>
-    <h1>
-      Oops! There is <i>Knothing</i> here
-    </h1>
-    <p>This app, allows you to configure and download an executable Singer</p>
-    <Link to="/taps">
-      <Button bsStyle="primary" className="login">
-        Get Started
-      </Button>
-    </Link>
-  </div>
-);
+class Home extends Component {
+  constructor() {
+    super();
 
-export default inject()(observer(Home));
+    this.fetchKnots = this.fetchKnots.bind(this);
+  }
+
+  componentWillMount() {
+    this.fetchKnots();
+  }
+
+  fetchKnots() {
+    this.props.knotsStore.getKnots();
+  }
+
+  render() {
+    const { knots } = this.props.knotsStore;
+    if (knots.length) {
+      return <Knots knots={knots} />;
+    }
+    return <Create />;
+  }
+}
+
+Home.propTypes = {
+  knotsStore: PropTypes.shape({
+    getKnots: PropTypes.func,
+    knots: PropTypes.object
+  }).isRequired
+};
+
+export default inject('knotsStore')(observer(Home));

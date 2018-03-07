@@ -1,5 +1,11 @@
 const { spawn } = require('child_process');
 
+const getKnots = () =>
+  new Promise((resolve) => {
+    // TODO: Read from knots folder and return result
+    resolve([]);
+  });
+
 const detectDocker = () =>
   new Promise((resolve, reject) => {
     // Run `docker -v` on the user's shell
@@ -40,5 +46,6 @@ const installTap = () =>
 
 module.exports = {
   detectDocker,
-  installTap
+  installTap,
+  getKnots
 };
