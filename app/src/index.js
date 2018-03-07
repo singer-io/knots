@@ -8,11 +8,12 @@ import Connect from './components/Connect';
 import registerServiceWorker from './registerServiceWorker';
 
 import tapsStore from './stores/taps';
+import knotsStore from './stores/knots';
 
 import './index.css';
 
 ReactDOM.render(
-  <Provider tapsStore={tapsStore}>
+  <Provider tapsStore={tapsStore} knotsStore={knotsStore}>
     <Router>
       <div>
         <Route exact path="/" component={Home} />

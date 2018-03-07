@@ -2,13 +2,16 @@ const express = require('express');
 const { taps } = require('../constants');
 
 const router = express.Router();
-const { detectDocker, installTap } = require('../util');
+const { getKnots, detectDocker, installTap } = require('../util');
+
+router.get('/knots/', (req, res) => {
+  getKnots().then((knots) => res.json(knots));
+});
 
 router.get('/taps', (req, res) => {
   res.json(taps);
 });
 
-// define the about route
 router.post('/taps/', (req, res) => {
   detectDocker()
     .then(() => {
