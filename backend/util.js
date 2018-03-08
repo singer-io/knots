@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
+const shell = require('shelljs');
 
 const getKnots = () =>
   new Promise((resolve) => {
@@ -23,9 +24,9 @@ const detectDocker = () =>
     });
   });
 
-const writeKnot = (knotString) =>
+const writeFile = (path, content) =>
   new Promise((resolve, reject) => {
-    fs.writeFile('./knot.json', knotString, (err) => {
+    fs.writeFile(path, content, (err) => {
       if (!err) {
         resolve();
       }
@@ -47,9 +48,9 @@ const getTapConfig = () =>
     ]);
   });
 
-const readKnot = () =>
+const readFile = (path) =>
   new Promise((resolve, reject) => {
-    fs.readFile('./knot.json', 'utf8', (err, data) => {
+    fs.readFile(path, 'utf8', (err, data) => {
       if (!err) {
         resolve(JSON.parse(data));
       }
@@ -75,18 +76,21 @@ const extendObject = (object, keyPath, value) => {
 
 const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
-    readKnot().then((knotObject) => {
+    readFile('./knot.json').then((knotObject) => {
       const newKnot = extendObject(knotObject, attributeArray, value);
 
-      writeKnot(JSON.stringify(newKnot))
-        .then(resolve)
+      writeFile('./knot.json', JSON.stringify(newKnot))
+        .then(() => {
+          resolve();
+        })
         .catch(reject);
     });
   });
 
 const createKnot = (tapName, tapVersion) =>
   new Promise((resolve, reject) => {
-    writeKnot(
+    writeFile(
+      './knot.json',
       JSON.stringify({
         tap: {
           name: tapName,
@@ -115,8 +119,92 @@ const addTap = (tap, version) =>
       .catch(reject);
   });
 
+const readSchema = () =>
+  new Promise((resolve) => {
+    console.log('I am about to start');
+    readFile('./docker/tap/config.json')
+      .then((schemaObject) => {
+        console.log('This is the object', schemaObject);
+        resolve();
+      })
+      .catch((err) => console.log(err));
+  });
+
+const runDiscovery = () =>
+  new Promise((resolve, reject) => {
+    console.log('Inside discovery');
+    const discovery = spawn('docker', [
+      'run',
+      '-v',
+      '$(pwd)/docker/tap:/app/tap-redshift/data',
+      'gbolahan/tap-redshift:1.0.0b3',
+      'tap-redshift',
+      '-c',
+      'tap-redshift/data/config.json',
+      '-d',
+      '>',
+      'docker/tap/catalog.json'
+    ]);
+
+    // A version number was returned, docker is installed
+    discovery.on('close', () => {
+      console.log('Inside close');
+      resolve();
+    });
+
+    // Threw error, no Docker
+    discovery.on('error', (err) => {
+      console.log('Something went wrong', err);
+      reject(err);
+    });
+  });
+
+const writeConfig = (config) =>
+  new Promise((resolve, reject) => {
+    const configJson = {};
+    config.forEach((field) => {
+      configJson[field.key] = field.value;
+    });
+    writeFile('./config.json', JSON.stringify(configJson))
+      .then(() => {
+        console.log('Starting');
+        shell.rm('-rf', './docker/tap');
+        shell.mkdir('-p', './docker/tap');
+        shell.mv('./config.json', './docker/tap');
+        runDiscovery()
+          .then(() => {
+            console.log('Imefika hapa?');
+            readSchema()
+              .then(resolve)
+              .catch(reject);
+            resolve();
+          })
+          .catch(reject);
+      })
+      .catch(reject);
+  });
+
+const getSchema = (config) =>
+  new Promise((resolve, reject) => {
+    writeConfig(config)
+      .then(resolve)
+      .catch(reject);
+  });
+
+const addSchema = (config) =>
+  new Promise((resolve, reject) => {
+    addKnotAttribute(['config'], config)
+      .then(() => {
+        getSchema(config)
+          .then(resolve)
+          .catch(reject);
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   detectDocker,
-  addTap
+  addTap,
+  addSchema
 };

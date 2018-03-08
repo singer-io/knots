@@ -16,7 +16,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "electron": "^1.8.2",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "shelljs": "^0.8.1"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",

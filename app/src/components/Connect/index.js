@@ -24,13 +24,12 @@ class Connection extends Component {
     this.fetchFields();
   }
 
-  handleFieldChange(e) {
-    const { name, value } = e.target;
-    this.props.tapsStore.setTapFields(name, value);
+  handleFieldChange(key, value, index) {
+    this.props.tapsStore.setTapFields(key, value, index);
   }
 
   submit() {
-    this.props.tapsStore.submitFields();
+    this.props.tapsStore.submitConfig();
   }
 
   refresh() {
@@ -101,7 +100,7 @@ Connection.propTypes = {
     tapFields: PropTypes.object,
     getTapFields: PropTypes.func,
     setTapFields: PropTypes.func,
-    submitFields: PropTypes.func,
+    submitConfig: PropTypes.func,
     loading: PropTypes.bool,
     dockerInstalled: PropTypes.bool
   }).isRequired,

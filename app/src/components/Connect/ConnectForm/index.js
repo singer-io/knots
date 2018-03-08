@@ -31,14 +31,16 @@ class ConnectForm extends Component {
 
   handleChange(e) {
     const { name, value } = e.target;
-    this.setState({ [name]: value });
-    this.props.handleChange(e);
+    const { key } = this.props.fields[name];
+    this.setState({ [key]: value });
+
+    this.props.handleChange(key, value, name);
   }
 
   render() {
     return (
       <form>
-        {this.props.fields.map((field) => (
+        {this.props.fields.map((field, index) => (
           <FormGroup
             controlId="formBasicText"
             key={field.key}
@@ -52,7 +54,7 @@ class ConnectForm extends Component {
                 </span>
               </ControlLabel>
               <FormControl
-                name={field.key}
+                name={index}
                 type="text"
                 onChange={this.handleChange}
               />

@@ -51,24 +51,23 @@ class Taps {
       });
   }
 
-  setTapFields(field, value) {
+  setTapFields(field, value, index) {
     runInAction(() => {
       this.fieldValues[field] = value;
+      this.tapFields[index].value = value;
     });
   }
 
-  submitFields() {
+  submitConfig() {
     runInAction(() => {
       this.loading = true;
     });
-    axios
-      .post('/tap/tap-redshift/schema/', toJS(this.fieldValues))
-      .then((res) => {
-        runInAction(() => {
-          this.loading = false;
-          this.tapSchema = res.data.streams;
-        });
+    axios.post('/tap/schema/', toJS(this.tapFields)).then((res) => {
+      runInAction(() => {
+        this.loading = false;
+        this.tapSchema = res.data.streams;
       });
+    });
   }
 
   editField(field, index, value) {
