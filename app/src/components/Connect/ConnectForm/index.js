@@ -1,31 +1,68 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
 import { ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 
 import './ConnectForm.css';
 
-const ConnectForm = (props) => (
-  <form>
-    <FormGroup controlId="formBasicText">
-      {props.fields.map((field) => (
-        <div key={field.key}>
-          <ControlLabel className="control-label">
-            {field.label}
-            <span className="normal">
-              {field.required ? '' : ' (optional)'}
-            </span>
-          </ControlLabel>
-          <FormControl
-            name={field.key}
-            type="text"
-            onChange={props.handleChange}
-          />
-        </div>
-      ))}
-    </FormGroup>
-  </form>
-);
+class ConnectForm extends Component {
+  constructor() {
+    super();
+
+    this.state = {};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.getValidationState = this.getValidationState.bind(this);
+  }
+
+  getValidationState(key, required) {
+    if (required) {
+      const fieldValue = this.state[key];
+
+      if (fieldValue) {
+        return fieldValue.length > 0 ? 'success' : 'error';
+      }
+
+      return 'error';
+    }
+
+    return 'success';
+  }
+
+  handleChange(e) {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+    this.props.handleChange(e);
+  }
+
+  render() {
+    return (
+      <form>
+        {this.props.fields.map((field) => (
+          <FormGroup
+            controlId="formBasicText"
+            key={field.key}
+            validationState={this.getValidationState(field.key, field.required)}
+          >
+            <div key={field.key}>
+              <ControlLabel className="control-label">
+                {field.label}
+                <span className="normal">
+                  {field.required ? '' : ' (optional)'}
+                </span>
+              </ControlLabel>
+              <FormControl
+                name={field.key}
+                type="text"
+                onChange={this.handleChange}
+              />
+            </div>
+          </FormGroup>
+        ))}
+      </form>
+    );
+  }
+}
 
 ConnectForm.propTypes = {
   /* eslint-disable react/forbid-prop-types */
