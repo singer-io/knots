@@ -1,5 +1,5 @@
 const express = require('express');
-const { taps } = require('../constants');
+const { taps, targets } = require('../constants');
 
 const router = express.Router();
 const { getKnots, detectDocker, addTap, addSchema } = require('../util');
@@ -36,6 +36,10 @@ router.post('/tap/schema/', (req, res) => {
     .catch((err) => {
       console.log('This is the error', err);
     });
+});
+
+router.get('/targets', (req, res) => {
+  res.json(targets);
 });
 
 module.exports = router;
