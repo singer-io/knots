@@ -17,7 +17,7 @@ class Schema extends Component {
     this.submitSchema = this.submitSchema.bind(this);
   }
 
-  handleChange(index, field, value) {
+  handleChange(field, index, value) {
     this.props.tapsStore.editField(index, field, value);
   }
 
@@ -45,19 +45,19 @@ class Schema extends Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.props.tapsStore.tapSchema.streams.map((row, index) => (
-                    <tr valign="middle" key={row.stap_stream_id}>
-                      <td className="stream">{row.table_name}</td>
+                  {this.props.tapsStore.tapSchema.map((stream, index) => (
+                    <tr valign="middle" key={stream.tap_stream_id}>
+                      <td className="stream">{stream.table_name}</td>
                       <td className="selected">
                         <Checkbox
-                          checked={row.metadata[0].metadata.selected}
+                          checked={stream.metadata[0].metadata.selected}
                           index={index}
                           handleChange={this.handleChange}
                         />
                       </td>
                       <td className="replication">
                         <Dropdown
-                          columns={Object.keys(row.schema.properties)}
+                          columns={Object.keys(stream.schema.properties)}
                           index={index}
                           handleChange={this.handleChange}
                         />

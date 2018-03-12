@@ -3,21 +3,25 @@ import PropTypes from 'prop-types';
 import './Checkbox.css';
 
 class Checkbox extends Component {
-  constructor() {
+  constructor(props) {
     super();
+
+    this.state = { checked: props.checked };
 
     this.toggle = this.toggle.bind(this);
   }
 
   toggle() {
-    this.props.handleChange('selected', this.props.index, !this.props.checked);
+    const checked = !this.state.checked;
+    this.props.handleChange('selected', this.props.index, checked);
+    this.setState({ checked });
   }
 
   render() {
     return (
       // eslint-disable-next-line
       <div className="checkbox" onClick={this.toggle}>
-        {this.props.checked && <i className="fa fa-check" aria-hidden="true" />}
+        {this.state.checked && <i className="fa fa-check" aria-hidden="true" />}
       </div>
     );
   }

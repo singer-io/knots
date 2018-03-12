@@ -131,7 +131,7 @@ const writeConfig = (config) =>
           resolve();
         });
       })
-      .catch(reject());
+      .catch(reject);
   });
 
 const getSchema = (config) =>
@@ -153,7 +153,10 @@ const addSchema = (config) =>
           .then(resolve)
           .catch(reject);
       })
-      .catch(reject);
+      .catch((err) => {
+        console.log('I am in here...', err);
+        reject(err);
+      });
   });
 
 module.exports = {

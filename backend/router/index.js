@@ -31,10 +31,7 @@ router.post('/taps/', (req, res) => {
 router.post('/tap/schema/', (req, res) => {
   addSchema(req.body)
     .then((schema) => {
-      console.log('This is the schema', schema);
-      res.json({
-        schema
-      });
+      res.json(schema.streams);
     })
     .catch((err) => {
       console.log('This is the error', err);
