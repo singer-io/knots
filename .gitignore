@@ -1,3 +1,4 @@
 node_modules
 .DS_Store
 knot.json
+tap

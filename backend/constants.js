@@ -11,9 +11,15 @@ const activeTaps = [
 
 const inactiveTaps = [];
 
+const commands = {
+  runDiscovery:
+    'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > docker/tap/catalog.json'
+};
+
 module.exports = {
   taps: {
     activeTaps,
     inactiveTaps
-  }
+  },
+  commands
 };

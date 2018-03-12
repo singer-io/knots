@@ -1,7 +1,8 @@
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const shell = require('shelljs');
 const { set } = require('lodash');
+const { commands } = require('./constants');
 
 const getKnots = () =>
   new Promise((resolve) => {
@@ -116,27 +117,11 @@ const readSchema = () =>
 
 const runDiscovery = () =>
   new Promise((resolve, reject) => {
-    const discovery = spawn('docker', [
-      'run',
-      '-v',
-      '$(pwd)/docker/tap:/app/tap-redshift/data',
-      'gbolahan/tap-redshift:1.0.0b3',
-      'tap-redshift',
-      '-c',
-      'tap-redshift/data/config.json',
-      '-d',
-      '>',
-      'docker/tap/catalog.json'
-    ]);
-
-    // A version number was returned, docker is installed
-    discovery.on('close', () => {
-      resolve();
-    });
-
-    // Threw error, no Docker
-    discovery.on('error', (err) => {
-      reject(err);
+    exec(commands.runDiscovery, (error, stdout, stderr) => {
+      if (error || stderr) {
+        return reject(error || stderr);
+      }
+      return resolve();
     });
   });
 
@@ -172,7 +157,7 @@ const getSchema = (config) =>
 
 const addSchema = (config) =>
   new Promise((resolve, reject) => {
-    addKnotAttribute(['config'], config)
+    addKnotAttribute(['tap', 'config'], config)
       .then(() => {
         getSchema(config)
           .then(resolve)
