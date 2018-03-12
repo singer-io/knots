@@ -1,6 +1,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs');
 const shell = require('shelljs');
+const { set } = require('lodash');
 
 const getKnots = () =>
   new Promise((resolve) => {
@@ -58,26 +59,10 @@ const readFile = (path) =>
     });
   });
 
-const extendObject = (object, keyPath, value) => {
-  let clone = object;
-  const lastKeyIndex = keyPath.length - 1;
-  for (let i = 0; i < lastKeyIndex; i += 1) {
-    const key = keyPath[i];
-    if (!(key in clone)) {
-      clone[key] = {};
-    }
-    clone = clone[key];
-  }
-
-  clone[keyPath[lastKeyIndex]] = value;
-
-  return clone;
-};
-
 const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
     readFile('./knot.json').then((knotObject) => {
-      const newKnot = extendObject(knotObject, attributeArray, value);
+      const newKnot = set(knotObject, attributeArray, value);
 
       writeFile('./knot.json', JSON.stringify(newKnot))
         .then(() => {
@@ -121,7 +106,6 @@ const addTap = (tap, version) =>
 
 const readSchema = () =>
   new Promise((resolve) => {
-    console.log('I am about to start');
     readFile('./docker/tap/config.json')
       .then((schemaObject) => {
         console.log('This is the object', schemaObject);
@@ -132,7 +116,6 @@ const readSchema = () =>
 
 const runDiscovery = () =>
   new Promise((resolve, reject) => {
-    console.log('Inside discovery');
     const discovery = spawn('docker', [
       'run',
       '-v',
@@ -148,13 +131,11 @@ const runDiscovery = () =>
 
     // A version number was returned, docker is installed
     discovery.on('close', () => {
-      console.log('Inside close');
       resolve();
     });
 
     // Threw error, no Docker
     discovery.on('error', (err) => {
-      console.log('Something went wrong', err);
       reject(err);
     });
   });
@@ -167,13 +148,11 @@ const writeConfig = (config) =>
     });
     writeFile('./config.json', JSON.stringify(configJson))
       .then(() => {
-        console.log('Starting');
         shell.rm('-rf', './docker/tap');
         shell.mkdir('-p', './docker/tap');
         shell.mv('./config.json', './docker/tap');
         runDiscovery()
           .then(() => {
-            console.log('Imefika hapa?');
             readSchema()
               .then(resolve)
               .catch(reject);
