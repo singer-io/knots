@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 import Header from '../Header';
 import Loader from '../Loader';
 import Target from './Target';
 import './Targets.css';
-import { Link } from 'react-router-dom';
-import { Button } from 'react-bootstrap';
 
 class Targets extends Component {
   componentWillMount() {
@@ -15,7 +15,6 @@ class Targets extends Component {
 
   render() {
     const { activeTargets, inactiveTargets } = this.props.targetsStore;
-    console.log(activeTargets);
     return (
       <div className="Targets">
         <Header>Choose a target</Header>

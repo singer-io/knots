@@ -6,6 +6,7 @@ import Home from './components/Home';
 import Taps from './components/Taps';
 import Connect from './components/Connect';
 import Schema from './components/Schema';
+import ConnectTarget from './components/ConnectTarget';
 import Targets from './components/Targets';
 import registerServiceWorker from './registerServiceWorker';
 
@@ -28,6 +29,7 @@ ReactDOM.render(
         <Route path="/connect" component={Connect} />
         <Route path="/schema" component={Schema} />
         <Route path="/targets" component={Targets} />
+        <Route path="/connect-target" component={ConnectTarget} />
       </div>
     </Router>
   </Provider>,

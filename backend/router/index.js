@@ -2,7 +2,13 @@ const express = require('express');
 const { taps, targets } = require('../constants');
 
 const router = express.Router();
-const { getKnots, detectDocker, addTap, addSchema } = require('../util');
+const {
+  getKnots,
+  detectDocker,
+  addTap,
+  addSchema,
+  addTarget
+} = require('../util');
 
 router.get('/knots/', (req, res) => {
   getKnots().then((knots) => res.json(knots));
@@ -40,6 +46,16 @@ router.post('/tap/schema/', (req, res) => {
 
 router.get('/targets', (req, res) => {
   res.json(targets);
+});
+
+router.post('/targets', (req, res) => {
+  const { target, version } = req.body;
+  console.log(target, version);
+  addTarget(target, version).then(() =>
+    res.json({
+      docker: true
+    })
+  );
 });
 
 module.exports = router;

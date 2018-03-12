@@ -5,13 +5,13 @@ import './Target.css';
 
 const Target = ({ target, logo, name, version }) => (
   <div className="Target">
-    <Link to={`/connect/?target=${target}`}>
+    <Link to={`/connect-target/?target=${target}&version=${version}`}>
       <div className="logo-container">
         <img className="logo" src={logo} alt="Target logo" />
       </div>
     </Link>
     <div className="info">
-      <Link to={`/connect/?target=${target}&version=${version}`}>
+      <Link to={`/connect-target/?target=${target}&version=${version}`}>
         <div className="name">{name}</div>
       </Link>
     </div>

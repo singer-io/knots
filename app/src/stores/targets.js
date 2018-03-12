@@ -6,7 +6,6 @@ class Targets {
     extendObservable(this, {
       activeTargets: [],
       inactiveTargets: [],
-      targetFields: [],
       loading: false
     });
   }
@@ -22,6 +21,23 @@ class Targets {
         this.loading = false;
       });
     });
+  }
+
+  getTargetCredentials(target, version) {
+    runInAction(() => {
+      this.loading = true;
+    });
+    axios
+      .post('/targets/', {
+        target,
+        version
+      })
+      .then((response) => {
+        console.log(response);
+        return runInAction(() => {
+          this.loading = false;
+        });
+      });
   }
 }
 
