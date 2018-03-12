@@ -5,6 +5,7 @@ import { Provider } from 'mobx-react';
 import Home from './components/Home';
 import Taps from './components/Taps';
 import Connect from './components/Connect';
+import Schema from './components/Schema';
 import registerServiceWorker from './registerServiceWorker';
 
 import tapsStore from './stores/taps';
@@ -19,6 +20,7 @@ ReactDOM.render(
         <Route exact path="/" component={Home} />
         <Route path="/taps" component={Taps} />
         <Route path="/connect" component={Connect} />
+        <Route path="/schema" component={Schema} />
       </div>
     </Router>
   </Provider>,

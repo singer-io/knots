@@ -1,0 +1,33 @@
+.schema-body {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.checkbox {
+  border: 1px solid;
+  width: 20px;
+  text-align: center;
+}
+
+.stream {
+  padding-top: 16px !important;
+}
+
+.selected {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.replication {
+  padding-top: 16px !important;
+}
+
+select {
+  width: 100%;
+}
+
+.date {
+  display: block;
+}

@@ -9,7 +9,7 @@ class Taps {
       tapFields: [],
       fieldValues: { schema: '' },
       loading: false,
-      tapSchema: [],
+      tapSchema: { streams: [] },
       dockerInstalled: true
     });
   }
@@ -65,7 +65,7 @@ class Taps {
     axios.post('/tap/schema/', toJS(this.tapFields)).then((res) => {
       runInAction(() => {
         this.loading = false;
-        this.tapSchema = res.data.streams;
+        this.tapSchema = res.data.schema;
       });
     });
   }

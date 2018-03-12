@@ -16,7 +16,6 @@ router.post('/taps/', (req, res) => {
   detectDocker()
     .then(() => {
       const { tap, version } = req.body;
-      console.log('In here');
       addTap(tap, version).then((config) =>
         res.json({
           docker: true,
@@ -30,12 +29,16 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/schema/', (req, res) => {
-  addSchema(req.body).then((schema) =>
-    res.json({
-      schema
+  addSchema(req.body)
+    .then((schema) => {
+      console.log('This is the schema', schema);
+      res.json({
+        schema
+      });
     })
-  );
-  res.json(req.body);
+    .catch((err) => {
+      console.log('This is the error', err);
+    });
 });
 
 module.exports = router;

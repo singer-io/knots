@@ -106,23 +106,10 @@ const addTap = (tap, version) =>
   });
 
 const readSchema = () =>
-  new Promise((resolve) => {
-    readFile('./docker/tap/config.json')
-      .then((schemaObject) => {
-        console.log('This is the object', schemaObject);
-        resolve();
-      })
-      .catch((err) => console.log(err));
-  });
-
-const runDiscovery = () =>
   new Promise((resolve, reject) => {
-    exec(commands.runDiscovery, (error, stdout, stderr) => {
-      if (error || stderr) {
-        return reject(error || stderr);
-      }
-      return resolve();
-    });
+    readFile('./docker/tap/catalog.json')
+      .then(resolve)
+      .catch(reject);
   });
 
 const writeConfig = (config) =>
@@ -136,22 +123,25 @@ const writeConfig = (config) =>
         shell.rm('-rf', './docker/tap');
         shell.mkdir('-p', './docker/tap');
         shell.mv('./config.json', './docker/tap');
-        runDiscovery()
-          .then(() => {
-            readSchema()
-              .then(resolve)
-              .catch(reject);
-            resolve();
-          })
-          .catch(reject);
+        exec(commands.runDiscovery, (error, stdout, stderr) => {
+          if (error || stderr) {
+            reject(error || stderr);
+          }
+
+          resolve();
+        });
       })
-      .catch(reject);
+      .catch(reject());
   });
 
 const getSchema = (config) =>
   new Promise((resolve, reject) => {
     writeConfig(config)
-      .then(resolve)
+      .then(() => {
+        readSchema()
+          .then(resolve)
+          .catch(reject);
+      })
       .catch(reject);
   });
 

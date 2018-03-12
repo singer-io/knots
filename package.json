@@ -32,5 +32,8 @@
     "nodemon": "^1.15.0",
     "prettier": "1.10.2",
     "wait-on": "^2.1.0"
+  },
+  "nodemonConfig": {
+    "watch": ["backend/"]
   }
 }
