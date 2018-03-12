@@ -77,7 +77,7 @@ class Schema extends Component {
                     Connection
                   </Button>
                 </Link>
-                <Link to="/dataworld">
+                <Link to="/targets">
                   <Button bsStyle="primary" onClick={this.submitSchema}>
                     Next: data.world<i
                       className="fa fa-long-arrow-right"
