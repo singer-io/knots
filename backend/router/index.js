@@ -2,7 +2,13 @@ const express = require('express');
 const { taps } = require('../constants');
 
 const router = express.Router();
-const { getKnots, detectDocker, addTap, addSchema } = require('../util');
+const {
+  getKnots,
+  detectDocker,
+  addTap,
+  addSchema,
+  writeSchema
+} = require('../util');
 
 router.get('/knots/', (req, res) => {
   getKnots().then((knots) => res.json(knots));
@@ -34,7 +40,17 @@ router.post('/tap/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch((err) => {
-      console.log('This is the error', err);
+      res.json(err);
+    });
+});
+
+router.put('/tap/schema/', (req, res) => {
+  writeSchema(req.body)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 

@@ -96,8 +96,8 @@ class Taps {
 
   submitSchema() {
     axios
-      .post('/tap/tap-redshift/selected/', {
-        streams: JSON.stringify({ streams: toJS(this.tapSchema) })
+      .put('/tap/schema/', {
+        streams: toJS(this.tapSchema)
       })
       .then((res) => {
         console.log('This is the response', res);

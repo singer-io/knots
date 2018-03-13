@@ -145,6 +145,18 @@ const getSchema = (config) =>
       .catch(reject);
   });
 
+const writeSchema = (schemaObject) =>
+  new Promise((resolve, reject) => {
+    console.log('THE OBJECT', schemaObject);
+    writeFile('./catalog.json', JSON.stringify(schemaObject))
+      .then(() => {
+        shell.rm('-f', './docker/tap/catalog.json');
+        shell.mv('./catalog.json', './docker/tap');
+        resolve();
+      })
+      .catch(reject);
+  });
+
 const addSchema = (config) =>
   new Promise((resolve, reject) => {
     addKnotAttribute(['tap', 'config'], config)
@@ -163,5 +175,6 @@ module.exports = {
   getKnots,
   detectDocker,
   addTap,
-  addSchema
+  addSchema,
+  writeSchema
 };
