@@ -20,7 +20,7 @@ p {
 }
 
 .targets-inactive {
-  margin-top: 40px;
+  margin-top: 20px, 0;
 }
 
 .target-list-inactive {

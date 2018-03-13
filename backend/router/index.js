@@ -50,7 +50,6 @@ router.get('/targets', (req, res) => {
 
 router.post('/targets', (req, res) => {
   const { target, version } = req.body;
-  console.log(target, version);
   addTarget(target, version).then(() =>
     res.json({
       docker: true

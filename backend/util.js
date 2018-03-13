@@ -154,7 +154,6 @@ const addSchema = (config) =>
           .catch(reject);
       })
       .catch((err) => {
-        console.log('I am in here...', err);
         reject(err);
       });
   });
