@@ -147,7 +147,6 @@ const getSchema = (config) =>
 
 const writeSchema = (schemaObject) =>
   new Promise((resolve, reject) => {
-    console.log('THE OBJECT', schemaObject);
     writeFile('./catalog.json', JSON.stringify(schemaObject))
       .then(() => {
         shell.rm('-f', './docker/tap/catalog.json');

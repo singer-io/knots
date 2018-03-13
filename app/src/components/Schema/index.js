@@ -34,6 +34,9 @@ class Schema extends Component {
 
         <div className="schema-body">
           {this.props.tapsStore.loading && <Loader />}
+          {this.props.tapsStore.loading && (
+            <div className="loading-info">Retrieving Schema Information</div>
+          )}
           {!this.props.tapsStore.loading && (
             <div>
               <Table bordered condensed hover>
@@ -79,7 +82,7 @@ class Schema extends Component {
                 </Link>
                 <Link to="/targets">
                   <Button bsStyle="primary" onClick={this.submitSchema}>
-                    Next: data.world<i
+                    Next: Select Tap<i
                       className="fa fa-long-arrow-right"
                       aria-hidden="true"
                     />
