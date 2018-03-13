@@ -8,11 +8,13 @@ import Connect from './components/Connect';
 import Schema from './components/Schema';
 import ConnectTarget from './components/ConnectTarget';
 import Targets from './components/Targets';
+import Callback from './components/Callback';
 import registerServiceWorker from './registerServiceWorker';
 
 import tapsStore from './stores/taps';
 import targetsStore from './stores/targets';
 import knotsStore from './stores/knots';
+import userStore from './stores/user';
 
 import './index.css';
 
@@ -21,6 +23,7 @@ ReactDOM.render(
     tapsStore={tapsStore}
     knotsStore={knotsStore}
     targetsStore={targetsStore}
+    userStore={userStore}
   >
     <Router>
       <div>
@@ -30,6 +33,7 @@ ReactDOM.render(
         <Route path="/schema" component={Schema} />
         <Route path="/targets" component={Targets} />
         <Route path="/connect-target" component={ConnectTarget} />
+        <Route path="/callback" component={Callback} />
       </div>
     </Router>
   </Provider>,
