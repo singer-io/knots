@@ -18,7 +18,7 @@ class Schema extends Component {
   }
 
   handleChange(field, index, value) {
-    this.props.tapsStore.editField(index, field, value);
+    this.props.tapsStore.editField(field, index, value);
   }
 
   submitSchema() {

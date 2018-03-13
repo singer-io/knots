@@ -7,7 +7,8 @@ const {
   detectDocker,
   addTap,
   addSchema,
-  addTarget
+  addTarget,
+  writeSchema
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -40,7 +41,17 @@ router.post('/tap/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch((err) => {
-      console.log('This is the error', err);
+      res.json(err);
+    });
+});
+
+router.put('/tap/schema/', (req, res) => {
+  writeSchema(req.body)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 
