@@ -52,7 +52,7 @@ class User {
     });
   }
 
-  submitDataset() {
+  submitFields() {
     axios
       .post('/target/', {
         dataset_id: this.dataset,

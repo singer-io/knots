@@ -8,8 +8,17 @@ import DataWorld from './DataWorld';
 
 import './ConnectTarget.css';
 
-/* eslint-disable */
 class ConnectTarget extends Component {
+  constructor() {
+    super();
+
+    this.submitFields = this.submitFields.bind(this);
+  }
+
+  submitFields() {
+    this.props.userStore.submitFields();
+  }
+
   render() {
     return (
       <div className="Connect">
@@ -25,7 +34,8 @@ class ConnectTarget extends Component {
                 back={{ name: 'Targets', path: '/targets' }}
                 next={{
                   name: 'Finish',
-                  path: '/targets'
+                  path: '/targets',
+                  onClick: this.submitFields
                 }}
               />
             </div>
@@ -40,7 +50,10 @@ ConnectTarget.propTypes = {
   targetsStore: PropTypes.shape({
     getTargetCredentials: PropTypes.func,
     loading: PropTypes.bool
+  }).isRequired,
+  userStore: PropTypes.shape({
+    submitFields: PropTypes.func
   }).isRequired
 };
 
-export default inject('targetsStore')(observer(ConnectTarget));
+export default inject('userStore', 'targetsStore')(observer(ConnectTarget));

@@ -6,11 +6,23 @@ import { Button, FormControl, ControlLabel } from 'react-bootstrap';
 import './DataWorld.css';
 
 class DataWorld extends Component {
+  constructor() {
+    super();
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
   componentWillMount() {
     if (this.props.userStore.token) {
       this.props.userStore.getDatasets();
     }
   }
+
+  handleChange(e) {
+    const { value } = e.target;
+    this.props.userStore.setDataset(value);
+  }
+
   render() {
     return (
       <div className="DataWorld">
@@ -52,7 +64,9 @@ DataWorld.propTypes = {
   userStore: PropTypes.shape({
     token: PropTypes.string,
     getDatasets: PropTypes.func,
-    datasets: PropTypes.object
+    datasets: PropTypes.object,
+    setDataset: PropTypes.func,
+    submitFields: PropTypes.func
   }).isRequired
 };
 
