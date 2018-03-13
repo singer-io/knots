@@ -15,11 +15,26 @@ const commands = {
   runDiscovery:
     'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > docker/tap/catalog.json'
 };
+const activeTargets = [
+  {
+    name: 'data.world',
+    key: 'target-datadotworld',
+    version: '1.0',
+    logo:
+      'http://www.musketeercapital.com/wp-content/uploads/2016/03/logo_dataWorld.png'
+  }
+];
+
+const inactiveTargets = [];
 
 module.exports = {
   taps: {
     activeTaps,
     inactiveTaps
+  },
+  targets: {
+    activeTargets,
+    inactiveTargets
   },
   commands
 };

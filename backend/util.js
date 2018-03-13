@@ -154,14 +154,31 @@ const addSchema = (config) =>
           .catch(reject);
       })
       .catch((err) => {
-        console.log('I am in here...', err);
         reject(err);
       });
+  });
+
+const addTarget = (targetName, version) =>
+  new Promise((resolve, reject) => {
+    const installTarget = spawn('docker', [
+      'run',
+      'gbolahan/target-datadotworld:1.0.0b3'
+    ]);
+    const val = {
+      name: targetName,
+      version
+    };
+    installTarget.on('close', () => {
+      addKnotAttribute(['target'], val)
+        .then(resolve)
+        .catch(reject);
+    });
   });
 
 module.exports = {
   getKnots,
   detectDocker,
   addTap,
-  addSchema
+  addSchema,
+  addTarget
 };
