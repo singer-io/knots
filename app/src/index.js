@@ -9,6 +9,7 @@ import Schema from './components/Schema';
 import ConnectTarget from './components/ConnectTarget';
 import Targets from './components/Targets';
 import Callback from './components/Callback';
+import Sync from './components/Sync';
 import registerServiceWorker from './registerServiceWorker';
 
 import tapsStore from './stores/taps';
@@ -34,6 +35,7 @@ ReactDOM.render(
         <Route path="/targets" component={Targets} />
         <Route path="/connect-target" component={ConnectTarget} />
         <Route path="/callback" component={Callback} />
+        <Route path="/sync" component={Sync} />
       </div>
     </Router>
   </Provider>,

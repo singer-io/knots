@@ -1,0 +1,39 @@
+.sync-body {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.sync-knot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.to-fro {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.tap-logo {
+  height: 100px;
+}
+
+.target-logo {
+  height: 100px;
+}
+
+.to {
+  font-size: 50px;
+  font-weight: bold;
+  margin: 0 30px;
+}
+
+.sync-button {
+  width: 100px;
+  height: 50px;
+  margin-top: 25px;
+  margin-right: 20%;
+}

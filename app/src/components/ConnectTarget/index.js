@@ -34,7 +34,7 @@ class ConnectTarget extends Component {
                 back={{ name: 'Targets', path: '/targets' }}
                 next={{
                   name: 'Finish',
-                  path: '/targets',
+                  path: '/sync',
                   onClick: this.submitFields
                 }}
               />
