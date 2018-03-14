@@ -1,5 +1,6 @@
 import { extendObservable, runInAction, toJS } from 'mobx';
 import axios from 'axios';
+import socketIOClient from 'socket.io-client';
 
 class Taps {
   constructor() {
@@ -10,8 +11,13 @@ class Taps {
       fieldValues: { schema: '' },
       loading: false,
       tapSchema: [],
-      dockerInstalled: true
+      dockerInstalled: true,
+      liveLogs: ''
     });
+  }
+
+  appendLiveLogs(data) {
+    this.liveLogs = this.liveLogs.concat(`${data} \n`);
   }
 
   getTaps() {
@@ -105,4 +111,8 @@ class Taps {
   }
 }
 
-export default new Taps();
+const TapStore = new Taps();
+const socket = socketIOClient();
+socket.on('live-logs', (data) => TapStore.appendLiveLogs(data));
+
+export default TapStore;

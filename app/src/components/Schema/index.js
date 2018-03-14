@@ -37,7 +37,11 @@ class Schema extends Component {
             <div>
               <Loader />
               <p className="info-text">Retrieving schema information...</p>
-              <textarea name="live-logs" className="live-logs" value={this.props.tapsStore.liveLogs} />
+              <textarea
+                name="live-logs"
+                className="live-logs"
+                value={this.props.tapsStore.liveLogs}
+              />
             </div>
           )}
           {!this.props.tapsStore.loading && (

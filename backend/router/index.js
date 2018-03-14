@@ -44,7 +44,7 @@ router.post('/tap/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch((err) => {
-      res.json(err);
+      req.io.emit('live-logs', err);
     });
 });
 

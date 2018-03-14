@@ -123,12 +123,18 @@ const writeConfig = (config) =>
         shell.rm('-rf', './docker/tap');
         shell.mkdir('-p', './docker/tap');
         shell.mv('./config.json', './docker/tap');
-        exec(commands.runDiscovery, (error, stdout, stderr) => {
-          if (error || stderr) {
-            reject(error || stderr);
-          }
+        const discovery = exec(commands.runDiscovery);
 
-          resolve();
+        discovery.stdout.on('data', (data) => {
+          resolve(data);
+        });
+
+        discovery.stderr.on('data', (data) => {
+          reject(data.toString());
+        });
+
+        discovery.on('close', (code) => {
+          resolve(code);
         });
       })
       .catch(reject);
@@ -142,7 +148,9 @@ const getSchema = (config) =>
           .then(resolve)
           .catch(reject);
       })
-      .catch(reject);
+      .catch((err) => {
+        reject(err);
+      });
   });
 
 const writeSchema = (schemaObject) =>
@@ -162,7 +170,9 @@ const addSchema = (config) =>
       .then(() => {
         getSchema(config)
           .then(resolve)
-          .catch(reject);
+          .catch((err) => {
+            reject(err);
+          });
       })
       .catch((err) => {
         reject(err);
