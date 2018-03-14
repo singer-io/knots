@@ -186,11 +186,24 @@ const addTarget = (targetName, version) =>
     });
   });
 
+const addTargetConfig = (config) =>
+  new Promise((resolve, reject) => {
+    writeFile('./config.json', JSON.stringify(config))
+      .then(() => {
+        shell.rm('-fr', './docker/target');
+        shell.mkdir('-p', './docker/target');
+        shell.mv('./config.json', './docker/target');
+        resolve();
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   detectDocker,
   addTap,
   addSchema,
   addTarget,
-  writeSchema
+  writeSchema,
+  addTargetConfig
 };

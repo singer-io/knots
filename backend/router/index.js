@@ -9,7 +9,8 @@ const {
   addTap,
   addSchema,
   addTarget,
-  writeSchema
+  writeSchema,
+  addTargetConfig
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -90,8 +91,7 @@ router.post('/token/', (req, res) => {
 });
 
 router.post('/target/', (req, res) => {
-  console.log('THis is the request body', req.body);
-  res.json({ status: 200 });
+  addTargetConfig(req.body).then(() => res.json({ status: 200 }));
 });
 
 module.exports = router;
