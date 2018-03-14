@@ -198,6 +198,16 @@ const addTargetConfig = (config) =>
       .catch(reject);
   });
 
+const sync = () =>
+  new Promise((resolve, reject) => {
+    exec(commands.runSync, (error) => {
+      if (error) {
+        reject(error);
+      }
+      resolve();
+    });
+  });
+
 module.exports = {
   getKnots,
   detectDocker,
@@ -205,5 +215,6 @@ module.exports = {
   addSchema,
   addTarget,
   writeSchema,
-  addTargetConfig
+  addTargetConfig,
+  sync
 };

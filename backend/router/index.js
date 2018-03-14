@@ -10,7 +10,8 @@ const {
   addSchema,
   addTarget,
   writeSchema,
-  addTargetConfig
+  addTargetConfig,
+  sync
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -92,6 +93,16 @@ router.post('/token/', (req, res) => {
 
 router.post('/target/', (req, res) => {
   addTargetConfig(req.body).then(() => res.json({ status: 200 }));
+});
+
+router.get('/sync/', (req, res) => {
+  sync()
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
 });
 
 module.exports = router;

@@ -25,9 +25,8 @@ class Knots {
     runInAction(() => {
       this.loading = true;
     });
-    axios.get('/sync/').then((response) => {
+    axios.get('/sync/').then(() => {
       runInAction(() => {
-        this.knots = response.data;
         this.loading = false;
       });
     });
