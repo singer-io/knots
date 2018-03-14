@@ -31,9 +31,16 @@
   margin: 0 30px;
 }
 
-.sync-button {
-  width: 100px;
-  height: 50px;
+.button-container {
   margin-top: 25px;
+}
+
+.sync-button {
   margin-right: 20%;
+  display: flex;
+  align-items: center;
+}
+
+.syncing-text {
+  margin-left: 15px;
 }

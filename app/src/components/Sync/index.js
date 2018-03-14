@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
 import { Button } from 'react-bootstrap';
+import ReactLoading from 'react-loading';
 import Header from '../Header';
 
 import './Sync.css';
@@ -9,11 +11,11 @@ class Sync extends Component {
   constructor() {
     super();
 
-    this.submitFields = this.submitFields.bind(this);
+    this.sync = this.sync.bind(this);
   }
 
-  submitFields() {
-    return this;
+  sync() {
+    this.props.knotsStore.sync();
   }
 
   render() {
@@ -39,9 +41,34 @@ class Sync extends Component {
                 className="target-logo"
               />
             </div>
-            <Button bsStyle="primary" bsSize="large" className="sync-button">
-              Run
-            </Button>
+            {!this.props.knotsStore.loading && (
+              <div className="button-container">
+                <Button
+                  bsStyle="primary"
+                  bsSize="large"
+                  className="sync-button"
+                  onClick={this.sync}
+                >
+                  Run
+                </Button>
+              </div>
+            )}
+            {this.props.knotsStore.loading && (
+              <div className="button-container">
+                <div className="sync-loader" />{' '}
+                <Button bsSize="large" className="sync-button">
+                  <div>
+                    <ReactLoading
+                      type="spin"
+                      color="#4688f1"
+                      height="40px"
+                      width="40px"
+                    />
+                  </div>
+                  <span className="syncing-text">Running</span>
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -49,4 +76,11 @@ class Sync extends Component {
   }
 }
 
-export default inject('userStore', 'targetsStore')(observer(Sync));
+Sync.propTypes = {
+  knotsStore: PropTypes.shape({
+    sync: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired
+  }).isRequired
+};
+
+export default inject('knotsStore')(observer(Sync));

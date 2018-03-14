@@ -4,7 +4,8 @@ import axios from 'axios';
 class Knots {
   constructor() {
     extendObservable(this, {
-      knots: []
+      knots: [],
+      loading: false
     });
   }
 
@@ -13,6 +14,18 @@ class Knots {
       this.loading = true;
     });
     axios.get('/knots/').then((response) => {
+      runInAction(() => {
+        this.knots = response.data;
+        this.loading = false;
+      });
+    });
+  }
+
+  sync() {
+    runInAction(() => {
+      this.loading = true;
+    });
+    axios.get('/sync/').then((response) => {
       runInAction(() => {
         this.knots = response.data;
         this.loading = false;
