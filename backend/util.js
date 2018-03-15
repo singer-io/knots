@@ -112,8 +112,9 @@ const readSchema = () =>
       .catch(reject);
   });
 
-const writeConfig = (config) =>
+const writeConfig = (req) =>
   new Promise((resolve, reject) => {
+    const config = req.body;
     const configJson = {};
     config.forEach((field) => {
       configJson[field.key] = field.value;
@@ -125,17 +126,19 @@ const writeConfig = (config) =>
         shell.mv('./config.json', './docker/tap');
         exec(commands.runDiscovery, (error, stdout, stderr) => {
           if (error || stderr) {
-            reject(error || stderr);
+            const cmdOutput = error.toString() || stderr.toString();
+            req.io.emit('live-logs', cmdOutput);
+          } else {
+            resolve();
           }
-          resolve();
         });
       })
       .catch(reject);
   });
 
-const getSchema = (config) =>
+const getSchema = (req) =>
   new Promise((resolve, reject) => {
-    writeConfig(config)
+    writeConfig(req)
       .then(() => {
         readSchema()
           .then(resolve)
@@ -157,11 +160,12 @@ const writeSchema = (schemaObject) =>
       .catch(reject);
   });
 
-const addSchema = (config) =>
+const addSchema = (req) =>
   new Promise((resolve, reject) => {
+    const config = req.body;
     addKnotAttribute(['tap', 'config'], config)
       .then(() => {
-        getSchema(config)
+        getSchema(req)
           .then(resolve)
           .catch((err) => {
             reject(err);

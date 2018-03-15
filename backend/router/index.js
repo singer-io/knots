@@ -1,7 +1,6 @@
 const express = require('express');
 const axios = require('axios');
-const { taps, targets, commands } = require('../constants');
-const cp = require('child_process');
+const { taps, targets } = require('../constants');
 
 const router = express.Router();
 const {
@@ -40,12 +39,12 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/schema/', (req, res) => {
-  addSchema(req.body)
+  addSchema(req)
     .then((schema) => {
       res.json(schema.streams);
     })
-    .catch((err) => {
-      req.io.emit('live-logs', err.toString());
+    .catch(() => {
+      res.json({ status: 500 });
     });
 });
 
