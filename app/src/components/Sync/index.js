@@ -70,6 +70,11 @@ class Sync extends Component {
               </div>
             )}
           </div>
+          <textarea
+            name="live-logs"
+            className="live-logs"
+            value={this.props.knotsStore.syncLogs}
+          />
         </div>
       </div>
     );
@@ -79,6 +84,7 @@ class Sync extends Component {
 Sync.propTypes = {
   knotsStore: PropTypes.shape({
     sync: PropTypes.func.isRequired,
+    syncLogs: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired
   }).isRequired
 };

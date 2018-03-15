@@ -1,6 +1,7 @@
 const express = require('express');
 const axios = require('axios');
-const { taps, targets } = require('../constants');
+const { taps, targets, commands } = require('../constants');
+const cp = require('child_process');
 
 const router = express.Router();
 const {
@@ -44,7 +45,7 @@ router.post('/tap/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch((err) => {
-      req.io.emit('live-logs', err);
+      req.io.emit('live-logs', err.toString());
     });
 });
 
@@ -96,13 +97,15 @@ router.post('/target/', (req, res) => {
 });
 
 router.get('/sync/', (req, res) => {
-  sync()
-    .then(() => {
-      res.json({ status: 200 });
-    })
-    .catch(() => {
-      res.json({ status: 500 });
-    });
+  const syncData = cp.exec(commands.runSync);
+
+  syncData.stderr.on('data', (data) => {
+    const str = data.toString();
+    req.io.emit('live-sync-logs', str);
+  });
+  syncData.on('close', () => {
+    res.json({ status: 200 });
+  });
 });
 
 module.exports = router;

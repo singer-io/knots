@@ -1,12 +1,18 @@
 import { extendObservable, runInAction } from 'mobx';
 import axios from 'axios';
+import socketIOClient from 'socket.io-client';
 
 class Knots {
   constructor() {
     extendObservable(this, {
       knots: [],
-      loading: false
+      loading: false,
+      syncLogs: ''
     });
+  }
+
+  appendSyncLogs(data) {
+    this.syncLogs = this.syncLogs.concat(`${data} \n`);
   }
 
   getKnots() {
@@ -33,4 +39,7 @@ class Knots {
   }
 }
 
-export default new Knots();
+const KnotStore = new Knots();
+const socket = socketIOClient();
+socket.on('live-sync-logs', (data) => KnotStore.appendSyncLogs(data));
+export default KnotStore;
