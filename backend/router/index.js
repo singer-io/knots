@@ -97,15 +97,13 @@ router.post('/target/', (req, res) => {
 });
 
 router.get('/sync/', (req, res) => {
-  const syncData = cp.exec(commands.runSync);
-
-  syncData.stderr.on('data', (data) => {
-    const str = data.toString();
-    req.io.emit('live-sync-logs', str);
-  });
-  syncData.on('close', () => {
-    res.json({ status: 200 });
-  });
+  sync(req)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
 });
 
 module.exports = router;

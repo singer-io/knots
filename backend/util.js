@@ -201,12 +201,13 @@ const addTargetConfig = (config) =>
       .catch(reject);
   });
 
-const sync = () =>
+const sync = (req) =>
   new Promise((resolve, reject) => {
-    exec(commands.runSync, (error) => {
-      if (error) {
-        reject(error);
-      }
+    const syncData = exec(commands.runSync);
+    syncData.stderr.on('data', (data) => {
+      req.io.emit('live-sync-logs', data.toString());
+    });
+    syncData.on('close', () => {
       resolve();
     });
   });
