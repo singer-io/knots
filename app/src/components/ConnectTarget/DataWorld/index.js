@@ -20,6 +20,7 @@ class DataWorld extends Component {
 
   handleChange(e) {
     const { value } = e.target;
+    console.log('This is the value', value);
     this.props.userStore.setDataset(value);
   }
 
@@ -48,9 +49,9 @@ class DataWorld extends Component {
         <div>
           <ControlLabel>Dataset</ControlLabel>
           <select onChange={this.handleChange}>
-            {this.props.userStore.datasets.map((dataset) => (
-              <option key={dataset} value={dataset}>
-                {dataset}
+            {this.props.userStore.datasets.map((dataset, index) => (
+              <option key={dataset.id} value={index}>
+                {dataset.title}
               </option>
             ))}
           </select>

@@ -41,18 +41,50 @@ class Sync extends Component {
                 className="target-logo"
               />
             </div>
-            {!this.props.knotsStore.loading && (
-              <div className="button-container">
-                <Button
-                  bsStyle="primary"
-                  bsSize="large"
-                  className="sync-button"
-                  onClick={this.sync}
-                >
-                  Run
-                </Button>
-              </div>
-            )}
+            {!this.props.knotsStore.loading &&
+              !this.props.knotsStore.synced && (
+                <div className="button-container">
+                  <Button
+                    bsStyle="primary"
+                    bsSize="large"
+                    className="sync-button"
+                    onClick={this.sync}
+                  >
+                    Run
+                  </Button>
+                </div>
+              )}
+            {!this.props.knotsStore.loading &&
+              this.props.knotsStore.synced && (
+                <div className="synced">
+                  <div className="button-container">
+                    <a
+                      href={`https://data.world/${
+                        this.props.userStore.dataset.owner
+                      }/${this.props.userStore.dataset.id}`}
+                      target="_blank"
+                    >
+                      <Button
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="synced-view"
+                      >
+                        View on data.world
+                      </Button>
+                    </a>
+                  </div>
+                  <div className="button-container">
+                    <Button
+                      bsStyle="primary"
+                      bsSize="large"
+                      className="synced-save"
+                      onClick={this.sync}
+                    >
+                      Save Knot
+                    </Button>
+                  </div>
+                </div>
+              )}
             {this.props.knotsStore.loading && (
               <div className="button-container">
                 <div className="sync-loader" />{' '}
@@ -85,8 +117,15 @@ Sync.propTypes = {
   knotsStore: PropTypes.shape({
     sync: PropTypes.func.isRequired,
     syncLogs: PropTypes.string.isRequired,
-    loading: PropTypes.bool.isRequired
+    loading: PropTypes.bool.isRequired,
+    synced: PropTypes.bool.isRequired
+  }).isRequired,
+  userStore: PropTypes.shape({
+    dataset: PropTypes.shape({
+      owner: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    })
   }).isRequired
 };
 
-export default inject('knotsStore')(observer(Sync));
+export default inject('knotsStore', 'userStore')(observer(Sync));

@@ -51,3 +51,11 @@
   height: 150px;
   padding: 10px;
 }
+
+.synced {
+  display: flex;
+}
+
+.synced-view {
+  margin-right: 40px;
+}

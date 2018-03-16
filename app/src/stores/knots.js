@@ -7,7 +7,8 @@ class Knots {
     extendObservable(this, {
       knots: [],
       loading: false,
-      syncLogs: ''
+      syncLogs: '',
+      synced: false
     });
   }
 
@@ -34,6 +35,7 @@ class Knots {
     axios.get('/sync/').then(() => {
       runInAction(() => {
         this.loading = false;
+        this.synced = true;
       });
     });
   }
