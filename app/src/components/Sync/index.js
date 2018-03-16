@@ -71,8 +71,8 @@ class Sync extends Component {
             )}
           </div>
           <textarea
-            name="live-logs"
-            className="live-logs"
+            name="live-sync-logs"
+            className="live-sync-logs"
             value={this.props.knotsStore.syncLogs}
           />
         </div>

@@ -12,7 +12,7 @@ class Knots {
   }
 
   appendSyncLogs(data) {
-    this.syncLogs = this.syncLogs.concat(`${data} \n`);
+    this.syncLogs = this.syncLogs.concat(`=> ${data} \n`);
   }
 
   getKnots() {

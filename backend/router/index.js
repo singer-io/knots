@@ -44,7 +44,7 @@ router.post('/tap/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch(() => {
-      res.json({ status: 500 });
+      res.status(500).json({ error: 'An error occured' });
     });
 });
 
@@ -101,7 +101,7 @@ router.get('/sync/', (req, res) => {
       res.json({ status: 200 });
     })
     .catch(() => {
-      res.json({ status: 500 });
+      res.status(500).json({ error: 'An error occured' });
     });
 });
 

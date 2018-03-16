@@ -126,8 +126,14 @@ const writeConfig = (req) =>
         shell.mv('./config.json', './docker/tap');
         exec(commands.runDiscovery, (error, stdout, stderr) => {
           if (error || stderr) {
-            const cmdOutput = error.toString() || stderr.toString();
-            req.io.emit('live-logs', cmdOutput);
+            let cmdOutput;
+            try {
+              cmdOutput = error.toString();
+            } catch (err) {
+              cmdOutput = stderr.toString();
+            } finally {
+              req.io.emit('live-logs', cmdOutput);
+            }
           } else {
             resolve();
           }

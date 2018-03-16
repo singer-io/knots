@@ -81,7 +81,7 @@ class Schema extends Component {
                 <input type="date" className="date" />
               </form>
               <div className="navigation">
-                <Link to="/taps">
+                <Link to="/connect">
                   <Button>
                     <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                     Connection
@@ -89,7 +89,7 @@ class Schema extends Component {
                 </Link>
                 <Link to="/targets">
                   <Button bsStyle="primary" onClick={this.submitSchema}>
-                    Next: data.world<i
+                    Next: Select Target<i
                       className="fa fa-long-arrow-right"
                       aria-hidden="true"
                     />
