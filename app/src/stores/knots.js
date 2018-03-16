@@ -39,6 +39,25 @@ class Knots {
       });
     });
   }
+
+  saveKnot(name) {
+    return new Promise((resolve, reject) => {
+      runInAction(() => {
+        this.loading = true;
+      });
+      axios
+        .post('/save-knot/', { name })
+        .then(() => {
+          runInAction(() => {
+            this.loading = false;
+          });
+          resolve('good');
+        })
+        .catch(() => {
+          reject();
+        });
+    });
+  }
 }
 
 const KnotStore = new Knots();

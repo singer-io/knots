@@ -11,7 +11,8 @@ const {
   addTarget,
   writeSchema,
   addTargetConfig,
-  sync
+  sync,
+  saveKnot
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -102,6 +103,15 @@ router.get('/sync/', (req, res) => {
     })
     .catch(() => {
       res.status(500).json({ error: 'An error occured' });
+    });
+});
+
+router.post('/save-knot/', (req, res) => {
+  const { name } = req.body;
+  saveKnot(name)
+    .then(() => res.json({ all: 'good' }))
+    .catch((err) => {
+      console.log('This is the error', err);
     });
 });
 

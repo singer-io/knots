@@ -1,7 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
-import { Button } from 'react-bootstrap';
+import {
+  Button,
+  Modal,
+  FormGroup,
+  FormControl,
+  ControlLabel
+} from 'react-bootstrap';
 import ReactLoading from 'react-loading';
 import Header from '../Header';
 
@@ -10,12 +16,36 @@ import './Sync.css';
 class Sync extends Component {
   constructor() {
     super();
+    this.state = { showSaveModal: false, knotName: '' };
 
     this.sync = this.sync.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+    this.saveKnot = this.saveKnot.bind(this);
   }
 
   sync() {
     this.props.knotsStore.sync();
+  }
+
+  showModal() {
+    this.setState({ showSaveModal: true });
+  }
+
+  closeModal() {
+    this.setState({ showSaveModal: false });
+  }
+
+  handleChange(e) {
+    const { value } = e.target;
+    this.setState({ knotName: value });
+  }
+
+  saveKnot() {
+    this.props.knotsStore.saveKnot(this.state.knotName).then(() => {
+      window.location = 'http://localhost:3000';
+    });
   }
 
   render() {
@@ -42,7 +72,7 @@ class Sync extends Component {
               />
             </div>
             {!this.props.knotsStore.loading &&
-              !this.props.knotsStore.synced && (
+              this.props.knotsStore.synced && (
                 <div className="button-container">
                   <Button
                     bsStyle="primary"
@@ -55,7 +85,7 @@ class Sync extends Component {
                 </div>
               )}
             {!this.props.knotsStore.loading &&
-              this.props.knotsStore.synced && (
+              !this.props.knotsStore.synced && (
                 <div className="synced">
                   <div className="button-container">
                     <a
@@ -78,7 +108,7 @@ class Sync extends Component {
                       bsStyle="primary"
                       bsSize="large"
                       className="synced-save"
-                      onClick={this.sync}
+                      onClick={this.showModal}
                     >
                       Save Knot
                     </Button>
@@ -108,6 +138,50 @@ class Sync extends Component {
             value={this.props.knotsStore.syncLogs}
           />
         </div>
+        <Modal show={this.state.showSaveModal} onHide={this.closeModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Save Knot</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <FormGroup
+              controlId="formBasicText"
+              key="saveKnot"
+              validationState={this.state.knotName ? 'success' : 'error'}
+            >
+              <div key="name">
+                <ControlLabel className="control-label">Name</ControlLabel>
+                <FormControl
+                  type="text"
+                  onChange={this.handleChange}
+                  value={this.state.knotName}
+                />
+              </div>
+            </FormGroup>
+          </Modal.Body>
+          <Modal.Footer>
+            <div className="buttons-container">
+              <Button onClick={this.closeModal}>Close</Button>
+              <Button
+                bsStyle="primary"
+                onClick={this.saveKnot}
+                disabled={!(this.state.knotName.length > 0)}
+                className="save-knot-button"
+              >
+                {this.props.knotsStore.loading && (
+                  <div className="saving-loader">
+                    <ReactLoading
+                      type="spin"
+                      color="#fff"
+                      height="20px"
+                      width="20px"
+                    />
+                  </div>
+                )}
+                <span>Save Knot</span>
+              </Button>
+            </div>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   }
@@ -118,7 +192,8 @@ Sync.propTypes = {
     sync: PropTypes.func.isRequired,
     syncLogs: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,
-    synced: PropTypes.bool.isRequired
+    synced: PropTypes.bool.isRequired,
+    saveKnot: PropTypes.func.isRequired
   }).isRequired,
   userStore: PropTypes.shape({
     dataset: PropTypes.shape({

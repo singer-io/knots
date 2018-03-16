@@ -59,3 +59,17 @@
 .synced-view {
   margin-right: 40px;
 }
+
+.save-knot-button {
+  display: flex;
+  align-items: center;
+}
+
+.buttons-container {
+  display: flex;
+  float: right;
+}
+
+.saving-loader {
+  margin-right: 10px;
+}
