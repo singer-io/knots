@@ -112,8 +112,9 @@ const readSchema = () =>
       .catch(reject);
   });
 
-const writeConfig = (config) =>
+const writeConfig = (req) =>
   new Promise((resolve, reject) => {
+    const config = req.body;
     const configJson = {};
     config.forEach((field) => {
       configJson[field.key] = field.value;
@@ -125,24 +126,33 @@ const writeConfig = (config) =>
         shell.mv('./config.json', './docker/tap');
         exec(commands.runDiscovery, (error, stdout, stderr) => {
           if (error || stderr) {
-            reject(error || stderr);
+            let cmdOutput;
+            try {
+              cmdOutput = error.toString();
+            } catch (err) {
+              cmdOutput = stderr.toString();
+            } finally {
+              req.io.emit('live-logs', cmdOutput);
+            }
+          } else {
+            resolve();
           }
-
-          resolve();
         });
       })
       .catch(reject);
   });
 
-const getSchema = (config) =>
+const getSchema = (req) =>
   new Promise((resolve, reject) => {
-    writeConfig(config)
+    writeConfig(req)
       .then(() => {
         readSchema()
           .then(resolve)
           .catch(reject);
       })
-      .catch(reject);
+      .catch((err) => {
+        reject(err);
+      });
   });
 
 const writeSchema = (schemaObject) =>
@@ -156,13 +166,16 @@ const writeSchema = (schemaObject) =>
       .catch(reject);
   });
 
-const addSchema = (config) =>
+const addSchema = (req) =>
   new Promise((resolve, reject) => {
+    const config = req.body;
     addKnotAttribute(['tap', 'config'], config)
       .then(() => {
-        getSchema(config)
+        getSchema(req)
           .then(resolve)
-          .catch(reject);
+          .catch((err) => {
+            reject(err);
+          });
       })
       .catch((err) => {
         reject(err);
@@ -198,12 +211,13 @@ const addTargetConfig = (config) =>
       .catch(reject);
   });
 
-const sync = () =>
+const sync = (req) =>
   new Promise((resolve, reject) => {
-    exec(commands.runSync, (error) => {
-      if (error) {
-        reject(error);
-      }
+    const syncData = exec(commands.runSync);
+    syncData.stderr.on('data', (data) => {
+      req.io.emit('live-sync-logs', data.toString());
+    });
+    syncData.on('close', () => {
       resolve();
     });
   });

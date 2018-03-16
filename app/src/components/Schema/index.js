@@ -33,9 +33,16 @@ class Schema extends Component {
         </Header>
 
         <div className="schema-body">
-          {this.props.tapsStore.loading && <Loader />}
           {this.props.tapsStore.loading && (
-            <div className="loading-info">Retrieving Schema Information</div>
+            <div>
+              <Loader />
+              <p className="info-text">Retrieving schema information...</p>
+              <textarea
+                name="live-logs"
+                className="live-logs"
+                value={this.props.tapsStore.liveLogs}
+              />
+            </div>
           )}
           {!this.props.tapsStore.loading && (
             <div>
@@ -74,7 +81,7 @@ class Schema extends Component {
                 <input type="date" className="date" />
               </form>
               <div className="navigation">
-                <Link to="/connection">
+                <Link to="/connect">
                   <Button>
                     <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                     Connection
@@ -82,7 +89,7 @@ class Schema extends Component {
                 </Link>
                 <Link to="/targets">
                   <Button bsStyle="primary" onClick={this.submitSchema}>
-                    Next: Select Tap<i
+                    Next: Select Target<i
                       className="fa fa-long-arrow-right"
                       aria-hidden="true"
                     />
@@ -102,7 +109,8 @@ Schema.propTypes = {
     tapSchema: PropTypes.object.isRequired,
     editField: PropTypes.func.isRequired,
     submitSchema: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired
+    loading: PropTypes.bool.isRequired,
+    liveLogs: PropTypes.string.isRequired
   }).isRequired
 };
 

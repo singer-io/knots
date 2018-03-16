@@ -39,12 +39,12 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/schema/', (req, res) => {
-  addSchema(req.body)
+  addSchema(req)
     .then((schema) => {
       res.json(schema.streams);
     })
-    .catch((err) => {
-      res.json(err);
+    .catch(() => {
+      res.status(500).json({ error: 'An error occured' });
     });
 });
 
@@ -96,12 +96,12 @@ router.post('/target/', (req, res) => {
 });
 
 router.get('/sync/', (req, res) => {
-  sync()
+  sync(req)
     .then(() => {
       res.json({ status: 200 });
     })
     .catch(() => {
-      res.json({ status: 500 });
+      res.status(500).json({ error: 'An error occured' });
     });
 });
 

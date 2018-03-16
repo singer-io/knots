@@ -19,7 +19,8 @@
     "electron": "^1.8.2",
     "express": "^4.16.2",
     "lodash": "^4.17.5",
-    "shelljs": "^0.8.1"
+    "shelljs": "^0.8.1",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "concurrently": "^3.5.1",
