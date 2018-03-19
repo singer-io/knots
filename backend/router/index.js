@@ -12,7 +12,8 @@ const {
   writeSchema,
   addTargetConfig,
   sync,
-  saveKnot
+  saveKnot,
+  downloadKnot
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -113,6 +114,16 @@ router.post('/save-knot/', (req, res) => {
     .catch((err) => {
       console.log('This is the error', err);
     });
+});
+
+router.post('/download/', (req, res) => {
+  const { knot } = req.body;
+  downloadKnot(knot).then(() => res.json({}));
+});
+
+router.get('/download/', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.download('knot.zip');
 });
 
 module.exports = router;

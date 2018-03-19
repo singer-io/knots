@@ -65,6 +65,27 @@ class Knots {
       this.selectedKnot = knot;
     });
   }
+
+  download(knot) {
+    axios.post('/download/', { knot }).then(() => {
+      axios({
+        url: 'http://localhost:5000/download',
+        method: 'GET',
+        responseType: 'blob' // important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${knot}.zip`);
+        document.body.appendChild(link);
+        link.click();
+      });
+    });
+
+    runInAction(() => {
+      this.selectedKnot = knot;
+    });
+  }
 }
 
 const KnotStore = new Knots();

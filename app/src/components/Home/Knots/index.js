@@ -12,12 +12,19 @@ class Knots extends Component {
     super();
 
     this.setKnot = this.setKnot.bind(this);
+    this.download = this.download.bind(this);
   }
 
   setKnot(e) {
     const { name } = e.target;
     this.props.knotsStore.setKnot(name);
   }
+
+  download(e) {
+    const { name } = e.target;
+    this.props.knotsStore.download(name);
+  }
+
   render() {
     return (
       <div className="Knots">
@@ -68,7 +75,8 @@ class Knots extends Component {
                     bsStyle="primary"
                     bsSize="large"
                     className="synced-save"
-                    onClick={this.showModal}
+                    name={knot}
+                    onClick={this.download}
                   >
                     Download
                   </Button>
@@ -92,7 +100,8 @@ class Knots extends Component {
 Knots.propTypes = {
   knotsStore: PropTypes.shape({
     knots: PropTypes.object.isRequired,
-    setKnot: PropTypes.func.isRequired
+    setKnot: PropTypes.func.isRequired,
+    download: PropTypes.func.isRequired
   }).isRequired
 };
 

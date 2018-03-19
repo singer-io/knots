@@ -3,6 +3,7 @@ const fs = require('fs');
 const shell = require('shelljs');
 const { set } = require('lodash');
 const { commands } = require('./constants');
+const { EasyZip } = require('easy-zip');
 
 const getKnots = () =>
   new Promise((resolve) => {
@@ -235,6 +236,15 @@ const saveKnot = (name) =>
     resolve();
   });
 
+const downloadKnot = (knotName) =>
+  new Promise((resolve) => {
+    const zip = new EasyZip();
+    zip.zipFolder(`./knots/${knotName}`, () => {
+      zip.writeToFile(`${knotName}.zip`);
+      resolve();
+    });
+  });
+
 module.exports = {
   getKnots,
   detectDocker,
@@ -244,5 +254,6 @@ module.exports = {
   writeSchema,
   addTargetConfig,
   sync,
-  saveKnot
+  saveKnot,
+  downloadKnot
 };
