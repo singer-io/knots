@@ -72,7 +72,7 @@ class Sync extends Component {
               />
             </div>
             {!this.props.knotsStore.loading &&
-              this.props.knotsStore.synced && (
+              !this.props.knotsStore.synced && (
                 <div className="button-container">
                   <Button
                     bsStyle="primary"
@@ -85,7 +85,7 @@ class Sync extends Component {
                 </div>
               )}
             {!this.props.knotsStore.loading &&
-              !this.props.knotsStore.synced && (
+              this.props.knotsStore.synced && (
                 <div className="synced">
                   <div className="button-container">
                     <a
@@ -104,14 +104,24 @@ class Sync extends Component {
                     </a>
                   </div>
                   <div className="button-container">
-                    <Button
-                      bsStyle="primary"
-                      bsSize="large"
-                      className="synced-save"
-                      onClick={this.showModal}
-                    >
-                      Save Knot
-                    </Button>
+                    {this.props.knotsStore.selectedKnot.length > 0 ? (
+                      <Button
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="synced-save"
+                      >
+                        Configure Knot
+                      </Button>
+                    ) : (
+                      <Button
+                        bsStyle="primary"
+                        bsSize="large"
+                        className="synced-save"
+                        onClick={this.showModal}
+                      >
+                        Save Knot
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
@@ -193,7 +203,8 @@ Sync.propTypes = {
     syncLogs: PropTypes.string.isRequired,
     loading: PropTypes.bool.isRequired,
     synced: PropTypes.bool.isRequired,
-    saveKnot: PropTypes.func.isRequired
+    saveKnot: PropTypes.func.isRequired,
+    selectedKnot: PropTypes.string.isRequired
   }).isRequired,
   userStore: PropTypes.shape({
     dataset: PropTypes.shape({

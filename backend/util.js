@@ -214,7 +214,7 @@ const addTargetConfig = (config) =>
 
 const sync = (req) =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync);
+    const syncData = exec(commands.runSync(req.body.knot));
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
     });

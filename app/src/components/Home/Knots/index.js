@@ -8,6 +8,16 @@ import Header from '../../Header';
 import './Knots.css';
 
 class Knots extends Component {
+  constructor() {
+    super();
+
+    this.setKnot = this.setKnot.bind(this);
+  }
+
+  setKnot(e) {
+    const { name } = e.target;
+    this.props.knotsStore.setKnot(name);
+  }
   render() {
     return (
       <div className="Knots">
@@ -31,13 +41,17 @@ class Knots extends Component {
               <p>{knot}</p>
 
               <div className="button-container">
-                <Button
-                  bsStyle="primary"
-                  bsSize="large"
-                  className="sync-button"
-                >
-                  Run
-                </Button>
+                <Link to="/sync">
+                  <Button
+                    bsStyle="primary"
+                    bsSize="large"
+                    className="sync-button"
+                    name={knot}
+                    onClick={this.setKnot}
+                  >
+                    Run
+                  </Button>
+                </Link>
               </div>
               <div className="synced">
                 <div className="button-container">
@@ -77,7 +91,8 @@ class Knots extends Component {
 
 Knots.propTypes = {
   knotsStore: PropTypes.shape({
-    knots: PropTypes.object.isRequired
+    knots: PropTypes.object.isRequired,
+    setKnot: PropTypes.func.isRequired
   }).isRequired
 };
 

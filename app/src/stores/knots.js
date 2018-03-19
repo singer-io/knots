@@ -8,7 +8,8 @@ class Knots {
       knots: [],
       loading: false,
       syncLogs: '',
-      synced: false
+      synced: false,
+      selectedKnot: ''
     });
   }
 
@@ -32,7 +33,7 @@ class Knots {
     runInAction(() => {
       this.loading = true;
     });
-    axios.get('/sync/').then(() => {
+    axios.post('/sync/', { knot: this.selectedKnot }).then(() => {
       runInAction(() => {
         this.loading = false;
         this.synced = true;
@@ -56,6 +57,12 @@ class Knots {
         .catch(() => {
           reject();
         });
+    });
+  }
+
+  setKnot(knot) {
+    runInAction(() => {
+      this.selectedKnot = knot;
     });
   }
 }

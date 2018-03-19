@@ -96,7 +96,7 @@ router.post('/target/', (req, res) => {
   addTargetConfig(req.body).then(() => res.json({ status: 200 }));
 });
 
-router.get('/sync/', (req, res) => {
+router.post('/sync/', (req, res) => {
   sync(req)
     .then(() => {
       res.json({ status: 200 });
