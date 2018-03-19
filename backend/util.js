@@ -226,9 +226,11 @@ const sync = (req) =>
 const saveKnot = (name) =>
   new Promise((resolve) => {
     shell.mkdir('-p', `./knots/${name}`);
+    shell.mkdir('-p', `./knots/${name}/images`);
     shell.mv('./docker/tap', `./knots/${name}/tap`);
     shell.mv('./docker/target', `./knots/${name}/target`);
     shell.mv('./knot.json', `./knots/${name}/knot.json`);
+    shell.cp('-R', './docker/images/', `./knots/${name}`);
 
     resolve();
   });

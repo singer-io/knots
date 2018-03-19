@@ -3,3 +3,5 @@ node_modules
 knot.json
 tap
 target
+knots
+*.log
