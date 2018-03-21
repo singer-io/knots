@@ -234,11 +234,9 @@ const createMakefile = (name) =>
       '\tdocker run gbolahan/target-datadotworld:1.0.0b3\n' +
       'sync:\n' +
       '\tdocker run -v ${CURDIR}/' +
-      name +
       '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
       'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json | ' +
       'docker run -v ${CURDIR}/' +
-      name +
       '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
       'target-datadotworld -c target/data/config.json > state.json';
 
