@@ -224,7 +224,7 @@ const sync = (req) =>
     });
   });
 
-const createMakefile = (name) =>
+const createMakefile = () =>
   new Promise((resolve, reject) => {
     const fileContent =
       'install:\n' +
@@ -232,13 +232,24 @@ const createMakefile = (name) =>
       '\tdocker run gbolahan/tap-redshift:1.0.0b3\n' +
       '\t-' +
       '\tdocker run gbolahan/target-datadotworld:1.0.0b3\n' +
-      'sync:\n' +
-      '\tdocker run -v ${CURDIR}/' +
+      'fullSync:\n' +
+      '\tdocker run -v ${CURDIR}' +
       '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
       'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json | ' +
-      'docker run -v ${CURDIR}/' +
+      'docker run -v ${CURDIR}' +
       '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
-      'target-datadotworld -c target/data/config.json > state.json';
+      'target-datadotworld -c target/data/config.json > ./tap/state.json\n' +
+      'sync:\n' +
+      '\t-' +
+      '\tdocker run -v ${CURDIR}' +
+      '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
+      'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json ' +
+      '--state tap/data/state.json | ' +
+      'docker run -v ${CURDIR}' +
+      '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
+      'target-datadotworld -c target/data/config.json > /tmp/state.json\n' +
+      '\t-' +
+      '\tcp /tmp/state.json ./tap/state.json';
 
     writeFile('Makefile', fileContent)
       .then(resolve)
@@ -247,7 +258,7 @@ const createMakefile = (name) =>
 
 const saveKnot = (name) =>
   new Promise((resolve) => {
-    createMakefile(name);
+    createMakefile();
     shell.mkdir('-p', `./knots/${name}`);
     shell.mkdir('-p', `./knots/${name}/images`);
     shell.mv('./docker/tap', `./knots/${name}/tap`);
