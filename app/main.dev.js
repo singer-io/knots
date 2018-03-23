@@ -13,11 +13,10 @@
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 
-require('./backend');
-
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
+  require('./backend');
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
