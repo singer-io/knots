@@ -5,11 +5,10 @@ import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import * as knotsActions from '../actions/knots';
-import type { knotsStateType } from '../reducers/knots';
 
 const history = createHashHistory();
 
-const configureStore = (initialState?: knotsStateType) => {
+const configureStore = (initialState) => {
   // Redux Configuration
   const middleware = [];
   const enhancers = [];

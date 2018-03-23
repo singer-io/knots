@@ -1,16 +1,20 @@
 // @flow
 import React, { Component } from 'react';
 import Create from './Create';
-import Header from '../Header';
 
 type Props = {
   knotsStore: {
-    knots: Array<String>
-  }
+    knots: Array<string>
+  },
+  fetchKnots: () => void
 };
 
 export default class Home extends Component<Props> {
   props: Props;
+
+  componentWillMount() {
+    this.props.fetchKnots();
+  }
 
   render() {
     const { knots } = this.props.knotsStore;
