@@ -42,6 +42,12 @@ class Schema extends Component {
                 className="live-logs"
                 value={this.props.tapsStore.liveLogs}
               />
+              <Link to="/connect">
+                <Button>
+                  <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
+                  Connection
+                </Button>
+              </Link>
             </div>
           )}
           {!this.props.tapsStore.loading && (

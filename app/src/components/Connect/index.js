@@ -17,11 +17,13 @@ class Connection extends Component {
     this.handleFieldChange = this.handleFieldChange.bind(this);
     this.submit = this.submit.bind(this);
     this.fetchFields = this.fetchFields.bind(this);
+    this.fetchConfig = this.fetchConfig.bind(this);
     this.refresh = this.refresh.bind(this);
   }
 
   componentWillMount() {
     this.fetchFields();
+    this.fetchConfig();
   }
 
   handleFieldChange(key, value, index) {
@@ -41,8 +43,12 @@ class Connection extends Component {
     this.props.tapsStore.getTapFields(tap, version);
   }
 
+  fetchConfig() {
+    this.props.tapsStore.getTapConfig();
+  }
+
   render() {
-    const { dockerInstalled } = this.props.tapsStore;
+    const { dockerInstalled, persist } = this.props.tapsStore;
     if (dockerInstalled) {
       return (
         <div className="Connect">
@@ -56,6 +62,7 @@ class Connection extends Component {
                 <ConnectForm
                   fields={this.props.tapsStore.tapFields}
                   handleChange={this.handleFieldChange}
+                  prefillData={persist}
                 />
                 <Navigtion
                   back={{ name: 'Taps', path: '/taps' }}
@@ -98,11 +105,13 @@ class Connection extends Component {
 Connection.propTypes = {
   tapsStore: PropTypes.shape({
     tapFields: PropTypes.object,
+    persist: PropTypes.object,
     getTapFields: PropTypes.func,
     setTapFields: PropTypes.func,
     submitConfig: PropTypes.func,
     loading: PropTypes.bool,
-    dockerInstalled: PropTypes.bool
+    dockerInstalled: PropTypes.bool,
+    getTapConfig: PropTypes.func
   }).isRequired,
   location: PropTypes.shape({
     search: PropTypes.string

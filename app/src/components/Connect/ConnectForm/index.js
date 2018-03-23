@@ -6,10 +6,12 @@ import { ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 import './ConnectForm.css';
 
 class ConnectForm extends Component {
-  constructor() {
+  constructor(props) {
     super();
 
-    this.state = {};
+    this.state = {
+      fields: props.prefillData
+    };
 
     this.handleChange = this.handleChange.bind(this);
     this.getValidationState = this.getValidationState.bind(this);
@@ -29,18 +31,22 @@ class ConnectForm extends Component {
     return 'success';
   }
 
-  handleChange(e) {
-    const { name, value } = e.target;
-    const { key } = this.props.fields[name];
-    this.setState({ [key]: value });
-
-    this.props.handleChange(key, value, name);
+  handleChange(idx) {
+    return (evt) => {
+      const { key } = this.props.fields[evt.target.name];
+      const newFields = this.state.fields.map((field, sidx) => {
+        if (idx !== sidx) return field;
+        return { ...field, value: evt.target.value };
+      });
+      this.setState({ [key]: evt.target.value, fields: newFields });
+      this.props.handleChange(key, evt.target.value, evt.target.name);
+    };
   }
 
   render() {
     return (
       <form>
-        {this.props.fields.map((field, index) => (
+        {this.state.fields.map((field, index) => (
           <FormGroup
             controlId="formBasicText"
             key={field.key}
@@ -55,8 +61,9 @@ class ConnectForm extends Component {
               </ControlLabel>
               <FormControl
                 name={index}
-                type="text"
-                onChange={this.handleChange}
+                type={field.key === 'password' ? 'password' : 'text'}
+                value={field.value}
+                onChange={this.handleChange(index)}
               />
             </div>
           </FormGroup>
@@ -69,7 +76,8 @@ class ConnectForm extends Component {
 ConnectForm.propTypes = {
   /* eslint-disable react/forbid-prop-types */
   fields: PropTypes.object.isRequired, // fields is a mobx array
-  handleChange: PropTypes.func.isRequired
+  handleChange: PropTypes.func.isRequired,
+  prefillData: PropTypes.object.isRequired
 };
 
 export default inject('tapsStore')(observer(ConnectForm));

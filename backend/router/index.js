@@ -13,7 +13,8 @@ const {
   addTargetConfig,
   sync,
   saveKnot,
-  downloadKnot
+  downloadKnot,
+  readConfig
 } = require('../util');
 
 router.get('/knots/', (req, res) => {
@@ -124,6 +125,12 @@ router.post('/download/', (req, res) => {
 router.get('/download/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.download('knot.zip');
+});
+
+router.get('/rehydrate/', (req, res) => {
+  readConfig().then((config) => {
+    res.json(config);
+  });
 });
 
 module.exports = router;

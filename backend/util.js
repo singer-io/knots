@@ -173,6 +173,7 @@ const addSchema = (req) =>
     const config = req.body;
     addKnotAttribute(['tap', 'config'], config)
       .then(() => {
+        readConfig();
         getSchema(req)
           .then(resolve)
           .catch((err) => {
@@ -245,6 +246,15 @@ const downloadKnot = (knotName) =>
     });
   });
 
+const readConfig = () =>
+  new Promise((resolve, reject) => {
+    readFile('./knot.json')
+      .then((data) => {
+        resolve(data.tap.config);
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   detectDocker,
@@ -255,5 +265,6 @@ module.exports = {
   addTargetConfig,
   sync,
   saveKnot,
-  downloadKnot
+  downloadKnot,
+  readConfig
 };

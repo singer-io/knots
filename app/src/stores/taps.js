@@ -12,7 +12,8 @@ class Taps {
       loading: false,
       tapSchema: [],
       dockerInstalled: true,
-      liveLogs: ''
+      liveLogs: '',
+      persist: {}
     });
   }
 
@@ -61,6 +62,14 @@ class Taps {
     runInAction(() => {
       this.fieldValues[field] = value;
       this.tapFields[index].value = value;
+    });
+  }
+
+  getTapConfig() {
+    axios.get('/rehydrate/').then((res) => {
+      runInAction(() => {
+        this.persist = res.data;
+      });
     });
   }
 
