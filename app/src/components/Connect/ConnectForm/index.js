@@ -17,6 +17,16 @@ class ConnectForm extends Component {
     this.getValidationState = this.getValidationState.bind(this);
   }
 
+  componentDidMount() {
+    this.state.fields.map((field, index) => {
+      const { key, value } = field;
+      if (value) {
+        this.setState({ [key]: value });
+        this.props.handleChange(key, value, index);
+      }
+    });
+  }
+
   getValidationState(key, required) {
     if (required) {
       const fieldValue = this.state[key];
