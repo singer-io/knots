@@ -2,7 +2,8 @@ import {
   UPDATE_TAPS,
   TAPS_LOADING,
   UPDATE_TAP_FIELDS,
-  SET_TAP_FIELDS
+  SET_TAP_FIELDS,
+  SCHEMA_RECEIVED
 } from '../actions/connect';
 
 export type tapsStateType = {
@@ -11,7 +12,8 @@ export type tapsStateType = {
   +dockerInstalled: boolean,
   +dockerVersion: string,
   +tapFields: Array<{}>,
-  +fieldValues: {}
+  +fieldValues: {},
+  +tapSchema: []
 };
 
 const defaultState = {
@@ -19,7 +21,8 @@ const defaultState = {
   taps: [],
   dockerVersion: '',
   tapFields: [],
-  fieldValues: {}
+  fieldValues: {},
+  tapSchema: []
 };
 
 export default function taps(state = defaultState, action) {
@@ -38,14 +41,16 @@ export default function taps(state = defaultState, action) {
         tapFields: action.tapFields
       });
     case SET_TAP_FIELDS:
-      console.log('This is the action', action);
-      console.log('These are the otheres', fields, values);
       fields[action.index].value = action.value;
       values[action.key] = action.value;
 
       return Object.assign({}, state, {
         tapFields: fields,
         fieldValues: values
+      });
+    case SCHEMA_RECEIVED:
+      return Object.assign({}, state, {
+        tapSchema: action.schema
       });
     default:
       return state;

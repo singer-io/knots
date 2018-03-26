@@ -13,13 +13,15 @@ type Props = {
   tapsStore: {
     loading: boolean,
     dockerVersion: string,
-    tapFields: Array<{}>
+    tapFields: Array<{}>,
+    fieldValues: {}
   },
   location: {
     search: string
   },
   fetchTapFields: (tap: string, version: string) => void,
-  setTapFields: (key: string, value: string, index: string) => void
+  setTapFields: (key: string, value: string, index: string) => void,
+  submitConfig: (config: {}) => void
 };
 
 export default class Taps extends Component<Props> {
@@ -42,7 +44,9 @@ export default class Taps extends Component<Props> {
     this.props.setTapFields(key, value, index);
   };
 
-  submit = () => 2;
+  submit = () => {
+    this.props.submitConfig(this.props.tapsStore.fieldValues);
+  };
 
   render() {
     const { loading, dockerVersion } = this.props.tapsStore;
@@ -70,8 +74,6 @@ export default class Taps extends Component<Props> {
         </div>
       );
     }
-
-    console.log('These are the real props', this.props);
 
     return (
       <div>

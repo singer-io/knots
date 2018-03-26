@@ -223,6 +223,7 @@
     "react-router-redux": "^5.0.0-alpha.6",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "shelljs": "^0.8.1",
     "source-map-support": "^0.5.3"
   },
   "devEngines": {

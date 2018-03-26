@@ -1,7 +1,13 @@
 const express = require('express');
 
 const router = express.Router();
-const { getKnots, getTaps, detectDocker, addTap } = require('./util');
+const {
+  getKnots,
+  getTaps,
+  detectDocker,
+  addTap,
+  addSchema
+} = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
 
@@ -26,15 +32,13 @@ router.post('/taps/', (req, res) => {
     .then((dockerVersion) => {
       const { tap, version } = req.body;
       addTap(tap, version)
-        .then((config) => {
-          console.log('This is the result', config);
-          return res.json({
+        .then((config) =>
+          res.json({
             dockerVersion,
             config
-          });
-        })
-        .catch((err) => {
-          console.log('This is the error', err);
+          })
+        )
+        .catch(() => {
           res.json({
             config: null
           });
@@ -42,6 +46,16 @@ router.post('/taps/', (req, res) => {
     })
     .catch(() => {
       res.json({ docker: false });
+    });
+});
+
+router.post('/tap/schema/', (req, res) => {
+  addSchema(req.body.config)
+    .then((schema) => {
+      res.json(schema.streams);
+    })
+    .catch((err) => {
+      res.json(err);
     });
 });
 

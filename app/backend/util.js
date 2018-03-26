@@ -1,8 +1,9 @@
 const fs = require('fs');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const { set } = require('lodash');
+const shell = require('shelljs');
 
-const { taps } = require('./constants');
+const { taps, commands } = require('./constants');
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
@@ -77,6 +78,7 @@ const readFile = (path) =>
 
 const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
+    console.log('This is the first layer');
     readFile('./knot.json')
       .then((knotObject) => {
         const newKnot = set(knotObject, attributeArray, value);
@@ -122,9 +124,59 @@ const addTap = (tap, version) =>
       .catch(reject);
   });
 
+const writeConfig = (config) =>
+  new Promise((resolve, reject) => {
+    writeFile('./config.json', JSON.stringify(config))
+      .then(() => {
+        shell.rm('-rf', './docker/tap');
+        shell.mkdir('-p', './docker/tap');
+        shell.mv('./config.json', './docker/tap');
+        exec(commands.runDiscovery, (error, stdout, stderr) => {
+          if (error || stderr) {
+            reject(error || stderr);
+          }
+
+          resolve();
+        });
+      })
+      .catch(reject);
+  });
+
+const readSchema = () =>
+  new Promise((resolve, reject) => {
+    readFile('./docker/tap/catalog.json')
+      .then(resolve)
+      .catch(reject);
+  });
+
+const getSchema = (config) =>
+  new Promise((resolve, reject) => {
+    writeConfig(config)
+      .then(() => {
+        readSchema()
+          .then(resolve)
+          .catch(reject);
+      })
+      .catch(reject);
+  });
+
+const addSchema = (config) =>
+  new Promise((resolve, reject) => {
+    addKnotAttribute(['tap', 'config'], config)
+      .then(() => {
+        getSchema(config)
+          .then(resolve)
+          .catch(reject);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+
 module.exports = {
   getKnots,
   getTaps,
   detectDocker,
-  addTap
+  addTap,
+  addSchema
 };
