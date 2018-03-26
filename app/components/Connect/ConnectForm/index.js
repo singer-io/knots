@@ -27,20 +27,15 @@ export default class ConnectForm extends Component<Props, State> {
     return 'success';
   }
 
-  handleChange(idx: string) {
-    return (evt: { target: { name: string } }) => {
-      const { key } = this.props.fields[evt.target.name];
-      const newFields = this.state.fields.map((field, sidx) => {
-        if (idx !== sidx) return field;
-        return { ...field, value: evt.target.value };
-      });
-      this.setState({ [key]: evt.target.value, fields: newFields });
-      this.props.handleChange(key, evt.target.value, evt.target.name);
-    };
+  handleChange(e: SyntheticKeyboardEvent) {
+    const { name, value } = e.target;
+    const { key } = this.props.fields[name];
+    this.setState({ [key]: value });
+
+    this.props.handleChange(key, value, name);
   }
 
   render() {
-    console.log('These are the fields', this.props);
     return (
       <form>
         {this.props.fields.map((field, index) => (
