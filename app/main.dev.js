@@ -13,6 +13,10 @@
 import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 
+const fixPath = require('fix-path');
+
+fixPath();
+
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {

@@ -78,7 +78,6 @@ const readFile = (path) =>
 
 const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
-    console.log('This is the first layer');
     readFile('./knot.json')
       .then((knotObject) => {
         const newKnot = set(knotObject, attributeArray, value);
