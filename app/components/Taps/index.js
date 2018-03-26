@@ -67,7 +67,16 @@ export default class Taps extends Component<Props> {
                 <div className={styles.tapListInactive}>
                   {taps.map((tap) => {
                     if (!tap.active) {
-                      return <div>{tap.name}</div>;
+                      return (
+                        <Tap
+                          key={tap.key}
+                          name={tap.name}
+                          logo={tap.logo}
+                          repo={tap.repo}
+                          tap={tap.key}
+                          version={tap.version}
+                        />
+                      );
                     }
                     return '';
                   })}
