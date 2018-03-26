@@ -18,7 +18,8 @@ type Props = {
   location: {
     search: string
   },
-  fetchTapFields: (tap: string, version: string) => void
+  fetchTapFields: (tap: string, version: string) => void,
+  setTapFields: (key: string, value: string, index: string) => void
 };
 
 export default class Taps extends Component<Props> {
@@ -37,13 +38,15 @@ export default class Taps extends Component<Props> {
     this.fetchFields();
   }
 
-  handleFieldChange = () => 2;
+  handleFieldChange = (key: string, value: string, index: string) => {
+    this.props.setTapFields(key, value, index);
+  };
 
   submit = () => 2;
 
   render() {
     const { loading, dockerVersion } = this.props.tapsStore;
-    console.log('These are the props', this.props);
+    console.log('These are the propsies', this.props);
     if (!dockerVersion) {
       return (
         <div>

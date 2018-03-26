@@ -54,7 +54,7 @@ export default class ConnectForm extends Component<Props, State> {
               <FormControl
                 name={index}
                 type={field.key === 'password' ? 'password' : 'text'}
-                value={field.value}
+                value={field.value || ''}
                 onChange={this.handleChange}
               />
             </div>

@@ -5,13 +5,13 @@ const baseUrl = 'http://localhost:4321';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
+export const SET_TAP_FIELDS = 'SET_TAP_FIELDS';
 
 type actionType = {
   +type: string
 };
 
 export function fetchTapFields(tap, version) {
-  console.log('These are the params', tap, version);
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TAPS_LOADING
@@ -23,7 +23,6 @@ export function fetchTapFields(tap, version) {
         version
       })
       .then((response) => {
-        console.log('This is the response', response);
         return dispatch({
           type: UPDATE_TAP_FIELDS,
           dockerVersion: response.data.dockerVersion,
@@ -37,5 +36,16 @@ export function fetchTapFields(tap, version) {
           tapFields: []
         })
       );
+  };
+}
+
+export function setTapFields(key, value, index) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SET_TAP_FIELDS,
+      key,
+      value,
+      index
+    });
   };
 }
