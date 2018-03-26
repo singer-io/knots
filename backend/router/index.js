@@ -128,7 +128,8 @@ router.get('/download/', (req, res) => {
 });
 
 router.get('/rehydrate/', (req, res) => {
-  readConfig().then((config) => {
+  const { knot } = req.query;
+  readConfig(knot).then((config) => {
     res.json(config);
   });
 });

@@ -281,13 +281,21 @@ const downloadKnot = (knotName) =>
     });
   });
 
-const readConfig = () =>
+const readConfig = (knotName) =>
   new Promise((resolve, reject) => {
-    readFile('./knot.json')
-      .then((data) => {
-        resolve(data.tap.config);
-      })
-      .catch(reject);
+    if (knotName) {
+      readFile(`./knots/${knotName}/knot.json`)
+        .then((data) => {
+          resolve(data.tap.config);
+        })
+        .catch(reject);
+    } else {
+      readFile('./knot.json')
+        .then((data) => {
+          resolve(data.tap.config);
+        })
+        .catch(reject);
+    }
   });
 
 module.exports = {

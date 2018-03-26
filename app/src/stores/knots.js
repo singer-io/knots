@@ -9,7 +9,8 @@ class Knots {
       loading: false,
       syncLogs: '',
       synced: false,
-      selectedKnot: ''
+      selectedKnot: '',
+      persist: {}
     });
   }
 
@@ -85,6 +86,20 @@ class Knots {
     runInAction(() => {
       this.selectedKnot = knot;
     });
+  }
+
+  configureKnot(knot) {
+    axios
+      .get('/rehydrate/', {
+        params: {
+          knot
+        }
+      })
+      .then((res) => {
+        runInAction(() => {
+          this.persist = res.data;
+        });
+      });
   }
 }
 

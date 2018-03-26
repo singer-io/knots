@@ -9,6 +9,7 @@ import ConnectForm from './ConnectForm';
 import Navigtion from '../Navigation';
 
 import './Connect.css';
+import KnotStore from '../../stores/knots';
 
 class Connection extends Component {
   constructor() {
@@ -44,11 +45,16 @@ class Connection extends Component {
   }
 
   fetchConfig() {
-    this.props.tapsStore.getTapConfig();
+    if (this.props.location.search) {
+      this.props.tapsStore.getTapConfig();
+    }
   }
 
   render() {
-    const { dockerInstalled, persist } = this.props.tapsStore;
+    const { dockerInstalled } = this.props.tapsStore;
+    const { persist } = !this.props.location.search
+      ? KnotStore
+      : this.props.tapsStore;
     if (dockerInstalled) {
       return (
         <div className="Connect">

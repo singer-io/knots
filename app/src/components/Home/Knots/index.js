@@ -13,6 +13,7 @@ class Knots extends Component {
 
     this.setKnot = this.setKnot.bind(this);
     this.download = this.download.bind(this);
+    this.configure = this.configure.bind(this);
   }
 
   setKnot(e) {
@@ -23,6 +24,11 @@ class Knots extends Component {
   download(e) {
     const { name } = e.target;
     this.props.knotsStore.download(name);
+  }
+
+  configure(e) {
+    const { name } = e.target;
+    this.props.knotsStore.configureKnot(name);
   }
 
   render() {
@@ -62,13 +68,17 @@ class Knots extends Component {
               </div>
               <div className="synced">
                 <div className="button-container">
-                  <Button
-                    bsStyle="primary"
-                    bsSize="large"
-                    className="synced-view"
-                  >
-                    Configure
-                  </Button>
+                  <Link to="/connect" state={{ prevPath: 'knotList' }}>
+                    <Button
+                      bsStyle="primary"
+                      bsSize="large"
+                      className="synced-view"
+                      name={knot}
+                      onClick={this.configure}
+                    >
+                      Configure
+                    </Button>
+                  </Link>
                 </div>
                 <div className="button-container">
                   <Button
@@ -101,7 +111,8 @@ Knots.propTypes = {
   knotsStore: PropTypes.shape({
     knots: PropTypes.object.isRequired,
     setKnot: PropTypes.func.isRequired,
-    download: PropTypes.func.isRequired
+    download: PropTypes.func.isRequired,
+    configureKnot: PropTypes.func.isRequired
   }).isRequired
 };
 
