@@ -16,10 +16,10 @@ const commands = {
     'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > docker/tap/catalog.json',
   runSync: (knot) => {
     if (knot) {
-      return `docker run -v $(pwd)/knots/${knot}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v $(pwd)/knots/${knot}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json`;
+      return `docker run -v $(pwd)/knots/${knot}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v $(pwd)/knots/${knot}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > state.json`;
     }
 
-    return 'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v $(pwd)/docker/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json';
+    return 'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v $(pwd)/docker/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > state.json';
   }
 };
 const activeTargets = [
