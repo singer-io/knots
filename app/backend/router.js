@@ -8,7 +8,8 @@ const {
   addTap,
   addSchema,
   readSchema,
-  writeSchema
+  writeSchema,
+  getTargets
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -76,6 +77,14 @@ router.put('/schema/', (req, res) => {
     })
     .catch((err) => {
       res.json(err);
+    });
+});
+
+router.get('/targets/', (req, res) => {
+  getTargets()
+    .then((taps) => res.json(taps))
+    .catch(() => {
+      res.json([]);
     });
 });
 

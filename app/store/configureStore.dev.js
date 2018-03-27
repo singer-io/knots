@@ -6,6 +6,8 @@ import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 import * as knotsActions from '../actions/knots';
 import * as tapsActions from '../actions/taps';
+import * as targetsActions from '../actions/targets';
+import * as connectActions from '../actions/connect';
 
 const history = createHashHistory();
 
@@ -36,6 +38,8 @@ const configureStore = (initialState) => {
   const actionCreators = {
     ...knotsActions,
     ...tapsActions,
+    ...targetsActions,
+    ...connectActions,
     ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose

@@ -6,11 +6,13 @@ import HomePage from './containers/HomePage';
 import Taps from './containers/Taps';
 import Connect from './containers/Connect';
 import Schema from './containers/Schema';
-import Targets from './components/Targets';
+import Targets from './containers/Targets';
+import Target from './components/Target';
 
 export default () => (
   <App>
     <Switch>
+      <Route path="/target" component={Target} />
       <Route path="/targets" component={Targets} />
       <Route path="/schema" component={Schema} />
       <Route path="/connect" component={Connect} />

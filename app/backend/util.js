@@ -3,7 +3,7 @@ const { spawn, exec } = require('child_process');
 const { set } = require('lodash');
 const shell = require('shelljs');
 
-const { taps, commands } = require('./constants');
+const { taps, commands, targets } = require('./constants');
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
@@ -18,7 +18,6 @@ const getKnots = () =>
 
 const getTaps = () =>
   new Promise((resolve, reject) => {
-    console.log('Called');
     if (taps) {
       resolve(taps);
     } else {
@@ -183,6 +182,15 @@ const writeSchema = (schemaObject) =>
       .catch(reject);
   });
 
+const getTargets = () =>
+  new Promise((resolve, reject) => {
+    if (targets) {
+      resolve(targets);
+    } else {
+      reject();
+    }
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -190,5 +198,6 @@ module.exports = {
   addTap,
   addSchema,
   readSchema,
-  writeSchema
+  writeSchema,
+  getTargets
 };
