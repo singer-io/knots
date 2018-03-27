@@ -6,7 +6,9 @@ const {
   getTaps,
   detectDocker,
   addTap,
-  addSchema
+  addSchema,
+  readSchema,
+  writeSchema
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -53,6 +55,24 @@ router.post('/tap/schema/', (req, res) => {
   addSchema(req.body.config)
     .then((schema) => {
       res.json(schema.streams);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+router.get('/schema/', (req, res) => {
+  readSchema()
+    .then((schema) => res.json(schema.streams))
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
+router.put('/schema/', (req, res) => {
+  writeSchema(req.body)
+    .then(() => {
+      res.json({ status: 200 });
     })
     .catch((err) => {
       res.json(err);

@@ -6,6 +6,8 @@ import {
   SCHEMA_RECEIVED
 } from '../actions/connect';
 
+import { UPDATE_SCHEMA } from '../actions/schema';
+
 export type tapsStateType = {
   +loading: boolean,
   +taps: Array<string>,
@@ -28,6 +30,7 @@ const defaultState = {
 export default function taps(state = defaultState, action) {
   const fields = state.tapFields;
   const values = state.fieldValues;
+  const schema = state.tapSchema;
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { loading: false });
@@ -52,6 +55,27 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapSchema: action.schema
       });
+    case UPDATE_SCHEMA:
+      if (schema[action.index]) {
+        switch (action.field) {
+          case 'selected':
+            schema[action.index].metadata[0].metadata[action.field] =
+              action.value;
+
+            return Object.assign({}, state, {
+              tapSchema: schema
+            });
+          case 'replication_key':
+            schema[action.index].replication_key = action.value;
+
+            return Object.assign({}, state, {
+              tapSchema: schema
+            });
+          default:
+            return state;
+        }
+      }
+      return state;
     default:
       return state;
   }

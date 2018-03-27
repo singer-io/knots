@@ -172,10 +172,23 @@ const addSchema = (config) =>
       });
   });
 
+const writeSchema = (schemaObject) =>
+  new Promise((resolve, reject) => {
+    writeFile('./catalog.json', JSON.stringify(schemaObject))
+      .then(() => {
+        shell.rm('-f', './docker/tap/catalog.json');
+        shell.mv('./catalog.json', './docker/tap');
+        resolve();
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   getTaps,
   detectDocker,
   addTap,
-  addSchema
+  addSchema,
+  readSchema,
+  writeSchema
 };
