@@ -7,11 +7,13 @@ import Taps from './containers/Taps';
 import Connect from './containers/Connect';
 import Schema from './containers/Schema';
 import Targets from './containers/Targets';
-import Target from './components/Target';
+import Target from './containers/Target';
+import Callback from './components/Callback';
 
 export default () => (
   <App>
     <Switch>
+      <Route path="/callback" component={Callback} />
       <Route path="/target" component={Target} />
       <Route path="/targets" component={Targets} />
       <Route path="/schema" component={Schema} />

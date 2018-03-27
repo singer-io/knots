@@ -1,4 +1,5 @@
 // @flow
+
 import React, { Component } from 'react';
 import { Button } from 'react-bootstrap';
 import queryString from 'query-string';
@@ -50,7 +51,6 @@ export default class Taps extends Component<Props> {
 
   render() {
     const { loading, dockerVersion } = this.props.tapsStore;
-    console.log('These are the propsies', this.props);
     if (!dockerVersion) {
       return (
         <div>

@@ -191,6 +191,18 @@ const getTargets = () =>
     }
   });
 
+const addTargetConfig = (config) =>
+  new Promise((resolve, reject) => {
+    writeFile('./config.json', JSON.stringify(config))
+      .then(() => {
+        shell.rm('-fr', './docker/target');
+        shell.mkdir('-p', './docker/target');
+        shell.mv('./config.json', './docker/target');
+        resolve();
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -199,5 +211,6 @@ module.exports = {
   addSchema,
   readSchema,
   writeSchema,
-  getTargets
+  getTargets,
+  addTargetConfig
 };

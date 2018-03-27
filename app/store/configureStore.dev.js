@@ -8,6 +8,7 @@ import * as knotsActions from '../actions/knots';
 import * as tapsActions from '../actions/taps';
 import * as targetsActions from '../actions/targets';
 import * as connectActions from '../actions/connect';
+import * as userActions from '../actions/user';
 
 const history = createHashHistory();
 
@@ -40,6 +41,7 @@ const configureStore = (initialState) => {
     ...tapsActions,
     ...targetsActions,
     ...connectActions,
+    ...userActions,
     ...routerActions
   };
   // If Redux DevTools Extension is installed use it, otherwise use Redux compose
