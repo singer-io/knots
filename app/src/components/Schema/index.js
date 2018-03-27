@@ -42,7 +42,7 @@ class Schema extends Component {
                 className="live-logs"
                 value={this.props.tapsStore.liveLogs}
               />
-              <Link to="/connect">
+              <Link to={{ pathname: '/connect', state: { from: 'discovery' } }}>
                 <Button>
                   <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                   Connection
@@ -87,7 +87,7 @@ class Schema extends Component {
                 <input type="date" className="date" />
               </form>
               <div className="navigation">
-                <Link to="/connect">
+                <Link to={{ pathname: '/connect', state: { from: 'schema' } }}>
                   <Button>
                     <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                     Connection

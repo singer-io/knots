@@ -68,7 +68,9 @@ class Knots extends Component {
               </div>
               <div className="synced">
                 <div className="button-container">
-                  <Link to="/connect" state={{ prevPath: 'knotList' }}>
+                  <Link
+                    to={{ pathname: '/connect', state: { from: 'knot-list' } }}
+                  >
                     <Button
                       bsStyle="primary"
                       bsSize="large"
@@ -113,6 +115,9 @@ Knots.propTypes = {
     setKnot: PropTypes.func.isRequired,
     download: PropTypes.func.isRequired,
     configureKnot: PropTypes.func.isRequired
+  }).isRequired,
+  location: PropTypes.shape({
+    state: PropTypes.object
   }).isRequired
 };
 

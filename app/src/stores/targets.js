@@ -33,7 +33,6 @@ class Targets {
         version
       })
       .then((response) => {
-        console.log(response);
         return runInAction(() => {
           this.loading = false;
         });

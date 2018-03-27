@@ -1,7 +1,7 @@
 const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const shell = require('shelljs');
-const { set } = require('lodash');
+const { _, set } = require('lodash');
 const { commands } = require('./constants');
 const { EasyZip } = require('easy-zip');
 
@@ -66,7 +66,6 @@ const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
     readFile('./knot.json').then((knotObject) => {
       const newKnot = set(knotObject, attributeArray, value);
-
       writeFile('./knot.json', JSON.stringify(newKnot))
         .then(() => {
           resolve();
@@ -144,6 +143,23 @@ const writeConfig = (req) =>
       .catch(reject);
   });
 
+const readConfig = (knotName) =>
+  new Promise((resolve, reject) => {
+    if (knotName) {
+      readFile(`./knots/${knotName}/knot.json`)
+        .then((data) => {
+          resolve(data.tap.config);
+        })
+        .catch(reject);
+    } else {
+      readFile('./knot.json')
+        .then((data) => {
+          resolve(data.tap.config);
+        })
+        .catch(reject);
+    }
+  });
+
 const getSchema = (req) =>
   new Promise((resolve, reject) => {
     writeConfig(req)
@@ -159,6 +175,17 @@ const getSchema = (req) =>
 
 const writeSchema = (schemaObject) =>
   new Promise((resolve, reject) => {
+    const selectedTable = [];
+    _.forEach(schemaObject.streams, (val) => {
+      val.metadata.forEach((item) => {
+        if (item.metadata.selected) {
+          selectedTable.push(val.table_name);
+        }
+      });
+    });
+    addKnotAttribute(['tap', 'selected-tables'], selectedTable)
+      .then(resolve)
+      .catch(reject);
     writeFile('./catalog.json', JSON.stringify(schemaObject))
       .then(() => {
         shell.rm('-f', './docker/tap/catalog.json');
@@ -215,7 +242,7 @@ const addTargetConfig = (config) =>
   });
 
 const sync = (req) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     const syncData = exec(commands.runSync(req.body.knot));
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
@@ -227,6 +254,7 @@ const sync = (req) =>
 
 const createMakefile = () =>
   new Promise((resolve, reject) => {
+    // TODO: Refactor string interpolation for makefile content
     const fileContent =
       'install:\n' +
       '\t-' +
@@ -279,23 +307,6 @@ const downloadKnot = (knotName) =>
       zip.writeToFile(`${knotName}.zip`);
       resolve();
     });
-  });
-
-const readConfig = (knotName) =>
-  new Promise((resolve, reject) => {
-    if (knotName) {
-      readFile(`./knots/${knotName}/knot.json`)
-        .then((data) => {
-          resolve(data.tap.config);
-        })
-        .catch(reject);
-    } else {
-      readFile('./knot.json')
-        .then((data) => {
-          resolve(data.tap.config);
-        })
-        .catch(reject);
-    }
   });
 
 module.exports = {

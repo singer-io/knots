@@ -45,16 +45,17 @@ class Connection extends Component {
   }
 
   fetchConfig() {
-    if (this.props.location.search) {
+    if (this.props.location.state.from !== 'knot-list') {
       this.props.tapsStore.getTapConfig();
     }
   }
 
   render() {
     const { dockerInstalled } = this.props.tapsStore;
-    const { persist } = !this.props.location.search
-      ? KnotStore
-      : this.props.tapsStore;
+    const { persist } =
+      this.props.location.state.from === 'knot-list'
+        ? KnotStore
+        : this.props.tapsStore;
     if (dockerInstalled) {
       return (
         <div className="Connect">
@@ -120,7 +121,8 @@ Connection.propTypes = {
     getTapConfig: PropTypes.func
   }).isRequired,
   location: PropTypes.shape({
-    search: PropTypes.string
+    search: PropTypes.string,
+    state: PropTypes.object
   }).isRequired
 };
 

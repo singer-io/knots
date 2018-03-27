@@ -9,8 +9,17 @@ import Target from './Target';
 import './Targets.css';
 
 class Targets extends Component {
+  constructor() {
+    super();
+
+    this.handleInstallTarget = this.handleInstallTarget.bind(this);
+  }
   componentWillMount() {
     this.props.targetsStore.getTargets();
+  }
+
+  handleInstallTarget(target, version) {
+    this.props.targetsStore.getTargetCredentials(target, version);
   }
 
   render() {
@@ -36,6 +45,7 @@ class Targets extends Component {
                       logo={target.logo}
                       target={target.key}
                       version={target.version}
+                      handleInstall={this.handleInstallTarget}
                     />
                   ))}
                 </div>
@@ -74,7 +84,8 @@ Targets.propTypes = {
     activeTargets: PropTypes.object,
     inactiveTargets: PropTypes.object,
     getTargets: PropTypes.func,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    getTargetCredentials: PropTypes.func
   }).isRequired
 };
 

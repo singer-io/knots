@@ -20,7 +20,6 @@ class DataWorld extends Component {
 
   handleChange(e) {
     const { value } = e.target;
-    console.log('This is the value', value);
     this.props.userStore.setDataset(value);
   }
 
