@@ -9,10 +9,12 @@ import Schema from './containers/Schema';
 import Targets from './containers/Targets';
 import Target from './containers/Target';
 import Callback from './components/Callback';
+import Sync from './containers/Sync';
 
 export default () => (
   <App>
     <Switch>
+      <Route path="/sync" component={Sync} />
       <Route path="/callback" component={Callback} />
       <Route path="/target" component={Target} />
       <Route path="/targets" component={Targets} />

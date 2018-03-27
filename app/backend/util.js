@@ -203,6 +203,16 @@ const addTargetConfig = (config) =>
       .catch(reject);
   });
 
+const sync = () =>
+  new Promise((resolve, reject) => {
+    exec(commands.runSync, (error) => {
+      if (error) {
+        reject(error);
+      }
+      resolve();
+    });
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -212,5 +222,6 @@ module.exports = {
   readSchema,
   writeSchema,
   getTargets,
-  addTargetConfig
+  addTargetConfig,
+  sync
 };

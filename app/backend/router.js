@@ -11,7 +11,8 @@ const {
   readSchema,
   writeSchema,
   getTargets,
-  addTargetConfig
+  addTargetConfig,
+  sync
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -115,6 +116,19 @@ router.post('/target/', (req, res) => {
   addTargetConfig(req.body)
     .then(() => res.json({ status: 200 }))
     .catch(console.log);
+});
+
+router.get('/sync/', (req, res) => {
+  console.log('About to start');
+  sync()
+    .then(() => {
+      console.log('COmplete');
+      res.json({ status: 200 });
+    })
+    .catch((err) => {
+      console.log('error', err);
+      res.json({ status: 500 });
+    });
 });
 
 module.exports = router;
