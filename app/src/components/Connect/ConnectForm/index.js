@@ -9,8 +9,11 @@ class ConnectForm extends Component {
   constructor(props) {
     super();
 
+    const fields = props.prefillData.config
+      ? props.prefillData.config
+      : props.prefillData;
     this.state = {
-      fields: props.prefillData
+      fields
     };
 
     this.handleChange = this.handleChange.bind(this);

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { observer, inject } from 'mobx-react';
+import { Link } from 'react-router-dom';
 import {
   Button,
   Modal,
@@ -23,6 +24,7 @@ class Sync extends Component {
     this.closeModal = this.closeModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.saveKnot = this.saveKnot.bind(this);
+    this.configure = this.configure.bind(this);
   }
 
   sync() {
@@ -46,6 +48,11 @@ class Sync extends Component {
     this.props.knotsStore.saveKnot(this.state.knotName).then(() => {
       window.location = 'http://localhost:3000';
     });
+  }
+
+  configure(e) {
+    const { name } = e.target;
+    this.props.knotsStore.configureKnot(name);
   }
 
   render() {
@@ -105,13 +112,21 @@ class Sync extends Component {
                   </div>
                   <div className="button-container">
                     {this.props.knotsStore.selectedKnot.length > 0 ? (
-                      <Button
-                        bsStyle="primary"
-                        bsSize="large"
-                        className="synced-save"
+                      <Link
+                        to={{
+                          pathname: '/connect',
+                          state: { from: 'Finish-sync' }
+                        }}
                       >
-                        Configure Knot
-                      </Button>
+                        <Button
+                          bsStyle="primary"
+                          bsSize="large"
+                          className="synced-save"
+                          onClick={this.configure}
+                        >
+                          Configure Knot
+                        </Button>
+                      </Link>
                     ) : (
                       <Button
                         bsStyle="primary"
@@ -204,7 +219,8 @@ Sync.propTypes = {
     loading: PropTypes.bool.isRequired,
     synced: PropTypes.bool.isRequired,
     saveKnot: PropTypes.func.isRequired,
-    selectedKnot: PropTypes.string.isRequired
+    selectedKnot: PropTypes.string.isRequired,
+    configureKnot: PropTypes.func.isRequired
   }).isRequired,
   userStore: PropTypes.shape({
     dataset: PropTypes.shape({

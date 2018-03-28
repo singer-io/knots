@@ -8,6 +8,7 @@ import Loader from '../Loader';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import './Schema.css';
+import KnotsStore from '../../stores/knots';
 
 class Schema extends Component {
   constructor() {
@@ -66,7 +67,13 @@ class Schema extends Component {
                       <td className="stream">{stream.table_name}</td>
                       <td className="selected">
                         <Checkbox
-                          checked={stream.metadata[0].metadata.selected}
+                          checked={
+                            KnotsStore.persist.selectedTables.includes(
+                              stream.table_name
+                            )
+                              ? true
+                              : stream.metadata[0].metadata.selected
+                          }
                           index={index}
                           handleChange={this.handleChange}
                         />

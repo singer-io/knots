@@ -148,7 +148,7 @@ const readConfig = (knotName) =>
     if (knotName) {
       readFile(`./knots/${knotName}/knot.json`)
         .then((data) => {
-          resolve(data.tap.config);
+          resolve(data.tap);
         })
         .catch(reject);
     } else {
@@ -183,7 +183,7 @@ const writeSchema = (schemaObject) =>
         }
       });
     });
-    addKnotAttribute(['tap', 'selected-tables'], selectedTable)
+    addKnotAttribute(['tap', 'selectedTables'], selectedTable)
       .then(resolve)
       .catch(reject);
     writeFile('./catalog.json', JSON.stringify(schemaObject))
