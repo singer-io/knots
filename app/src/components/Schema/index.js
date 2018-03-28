@@ -27,6 +27,9 @@ class Schema extends Component {
   }
 
   render() {
+    const selectedSchema = KnotsStore.persist.selectedTables
+      ? KnotsStore.persist.selectedTables
+      : [];
     return (
       <div className="Schema">
         <Header>
@@ -68,9 +71,7 @@ class Schema extends Component {
                       <td className="selected">
                         <Checkbox
                           checked={
-                            KnotsStore.persist.selectedTables.includes(
-                              stream.table_name
-                            )
+                            selectedSchema.includes(stream.table_name)
                               ? true
                               : stream.metadata[0].metadata.selected
                           }
