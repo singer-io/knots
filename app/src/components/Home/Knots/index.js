@@ -17,8 +17,8 @@ class Knots extends Component {
   }
 
   setKnot(e) {
-    const { name } = e.target;
-    this.props.knotsStore.setKnot(name);
+    const { name, value } = e.target;
+    this.props.knotsStore.setKnot(name, value);
   }
 
   download(e) {
@@ -60,9 +60,24 @@ class Knots extends Component {
                     bsSize="large"
                     className="sync-button"
                     name={knot}
+                    value="incremental"
                     onClick={this.setKnot}
                   >
                     Run
+                  </Button>
+                </Link>
+              </div>
+              <div className="button-container">
+                <Link to="/sync">
+                  <Button
+                    bsStyle="primary"
+                    bsSize="large"
+                    className="sync-button"
+                    name={knot}
+                    value="full"
+                    onClick={this.setKnot}
+                  >
+                    Full Sync
                   </Button>
                 </Link>
               </div>

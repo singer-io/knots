@@ -243,7 +243,13 @@ const addTargetConfig = (config) =>
 
 const sync = (req) =>
   new Promise((resolve, reject) => {
-    const syncData = exec(commands.runSync(req.body.knot));
+    let syncData;
+    const { knot, mode } = req.body;
+    if (mode === 'full' || !knot) {
+      syncData = exec(commands.runSync(knot));
+    } else {
+      syncData = exec(commands.runPartialSync(knot));
+    }
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
     });

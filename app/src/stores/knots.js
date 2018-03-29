@@ -10,7 +10,9 @@ class Knots {
       syncLogs: '',
       synced: false,
       selectedKnot: '',
-      persist: {}
+      persist: {},
+      syncMode: '',
+      reconfiguredKnot: ''
     });
   }
 
@@ -34,12 +36,19 @@ class Knots {
     runInAction(() => {
       this.loading = true;
     });
-    axios.post('/sync/', { knot: this.selectedKnot }).then(() => {
-      runInAction(() => {
-        this.loading = false;
-        this.synced = true;
+    const selected = localStorage.getItem('SelectedKnot') || '';
+    axios
+      .post('/sync/', {
+        knot: this.selectedKnot || selected,
+        mode: this.syncMode
+      })
+      .then(() => {
+        runInAction(() => {
+          this.loading = false;
+          this.synced = true;
+          localStorage.removeItem('SelectedKnot');
+        });
       });
-    });
   }
 
   saveKnot(name) {
@@ -61,9 +70,10 @@ class Knots {
     });
   }
 
-  setKnot(knot) {
+  setKnot(knot, mode) {
     runInAction(() => {
       this.selectedKnot = knot;
+      this.syncMode = mode;
     });
   }
 
@@ -89,6 +99,10 @@ class Knots {
   }
 
   configureKnot(knot) {
+    runInAction(() => {
+      this.reconfiguredKnot = knot;
+      localStorage.setItem('SelectedKnot', JSON.stringify(knot));
+    });
     axios
       .get('/rehydrate/', {
         params: {
