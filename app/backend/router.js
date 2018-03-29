@@ -46,6 +46,7 @@ router.post('/taps/', (req, res) => {
         )
         .catch(() => {
           res.json({
+            dockerVersion,
             config: null
           });
         });
