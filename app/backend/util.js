@@ -1,14 +1,25 @@
 const fs = require('fs');
 const { spawn, exec } = require('child_process');
+const path = require('path');
 const { set } = require('lodash');
 const shell = require('shelljs');
+const { app } = require('electron');
 
 const { taps, commands, targets } = require('./constants');
+
+let tempFolder;
+
+// app is only defined in the packaged app, use app root directory during development
+if (app) {
+  tempFolder = app.getPath('temp');
+} else {
+  tempFolder = path.resolve(__dirname, '..', '..');
+}
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
     try {
-      const knots = fs.readdirSync('./knots');
+      const knots = fs.readdirSync(path.resolve(tempFolder, 'knots'));
 
       resolve(knots);
     } catch (err) {
@@ -41,9 +52,9 @@ const detectDocker = () =>
     });
   });
 
-const writeFile = (path, content) =>
+const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
-    fs.writeFile(path, content, (err) => {
+    fs.writeFile(filePath, content, (err) => {
       if (!err) {
         resolve();
       }
@@ -65,9 +76,9 @@ const getTapConfig = () =>
     ]);
   });
 
-const readFile = (path) =>
+const readFile = (filePath) =>
   new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
       if (!err) {
         resolve(JSON.parse(data));
       }
@@ -77,11 +88,14 @@ const readFile = (path) =>
 
 const addKnotAttribute = (attributeArray, value) =>
   new Promise((resolve, reject) => {
-    readFile('./knot.json')
+    readFile(path.resolve(tempFolder, 'knot.json'))
       .then((knotObject) => {
         const newKnot = set(knotObject, attributeArray, value);
 
-        writeFile('./knot.json', JSON.stringify(newKnot))
+        writeFile(
+          path.resolve(tempFolder, 'knot.json'),
+          JSON.stringify(newKnot)
+        )
           .then(() => {
             resolve();
           })
@@ -93,7 +107,7 @@ const addKnotAttribute = (attributeArray, value) =>
 const createKnot = (tapName, tapVersion) =>
   new Promise((resolve, reject) => {
     writeFile(
-      './knot.json',
+      path.resolve(tempFolder, 'knot.json'),
       JSON.stringify({
         tap: {
           name: tapName,
