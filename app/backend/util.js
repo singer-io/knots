@@ -16,7 +16,7 @@ let tempFolder;
 
 // app is only defined in the packaged app, use app root directory during development
 if (app) {
-  tempFolder = app.getPath('temp');
+  tempFolder = app.getPath('home');
 } else {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
@@ -85,7 +85,11 @@ const readFile = (filePath) =>
   new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf8', (err, data) => {
       if (!err) {
-        resolve(JSON.parse(data));
+        try {
+          resolve(JSON.parse(data));
+        } catch (error) {
+          reject(error);
+        }
       }
       reject(err);
     });

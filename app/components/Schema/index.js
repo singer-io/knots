@@ -71,6 +71,7 @@ export default class Schema extends Component<Props> {
                     <th>Replication Property</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {this.props.tapsStore.tapSchema.map((stream, index) => (
                     <tr valign="middle" key={stream.tap_stream_id}>
