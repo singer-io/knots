@@ -25,7 +25,7 @@ export function fetchSchema() {
       .then((response) =>
         dispatch({
           type: SCHEMA_RECEIVED,
-          schema: response.data
+          schema: response.data || []
         })
       )
       .catch(() =>

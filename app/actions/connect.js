@@ -52,7 +52,6 @@ export function setTapFields(key, value, index) {
 }
 
 export function submitConfig(config) {
-  console.log('This is the config', config);
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TAPS_LOADING

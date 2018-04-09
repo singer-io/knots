@@ -1,3 +1,5 @@
+const os = require('os');
+
 const taps = [
   {
     name: 'Redshift',
@@ -21,15 +23,24 @@ const targets = [
   }
 ];
 
+const tapRedshiftDockerCommand = `FROM python:latest${
+  os.EOL
+}MAINTAINER 'data.world, Inc.(http://data.world/)'${
+  os.EOL
+}RUN pip install tap-redshift==1.0.0b3${os.EOL}COPY ./ /app/tap-redshift${
+  os.EOL
+}WORKDIR /app${os.EOL}CMD ["tap-redshift"]`;
+
 const commands = {
-  runDiscovery:
-    'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > docker/tap/catalog.json',
+  runDiscovery: (folderPath) =>
+    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/docker/tap/catalog.json`,
   runSync:
     'docker run -v $(pwd)/docker/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v $(pwd)/docker/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json'
 };
 
 module.exports = {
   taps,
+  tapRedshiftDockerCommand,
   commands,
   targets
 };

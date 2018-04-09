@@ -5,7 +5,12 @@ const { set } = require('lodash');
 const shell = require('shelljs');
 const { app } = require('electron');
 
-const { taps, commands, targets } = require('./constants');
+const {
+  taps,
+  commands,
+  targets,
+  tapRedshiftDockerCommand
+} = require('./constants');
 
 let tempFolder;
 
@@ -138,25 +143,38 @@ const addTap = (tap, version) =>
 
 const writeConfig = (config) =>
   new Promise((resolve, reject) => {
-    writeFile('./config.json', JSON.stringify(config))
+    writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
       .then(() => {
-        shell.rm('-rf', './docker/tap');
-        shell.mkdir('-p', './docker/tap');
-        shell.mv('./config.json', './docker/tap');
-        exec(commands.runDiscovery, (error, stdout, stderr) => {
-          if (error || stderr) {
-            reject(error || stderr);
-          }
+        shell.rm('-rf', path.resolve(tempFolder, 'docker', 'tap'));
+        shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'tap'));
+        shell.mv(
+          path.resolve(tempFolder, 'config.json'),
+          path.resolve(tempFolder, 'docker', 'tap')
+        );
 
-          resolve();
-        });
+        shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'tap'));
+        shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'images', 'tap'));
+        writeFile(
+          path.resolve(tempFolder, 'docker', 'images', 'tap', 'Dockerfile'),
+          tapRedshiftDockerCommand
+        )
+          .then(() => {
+            exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
+              if (error || stderr) {
+                reject(error || stderr);
+              }
+
+              resolve();
+            });
+          })
+          .catch(reject);
       })
       .catch(reject);
   });
 
 const readSchema = () =>
   new Promise((resolve, reject) => {
-    readFile('./docker/tap/catalog.json')
+    readFile(path.resolve(tempFolder, 'docker', 'tap', 'catalog.json'))
       .then(resolve)
       .catch(reject);
   });
