@@ -51,6 +51,14 @@ export function setTapFields(key, value, index) {
   };
 }
 
+export function getTapConfig() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: 'persist/REHYDRATE'
+    });
+  };
+}
+
 export function submitConfig(config) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({

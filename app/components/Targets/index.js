@@ -81,7 +81,7 @@ export default class Targets extends Component<Props> {
                   })}
                 </div>
               </div>
-              <Link to="/connect">
+              <Link to="/schema">
                 <Button>
                   <i className="fa fa-long-arrow-left" aria-hidden="true" />
                   Back: Schema
