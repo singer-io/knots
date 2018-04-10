@@ -108,23 +108,12 @@ app.on('ready', async () => {
   };
 
   const dataWorldOauth = electronOauth2(config, windowParams);
-  // dataWorldOauth
-  //   .getAccessToken({})
-  //   .then((token) => {
-  //     // use your token.access_token
-  //     console.log('Ze code', token);
-  //   })
-  //   .catch((error) => {
-  //     console.log('def', error);
-  //   });
 
   ipcMain.on('dataworld-oauth', (event) => {
-    console.log('It is happening');
     dataWorldOauth
       .getAccessToken({})
       .then(
         (token) => {
-          console.log('Ze code', token);
           event.sender.send('dataworld-oauth-reply', token);
         },
         (err) => {

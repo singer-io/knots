@@ -8,6 +8,7 @@ export const TOKEN_LOADED = 'TOKEN_LOADED';
 export const TOKEN_LOADING_ERROR = 'TOKEN_LOADING_ERROR';
 export const UPDATE_DATASETS = 'UPDATE_DATASETS';
 export const UPDATE_DATASET = 'UPDATE_DATASET';
+export const SET_TOKEN = 'SET_TOKEN';
 
 type actionType = {
   +type: string
@@ -29,27 +30,12 @@ export function submitFields(dataset, token) {
   };
 }
 
-export function getToken(code) {
+export function setToken(token) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
-      type: TOKEN_LOADING
+      type: SET_TOKEN,
+      token
     });
-
-    axios
-      .post(`${baseUrl}/token/`, {
-        code
-      })
-      .then((response) => {
-        dispatch({
-          type: TOKEN_LOADED,
-          token: response.data.token
-        });
-      })
-      .catch(
-        dispatch({
-          type: TOKEN_LOADING_ERROR
-        })
-      );
   };
 }
 
@@ -64,7 +50,6 @@ export function getDatasets(token) {
     })
       .then((response) => {
         const datasets = response.data.records.map((record) => record.title);
-        console.log('The result', datasets);
         dispatch({
           type: UPDATE_DATASETS,
           datasets

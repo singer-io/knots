@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const router = require('./router');
 
 const app = express();
-const PORT = 3000; // Random number that's unikely to clash with other apps
+const PORT = 4321; // Random number that's unikely to clash with other apps
 
 app.use(bodyParser.json());
 app.use('/', router);
