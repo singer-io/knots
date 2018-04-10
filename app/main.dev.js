@@ -10,12 +10,21 @@
  *
  * @flow
  */
-import { app, BrowserWindow } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
+import electronOauth2 from 'electron-oauth2';
 import MenuBuilder from './menu';
 
 const fixPath = require('fix-path');
 
 fixPath();
+
+const config = {
+  authorizationUrl: 'https://data.world/oauth/authorize',
+  clientId: 'knot-local',
+  redirectUri: 'http://localhost:3000/callback',
+  clientSecret: 'iEcKy7joLVrJgtbm6YzzhTuxwsxU.jVb',
+  tokenUrl: 'https://data.world/oauth/access_token'
+};
 
 let mainWindow = null;
 
@@ -89,4 +98,39 @@ app.on('ready', async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
+
+  const windowParams = {
+    alwaysOnTop: true,
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: false
+    }
+  };
+
+  const dataWorldOauth = electronOauth2(config, windowParams);
+  // dataWorldOauth
+  //   .getAccessToken({})
+  //   .then((token) => {
+  //     // use your token.access_token
+  //     console.log('Ze code', token);
+  //   })
+  //   .catch((error) => {
+  //     console.log('def', error);
+  //   });
+
+  ipcMain.on('dataworld-oauth', (event) => {
+    console.log('It is happening');
+    dataWorldOauth
+      .getAccessToken({})
+      .then(
+        (token) => {
+          console.log('Ze code', token);
+          event.sender.send('dataworld-oauth-reply', token);
+        },
+        (err) => {
+          console.log('Error while getting token', err);
+        }
+      )
+      .catch((error) => console.log(error));
+  });
 });

@@ -17,6 +17,11 @@ const {
 
 router.get('/', (req, res) => res.send('Server running'));
 
+router.get('/callback', (req, res) => {
+  console.log('Hello to high heaven!');
+  res.send('Server running');
+});
+
 router.get('/knots', (req, res) => {
   getKnots()
     .then((knots) => res.json(knots))
