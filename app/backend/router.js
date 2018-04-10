@@ -125,14 +125,11 @@ router.post('/target/', (req, res) => {
 });
 
 router.get('/sync/', (req, res) => {
-  console.log('About to start');
   sync()
     .then(() => {
-      console.log('COmplete');
       res.json({ status: 200 });
     })
-    .catch((err) => {
-      console.log('error', err);
+    .catch(() => {
       res.json({ status: 500 });
     });
 });

@@ -16,8 +16,6 @@ export default class Home extends Component<Props> {
   }
 
   render() {
-    console.log('The props', this.props);
-    console.log('The window', window);
     const { knots } = this.props.knotsStore;
     if (knots.length) {
       return <div>Knots will appear here</div>;

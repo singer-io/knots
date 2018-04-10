@@ -9,7 +9,8 @@ const {
   taps,
   commands,
   targets,
-  tapRedshiftDockerCommand
+  tapRedshiftDockerCommand,
+  targetDataWorldDockerCommand
 } = require('./constants');
 
 let tempFolder;
@@ -209,10 +210,19 @@ const addSchema = (config) =>
 
 const writeSchema = (schemaObject) =>
   new Promise((resolve, reject) => {
-    writeFile('./catalog.json', JSON.stringify(schemaObject))
+    writeFile(
+      path.resolve(tempFolder, 'catalog.json'),
+      JSON.stringify(schemaObject)
+    )
       .then(() => {
-        shell.rm('-f', './docker/tap/catalog.json');
-        shell.mv('./catalog.json', './docker/tap');
+        shell.rm(
+          '-f',
+          path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+        );
+        shell.mv(
+          path.resolve(tempFolder, 'catalog.json'),
+          path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+        );
         resolve();
       })
       .catch(reject);
@@ -228,24 +238,39 @@ const getTargets = () =>
   });
 
 const addTargetConfig = (config) =>
-  new Promise((resolve, reject) => {
-    writeFile('./config.json', JSON.stringify(config))
+  new Promise((resolve) => {
+    shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'target'));
+    shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'images', 'target'));
+    writeFile(
+      path.resolve(tempFolder, 'docker', 'images', 'target', 'Dockerfile'),
+      targetDataWorldDockerCommand
+    )
       .then(() => {
-        shell.rm('-fr', './docker/target');
-        shell.mkdir('-p', './docker/target');
-        shell.mv('./config.json', './docker/target');
-        resolve();
+        writeFile(
+          path.resolve(tempFolder, 'config.json'),
+          JSON.stringify(config)
+        )
+          .then(() => {
+            shell.rm('-fr', path.resolve(tempFolder, 'docker', 'target'));
+            shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'target'));
+            shell.mv(
+              path.resolve(tempFolder, 'config.json'),
+              path.resolve(tempFolder, 'docker', 'target')
+            );
+            resolve();
+          })
+          .catch(console.log);
       })
-      .catch(reject);
+      .catch(console.log);
   });
 
 const sync = () =>
-  new Promise((resolve, reject) => {
-    exec(commands.runSync, (error) => {
+  new Promise((resolve) => {
+    exec(commands.runSync(tempFolder), (error) => {
       if (error) {
-        reject(error);
+        resolve(error.toString());
       }
-      resolve();
+      resolve(tempFolder);
     });
   });
 

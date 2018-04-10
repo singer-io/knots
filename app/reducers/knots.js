@@ -6,17 +6,21 @@ import {
 
 export type knotsStateType = {
   +knots: Array<string>,
-  +loading: boolean
+  +loading: boolean,
+  +text: string
 };
 
-export default function knots(state = { knots: [], loading: false }, action) {
+export default function knots(
+  state = { knots: [], loading: false, text: 'New' },
+  action
+) {
   switch (action.type) {
     case UPDATE_KNOTS:
       return Object.assign({}, state, { knots: action.knots });
     case KNOT_RUNNING:
       return Object.assign({}, state, { loading: true });
     case KNOT_RUN_COMPLETE:
-      return Object.assign({}, state, { loading: false });
+      return Object.assign({}, state, { loading: false, text: action.string });
     default:
       return state;
   }

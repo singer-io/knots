@@ -53,5 +53,4 @@ npm-debug.log.*
 
 # Knot temp files
 knot.json
-docker/tap
-docker/target
+docker
