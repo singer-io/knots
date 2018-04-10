@@ -4,18 +4,13 @@ import {
   KNOT_RUN_COMPLETE,
   SHOW_MODAL,
   CLOSE_MODAL,
-  SET_KNOT_NAME,
-  SAVE_KNOT
+  SET_KNOT_NAME
 } from '../actions/knots';
 
 export type knotsStateType = {
   +knots: Array<string>,
   +loading: boolean,
-  +text: string
-};
-
-export default function knots(
-  state = { knots: [], loading: false, text: 'New' },
+  +text: string,
   +synced: boolean,
   +showSaveModal: boolean,
   +knotName: string
@@ -27,6 +22,7 @@ export default function knots(
     loading: false,
     synced: false,
     showSaveModal: false,
+    text: 'New',
     knotName: ''
   },
   action
@@ -37,8 +33,11 @@ export default function knots(
     case KNOT_RUNNING:
       return Object.assign({}, state, { loading: true, synced: false });
     case KNOT_RUN_COMPLETE:
-      return Object.assign({}, state, { loading: false, text: action.string });
-      return Object.assign({}, state, { loading: false, synced: true });
+      return Object.assign({}, state, {
+        loading: false,
+        text: action.string,
+        synced: true
+      });
     case SHOW_MODAL:
       return Object.assign({}, state, { showSaveModal: true });
     case CLOSE_MODAL:
