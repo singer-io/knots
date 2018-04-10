@@ -3,7 +3,7 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:4321';
 
 export const TARGETS_LOADING = 'TARGETS_LOADING';
-export const UPDATE_TARGETS = 'UPDATE_TAPS';
+export const UPDATE_TARGETS = 'UPDATE_TARGETS';
 
 type actionType = {
   +type: string

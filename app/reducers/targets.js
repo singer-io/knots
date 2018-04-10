@@ -2,7 +2,7 @@ import { UPDATE_TARGETS } from '../actions/targets';
 
 export type targetsStateType = {
   +targets: Array<{}>,
-  loading: boolean
+  +loading: boolean
 };
 
 const defaultState = {
