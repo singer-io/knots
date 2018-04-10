@@ -141,7 +141,7 @@ const createKnot = (tapName, tapVersion) =>
 
 const addTap = (tap, version) =>
   new Promise((resolve, reject) => {
-    const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
+    const installTap = exec(commands.installTap);
     installTap.on('close', () => {
       createKnot(tap, version)
         .then(resolve)
@@ -153,6 +153,7 @@ const writeConfig = (config) =>
   new Promise((resolve, reject) => {
     writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
       .then(() => {
+<<<<<<< HEAD
         shell.rm('-rf', path.resolve(tempFolder, 'docker', 'tap'));
         shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'tap'));
         shell.mv(
@@ -176,6 +177,19 @@ const writeConfig = (config) =>
             });
           })
           .catch(reject);
+=======
+        shell.rm('-rf', './docker/tap');
+        shell.mkdir('-p', './docker/tap');
+        shell.mv('./config.json', './docker/tap');
+        exec(commands.runDiscovery, (error, stdout, stderr) => {
+          console.log(stdout);
+          if (error || stderr) {
+            reject(error || stderr);
+          }
+
+          resolve();
+        });
+>>>>>>> More migration for saving knots and livelogs
       })
       .catch(reject);
   });
@@ -242,10 +256,7 @@ const getTargets = () =>
 
 const addTarget = (targetName, version) =>
   new Promise((resolve, reject) => {
-    const installTarget = spawn('docker', [
-      'run',
-      'gbolahan/target-datadotworld:b4'
-    ]);
+    const installTarget = exec(commands.InstallTarget);
     const val = {
       name: targetName,
       version
