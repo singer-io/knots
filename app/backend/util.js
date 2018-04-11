@@ -141,9 +141,12 @@ const createKnot = (tapName, tapVersion) =>
 
 const addTap = (tap, version) =>
   new Promise((resolve, reject) => {
-    createKnot(tap, version)
-      .then(resolve)
-      .catch(reject);
+    const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
+    installTap.on('close', () => {
+      createKnot(tap, version)
+        .then(resolve)
+        .catch(reject);
+    });
   });
 
 const writeConfig = (config) =>
@@ -237,6 +240,23 @@ const getTargets = () =>
     }
   });
 
+const addTarget = (targetName, version) =>
+  new Promise((resolve, reject) => {
+    const installTarget = spawn('docker', [
+      'run',
+      'gbolahan/target-datadotworld:1.0.0b3'
+    ]);
+    const val = {
+      name: targetName,
+      version
+    };
+    installTarget.on('close', () => {
+      addKnotAttribute(['target'], val)
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+
 const addTargetConfig = (config) =>
   new Promise((resolve) => {
     shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'target'));
@@ -283,6 +303,7 @@ module.exports = {
   readSchema,
   writeSchema,
   getTargets,
+  addTarget,
   addTargetConfig,
   sync
 };

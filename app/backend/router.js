@@ -12,7 +12,8 @@ const {
   writeSchema,
   getTargets,
   addTargetConfig,
-  sync
+  sync,
+  addTarget
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -91,7 +92,18 @@ router.put('/schema/', (req, res) => {
 
 router.get('/targets/', (req, res) => {
   getTargets()
-    .then((taps) => res.json(taps))
+    .then((targets) => res.json(targets))
+    .catch(() => {
+      res.json([]);
+    });
+});
+
+router.post('/target/install', (req, res) => {
+  const { target, version } = req.body;
+  addTarget(target, version)
+    .then(() => {
+      res.json({ status: 200 });
+    })
     .catch(() => {
       res.json([]);
     });
