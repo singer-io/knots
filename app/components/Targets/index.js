@@ -19,7 +19,8 @@ type Props = {
     }>,
     loading: boolean
   },
-  getTargets: () => void
+  getTargets: () => void,
+  installTargets: () => void
 };
 
 export default class Targets extends Component<Props> {
@@ -27,6 +28,10 @@ export default class Targets extends Component<Props> {
   componentWillMount() {
     this.props.getTargets();
   }
+
+  handleInstallTarget = (target, version) => {
+    this.props.installTargets(target, version);
+  };
 
   render() {
     const { targets } = this.props.targetsStore;
@@ -53,6 +58,7 @@ export default class Targets extends Component<Props> {
                           logo={target.logo}
                           target={target.key}
                           version={target.version}
+                          handleInstall={this.handleInstallTarget}
                         />
                       );
                     }

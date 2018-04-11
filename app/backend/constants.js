@@ -27,7 +27,7 @@ const tapRedshiftDockerCommand = `FROM python:latest${
   os.EOL
 }MAINTAINER 'data.world, Inc.(http://data.world/)'${
   os.EOL
-}RUN pip install tap-redshift==1.0.0b3${os.EOL}COPY ./ /app/tap-redshift${
+}RUN pip install tap-redshift==1.0.0b4${os.EOL}COPY ./ /app/tap-redshift${
   os.EOL
 }WORKDIR /app${os.EOL}CMD ["tap-redshift"]`;
 
