@@ -1,7 +1,7 @@
 import { UPDATE_DATASETS, UPDATE_DATASET, SET_TOKEN } from '../actions/user';
 
 export type targetsStateType = {
-  +datasets: Array<string>,
+  +datasets: Array<{ id: string, owner: string }>,
   +token: string,
   +selectedDataset: string
 };

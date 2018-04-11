@@ -6,7 +6,8 @@ import Sync from '../components/Sync';
 
 function mapStateToProps(state) {
   return {
-    knotsStore: state.knots
+    knotsStore: state.knots,
+    userStore: state.user
   };
 }
 

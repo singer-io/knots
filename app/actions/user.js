@@ -49,7 +49,7 @@ export function getDatasets(token) {
       }
     })
       .then((response) => {
-        const datasets = response.data.records.map((record) => record.title);
+        const datasets = response.data.records;
         dispatch({
           type: UPDATE_DATASETS,
           datasets

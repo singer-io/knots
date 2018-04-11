@@ -7,7 +7,7 @@ import {
 export type knotsStateType = {
   +knots: Array<string>,
   +loading: boolean,
-  +text: string
+  +synced: false
 };
 
 export default function knots(
@@ -20,7 +20,7 @@ export default function knots(
     case KNOT_RUNNING:
       return Object.assign({}, state, { loading: true });
     case KNOT_RUN_COMPLETE:
-      return Object.assign({}, state, { loading: false, text: action.string });
+      return Object.assign({}, state, { loading: false, synced: true });
     default:
       return state;
   }

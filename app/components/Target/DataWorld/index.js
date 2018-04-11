@@ -8,7 +8,7 @@ import Datasets from './Datasets';
 import styles from './DataWorld.css';
 
 type Props = {
-  userStore: { token: string, datasets: Array<string> },
+  userStore: { token: string, datasets: Array<{ id: string }> },
   getDatasets: (token: string) => void,
   setDataset: (value: string) => void,
   setToken: (token: string) => void
