@@ -18,7 +18,6 @@ const {
 router.get('/', (req, res) => res.send('Server running'));
 
 router.get('/callback', (req, res) => {
-  console.log('Hello to high heaven!');
   res.send('Server running');
 });
 
@@ -73,10 +72,10 @@ router.post('/tap/schema/', (req, res) => {
 
 router.get('/schema/', (req, res) => {
   readSchema()
-    .then((schema) => res.json(schema.streams))
-    .catch((err) => {
-      res.json(err);
-    });
+    .then((schema) => {
+      res.json(schema.streams);
+    })
+    .catch();
 });
 
 router.put('/schema/', (req, res) => {

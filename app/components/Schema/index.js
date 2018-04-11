@@ -36,7 +36,9 @@ type Props = {
 
 export default class Schema extends Component<Props> {
   componentWillMount() {
-    this.props.fetchSchema();
+    setTimeout(() => {
+      this.props.fetchSchema();
+    }, 4000);
   }
 
   handleChange = (field: string, index: string, value: string) => {
