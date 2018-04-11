@@ -141,9 +141,12 @@ const createKnot = (tapName, tapVersion) =>
 
 const addTap = (tap, version) =>
   new Promise((resolve, reject) => {
-    createKnot(tap, version)
-      .then(resolve)
-      .catch(reject);
+    const installTap = exec(commands.installTap);
+    installTap.on('close', () => {
+      createKnot(tap, version)
+        .then(resolve)
+        .catch(reject);
+    });
   });
 
 const writeConfig = (config) =>
@@ -237,6 +240,20 @@ const getTargets = () =>
     }
   });
 
+const addTarget = (targetName, version) =>
+  new Promise((resolve, reject) => {
+    const installTarget = exec(commands.InstallTarget);
+    const val = {
+      name: targetName,
+      version
+    };
+    installTarget.on('close', () => {
+      addKnotAttribute(['target'], val)
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+
 const addTargetConfig = (config) =>
   new Promise((resolve) => {
     shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'target'));
@@ -283,6 +300,7 @@ module.exports = {
   readSchema,
   writeSchema,
   getTargets,
+  addTarget,
   addTargetConfig,
   sync
 };

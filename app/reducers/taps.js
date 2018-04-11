@@ -53,7 +53,8 @@ export default function taps(state = defaultState, action) {
       });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
-        tapSchema: action.schema
+        tapSchema: action.schema,
+        loading: false
       });
     case UPDATE_SCHEMA:
       if (schema[action.index]) {
@@ -76,6 +77,8 @@ export default function taps(state = defaultState, action) {
         }
       }
       return state;
+    case 'persist/REHYDRATE':
+      return { ...state };
     default:
       return state;
   }

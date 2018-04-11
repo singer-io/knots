@@ -48,3 +48,10 @@
 .syncingText {
   margin-left: 15px;
 }
+
+.live-sync-logs {
+  margin: 50px auto;
+  width: 100%;
+  height: 150px;
+  padding: 10px;
+}

@@ -90,7 +90,7 @@ router.put('/schema/', (req, res) => {
 
 router.get('/targets/', (req, res) => {
   getTargets()
-    .then((taps) => res.json(taps))
+    .then((targets) => res.json(targets))
     .catch(() => {
       res.json([]);
     });

@@ -5,12 +5,24 @@ import { ControlLabel, FormControl, FormGroup } from 'react-bootstrap';
 import styles from './ConnectForm.css';
 
 export default class ConnectForm extends Component<Props, State> {
-  constructor() {
+  constructor(props) {
     super();
-    this.state = {};
+    this.state = {
+      fields: props.fields
+    };
 
     this.getValidationState = this.getValidationState.bind(this);
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    this.state.fields.map((field, index) => {
+      const { key, value } = field;
+      if (value) {
+        this.setState({ [key]: value });
+        this.props.handleChange(key, value, index.toString());
+      }
+    });
   }
 
   getValidationState(key: string, required: boolean) {
@@ -27,18 +39,22 @@ export default class ConnectForm extends Component<Props, State> {
     return 'success';
   }
 
-  handleChange(e: SyntheticKeyboardEvent) {
-    const { name, value } = e.target;
-    const { key } = this.props.fields[name];
-    this.setState({ [key]: value });
-
-    this.props.handleChange(key, value, name);
+  handleChange(idx) {
+    return (evt: SyntheticKeyboardEvent) => {
+      const { key } = this.props.fields[evt.target.name];
+      const newFields = this.state.fields.map((field, sidx) => {
+        if (idx !== sidx) return field;
+        return { ...field, value: evt.target.value };
+      });
+      this.setState({ [key]: evt.target.value, fields: newFields });
+      this.props.handleChange(key, evt.target.value, evt.target.name);
+    };
   }
 
   render() {
     return (
       <form>
-        {this.props.fields.map((field, index) => (
+        {this.state.fields.map((field, index) => (
           <FormGroup
             controlId="formBasicText"
             key={field.key}
@@ -55,7 +71,7 @@ export default class ConnectForm extends Component<Props, State> {
                 name={index}
                 type={field.key === 'password' ? 'password' : 'text'}
                 value={field.value || ''}
-                onChange={this.handleChange}
+                onChange={this.handleChange(index)}
               />
             </div>
           </FormGroup>

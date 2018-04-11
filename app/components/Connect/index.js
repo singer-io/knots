@@ -22,7 +22,8 @@ type Props = {
   },
   fetchTapFields: (tap: string, version: string) => void,
   setTapFields: (key: string, value: string, index: string) => void,
-  submitConfig: (config: {}) => void
+  submitConfig: (config: {}) => void,
+  getTapConfig: () => void
 };
 
 export default class Taps extends Component<Props> {
@@ -30,6 +31,7 @@ export default class Taps extends Component<Props> {
 
   componentWillMount() {
     this.fetchFields();
+    this.props.getTapConfig();
   }
 
   fetchFields() {

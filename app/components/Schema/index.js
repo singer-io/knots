@@ -57,10 +57,11 @@ export default class Schema extends Component<Props> {
         </Header>
 
         <div className={styles.schemaBody}>
-          {this.props.tapsStore.loading && <Loader />}
           {this.props.tapsStore.loading && (
-            <div className={styles.loadingInfo}>
-              Retrieving Schema Information
+            <div>
+              <Loader />
+              <p className="info-text">Retrieving schema information...</p>
+              <textarea name="live-logs" className="live-logs" />
             </div>
           )}
           {!this.props.tapsStore.loading && (
@@ -87,7 +88,15 @@ export default class Schema extends Component<Props> {
                       </td>
                       <td className={styles.replication}>
                         <Dropdown
-                          columns={Object.keys(stream.schema.properties)}
+                          columns={
+                            stream.metadata[0].metadata[
+                              'valid-replication-keys'
+                            ]
+                              ? stream.metadata[0].metadata[
+                                  'valid-replication-keys'
+                                ]
+                              : ['----']
+                          }
                           index={index.toString()}
                           handleChange={this.handleChange}
                         />
@@ -101,7 +110,7 @@ export default class Schema extends Component<Props> {
                 <input type="date" className={styles.date} />
               </form>
               <div className={styles.navigation}>
-                <Link to="/connection">
+                <Link to={{ pathname: '/connect', state: { from: 'schema' } }}>
                   <Button>
                     <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                     Connection
