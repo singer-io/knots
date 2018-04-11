@@ -8,17 +8,21 @@ import Header from '../Header';
 import styles from './Sync.css';
 
 type Props = {
-  knotsStore: { loading: boolean, synced: boolean },
+  knotsStore: { loading: boolean, synced: boolean, syncLogs: string },
   userStore: {
     selectedDataset: string,
     datasets: Array<{ owner: string }>
   },
-  sync: () => void
+  sync: () => void,
+  syncLiveLogs: () => void
 };
 
 export default class Sync extends Component<Props> {
+  props: Props;
+
   sync = () => {
     this.props.sync();
+    this.props.syncLiveLogs();
   };
 
   render() {
@@ -96,6 +100,11 @@ export default class Sync extends Component<Props> {
                 </div>
               )}
           </div>
+          <textarea
+            name="live-sync-logs"
+            className="live-sync-logs"
+            value={this.props.knotsStore.syncLogs}
+          />
         </div>
       </div>
     );
