@@ -7,7 +7,7 @@ import {
 export type knotsStateType = {
   +knots: Array<string>,
   +loading: boolean,
-  +synced: boolean
+  +synced: boolean,
   +text: string,
   +syncLogs: string
 };

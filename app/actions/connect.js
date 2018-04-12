@@ -7,6 +7,7 @@ export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 export const SET_TAP_FIELDS = 'SET_TAP_FIELDS';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
+export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
 
 type actionType = {
   +type: string
@@ -54,7 +55,8 @@ export function setTapFields(key, value, index) {
 export function submitConfig(config) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
-      type: TAPS_LOADING
+      type: TAPS_LOADING,
+      schema: []
     });
 
     axios
@@ -68,11 +70,11 @@ export function submitConfig(config) {
           schema: response.data || []
         });
       })
-      .catch(() =>
+      .catch(() => {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: []
-        })
-      );
+        });
+      });
   };
 }

@@ -102,7 +102,7 @@ export default class Sync extends Component<Props> {
           </div>
           <textarea
             name="live-sync-logs"
-            className="live-sync-logs"
+            className={styles.syncLogs}
             value={this.props.knotsStore.syncLogs}
           />
         </div>

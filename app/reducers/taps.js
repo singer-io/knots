@@ -3,6 +3,7 @@ import {
   TAPS_LOADING,
   UPDATE_TAP_FIELDS,
   SET_TAP_FIELDS,
+  DISCOVER_SCHEMA,
   SCHEMA_RECEIVED
 } from '../actions/connect';
 
@@ -15,7 +16,8 @@ export type tapsStateType = {
   +dockerVersion: string,
   +tapFields: Array<{}>,
   +fieldValues: {},
-  +tapSchema: []
+  +tapSchema: [],
+  +liveLogs: string
 };
 
 const defaultState = {
@@ -23,8 +25,15 @@ const defaultState = {
   taps: [],
   dockerVersion: '',
   tapFields: [],
-  fieldValues: {},
-  tapSchema: []
+  fieldValues: {
+    host: 'examplecluster.ctjbcssjmnx4.us-west-2.redshift.amazonaws.com',
+    user: 'masteruser',
+    password: 'Pastor-02',
+    dbname: 'dev',
+    port: '5439'
+  },
+  tapSchema: [],
+  liveLogs: ''
 };
 
 export default function taps(state = defaultState, action) {
@@ -36,6 +45,12 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, { loading: false });
     case UPDATE_TAPS:
       return Object.assign({}, state, { taps: action.taps, loading: false });
+    case DISCOVER_SCHEMA:
+      return Object.assign({}, state, {
+        loading: true,
+        liveLogs: action.liveLogs,
+        tapSchema: action.schema
+      });
     case UPDATE_TAP_FIELDS:
       return Object.assign({}, state, {
         taps: action.taps,

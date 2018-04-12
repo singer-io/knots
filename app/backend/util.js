@@ -152,7 +152,6 @@ const addTap = (tap, version) =>
 const writeConfig = (req) =>
   new Promise((resolve, reject) => {
     const { config } = req.body;
-    const { io } = req;
     writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
       .then(() => {
         shell.rm('-rf', path.resolve(tempFolder, 'docker', 'tap'));
@@ -177,7 +176,7 @@ const writeConfig = (req) =>
                 } catch (err) {
                   cmdOutput = stderr.toString();
                 } finally {
-                  io.emit('live-logs', cmdOutput);
+                  req.io.emit('live-logs', cmdOutput);
                 }
               } else {
                 resolve();
