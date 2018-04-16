@@ -48,3 +48,8 @@
 .syncingText {
   margin-left: 15px;
 }
+
+.syncLogs {
+  width: 100%;
+  height: 500px;
+}

@@ -3,10 +3,11 @@ import {
   TAPS_LOADING,
   UPDATE_TAP_FIELDS,
   SET_TAP_FIELDS,
+  DISCOVER_SCHEMA,
   SCHEMA_RECEIVED
 } from '../actions/connect';
 
-import { UPDATE_SCHEMA } from '../actions/schema';
+import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
 
 export type tapsStateType = {
   +loading: boolean,
@@ -15,7 +16,8 @@ export type tapsStateType = {
   +dockerVersion: string,
   +tapFields: Array<{}>,
   +fieldValues: {},
-  +tapSchema: []
+  +tapSchema: [],
+  +liveLogs: string
 };
 
 const defaultState = {
@@ -24,7 +26,8 @@ const defaultState = {
   dockerVersion: '',
   tapFields: [],
   fieldValues: {},
-  tapSchema: []
+  tapSchema: [],
+  liveLogs: ''
 };
 
 export default function taps(state = defaultState, action) {
@@ -36,6 +39,14 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, { loading: false });
     case UPDATE_TAPS:
       return Object.assign({}, state, { taps: action.taps, loading: false });
+    case SCHEMA_LOADING:
+      return Object.assign({}, state, { loading: true });
+    case DISCOVER_SCHEMA:
+      return Object.assign({}, state, {
+        loading: true,
+        liveLogs: action.liveLogs,
+        tapSchema: action.schema
+      });
     case UPDATE_TAP_FIELDS:
       return Object.assign({}, state, {
         taps: action.taps,
@@ -53,7 +64,8 @@ export default function taps(state = defaultState, action) {
       });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
-        tapSchema: action.schema
+        tapSchema: action.schema,
+        loading: false
       });
     case UPDATE_SCHEMA:
       if (schema[action.index]) {

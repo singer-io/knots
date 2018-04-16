@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ControlLabel, Table } from 'react-bootstrap';
+import ReactLoading from 'react-loading';
 
 import Header from '../Header';
-import Loader from '../Loader';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import styles from './Schema.css';
@@ -19,7 +19,8 @@ type Props = {
       metadata: Array<{ metadata: { selected?: string } }>,
       schema: { properties: {} }
     }>,
-    loading: boolean
+    loading: boolean,
+    liveLogs: string
   },
   editField: (field: string, index: string, value: string) => void,
   submitSchema: (
@@ -31,14 +32,14 @@ type Props = {
       schema: { properties: {} }
     }>
   ) => void,
-  fetchSchema: () => void
+  fetchSchema: () => void,
+  discoveryLiveLogs: () => void
 };
 
 export default class Schema extends Component<Props> {
   componentWillMount() {
-    setTimeout(() => {
-      this.props.fetchSchema();
-    }, 4000);
+    this.props.discoveryLiveLogs();
+    this.props.fetchSchema();
   }
 
   handleChange = (field: string, index: string, value: string) => {
@@ -57,10 +58,20 @@ export default class Schema extends Component<Props> {
         </Header>
 
         <div className={styles.schemaBody}>
-          {this.props.tapsStore.loading && <Loader />}
           {this.props.tapsStore.loading && (
-            <div className={styles.loadingInfo}>
-              Retrieving Schema Information
+            <div>
+              <ReactLoading
+                type="spin"
+                color="#4688f1"
+                height="40px"
+                width="40px"
+              />
+              <p className="info-text">Retrieving schema information...</p>
+              <textarea
+                name="live-logs"
+                className={styles.log}
+                value={this.props.tapsStore.liveLogs}
+              />
             </div>
           )}
           {!this.props.tapsStore.loading && (
@@ -101,7 +112,7 @@ export default class Schema extends Component<Props> {
                 <input type="date" className={styles.date} />
               </form>
               <div className={styles.navigation}>
-                <Link to="/connection">
+                <Link to="/connect">
                   <Button>
                     <i className="fa fa-long-arrow-left" aria-hidden="true" />Back:
                     Connection

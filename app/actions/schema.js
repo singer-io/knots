@@ -1,18 +1,23 @@
 import axios from 'axios';
+import socketIOClient from 'socket.io-client';
 
 const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
 
-export const SCHEMA_LOADING = 'UPDATE_SCHEMA';
+export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const SCHEMA_ERROR = 'SCHEMA_ERROR';
 export const UPDATE_SCHEMA = 'UPDATE_SCHEMA';
 export const SUBMIT_SCHEMA = 'SUBMIT_SCHEMA';
 export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const SCHEMA_UPDATE_FAILED = 'SCHEMA_UPDATE_FAILED';
+export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
 
 type actionType = {
   +type: string
 };
+
+let liveLogs = '';
 
 export function fetchSchema() {
   return (dispatch: (action: actionType) => void) => {
@@ -37,7 +42,6 @@ export function fetchSchema() {
 }
 
 export function editField(field, index, value) {
-  console.log('These are my arguments', field, index, value);
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA,
@@ -55,7 +59,6 @@ export function submitSchema(schema) {
         streams: schema
       })
       .then((res) => {
-        console.log('This is the response', res);
         dispatch({
           type: SCHEMA_UPDATED
         });
@@ -65,5 +68,14 @@ export function submitSchema(schema) {
           type: SCHEMA_UPDATE_FAILED
         });
       });
+  };
+}
+
+export function discoveryLiveLogs() {
+  return (dispatch: (action: actionType) => void) => {
+    socket.on('live-logs', (data) => {
+      liveLogs = liveLogs.concat(`${data} \n`);
+      dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
+    });
   };
 }

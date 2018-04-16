@@ -62,7 +62,7 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/schema/', (req, res) => {
-  addSchema(req.body.config)
+  addSchema(req)
     .then((schema) => {
       res.json(schema.streams);
     })
@@ -136,7 +136,7 @@ router.post('/target/', (req, res) => {
 });
 
 router.get('/sync/', (req, res) => {
-  sync()
+  sync(req)
     .then(() => {
       res.json({ status: 200 });
     })
