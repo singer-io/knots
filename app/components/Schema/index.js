@@ -39,9 +39,7 @@ type Props = {
 export default class Schema extends Component<Props> {
   componentWillMount() {
     this.props.discoveryLiveLogs();
-    setTimeout(() => {
-      this.props.fetchSchema();
-    }, 4000);
+    this.props.fetchSchema();
   }
 
   handleChange = (field: string, index: string, value: string) => {

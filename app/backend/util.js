@@ -305,6 +305,9 @@ const sync = (req) =>
     syncData.stdout.on('data', (data) => {
       resolve(data.toString());
     });
+    syncData.on('exit', (code) => {
+      req.io.emit('complete', 'Finished emitting');
+    });
   });
 
 module.exports = {

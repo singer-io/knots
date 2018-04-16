@@ -45,11 +45,9 @@ export function sync() {
     });
     axios
       .get(`${baseUrl}/sync/`)
-      .then(() =>
-        dispatch({
-          type: KNOT_RUN_COMPLETE
-        })
-      )
+      .then(() => {
+        dispatch(syncLiveLogs());
+      })
       .catch(() =>
         dispatch({
           type: KNOT_RUN_ERROR
@@ -61,7 +59,14 @@ export function sync() {
 export function syncLiveLogs() {
   return (dispatch: (action: actionType) => void) => {
     socket.on('live-sync-logs', (data) => {
-      dispatch({ type: KNOT_RUNNING, syncLogs }, appendSyncLogs(data));
+      syncLogs = syncLogs.concat(`=> ${data} \n`);
+      dispatch({ type: KNOT_RUNNING, syncLogs });
+      setTimeout(() => {
+        dispatch({ type: KNOT_RUN_COMPLETE, syncLogs });
+      }, 5000);
+    });
+    socket.on('complete', () => {
+      dispatch({ type: KNOT_RUN_COMPLETE, syncLogs });
     });
   };
 }

@@ -4,7 +4,7 @@ import socketIOClient from 'socket.io-client';
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
 
-export const SCHEMA_LOADING = 'UPDATE_SCHEMA';
+export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const SCHEMA_ERROR = 'SCHEMA_ERROR';
 export const UPDATE_SCHEMA = 'UPDATE_SCHEMA';
@@ -18,9 +18,6 @@ type actionType = {
 };
 
 let liveLogs = '';
-const appendLiveLogs = (data) => {
-  liveLogs = liveLogs.concat(`${data} \n`);
-};
 
 export function fetchSchema() {
   return (dispatch: (action: actionType) => void) => {
@@ -45,7 +42,6 @@ export function fetchSchema() {
 }
 
 export function editField(field, index, value) {
-  console.log('These are my arguments', field, index, value);
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA,
@@ -78,10 +74,8 @@ export function submitSchema(schema) {
 export function discoveryLiveLogs() {
   return (dispatch: (action: actionType) => void) => {
     socket.on('live-logs', (data) => {
-      dispatch(
-        { type: DISCOVER_SCHEMA, schema: [], liveLogs },
-        appendLiveLogs(data)
-      );
+      liveLogs = liveLogs.concat(`${data} \n`);
+      dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
     });
   };
 }

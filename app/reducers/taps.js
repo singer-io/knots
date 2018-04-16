@@ -7,7 +7,7 @@ import {
   SCHEMA_RECEIVED
 } from '../actions/connect';
 
-import { UPDATE_SCHEMA } from '../actions/schema';
+import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
 
 export type tapsStateType = {
   +loading: boolean,
@@ -45,6 +45,8 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, { loading: false });
     case UPDATE_TAPS:
       return Object.assign({}, state, { taps: action.taps, loading: false });
+    case SCHEMA_LOADING:
+      return Object.assign({}, state, { loading: true });
     case DISCOVER_SCHEMA:
       return Object.assign({}, state, {
         loading: true,
@@ -68,7 +70,8 @@ export default function taps(state = defaultState, action) {
       });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
-        tapSchema: action.schema
+        tapSchema: action.schema,
+        loading: false
       });
     case UPDATE_SCHEMA:
       if (schema[action.index]) {

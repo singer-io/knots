@@ -13,8 +13,7 @@ type Props = {
     selectedDataset: string,
     datasets: Array<{ owner: string }>
   },
-  sync: () => void,
-  syncLiveLogs: () => void
+  sync: () => void
 };
 
 export default class Sync extends Component<Props> {
@@ -22,7 +21,6 @@ export default class Sync extends Component<Props> {
 
   sync = () => {
     this.props.sync();
-    this.props.syncLiveLogs();
   };
 
   render() {

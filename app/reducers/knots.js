@@ -28,6 +28,7 @@ export default function knots(
     case KNOT_RUNNING:
       return Object.assign({}, state, {
         loading: true,
+        synced: false,
         syncLogs: action.syncLogs
       });
     case KNOT_RUN_COMPLETE:
