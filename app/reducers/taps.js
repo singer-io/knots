@@ -88,6 +88,8 @@ export default function taps(state = defaultState, action) {
         }
       }
       return state;
+    case 'persist/REHYDRATE':
+      return { ...state };
     default:
       return state;
   }
