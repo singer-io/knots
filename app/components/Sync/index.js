@@ -1,29 +1,72 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Button } from 'react-bootstrap';
+import { Redirect } from 'react-router';
+import {
+  Button,
+  Modal,
+  FormGroup,
+  FormControl,
+  ControlLabel
+} from 'react-bootstrap';
 import ReactLoading from 'react-loading';
 import Header from '../Header';
 
 import styles from './Sync.css';
 
 type Props = {
-  knotsStore: { loading: boolean, synced: boolean, syncLogs: string },
+  knotsStore: {
+    loading: boolean,
+    synced: boolean,
+    saved: boolean,
+    syncLogs: string
+  },
   userStore: {
     selectedDataset: string,
     datasets: Array<{ owner: string }>
   },
-  sync: () => void
+  sync: () => void,
+  saveKnot: (name: string) => Promise<string>
 };
 
-export default class Sync extends Component<Props> {
-  props: Props;
+type State = {
+  showSaveModal: boolean,
+  knotName: string
+};
 
+export default class Sync extends Component<Props, State> {
+  props: Props;
+  constructor() {
+    super();
+
+    this.state = { showSaveModal: false, knotName: '' };
+  }
   sync = () => {
     this.props.sync();
   };
 
+  showModal = () => {
+    this.setState({ showSaveModal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ showSaveModal: false });
+  };
+
+  handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
+    const { value } = e.currentTarget;
+    this.setState({ knotName: value });
+  };
+
+  saveKnot = () => {
+    this.props.saveKnot(this.state.knotName);
+  };
+
   render() {
+    if (this.props.knotsStore.saved) {
+      return <Redirect push to="/" />;
+    }
+
     return (
       <div>
         <Header>Redshift + data.world</Header>
@@ -94,6 +137,14 @@ export default class Sync extends Component<Props> {
                         View on data.world
                       </Button>
                     </a>
+                    <Button
+                      bsStyle="primary"
+                      bsSize="large"
+                      className="synced-save"
+                      onClick={this.showModal}
+                    >
+                      Save Knot
+                    </Button>
                   </div>
                 </div>
               )}
@@ -103,6 +154,50 @@ export default class Sync extends Component<Props> {
             className={styles.syncLogs}
             value={this.props.knotsStore.syncLogs}
           />
+          <Modal show={this.state.showSaveModal} onHide={this.closeModal}>
+            <Modal.Header closeButton>
+              <Modal.Title>Save Knot</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <FormGroup
+                controlId="formBasicText"
+                key="saveKnot"
+                validationState={this.state.knotName ? 'success' : 'error'}
+              >
+                <div key="name">
+                  <ControlLabel className="control-label">Name</ControlLabel>
+                  <FormControl
+                    type="text"
+                    onChange={this.handleChange}
+                    value={this.state.knotName}
+                  />
+                </div>
+              </FormGroup>
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="buttons-container">
+                <Button onClick={this.closeModal}>Close</Button>
+                <Button
+                  bsStyle="primary"
+                  onClick={this.saveKnot}
+                  disabled={!(this.state.knotName.length > 0)}
+                  className="save-knot-button"
+                >
+                  {this.props.knotsStore.loading && (
+                    <div className="saving-loader">
+                      <ReactLoading
+                        type="spin"
+                        color="#fff"
+                        height="20px"
+                        width="20px"
+                      />
+                    </div>
+                  )}
+                  <span>Save Knot</span>
+                </Button>
+              </div>
+            </Modal.Footer>
+          </Modal>
         </div>
       </div>
     );

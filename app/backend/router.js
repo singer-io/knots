@@ -13,7 +13,8 @@ const {
   getTargets,
   addTargetConfig,
   sync,
-  addTarget
+  addTarget,
+  saveKnot
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -142,6 +143,15 @@ router.get('/sync/', (req, res) => {
     })
     .catch(() => {
       res.json({ status: 500 });
+    });
+});
+
+router.post('/save-knot/', (req, res) => {
+  const { name } = req.body;
+  saveKnot(name)
+    .then(() => res.json({ all: 'good' }))
+    .catch((err) => {
+      console.log('This is the error', err);
     });
 });
 

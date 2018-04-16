@@ -1,7 +1,8 @@
 import {
   UPDATE_KNOTS,
   KNOT_RUNNING,
-  KNOT_RUN_COMPLETE
+  KNOT_RUN_COMPLETE,
+  KNOT_SAVED
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -9,16 +10,17 @@ export type knotsStateType = {
   +loading: boolean,
   +synced: boolean,
   +text: string,
-  +syncLogs: string
+  +syncLogs: string,
+  +saved: boolean
 };
 
 export default function knots(
   state = {
     knots: [],
     loading: false,
-    text: 'New',
     synced: false,
-    syncLogs: ''
+    syncLogs: '',
+    saved: false
   },
   action
 ) {
@@ -33,6 +35,8 @@ export default function knots(
       });
     case KNOT_RUN_COMPLETE:
       return Object.assign({}, state, { loading: false, synced: true });
+    case KNOT_SAVED:
+      return Object.assign({}, state, { saved: true });
     default:
       return state;
   }

@@ -310,6 +310,73 @@ const sync = (req) =>
     });
   });
 
+const createMakefile = () =>
+  new Promise((resolve, reject) => {
+    // TODO: Refactor string interpolation for makefile content
+    const fileContent =
+      'install:\n' +
+      '\t-' +
+      '\tdocker run gbolahan/tap-redshift:1.0.0b3\n' +
+      '\t-' +
+      '\tdocker run gbolahan/target-datadotworld:1.0.0b3\n' +
+      'fullSync:\n' +
+      '\tdocker run -v ${CURDIR}' +
+      '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
+      'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json | ' +
+      'docker run -v ${CURDIR}' +
+      '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
+      'target-datadotworld -c target/data/config.json > ./tap/state.json\n' +
+      'sync:\n' +
+      '\t-' +
+      '\tdocker run -v ${CURDIR}' +
+      '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
+      'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json ' +
+      '--state tap/data/state.json | ' +
+      'docker run -v ${CURDIR}' +
+      '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
+      'target-datadotworld -c target/data/config.json > /tmp/state.json\n' +
+      '\t-' +
+      '\tcp /tmp/state.json ./tap/state.json';
+
+    writeFile(path.resolve(tempFolder, 'Makefile'), fileContent)
+      .then(resolve)
+      .catch(reject);
+  });
+
+const saveKnot = (name) =>
+  new Promise((resolve) => {
+    createMakefile();
+    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name));
+    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name, 'images'));
+    shell.mv(
+      path.resolve(tempFolder, 'docker', 'tap'),
+      path.resolve(tempFolder, 'knots', name, 'tap')
+    );
+    shell.mv(
+      path.resolve(tempFolder, 'docker', 'target'),
+      path.resolve(tempFolder, 'knots', 'name', 'target')
+    );
+    shell.mv(
+      path.resolve(tempFolder, 'knot.json'),
+      path.resolve(tempFolder, 'knots', name, 'knots.json')
+    );
+    shell.mv(
+      path.resolve(tempFolder, 'state.json'),
+      path.resolve(tempFolder, 'knots', name, 'tap', 'state.json')
+    );
+    shell.mv(
+      path.resolve(tempFolder, 'Makefile'),
+      path.resolve(tempFolder, 'knots', name, 'Makefile')
+    );
+    shell.cp(
+      '-R',
+      path.resolve(tempFolder, 'docker', 'images'),
+      path.resolve(tempFolder, 'knots', name)
+    );
+
+    resolve();
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -321,5 +388,6 @@ module.exports = {
   getTargets,
   addTarget,
   addTargetConfig,
-  sync
+  sync,
+  saveKnot
 };
