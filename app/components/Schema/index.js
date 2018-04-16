@@ -98,7 +98,15 @@ export default class Schema extends Component<Props> {
                       </td>
                       <td className={styles.replication}>
                         <Dropdown
-                          columns={Object.keys(stream.schema.properties)}
+                          columns={
+                            stream.metadata[0].metadata[
+                              'valid-replication-keys'
+                            ]
+                              ? stream.metadata[0].metadata[
+                                  'valid-replication-keys'
+                                ]
+                              : ['No valid replication key']
+                          }
                           index={index.toString()}
                           handleChange={this.handleChange}
                         />

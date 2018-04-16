@@ -43,9 +43,9 @@ const targetDataWorldDockerCommand = `FROM python:latest${
 
 const commands = {
   runDiscovery: (folderPath) =>
-    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/docker/tap/catalog.json`,
+    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/docker/tap/catalog.json`,
   runSync: (folderPath) =>
-    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:1.0.0b3 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/docker/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json`
+    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/docker/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json`
 };
 
 module.exports = {
