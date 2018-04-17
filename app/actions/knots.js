@@ -39,14 +39,14 @@ export function fetchKnots() {
   };
 }
 
-export function sync() {
+export function sync(knot) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_RUNNING,
       syncLogs
     });
     axios
-      .get(`${baseUrl}/sync/`)
+      .post(`${baseUrl}/sync/`, { knot })
       .then(() => {
         dispatch(syncLiveLogs());
       })

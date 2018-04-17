@@ -25,7 +25,8 @@ type Props = {
     selectedDataset: string,
     datasets: Array<{ owner: string }>
   },
-  sync: () => void,
+  location: { state: { knot: string } },
+  sync: (knot: string) => void,
   saveKnot: (name: string) => Promise<string>
 };
 
@@ -42,7 +43,7 @@ export default class Sync extends Component<Props, State> {
     this.state = { showSaveModal: false, knotName: '' };
   }
   sync = () => {
-    this.props.sync();
+    this.props.sync(this.props.location.state.knot);
   };
 
   showModal = () => {

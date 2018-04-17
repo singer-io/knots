@@ -326,9 +326,15 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = (req) =>
+const sync = (req, knot) =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(tempFolder));
+    let knotPath;
+    if (knot) {
+      knotPath = `${tempFolder}/knots/${knot}`;
+    } else {
+      knotPath = `${tempFolder}/docker`;
+    }
+    const syncData = exec(commands.runSync(knotPath));
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
     });
@@ -426,7 +432,6 @@ const getToken = (knot) =>
       readFile(path.resolve(tempFolder, 'knots', knot, 'target', 'config.json'))
         .then((configObject) => resolve(configObject.api_token))
         .catch((err) => {
-          console.log('The errors', err);
           reject(err);
         });
     } else {

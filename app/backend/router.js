@@ -141,8 +141,9 @@ router.post('/target/', (req, res) => {
     .catch(console.log);
 });
 
-router.get('/sync/', (req, res) => {
-  sync(req)
+router.post('/sync/', (req, res) => {
+  const { knot } = req.body;
+  sync(req, knot)
     .then(() => {
       res.json({ status: 200 });
     })
