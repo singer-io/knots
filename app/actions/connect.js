@@ -78,3 +78,9 @@ export function submitConfig(config) {
       });
   };
 }
+
+export function getTapConfig() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({ type: 'persist/REHYDRATE' });
+  };
+}
