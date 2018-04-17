@@ -52,7 +52,8 @@ export default function taps(state = defaultState, action) {
         taps: action.taps,
         loading: false,
         dockerVersion: action.dockerVersion,
-        tapFields: action.tapFields
+        tapFields: action.tapFields,
+        fieldValues: action.fieldValues || {}
       });
     case SET_TAP_FIELDS:
       fields[action.index].value = action.value;

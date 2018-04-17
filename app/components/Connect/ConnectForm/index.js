@@ -27,7 +27,7 @@ export default class ConnectForm extends Component<Props, State> {
 
   getValidationState(key: string, required: boolean) {
     if (required) {
-      const fieldValue = this.state[key];
+      const fieldValue = this.props.fieldValues[key];
 
       if (fieldValue) {
         return fieldValue.length > 0 ? 'success' : 'error';
@@ -70,7 +70,7 @@ export default class ConnectForm extends Component<Props, State> {
               <FormControl
                 name={index}
                 type={field.key === 'password' ? 'password' : 'text'}
-                value={field.value || ''}
+                value={this.props.fieldValues[field.key] || ''}
                 onChange={this.handleChange(index)}
               />
             </div>

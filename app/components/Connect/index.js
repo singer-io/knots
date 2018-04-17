@@ -18,9 +18,10 @@ type Props = {
     fieldValues: {}
   },
   location: {
-    search: string
+    search: string,
+    state: { knot: string }
   },
-  fetchTapFields: (tap: string, version: string) => void,
+  fetchTapFields: (tap: string, version: string, knot: string) => void,
   setTapFields: (key: string, value: string, index: string) => void,
   submitConfig: (config: {}) => void,
   getTapConfig: () => void
@@ -36,7 +37,7 @@ export default class Taps extends Component<Props> {
 
   fetchFields() {
     const { tap, version } = queryString.parse(this.props.location.search);
-    this.props.fetchTapFields(tap, version);
+    this.props.fetchTapFields(tap, version, this.props.location.state.knot);
   }
 
   refresh() {
@@ -53,6 +54,7 @@ export default class Taps extends Component<Props> {
 
   render() {
     const { loading, dockerVersion } = this.props.tapsStore;
+    console.log('This is the prop', this.props);
     if (!dockerVersion) {
       return (
         <div>
@@ -88,6 +90,7 @@ export default class Taps extends Component<Props> {
             <div>
               <ConnectForm
                 fields={this.props.tapsStore.tapFields}
+                fieldValues={this.props.tapsStore.fieldValues}
                 handleChange={this.handleFieldChange}
               />
               <Navigation

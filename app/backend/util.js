@@ -4,6 +4,7 @@ const path = require('path');
 const { set } = require('lodash');
 const shell = require('shelljs');
 const { app } = require('electron');
+const { EasyZip } = require('easy-zip');
 
 const {
   taps,
@@ -139,12 +140,31 @@ const createKnot = (tapName, tapVersion) =>
       .catch(reject);
   });
 
-const addTap = (tap, version) =>
+const readFieldValues = (knot) =>
+  new Promise((resolve, reject) => {
+    readFile(path.resolve(tempFolder, 'knots', knot, 'knots.json'))
+      .then((knotObject) => {
+        resolve(knotObject.tap.config);
+      })
+      .catch(reject);
+  });
+
+const addTap = (tap, version, knot) =>
   new Promise((resolve, reject) => {
     const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
     installTap.on('close', () => {
       createKnot(tap, version)
-        .then(resolve)
+        .then((config) => {
+          if (knot) {
+            readFieldValues(knot)
+              .then((fieldValues) => {
+                resolve({ config, fieldValues });
+              })
+              .catch(reject);
+          } else {
+            resolve(config);
+          }
+        })
         .catch(reject);
     });
   });
@@ -377,6 +397,15 @@ const saveKnot = (name) =>
     resolve();
   });
 
+const downloadKnot = (knotName) =>
+  new Promise((resolve) => {
+    const zip = new EasyZip();
+    zip.zipFolder(path.resolve(tempFolder, 'knots', knotName), () => {
+      zip.writeToFile(`${knotName}.zip`);
+      resolve();
+    });
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -389,5 +418,6 @@ module.exports = {
   addTarget,
   addTargetConfig,
   sync,
-  saveKnot
+  saveKnot,
+  downloadKnot
 };

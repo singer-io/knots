@@ -14,7 +14,6 @@
   "dependencies": {
     "bufferutil": "^3.0.4",
     "socket.io": "^2.1.0",
-    "socket.io-client": "^2.1.0",
     "utf-8-validate": "^4.0.1"
   }
 }

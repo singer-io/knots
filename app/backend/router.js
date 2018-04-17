@@ -14,7 +14,8 @@ const {
   addTargetConfig,
   sync,
   addTarget,
-  saveKnot
+  saveKnot,
+  downloadKnot
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -42,18 +43,20 @@ router.get('/taps', (req, res) => {
 router.post('/taps/', (req, res) => {
   detectDocker()
     .then((dockerVersion) => {
-      const { tap, version } = req.body;
-      addTap(tap, version)
-        .then((config) =>
+      const { tap, version, knot } = req.body;
+      addTap(tap, version, knot)
+        .then((resObject) => {
           res.json({
             dockerVersion,
-            config
-          })
-        )
+            config: resObject.config,
+            fieldValues: resObject.fieldValues
+          });
+        })
         .catch(() => {
           res.json({
             dockerVersion,
-            config: null
+            config: null,
+            fieldValues: null
           });
         });
     })
@@ -153,6 +156,18 @@ router.post('/save-knot/', (req, res) => {
     .catch((err) => {
       console.log('This is the error', err);
     });
+});
+
+router.post('/download/', (req, res) => {
+  const { knot } = req.body;
+  downloadKnot(knot)
+    .then(() => res.json({}))
+    .catch();
+});
+
+router.get('/download/', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.download('abc.zip');
 });
 
 module.exports = router;

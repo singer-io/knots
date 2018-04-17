@@ -13,7 +13,7 @@ type actionType = {
   +type: string
 };
 
-export function fetchTapFields(tap, version) {
+export function fetchTapFields(tap, version, knot) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TAPS_LOADING
@@ -22,15 +22,19 @@ export function fetchTapFields(tap, version) {
     axios
       .post(`${baseUrl}/taps/`, {
         tap,
-        version
+        version,
+        knot
       })
-      .then((response) =>
+      .then((response) => {
+        console.log('THE TAP FIELDS');
+        console.log('The response', response.data);
         dispatch({
           type: UPDATE_TAP_FIELDS,
           dockerVersion: response.data.dockerVersion,
-          tapFields: response.data.config || []
-        })
-      )
+          tapFields: response.data.config || [],
+          fieldValues: response.data.fieldValues
+        });
+      })
       .catch(() =>
         dispatch({
           type: UPDATE_TAP_FIELDS,
