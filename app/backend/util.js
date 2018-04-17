@@ -208,9 +208,22 @@ const writeConfig = (req) =>
       .catch(reject);
   });
 
-const readSchema = () =>
+const readSchema = (knot) =>
   new Promise((resolve, reject) => {
-    readFile(path.resolve(tempFolder, 'docker', 'tap', 'catalog.json'))
+    let knotPath;
+    if (knot) {
+      knotPath = path.resolve(
+        tempFolder,
+        'knots',
+        knot,
+        'docker',
+        'tap',
+        'catalog.json'
+      );
+    } else {
+      knotPath = path.resolve(tempFolder, 'docker', 'tap', 'catalog.json');
+    }
+    readFile(knotPath)
       .then(resolve)
       .catch(reject);
   });

@@ -19,14 +19,16 @@ type actionType = {
 
 let liveLogs = '';
 
-export function fetchSchema() {
+export function fetchSchema(knot) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SCHEMA_LOADING
     });
 
     axios
-      .get(`${baseUrl}/schema/`)
+      .post(`${baseUrl}/schema/`, {
+        knot
+      })
       .then((response) =>
         dispatch({
           type: SCHEMA_RECEIVED,

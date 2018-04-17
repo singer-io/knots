@@ -20,7 +20,8 @@ type Props = {
       schema: { properties: {} }
     }>,
     loading: boolean,
-    liveLogs: string
+    liveLogs: string,
+    knot: string
   },
   editField: (field: string, index: string, value: string) => void,
   submitSchema: (
@@ -32,14 +33,14 @@ type Props = {
       schema: { properties: {} }
     }>
   ) => void,
-  fetchSchema: () => void,
+  fetchSchema: (knot: string) => void,
   discoveryLiveLogs: () => void
 };
 
 export default class Schema extends Component<Props> {
   componentWillMount() {
     this.props.discoveryLiveLogs();
-    this.props.fetchSchema();
+    this.props.fetchSchema(this.props.tapsStore.knot);
   }
 
   handleChange = (field: string, index: string, value: string) => {

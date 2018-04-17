@@ -75,8 +75,9 @@ router.post('/tap/schema/', (req, res) => {
     });
 });
 
-router.get('/schema/', (req, res) => {
-  readSchema()
+router.post('/schema/', (req, res) => {
+  const { knot } = req.body;
+  readSchema(knot)
     .then((schema) => {
       res.json(schema.streams);
     })
