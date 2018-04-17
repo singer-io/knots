@@ -8,6 +8,7 @@ export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 export const SET_TAP_FIELDS = 'SET_TAP_FIELDS';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
+export const SET_KNOT = 'SET_KNOT';
 
 type actionType = {
   +type: string
@@ -86,5 +87,15 @@ export function submitConfig(config) {
 export function getTapConfig() {
   return (dispatch: (action: actionType) => void) => {
     dispatch({ type: 'persist/REHYDRATE' });
+  };
+}
+
+export function setKnot(knot) {
+  return (dispatch: (action: actionType) => void) => {
+    console.log('Called with', knot);
+    dispatch({
+      type: SET_KNOT,
+      knot
+    });
   };
 }

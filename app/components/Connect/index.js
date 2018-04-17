@@ -24,13 +24,17 @@ type Props = {
   fetchTapFields: (tap: string, version: string, knot: string) => void,
   setTapFields: (key: string, value: string, index: string) => void,
   submitConfig: (config: {}) => void,
-  getTapConfig: () => void
+  getTapConfig: () => void,
+  setKnot: (knot: string) => string
 };
 
 export default class Taps extends Component<Props> {
   props: Props;
 
   componentWillMount() {
+    if (this.props.location.state.knot) {
+      this.props.setKnot(this.props.location.state.knot);
+    }
     this.fetchFields();
     this.props.getTapConfig();
   }
@@ -54,7 +58,6 @@ export default class Taps extends Component<Props> {
 
   render() {
     const { loading, dockerVersion } = this.props.tapsStore;
-    console.log('This is the prop', this.props);
     if (!dockerVersion) {
       return (
         <div>

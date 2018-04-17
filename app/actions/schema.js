@@ -60,7 +60,7 @@ export function submitSchema(schema) {
       .put(`${baseUrl}/schema/`, {
         streams: schema
       })
-      .then((res) => {
+      .then(() => {
         dispatch({
           type: SCHEMA_UPDATED
         });

@@ -15,7 +15,8 @@ const {
   sync,
   addTarget,
   saveKnot,
-  downloadKnot
+  downloadKnot,
+  getToken
 } = require('./util');
 
 router.get('/', (req, res) => res.send('Server running'));
@@ -164,6 +165,18 @@ router.post('/download/', (req, res) => {
   downloadKnot(knot)
     .then(() => res.json({}))
     .catch();
+});
+
+router.post('/token/', (req, res) => {
+  const { knot } = req.body;
+
+  console.log('sfsd', knot);
+  getToken(knot)
+    .then((token) => {
+      console.log('This is what we are working wiht', token);
+      res.json({ token });
+    })
+    .catch((err) => console.log('Perhaps this', err));
 });
 
 router.get('/download/', (req, res) => {

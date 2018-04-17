@@ -67,3 +67,22 @@ export function setDataset(selectedDataset) {
     });
   };
 }
+
+export function fetchToken(knot) {
+  return (dispatch: (action: actionType) => void) => {
+    console.log('What I have received', knot);
+    axios
+      .post(`${baseUrl}/token/`, {
+        knot
+      })
+      .then((response) => {
+        dispatch({
+          type: SET_TOKEN,
+          token: response.data.token
+        });
+      })
+      .catch(() => {
+        console.log('Final post failed');
+      });
+  };
+}

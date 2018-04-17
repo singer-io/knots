@@ -6,7 +6,8 @@ import DataWorld from '../components/Target/DataWorld';
 
 function mapStateToProps(state) {
   return {
-    userStore: state.user
+    userStore: state.user,
+    tapsStore: state.taps
   };
 }
 

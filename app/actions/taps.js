@@ -4,6 +4,7 @@ const baseUrl = 'http://localhost:4321';
 
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const TAPS_LOADING = 'TAPS_LOADING';
+export const SET_KNOT = 'SET_KNOT';
 
 type actionType = {
   +type: string

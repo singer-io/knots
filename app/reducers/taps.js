@@ -8,6 +8,7 @@ import {
 } from '../actions/connect';
 
 import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
+import { SET_KNOT } from '../actions/taps';
 
 export type tapsStateType = {
   +loading: boolean,
@@ -17,7 +18,8 @@ export type tapsStateType = {
   +tapFields: Array<{}>,
   +fieldValues: {},
   +tapSchema: [],
-  +liveLogs: string
+  +liveLogs: string,
+  +knot: string
 };
 
 const defaultState = {
@@ -27,13 +29,15 @@ const defaultState = {
   tapFields: [],
   fieldValues: {},
   tapSchema: [],
-  liveLogs: ''
+  liveLogs: '',
+  knot: ''
 };
 
 export default function taps(state = defaultState, action) {
   const fields = state.tapFields;
   const values = state.fieldValues;
   const schema = state.tapSchema;
+  console.log('The action', action);
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { loading: false });
@@ -89,6 +93,11 @@ export default function taps(state = defaultState, action) {
         }
       }
       return state;
+    case 'SET_KNOT':
+      console.log('THE sdfe', action);
+      return Object.assign({}, state, {
+        knot: action.knot
+      });
     case 'persist/REHYDRATE':
       return { ...state };
     default:

@@ -9,9 +9,11 @@ import styles from './DataWorld.css';
 
 type Props = {
   userStore: { token: string, datasets: Array<{ id: string }> },
+  tapsStore: { knot: string },
   getDatasets: (token: string) => void,
   setDataset: (value: string) => void,
-  setToken: (token: string) => void
+  setToken: (token: string) => void,
+  fetchToken: (knot: string) => void
 };
 
 export default class DataWorld extends Component<Props> {
@@ -20,9 +22,11 @@ export default class DataWorld extends Component<Props> {
     super();
 
     ipcRenderer.on('dataworld-oauth-reply', (event, token) => {
-      console.log('It has happened', token.access_token);
       this.setToken(token.access_token);
     });
+  }
+  componentWillMount() {
+    this.props.fetchToken(this.props.tapsStore.knot);
   }
 
   setToken = (token: string) => {
@@ -51,7 +55,10 @@ export default class DataWorld extends Component<Props> {
               type="text"
               value={this.props.userStore.token}
               readOnly
-            />
+            />{' '}
+            <Button bsStyle="primary" onClick={this.authorize}>
+              Reset Token
+            </Button>
             <Datasets
               datasets={this.props.userStore.datasets}
               handleChange={this.handleChange}
