@@ -326,15 +326,23 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = (req, knot) =>
+const sync = (req, knot, mode) =>
   new Promise((resolve) => {
     let knotPath;
+    let syncData;
+
     if (knot) {
       knotPath = `${tempFolder}/knots/${knot}`;
     } else {
       knotPath = `${tempFolder}/docker`;
     }
-    const syncData = exec(commands.runSync(knotPath));
+
+    if (mode === 'full' || !knot) {
+      syncData = exec(commands.runSync(knotPath));
+    } else {
+      syncData = exec(commands.runPartialSync(knotPath));
+    }
+
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
     });

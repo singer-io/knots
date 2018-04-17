@@ -10,15 +10,13 @@ export const KNOT_RUN_COMPLETE = 'KNOT_RUN_COMPLETE';
 export const KNOT_RUN_ERROR = 'KNOT_RUN_ERROR';
 export const KNOT_SAVED = 'KNOT_SAVED';
 export const KNOT_SAVE_ERROR = 'KNOT_SAVE_ERROR';
+export const SET_SYNC_MODE = 'SET_SYNC_MODE';
 
 type actionType = {
   +type: string
 };
 
 let syncLogs = '';
-// const appendSyncLogs = (data) => {
-//   syncLogs = syncLogs.concat(`=> ${data} \n`);
-// };
 
 export function fetchKnots() {
   return (dispatch: (action: actionType) => void) => {
@@ -39,14 +37,14 @@ export function fetchKnots() {
   };
 }
 
-export function sync(knot) {
+export function sync(knot, mode) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_RUNNING,
       syncLogs
     });
     axios
-      .post(`${baseUrl}/sync/`, { knot })
+      .post(`${baseUrl}/sync/`, { knot, mode })
       .then(() => {
         dispatch(syncLiveLogs());
       })
@@ -110,4 +108,14 @@ export function download(knot) {
         .catch();
     })
     .catch();
+}
+
+export function syncMode(name, value) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SET_SYNC_MODE,
+      syncMode: value,
+      knot: name
+    });
+  };
 }

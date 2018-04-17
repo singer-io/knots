@@ -19,14 +19,16 @@ type Props = {
     loading: boolean,
     synced: boolean,
     saved: boolean,
-    syncLogs: string
+    syncLogs: string,
+    syncMode: string,
+    knot: string
   },
   userStore: {
     selectedDataset: string,
     datasets: Array<{ owner: string }>
   },
   location: { state: { knot: string } },
-  sync: (knot: string) => void,
+  sync: (knot: string, mode: string) => void,
   saveKnot: (name: string) => Promise<string>
 };
 
@@ -43,7 +45,8 @@ export default class Sync extends Component<Props, State> {
     this.state = { showSaveModal: false, knotName: '' };
   }
   sync = () => {
-    this.props.sync(this.props.location.state.knot);
+    const { syncMode, knot } = this.props.knotsStore;
+    this.props.sync(knot, syncMode);
   };
 
   showModal = () => {

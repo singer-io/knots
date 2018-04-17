@@ -22,6 +22,7 @@ export default class Dropdown extends Component<Props> {
   render() {
     return (
       <select onChange={this.handleChange}>
+        <option value=" ">None</option>
         {this.props.columns.map((column) => (
           <option key={column} value={column}>
             {column}

@@ -2,7 +2,8 @@ import {
   UPDATE_KNOTS,
   KNOT_RUNNING,
   KNOT_RUN_COMPLETE,
-  KNOT_SAVED
+  KNOT_SAVED,
+  SET_SYNC_MODE
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -11,7 +12,8 @@ export type knotsStateType = {
   +synced: boolean,
   +text: string,
   +syncLogs: string,
-  +saved: boolean
+  +saved: boolean,
+  +syncMode: string
 };
 
 export default function knots(
@@ -37,6 +39,11 @@ export default function knots(
       return Object.assign({}, state, { loading: false, synced: true });
     case KNOT_SAVED:
       return Object.assign({}, state, { saved: true });
+    case SET_SYNC_MODE:
+      return Object.assign({}, state, {
+        syncMode: action.syncMode,
+        knot: action.knot
+      });
     default:
       return state;
   }

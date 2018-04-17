@@ -142,8 +142,8 @@ router.post('/target/', (req, res) => {
 });
 
 router.post('/sync/', (req, res) => {
-  const { knot } = req.body;
-  sync(req, knot)
+  const { knot, mode } = req.body;
+  sync(req, knot, mode)
     .then(() => {
       res.json({ status: 200 });
     })
