@@ -336,8 +336,7 @@ const sync = (req, knot, mode) =>
     } else {
       knotPath = `${tempFolder}/docker`;
     }
-
-    if (mode === 'full' || !knot) {
+    if (mode === 'full') {
       syncData = exec(commands.runSync(knotPath));
     } else {
       syncData = exec(commands.runPartialSync(knotPath));

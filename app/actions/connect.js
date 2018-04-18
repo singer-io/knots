@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SET_SYNC_MODE } from './knots';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -96,6 +97,10 @@ export function setKnot(knot) {
     dispatch({
       type: SET_KNOT,
       knot
+    });
+    dispatch({
+      type: SET_SYNC_MODE,
+      syncMode: 'incremental'
     });
   };
 }

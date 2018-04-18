@@ -9,6 +9,7 @@ import {
 
 import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
 import { SET_KNOT } from '../actions/taps';
+import { SET_SYNC_MODE } from '../actions/knots';
 
 export type tapsStateType = {
   +loading: boolean,
@@ -97,6 +98,10 @@ export default function taps(state = defaultState, action) {
       console.log('THE sdfe', action);
       return Object.assign({}, state, {
         knot: action.knot
+      });
+    case SET_SYNC_MODE:
+      return Object.assign({}, state, {
+        syncMode: action.syncMode
       });
     case 'persist/REHYDRATE':
       return { ...state };
