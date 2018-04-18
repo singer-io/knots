@@ -1,0 +1,31 @@
+.targetsBody {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+p {
+  margin: 0;
+}
+
+.emphasis {
+  font-weight: bold;
+}
+
+.targetList {
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+}
+
+.targetsInactive {
+  margin: 20px 0;
+}
+
+.targetListInactive {
+  display: flex;
+  justify-content: left;
+  flex-wrap: wrap;
+  opacity: 0.4;
+}

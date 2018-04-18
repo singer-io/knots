@@ -1,26 +1,19 @@
 {
-  "name": "app",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "axios": "^0.18.0",
-    "mobx": "^3.5.1",
-    "mobx-react": "^4.4.2",
-    "prop-types": "^15.6.0",
-    "query-string": "^5.1.0",
-    "react": "^16.2.0",
-    "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.2.0",
-    "react-loading": "^1.0.3",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.1",
-    "socket.io-client": "^2.0.4"
-  },
+  "name": "knot",
+  "productName": "knot",
+  "version": "0.0.1",
+  "description":
+    "This app, allows you to configure and download an executable Singer pipeline",
+  "main": "./main.prod.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "electron-rebuild":
+      "node -r babel-register ../internals/scripts/ElectronRebuild.js",
+    "postinstall": "npm run electron-rebuild"
   },
-  "proxy": "http://localhost:5000/"
+  "license": "MIT",
+  "dependencies": {
+    "bufferutil": "^3.0.4",
+    "socket.io": "^2.1.0",
+    "utf-8-validate": "^4.0.1"
+  }
 }

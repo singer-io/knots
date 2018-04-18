@@ -1,0 +1,35 @@
+// @flow
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Tap.css';
+
+type Props = {
+  logo: string,
+  name: string,
+  repo: string,
+  tap: string,
+  version: string
+};
+
+const Tap = (props: Props) => (
+  <div className={styles.Tap}>
+    <Link to={`/connect/?tap=${props.tap}`}>
+      <div className={styles.logoContainer}>
+        <img className={styles.logo} src={props.logo} alt="Tap logo" />
+      </div>
+    </Link>
+    <div className={styles.info}>
+      <Link to={`/connect/?tap=${props.tap}&version=${props.version}`}>
+        <div className={styles.name}>{props.name}</div>
+      </Link>
+      <div className={styles.repo}>
+        <a href={props.repo} target="_blank">
+          View repo
+        </a>
+      </div>
+    </div>
+  </div>
+);
+
+export default Tap;
