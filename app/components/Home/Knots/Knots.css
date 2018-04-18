@@ -1,0 +1,33 @@
+.knotsBody {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.newKnot {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.syncKnot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toFro {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.tapLogo {
+  height: 100px;
+}
+
+.targetLogo {
+  height: 100px;
+}
+
+.buttonContainer {
+  margin-top: 25px;
+}

@@ -1,0 +1,55 @@
+.syncBody {
+  text-align: left;
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.emphasis {
+  font-weight: bold;
+}
+
+.syncKnot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toFro {
+  display: flex;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.tapLogo {
+  height: 100px;
+}
+
+.targetLogo {
+  height: 100px;
+}
+
+.to {
+  font-size: 50px;
+  font-weight: bold;
+  margin: 0 30px;
+}
+
+.buttonContainer {
+  margin-top: 25px;
+}
+
+.syncButton {
+  margin-right: 20%;
+  display: flex !important;
+  align-items: center;
+}
+
+.syncingText {
+  margin-left: 15px;
+}
+
+.syncLogs {
+  width: 100%;
+  height: 500px;
+}
