@@ -106,7 +106,7 @@ export default class Schema extends Component<Props> {
                               ? stream.metadata[0].metadata[
                                   'valid-replication-keys'
                                 ]
-                              : ['No valid replication key']
+                              : ['']
                           }
                           index={index.toString()}
                           handleChange={this.handleChange}

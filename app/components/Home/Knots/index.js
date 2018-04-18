@@ -9,15 +9,16 @@ import styles from './Knots.css';
 
 type Props = {
   knots: Array<string>,
-  setKnot: (name: string, value: string) => void,
+  syncMode: (name: string, value: string) => void,
   download: (name: string) => void,
   configureKnot: (name: string) => void
 };
 
 export default class Knots extends Component<Props> {
-  setKnot = (e: SyntheticEvent<HTMLButtonElement>) => {
+  props: Props;
+  syncMode = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    this.props.setKnot(name, value);
+    this.props.syncMode(name, value);
   };
 
   download = (e: SyntheticEvent<HTMLButtonElement>) => {
@@ -62,7 +63,7 @@ export default class Knots extends Component<Props> {
                     className="sync-button"
                     name={knot}
                     value="incremental"
-                    onClick={this.setKnot}
+                    onClick={this.syncMode}
                   >
                     Run
                   </Button>
@@ -80,7 +81,8 @@ export default class Knots extends Component<Props> {
                     bsSize="large"
                     className="synced-view"
                     name={knot}
-                    onClick={this.configure}
+                    value="full"
+                    onClick={this.syncMode}
                   >
                     Full Sync
                   </Button>

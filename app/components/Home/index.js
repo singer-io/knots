@@ -7,7 +7,8 @@ import Knots from './Knots';
 type Props = {
   fetchKnots: () => void,
   knotsStore: { knots: Array<string> },
-  download: (name: string) => void
+  download: (name: string) => void,
+  syncMode: (name: string) => void
 };
 
 export default class Home extends Component<Props> {
@@ -23,6 +24,7 @@ export default class Home extends Component<Props> {
           <Knots
             knots={this.props.knotsStore.knots}
             download={this.props.download}
+            syncMode={this.props.syncMode}
           />
         );
       }
