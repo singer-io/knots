@@ -16,6 +16,10 @@ const {
 
 let tempFolder;
 
+const KNOT_CONTENT = ['tap', 'target', 'knots.json', 'Makefile', 'images'];
+const KNOT_TAP_CONTENT = ['config.json', 'state.json', 'catalog.json'];
+const KNOT_TARGET_CONTENT = ['config.json'];
+
 // app is only defined in the packaged app, use app root directory during development
 if (app) {
   tempFolder = app.getPath('home');
@@ -25,13 +29,52 @@ if (app) {
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
-    try {
-      const knots = fs.readdirSync(path.resolve(tempFolder, 'knots'));
+    const knotPath = path.resolve(tempFolder, 'knots');
+    fs.lstat(knotPath, (err, knots) => {
+      const validKnots = [];
+      if (knots.isDirectory()) {
+        const knotList = fs.readdirSync(knotPath);
+        knotList.forEach((ele) => {
+          const pathToKnot = path.resolve(tempFolder, `knots/${ele}`);
+          const pathToKnotTapContent = path.resolve(
+            tempFolder,
+            `knots/${ele}/tap`
+          );
+          const pathToKnotTargetContent = path.resolve(
+            tempFolder,
+            `knots/${ele}/target`
+          );
 
-      resolve(knots);
-    } catch (err) {
-      reject(err);
-    }
+          const knotContent = fs.readdirSync(pathToKnot);
+          const tapContent = fs.readdirSync(pathToKnotTapContent);
+          const targetContent = fs.readdirSync(pathToKnotTargetContent);
+
+          fs.lstat(pathToKnot, (e, knot) => {
+            if (knot.isDirectory()) {
+              if (
+                knotContent.sort().join(',') ===
+                  KNOT_CONTENT.sort().join(',') &&
+                tapContent.sort().join(',') ===
+                  KNOT_TAP_CONTENT.sort().join(',') &&
+                targetContent.sort().join(',') ===
+                  KNOT_TARGET_CONTENT.sort().join(',')
+              ) {
+                validKnots.push(ele);
+                resolve(validKnots);
+              } else {
+                console.log(
+                  `Knot ${ele} cannot be retrieved. it does not have the necessary folders/files`
+                );
+              }
+            } else {
+              console.log('error: knot a directory');
+            }
+          });
+        });
+      } else {
+        console.log(`what is ${knots} ${err}`);
+      }
+    });
   });
 
 const getTaps = () =>
