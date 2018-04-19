@@ -67,7 +67,7 @@ const getKnots = () =>
                 );
               }
             } else {
-              console.log('error: knot a directory');
+              console.log(`Error: ${e}`);
             }
           });
         });
