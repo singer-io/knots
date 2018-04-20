@@ -1,15 +1,15 @@
 // @flow
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Jumbotron } from 'reactstrap';
 
 import Header from '../../Header';
-import styles from './Create.css';
 
 const Create = () => (
-  <div className={styles.Create}>
+  <div>
     <Header />
     <div className="container mt-5">
-      <div className="jumbotron">
+      <Jumbotron>
         <h1 className="display-4">
           There is <em>knothing</em> here!
         </h1>
@@ -20,7 +20,7 @@ const Create = () => (
         <Link className="btn btn-primary btn-lg" to="/taps" role="button">
           Get Started
         </Link>
-      </div>
+      </Jumbotron>
     </div>
   </div>
 );
