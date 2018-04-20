@@ -1,22 +1,15 @@
 // @flow
 import React from 'react';
-import type { Node } from 'react';
 
-import './Header.css';
-import styles from './Header.css';
-
-type Props = {
-  children?: Node
-};
-
-const Header = (props: Props) => (
-  <div className={styles.Header}>
-    <h2 className={styles.title}>{props.children}</h2>
+const Header = () => (
+  <div className="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+    <h5 className="my-0 mr-md-auto font-weight-normal">Knot</h5>
+    <nav className="my-2 my-md-0 mr-md-3">
+      <a className="p-2 text-dark" href="#">
+        My Knots
+      </a>
+    </nav>
   </div>
 );
-
-Header.defaultProps = {
-  children: ''
-};
 
 export default Header;

@@ -206,6 +206,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
+    "bootstrap": "^4.1.0",
     "bootstrap3": "^3.3.5",
     "devtron": "^1.4.0",
     "easy-zip": "^0.0.4",
@@ -214,6 +215,7 @@
     "fix-path": "^2.1.0",
     "font-awesome": "^4.7.0",
     "history": "^4.7.2",
+    "jquery": "^3.3.1",
     "query-string": "^6.0.0",
     "react": "^16.2.0",
     "react-bootstrap": "^0.32.1",
@@ -224,6 +226,7 @@
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-router-redux": "^5.0.0-alpha.6",
+    "reactstrap": "^5.0.0-beta.3",
     "redux": "^3.7.2",
     "redux-persist": "^5.9.1",
     "redux-thunk": "^2.2.0",
