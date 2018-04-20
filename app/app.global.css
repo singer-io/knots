@@ -13,9 +13,9 @@ body {
 .knot-wiz .progress {
   position: relative;
   top: 40px;
-  left: 12.5%;
+  left: 8.5%;
   z-index: -1;
-  width: 75%;
+  width: 80%;
 }
 .knot-wiz .nav-link {
   width: 32px;

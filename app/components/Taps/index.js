@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 
 import Header from '../Header';
+import Progress from '../Progress';
 
 import './Taps.css';
 
@@ -22,36 +23,7 @@ export default class Taps extends Component<{}> {
                 aria-valuemax="100"
               />
             </div>
-            <ul className="nav nav-pills nav-justified">
-              <li className="nav-item">
-                <a href="#" className="nav-link completed">
-                  <span className="step">1</span>
-                  <span className="oi oi-check" />
-                </a>
-                <small>Configure Tap</small>
-              </li>
-              <li className="nav-item">
-                <a href="#" className="nav-link active">
-                  <span className="step">2</span>
-                  <span className="oi oi-check" />
-                </a>
-                <small>Replication Options</small>
-              </li>
-              <li className="nav-item">
-                <a href="#" className="nav-link disabled">
-                  <span className="step">3</span>
-                  <span className="oi oi-check" />
-                </a>
-                <small>Configure Target</small>
-              </li>
-              <li className="nav-item">
-                <a href="#" className="nav-link disabled">
-                  <span className="step">4</span>
-                  <span className="oi oi-check" />
-                </a>
-                <small>Save/Run</small>
-              </li>
-            </ul>
+            <Progress />
             <div className="pt-4">
               <h2>Replication Options</h2>
               <form className="py-2">
