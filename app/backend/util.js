@@ -147,31 +147,23 @@ const validateKnotTargetContent = (validKnotPaths) =>
     });
   });
 
-const getKnots = () =>
-  new Promise((resolve, reject) => {
+async function getKnots() {
+  try {
     const knotPath = path.resolve(tempFolder, 'knots');
-    validateKnotsFolder(knotPath)
-      .then((data) => {
-        validateKnotContent(data)
-          .then((file) => {
-            validateKnotJson(file)
-              .then((d) => {
-                validateKnotTapContent(d)
-                  .then((paths) => {
-                    validateKnotTargetContent(paths)
-                      .then((validKnot) => {
-                        resolve(validKnot);
-                      })
-                      .catch(reject);
-                  })
-                  .catch(reject);
-              })
-              .catch(reject);
-          })
-          .catch(reject);
-      })
-      .catch(reject);
-  });
+    const data = await validateKnotsFolder(knotPath);
+    const file = await validateKnotContent(data);
+    const config = await validateKnotJson(file);
+    const paths = await validateKnotTapContent(config);
+    const validKnot = await validateKnotTargetContent(paths);
+    return new Promise((resolve) => {
+      resolve(validKnot);
+    });
+  } catch (error) {
+    return new Promise((resolve, reject) => {
+      reject(error);
+    });
+  }
+}
 
 const getTaps = () =>
   new Promise((resolve, reject) => {
