@@ -16,9 +16,10 @@ const {
 
 let tempFolder;
 
-const KNOT_CONTENT = ['tap', 'target', 'knots.json', 'Makefile', 'images'];
+const KNOT_CONTENT = ['tap', 'target', 'knots.json', 'Makefile'];
 const KNOT_TAP_CONTENT = ['config.json', 'state.json', 'catalog.json'];
 const KNOT_TARGET_CONTENT = ['config.json'];
+const KNOT_JSON_KEYS = ['tap', 'target'];
 
 // app is only defined in the packaged app, use app root directory during development
 if (app) {
@@ -27,54 +28,149 @@ if (app) {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
 
+const validateKnotsFolder = (knotPath) =>
+  new Promise((resolve, reject) => {
+    const validKnotFolder = [];
+    fs.lstat(knotPath, (error, knots) => {
+      if (error) reject(error);
+
+      if (knots.isDirectory()) {
+        try {
+          fs.readdir(knotPath, (e, savedKnots) => {
+            savedKnots.forEach((folder) => {
+              validKnotFolder.push(folder);
+            });
+            resolve(validKnotFolder);
+          });
+        } catch (e) {
+          reject(e);
+        }
+      } else {
+        reject();
+      }
+    });
+  });
+
+const validateKnotContent = (validKnots) =>
+  new Promise((resolve, reject) => {
+    const knots = [];
+    try {
+      validKnots.forEach((knotFolder) => {
+        const pathToKnot = path.resolve(tempFolder, 'knots', knotFolder);
+        const knotContent = fs.readdirSync(pathToKnot);
+        if (knotContent.sort().join(',') === KNOT_CONTENT.sort().join(',')) {
+          knots.push(pathToKnot);
+        }
+      });
+      resolve(knots);
+    } catch (e) {
+      reject(e);
+    }
+  });
+
+const validateKnotJson = (validKnotPaths) =>
+  new Promise((resolve, reject) => {
+    const knots = [];
+    let counter = 0;
+    validKnotPaths.forEach((knotPath) => {
+      fs.readFile(path.resolve(knotPath, 'knots.json'), 'utf8', (e, data) => {
+        if (e) reject(e);
+        const knotConfig = JSON.parse(data);
+        KNOT_JSON_KEYS.every((k) => {
+          counter += 1;
+          if (k in knotConfig) {
+            knots.push(knotPath);
+          } else {
+            console.log('Missing keys in knot.json');
+          }
+          if (counter === validKnotPaths.length) {
+            resolve(knots);
+          }
+        });
+      });
+    });
+  });
+
+const validateKnotTapContent = (validKnotPaths) =>
+  new Promise((resolve, reject) => {
+    const knots = [];
+    let counter = 0;
+    validKnotPaths.forEach((knotPath) => {
+      fs.readdir(path.resolve(knotPath, 'tap'), (e, tapContent) => {
+        if (e) reject(e);
+        try {
+          counter += 1;
+          if (
+            tapContent.sort().join(',') === KNOT_TAP_CONTENT.sort().join(',')
+          ) {
+            knots.push(knotPath);
+          } else {
+            console.log('Tap does not have the required files');
+          }
+          if (counter === validKnotPaths.length) {
+            resolve(knots);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  });
+
+const validateKnotTargetContent = (validKnotPaths) =>
+  new Promise((resolve, reject) => {
+    const validKnots = [];
+    let counter = 0;
+    validKnotPaths.forEach((knotPath) => {
+      fs.readdir(path.resolve(knotPath, 'target'), (e, targetContent) => {
+        if (e) reject(e);
+        try {
+          counter += 1;
+          const folder = path.basename(knotPath);
+          if (
+            targetContent.sort().join(',') ===
+            KNOT_TARGET_CONTENT.sort().join(',')
+          ) {
+            validKnots.push(folder);
+          } else {
+            console.log(
+              `knot ${folder} could not be retrieved: No target config.json`
+            );
+          }
+          if (counter === validKnotPaths.length) {
+            resolve(validKnots);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  });
+
 const getKnots = () =>
   new Promise((resolve, reject) => {
     const knotPath = path.resolve(tempFolder, 'knots');
-    fs.lstat(knotPath, (err, knots) => {
-      const validKnots = [];
-      if (knots.isDirectory()) {
-        const knotList = fs.readdirSync(knotPath);
-        knotList.forEach((ele) => {
-          const pathToKnot = path.resolve(tempFolder, `knots/${ele}`);
-          const pathToKnotTapContent = path.resolve(
-            tempFolder,
-            `knots/${ele}/tap`
-          );
-          const pathToKnotTargetContent = path.resolve(
-            tempFolder,
-            `knots/${ele}/target`
-          );
-
-          const knotContent = fs.readdirSync(pathToKnot);
-          const tapContent = fs.readdirSync(pathToKnotTapContent);
-          const targetContent = fs.readdirSync(pathToKnotTargetContent);
-
-          fs.lstat(pathToKnot, (e, knot) => {
-            if (knot.isDirectory()) {
-              if (
-                knotContent.sort().join(',') ===
-                  KNOT_CONTENT.sort().join(',') &&
-                tapContent.sort().join(',') ===
-                  KNOT_TAP_CONTENT.sort().join(',') &&
-                targetContent.sort().join(',') ===
-                  KNOT_TARGET_CONTENT.sort().join(',')
-              ) {
-                validKnots.push(ele);
-                resolve(validKnots);
-              } else {
-                console.log(
-                  `Knot ${ele} cannot be retrieved. it does not have the necessary folders/files`
-                );
-              }
-            } else {
-              console.log(`Error: ${e}`);
-            }
-          });
-        });
-      } else {
-        console.log(`what is ${knots} ${err}`);
-      }
-    });
+    validateKnotsFolder(knotPath)
+      .then((data) => {
+        validateKnotContent(data)
+          .then((file) => {
+            validateKnotJson(file)
+              .then((d) => {
+                validateKnotTapContent(d)
+                  .then((paths) => {
+                    validateKnotTargetContent(paths)
+                      .then((validKnot) => {
+                        resolve(validKnot);
+                      })
+                      .catch(reject);
+                  })
+                  .catch(reject);
+              })
+              .catch(reject);
+          })
+          .catch(reject);
+      })
+      .catch(reject);
   });
 
 const getTaps = () =>
