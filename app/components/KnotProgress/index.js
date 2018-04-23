@@ -15,7 +15,6 @@ const KnotProgress = (props: Props) => (
       <Progress bar color="success" value="0" />
     </div>
     <Nav pills justified>
-      {console.log(Object.keys(props.progressStore))}
       {Object.keys(props.progressStore).map((item) => (
         <Item
           key={item}
