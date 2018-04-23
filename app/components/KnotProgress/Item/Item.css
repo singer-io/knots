@@ -1,0 +1,41 @@
+.navLink {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 0.25rem;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background-color: #e9ecef;
+  border: 2px solid #e9ecef;
+  box-sizing: initial;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: relative !important;
+  transition: border-color linear 0.2s, background-color linear 0.2s;
+  color: #6c757d;
+}
+
+.checkIcon {
+  transition: all linear 0.2s;
+  font-weight: bold;
+}
+
+.step {
+  font-weight: bold;
+}
+
+.completed {
+  border-color: #28a745;
+  color: #28a745;
+  background-color: #fff;
+}
+
+.active {
+  border-color: #007bff;
+  color: #fff;
+  background-color: #007bff;
+}
+
+.hidden {
+  display: none;
+}

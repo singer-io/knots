@@ -8,7 +8,6 @@ import {
 } from '../actions/connect';
 
 import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
-import { SET_KNOT } from '../actions/taps';
 import { SET_SYNC_MODE } from '../actions/knots';
 
 export type tapsStateType = {

@@ -4,14 +4,14 @@ import { Container, Row, Col } from 'reactstrap';
 
 import Loader from '../Loader';
 import Header from '../Header';
-import KnotProgress from '../KnotProgress';
+import KnotProgress from '../../containers/KnotProgress';
 
 import './Taps.css';
 
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
-    loading: string
+    loading: boolean
   }
 };
 
