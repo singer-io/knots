@@ -30,6 +30,7 @@ const KnotProgress = (props: Props) => (
       >
         {props.index + 1}
       </span>
+      {console.log('Props', props)}
       <span
         className={classNames('oi', 'oi-check', styles.checkIcon, {
           [styles.hidden]: !props.complete
