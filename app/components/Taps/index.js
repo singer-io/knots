@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 
 import Header from '../Header';
-import Progress from '../Progress';
+import KnotProgress from '../KnotProgress';
 
 import './Taps.css';
 
@@ -13,7 +13,7 @@ export default class Taps extends Component<{}> {
         <Header />{' '}
         <div className="container knot-wiz">
           <div className="col-md-8 offset-md-2">
-            <div className="progress" style={{ height: '2px' }}>
+            {/* <div className="progress" style={{ height: '2px' }}>
               <div
                 className="progress-bar bg-success"
                 role="progressbar"
@@ -22,8 +22,8 @@ export default class Taps extends Component<{}> {
                 aria-valuemin="0"
                 aria-valuemax="100"
               />
-            </div>
-            <Progress />
+            </div> */}
+            <KnotProgress />
             <div className="pt-4">
               <h2>Replication Options</h2>
               <form className="py-2">
