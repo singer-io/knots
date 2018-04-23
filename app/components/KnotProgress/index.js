@@ -1,73 +1,94 @@
 import React from 'react';
 import { Progress, Nav, NavItem, NavLink } from 'reactstrap';
+import classNames from 'classnames';
 
 import styles from './KnotProgress.css';
 
 const KnotProgress = () => (
   <div>
-    {/* <ul className="nav nav-pills nav-justified">
-      <li className="nav-item">
-        <a href="#" className="nav-link completed">
-          <span className="step">1</span>
-          <span className="oi oi-check" />
-        </a>
-        <small>Select Tap</small>
-      </li>
-      <li className="nav-item">
-        <a href="#" className="nav-link completed">
-          <span className="step">2</span>
-          <span className="oi oi-check" />
-        </a>
-        <small>Configure Tap</small>
-      </li>
-      <li className="nav-item">
-        <a href="#" className="nav-link active">
-          <span className="step">3</span>
-          <span className="oi oi-check" />
-        </a>
-        <small>Replication Options</small>
-      </li>
-      <li className="nav-item">
-        <a href="#" className="nav-link disabled">
-          <span className="step">4</span>
-          <span className="oi oi-check" />
-        </a>
-        <small>Configure Target</small>
-      </li>
-      <li className="nav-item">
-        <a href="#" className="nav-link disabled">
-          <span className="step">5</span>
-          <span className="oi oi-check" />
-        </a>
-        <small>Save/Run</small>
-      </li>
-    </ul> */}
     <div className={styles.progress}>
       <Progress bar color="success" value="75" />
     </div>
     <Nav pills justified>
       <NavItem>
-        <NavItem className="completed">
-          <span className="step">1</span>
-          <span className="oi oi-check" />
-          <NavLink href="/select-tap">Select Tap</NavLink>
-        </NavItem>
+        <NavLink
+          href="/select-tap"
+          className={classNames(styles.navLink, { [styles.completed]: false })}
+        >
+          <span className={classNames(styles.step, { [styles.hidden]: false })}>
+            1
+          </span>
+          <span
+            className={classNames('oi', 'oi-check', styles.icon, {
+              [styles.hidden]: true
+            })}
+          />
+        </NavLink>
+        <small>Select Tap</small>
       </NavItem>
       <NavItem>
-        <NavItem>
-          <NavLink href="/configure-tap">Configure Tap</NavLink>
-        </NavItem>
+        <NavLink
+          href="/configure-tap"
+          className={classNames(styles.navLink, { [styles.completed]: false })}
+        >
+          <span className={classNames(styles.step, { [styles.hidden]: false })}>
+            2
+          </span>
+          <span
+            className={classNames('oi', 'oi-check', styles.icon, {
+              [styles.hidden]: true
+            })}
+          />
+        </NavLink>
+        <small>Configure Tap</small>
       </NavItem>
       <NavItem>
-        <NavItem>
-          <NavLink href="/replication-options">Replication Options</NavLink>
-        </NavItem>
+        <NavLink
+          href="/replication-options"
+          className={classNames(styles.navLink, { [styles.completed]: false })}
+        >
+          <span className={classNames(styles.step, { [styles.hidden]: false })}>
+            3
+          </span>
+          <span
+            className={classNames('oi', 'oi-check', styles.icon, {
+              [styles.hidden]: true
+            })}
+          />
+        </NavLink>
+        <small>Replication Options</small>
       </NavItem>
       <NavItem>
-        <NavLink href="/configure-target">Configure Target</NavLink>
+        <NavLink
+          href="/configure-target"
+          className={classNames(styles.navLink, { [styles.completed]: false })}
+        >
+          <span className={classNames(styles.step, { [styles.hidden]: false })}>
+            4
+          </span>
+          <span
+            className={classNames('oi', 'oi-check', styles.icon, {
+              [styles.hidden]: true
+            })}
+          />
+        </NavLink>
+        <small>Configure Target</small>
       </NavItem>
       <NavItem>
-        <NavLink href="/run">Save/Run</NavLink>
+        <NavLink
+          href="/run"
+          className={classNames(styles.navLink, { [styles.completed]: false })}
+        >
+          <span className={classNames(styles.step, { [styles.hidden]: false })}>
+            5
+          </span>
+          <span
+            className={classNames('oi', 'oi-check', styles.icon, {
+              [styles.hidden]: true
+            })}
+          />
+        </NavLink>
+        <small>Save/Run</small>
       </NavItem>
     </Nav>
   </div>

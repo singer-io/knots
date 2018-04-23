@@ -6,3 +6,43 @@
   height: 2px;
   width: 100%;
 }
+
+.navLink {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 0.25rem;
+  padding: 0;
+  border-radius: 50% !important;
+  background-color: #e9ecef;
+  border: 2px solid #e9ecef;
+  box-sizing: initial;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color linear 0.2s, background-color linear 0.2s;
+}
+
+.checkIcon {
+  transition: all linear 0.2s;
+  font-weight: bold;
+}
+
+.step {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.completed {
+  border-color: #28a745;
+  color: #28a745;
+  background-color: #fff;
+}
+
+.active {
+  border-color: #007bff;
+}
+
+.hidden {
+  display: none;
+}
