@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Container, Row, Col } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 import Loader from '../Loader';
 import Header from '../Header';
@@ -78,7 +79,11 @@ export default class Taps extends Component<Props> {
                                 alt="RedShift"
                               />
                               <div className="media-body">
-                                <h5 className="mt-0">Redshift</h5>
+                                <Link
+                                  to={`/configure-tap/?tap=${'tap-redshift'}&version=${'1.0'}`}
+                                >
+                                  <h5 className="mt-0">Redshift</h5>
+                                </Link>
                                 <a
                                   href="https://github.com/datadotworld/tap-redshift"
                                   target="_blank"

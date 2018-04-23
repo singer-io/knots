@@ -4,7 +4,8 @@ import {
   UPDATE_TAP_FIELDS,
   SET_TAP_FIELDS,
   DISCOVER_SCHEMA,
-  SCHEMA_RECEIVED
+  SCHEMA_RECEIVED,
+  TAP_CONFIG_LOADING
 } from '../actions/connect';
 
 import { UPDATE_SCHEMA, SCHEMA_LOADING } from '../actions/schema';
@@ -12,6 +13,7 @@ import { SET_SYNC_MODE } from '../actions/knots';
 
 export type tapsStateType = {
   +loading: boolean,
+  +configLoading: boolean,
   +taps: Array<string>,
   +dockerInstalled: boolean,
   +dockerVersion: string,
@@ -24,6 +26,7 @@ export type tapsStateType = {
 
 const defaultState = {
   loading: false,
+  configLoading: false,
   taps: [],
   dockerVersion: '',
   tapFields: [],
@@ -56,7 +59,8 @@ export default function taps(state = defaultState, action) {
         loading: false,
         dockerVersion: action.dockerVersion,
         tapFields: action.tapFields,
-        fieldValues: action.fieldValues || {}
+        fieldValues: action.fieldValues || {},
+        configLoading: false
       });
     case SET_TAP_FIELDS:
       fields[action.index].value = action.value;
@@ -100,6 +104,10 @@ export default function taps(state = defaultState, action) {
     case SET_SYNC_MODE:
       return Object.assign({}, state, {
         syncMode: action.syncMode
+      });
+    case TAP_CONFIG_LOADING:
+      return Object.assign({}, state, {
+        configLoading: true
       });
     case 'persist/REHYDRATE':
       return { ...state };

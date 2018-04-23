@@ -10,6 +10,7 @@ export const SET_TAP_FIELDS = 'SET_TAP_FIELDS';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
 export const SET_KNOT = 'SET_KNOT';
+export const TAP_CONFIG_LOADING = 'TAP_CONFIG_LOADING';
 
 type actionType = {
   +type: string
@@ -18,8 +19,9 @@ type actionType = {
 export function fetchTapFields(tap, version, knot) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
-      type: TAPS_LOADING
+      type: TAP_CONFIG_LOADING
     });
+    console.log('Happening');
 
     axios
       .post(`${baseUrl}/taps/`, {
