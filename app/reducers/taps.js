@@ -38,7 +38,6 @@ export default function taps(state = defaultState, action) {
   const fields = state.tapFields;
   const values = state.fieldValues;
   const schema = state.tapSchema;
-  console.log('The action', action);
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { loading: false });

@@ -11,15 +11,15 @@
   width: 32px;
   height: 32px;
   margin: 0 auto 0.25rem;
-  padding: 0;
+  padding: 0 !important;
   border-radius: 50% !important;
   background-color: #e9ecef;
   border: 2px solid #e9ecef;
   box-sizing: initial;
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  position: relative;
+  position: relative !important;
   transition: border-color linear 0.2s, background-color linear 0.2s;
 }
 

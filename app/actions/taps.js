@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
 
-export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const TAPS_LOADING = 'TAPS_LOADING';
-export const SET_KNOT = 'SET_KNOT';
+export const UPDATE_TAPS = 'UPDATE_TAPS';
+export const UPDATE_TAPS_ERROR = 'UPDATE_TAPS_ERROR';
 
 type actionType = {
   +type: string
@@ -24,10 +24,10 @@ export function fetchTaps() {
           taps: response.data
         })
       )
-      .catch(() =>
+      .catch((error) =>
         dispatch({
-          type: UPDATE_TAPS,
-          taps: []
+          type: UPDATE_TAPS_ERROR,
+          error
         })
       );
   };
