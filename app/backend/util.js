@@ -520,37 +520,111 @@ const createMakefile = () =>
       .catch(reject);
   });
 
-const saveKnot = (name) =>
-  new Promise((resolve) => {
-    createMakefile();
-    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name));
-    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name, 'images'));
-    shell.mv(
-      path.resolve(tempFolder, 'docker', 'tap'),
-      path.resolve(tempFolder, 'knots', name, 'tap')
-    );
-    shell.mv(
-      path.resolve(tempFolder, 'docker', 'target'),
-      path.resolve(tempFolder, 'knots', 'name', 'target')
-    );
-    shell.mv(
-      path.resolve(tempFolder, 'knot.json'),
-      path.resolve(tempFolder, 'knots', name, 'knots.json')
-    );
-    shell.mv(
-      path.resolve(tempFolder, 'state.json'),
-      path.resolve(tempFolder, 'knots', name, 'tap', 'state.json')
-    );
-    shell.mv(
-      path.resolve(tempFolder, 'Makefile'),
-      path.resolve(tempFolder, 'knots', name, 'Makefile')
-    );
-    shell.cp(
-      '-R',
-      path.resolve(tempFolder, 'docker', 'images'),
-      path.resolve(tempFolder, 'knots', name)
-    );
+const validateIsDirectory = (pathToFolder) =>
+  new Promise((resolve, reject) => {
+    fs.lstat(pathToFolder, (err, file) => {
+      if (file.isDirectory()) {
+        resolve();
+      } else {
+        reject(err);
+      }
+    });
+  });
 
+const saveKnot = (name) =>
+  new Promise((resolve, reject) => {
+    createMakefile();
+
+    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name));
+
+    const pathToDockerTapFolder = path.resolve(tempFolder, 'docker', 'tap');
+    const pathToDockerTargetFolder = path.resolve(
+      tempFolder,
+      'docker',
+      'target'
+    );
+    const pathToKnotJson = path.resolve(tempFolder, 'knot.json');
+
+    validateIsDirectory(pathToDockerTapFolder)
+      .then(() => {
+        try {
+          fs.readdir(pathToDockerTapFolder, (e, tapFolderContent) => {
+            if (e) reject(e);
+            if (
+              tapFolderContent.sort().join(',') ===
+              ['catalog.json', 'config.json'].sort().join(',')
+            ) {
+              shell.mv(
+                pathToDockerTapFolder,
+                path.resolve(tempFolder, 'knots', name, 'tap')
+              );
+            } else {
+              reject();
+            }
+          });
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .catch((e) => {
+        reject(e);
+      });
+
+    validateIsDirectory(pathToDockerTargetFolder)
+      .then(() => {
+        try {
+          fs.readdir(pathToDockerTargetFolder, (e, targetFolderContent) => {
+            if (e) reject(e);
+            if (targetFolderContent === ['config.json']) {
+              shell.mv(
+                pathToDockerTargetFolder,
+                path.resolve(tempFolder, 'knots', 'name', 'target')
+              );
+            } else {
+              reject();
+            }
+          });
+        } catch (e) {
+          reject(e);
+        }
+      })
+      .catch((e) => {
+        reject(e);
+      });
+
+    fs.readdir(tempFolder, (e, files) => {
+      if (e) reject(e);
+      if ('knot.json' in files) {
+        readFile(pathToKnotJson)
+          .then((config) => {
+            const knotConfig = JSON.parse(config);
+            try {
+              KNOT_JSON_KEYS.every((k) => {
+                if (k in knotConfig) {
+                  shell.mv(
+                    pathToKnotJson,
+                    path.resolve(tempFolder, 'knots', name, 'knots.json')
+                  );
+                } else {
+                  reject();
+                }
+              });
+            } catch (error) {
+              reject(error);
+            }
+          })
+          .catch(() => {
+            reject(e);
+          });
+      }
+
+      if ('Makefile' in files) {
+        shell.mv(
+          path.resolve(tempFolder, 'Makefile'),
+          path.resolve(tempFolder, 'knots', name, 'Makefile')
+        );
+      }
+    });
     resolve();
   });
 
