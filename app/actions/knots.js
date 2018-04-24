@@ -11,6 +11,7 @@ export const KNOT_RUN_ERROR = 'KNOT_RUN_ERROR';
 export const KNOT_SAVED = 'KNOT_SAVED';
 export const KNOT_SAVE_ERROR = 'KNOT_SAVE_ERROR';
 export const SET_SYNC_MODE = 'SET_SYNC_MODE';
+export const DOCKER_INSTALL_ERROR = 'DOCKER_INSTALL_ERROR';
 
 type actionType = {
   +type: string
@@ -23,10 +24,17 @@ export function fetchKnots() {
     axios
       .get(`${baseUrl}/knots/`)
       .then((response) => {
-        dispatch({
-          type: UPDATE_KNOTS,
-          knots: response.data
-        });
+        if (response.data.docker) {
+          dispatch({
+            type: UPDATE_KNOTS,
+            knots: response.data.knots
+          });
+        } else {
+          dispatch({
+            type: DOCKER_INSTALL_ERROR,
+            knots: []
+          });
+        }
       })
       .catch(() =>
         dispatch({
