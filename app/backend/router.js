@@ -26,10 +26,16 @@ router.get('/callback', (req, res) => {
 });
 
 router.get('/knots', (req, res) => {
-  getKnots()
-    .then((knots) => res.json(knots))
+  detectDocker()
+    .then(() => {
+      getKnots()
+        .then((knots) => res.json({ knots, docker: true }))
+        .catch(() => {
+          res.json([]);
+        });
+    })
     .catch(() => {
-      res.json([]);
+      res.json({ docker: false });
     });
 });
 

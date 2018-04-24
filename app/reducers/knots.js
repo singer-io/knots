@@ -3,7 +3,8 @@ import {
   KNOT_RUNNING,
   KNOT_RUN_COMPLETE,
   KNOT_SAVED,
-  SET_SYNC_MODE
+  SET_SYNC_MODE,
+  DOCKER_INSTALL_ERROR
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -13,7 +14,8 @@ export type knotsStateType = {
   +text: string,
   +syncLogs: string,
   +saved: boolean,
-  +syncMode: string
+  +syncMode: string,
+  +showAlert: boolean
 };
 
 export default function knots(
@@ -22,13 +24,19 @@ export default function knots(
     loading: false,
     synced: false,
     syncLogs: '',
-    saved: false
+    saved: false,
+    showAlert: false
   },
   action
 ) {
   switch (action.type) {
+    case DOCKER_INSTALL_ERROR:
+      return Object.assign({}, state, { showAlert: true, knots: action.knots });
     case UPDATE_KNOTS:
-      return Object.assign({}, state, { knots: action.knots });
+      return Object.assign({}, state, {
+        knots: action.knots,
+        showAlert: false
+      });
     case KNOT_RUNNING:
       return Object.assign({}, state, {
         loading: true,
