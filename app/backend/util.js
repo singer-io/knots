@@ -185,8 +185,8 @@ const detectDocker = () =>
     });
 
     // Threw error, no Docker
-    docker.on('error', () => {
-      reject();
+    docker.on('error', (error) => {
+      reject(error.toString('utf8'));
     });
   });
 

@@ -1,56 +1,36 @@
 import {
-  UPDATE_KNOTS,
-  KNOT_RUNNING,
-  KNOT_RUN_COMPLETE,
-  KNOT_SAVED,
-  SET_SYNC_MODE,
-  DOCKER_INSTALL_ERROR
+  DOCKER_VERSION_LOADING,
+  UPDATE_DOCKER_VERSION,
+  DOCKER_VERSION_ERROR
 } from '../actions/knots';
 
 export type knotsStateType = {
-  +knots: Array<string>,
-  +loading: boolean,
-  +synced: boolean,
-  +text: string,
-  +syncLogs: string,
-  +saved: boolean,
-  +syncMode: string,
-  +showAlert: boolean
+  +dockerVersionLoading: boolean,
+  +dockerVersion: string,
+  +dockerVersionError: string
 };
 
-export default function knots(
-  state = {
-    knots: [],
-    loading: false,
-    synced: false,
-    syncLogs: '',
-    saved: false,
-    showAlert: false
-  },
-  action
-) {
+const defaultState = {
+  dockerVersionLoading: false,
+  dockerVersion: '',
+  dockerVersionError: ''
+};
+
+export default function knots(state = defaultState, action) {
   switch (action.type) {
-    case DOCKER_INSTALL_ERROR:
-      return Object.assign({}, state, { showAlert: true, knots: action.knots });
-    case UPDATE_KNOTS:
+    case DOCKER_VERSION_LOADING:
+      return Object.assign({}, state, { dockerVersionLoading: true });
+    case UPDATE_DOCKER_VERSION:
       return Object.assign({}, state, {
-        knots: action.knots,
-        showAlert: false
+        dockerVersionLoading: false,
+        dockerVersion: action.version,
+        dockerVersionError: action.error
       });
-    case KNOT_RUNNING:
+    case DOCKER_VERSION_ERROR:
       return Object.assign({}, state, {
-        loading: true,
-        synced: false,
-        syncLogs: action.syncLogs
-      });
-    case KNOT_RUN_COMPLETE:
-      return Object.assign({}, state, { loading: false, synced: true });
-    case KNOT_SAVED:
-      return Object.assign({}, state, { saved: true });
-    case SET_SYNC_MODE:
-      return Object.assign({}, state, {
-        syncMode: action.syncMode,
-        knot: action.knot
+        dockerVersionLoading: false,
+        dockerVersion: '',
+        dockerVersionError: action.error
       });
     default:
       return state;

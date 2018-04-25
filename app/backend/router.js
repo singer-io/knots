@@ -19,7 +19,15 @@ const {
   getToken
 } = require('./util');
 
-router.get('/', (req, res) => res.send('Server running'));
+router.get('/docker', (req, res) => {
+  detectDocker()
+    .then((version) => {
+      res.json({ version });
+    })
+    .catch((error) => {
+      res.json({ version: '', error });
+    });
+});
 
 router.get('/callback', (req, res) => {
   res.send('Server running');
