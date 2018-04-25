@@ -3,12 +3,11 @@ const os = require('os');
 const taps = [
   {
     name: 'Redshift',
-    key: 'tap-redshift',
+    tapKey: 'tap-redshift',
     version: '1.0',
     repo: 'https://github.com/datadotworld/tap-redshift',
     logo:
-      'https://cdn.zapier.com/storage/services/1e66b95901e0564c9e990c320705b69a.128x128.png',
-    active: true
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAn1BMVEX///9SlM8gW5kuc7hQks0paqw9gMEgXJoAUZRHj8260uqrvdQAZbL6/P4LVJYcWZhDjcwASpEATpNZmNGuyuadsczb5/TI2u4rYp1jntPAzd7x9vvO2OW4xtk7a6LF2e0LYqp1qNcqeb6itc+1z+g9baOGsdxVfKs4iMrn7/jf5u9ujbaYvOCCnL+Qt955lbvJ0+Jfg699rNoARI6OpcXaVDOdAAADm0lEQVR4nO3d2XLaMBhA4ZiqtR1qvAAJAUz2Qtambd7/2SqBIQbsYAuvmXNuk5H0RZMLxMV/ckJEREREREREdChnePXzUDcDp+5jaucMXev7t0P9sMWg7pNqNuxZnU4GoSFsu43GW1f6sgkNaWzdPUa+rEJp9Iy7ug+do+7al13YKmPX3PjyCJfG07oPn6GwY7kdPWErjOEoiPvyCpWxf1k34pNCc8eXX9hoYzjb8+kIlfGiicZxkk9PuDSe1w3aKcWnK2yccXyf4tMXNsvo+Gm+Y4TSuGjKpw6nV47QsBFWFUKECOsPIUKE9fdFhI9nqT+qQzh9KNg3/eN73vXgLHHLioWT6XDuB4u/6X/y/L3NA9dU77aenaSsUOi8vc97gdzPFcK7Lsq4ep0wV5tK5eLi+XxSg3Ayfr/3pW65mSsKe+3oRq9n5sfG6i7jygqEUjezgtg+Srh8tTry9VF9exStam5vHr/LkoUP4cvMD3b2WAmVURzx7dzk3fp4vTb3DyCVXv/1clKaUEjd71FgJay/FqpT2M+Tw5ikxn585QThRpkOPE5ozPwk3bZQ3fVC70Wna8WXTBEulaUJ0xfeEhq23n9jA4QmQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiLDVwn/xk6cKhbBLE6YPA9sSioXm9LXpPDZSPFEobNszft2VJuw+mb6VuHpMeNSYwOl8MxZ+T7jSnT6UOVlOHuGx+9QJLHd3h43w6DGIm3vcEqrJef3X02hSZunTAaVytDOBLRKKRQFjHqN73AjXE/M+fqOSCY87U/SWwsLGWKp7dM1kXWXCtTK6Syks5P4+jIFrSN3ufM6KharJ+GUWBD3XLm4M6drYT9RVLoyUo4J9n/dFJh5/EkKECOsPIUKE9YcQYQuEfjlCsWiK8GR8H6QZ9YXCu9CbmF5O41mKUVfYMJ8qxagnbKBPFSYZdYTSd1k3JqXQ3DPmFwqv31SfKhztGPMKG+5ThZ2tR+p8QuEZmu/zldY1LT1hS3yqrmvlF0rfXd0Hz9Ht2phV2DKfKjJmEwpbDOo+sEbDnpVNKGy7jT6ZM3StDMJ23l+UM7z6eaibQWM+QRARERERERFRg/sPWgsdm/HykUYAAAAASUVORK5CYII='
   }
 ];
 

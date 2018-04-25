@@ -4,7 +4,6 @@ const baseUrl = 'http://localhost:4321';
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
-export const UPDATE_TAPS_ERROR = 'UPDATE_TAPS_ERROR';
 
 type actionType = {
   +type: string
@@ -21,12 +20,14 @@ export function fetchTaps() {
       .then((response) =>
         dispatch({
           type: UPDATE_TAPS,
-          taps: response.data
+          taps: response.data.taps,
+          error: response.data.error
         })
       )
       .catch((error) =>
         dispatch({
-          type: UPDATE_TAPS_ERROR,
+          type: UPDATE_TAPS,
+          taps: [],
           error
         })
       );

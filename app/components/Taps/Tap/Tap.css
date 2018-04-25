@@ -1,9 +1,6 @@
 .Tap {
   display: flex;
-  border: 1px solid #d3d3d3;
   width: 220px;
-  margin-right: 20px;
-  margin-top: 20px;
 }
 
 a:hover {
@@ -24,7 +21,6 @@ a:hover {
   flex-wrap: wrap;
   align-items: center;
   align-content: center;
-  margin-left: 10px;
 }
 
 .name {

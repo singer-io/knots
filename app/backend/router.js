@@ -29,8 +29,12 @@ router.get('/docker', (req, res) => {
     });
 });
 
-router.get('/callback', (req, res) => {
-  res.send('Server running');
+router.get('/taps', (req, res) => {
+  getTaps()
+    .then((taps) => res.json({ taps }))
+    .catch((error) => {
+      res.json({ taps: [], error });
+    });
 });
 
 router.get('/knots', (req, res) => {
@@ -44,14 +48,6 @@ router.get('/knots', (req, res) => {
     })
     .catch(() => {
       res.json({ docker: false });
-    });
-});
-
-router.get('/taps', (req, res) => {
-  getTaps()
-    .then((taps) => res.json(taps))
-    .catch(() => {
-      res.json([]);
     });
 });
 

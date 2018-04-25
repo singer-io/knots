@@ -5,12 +5,12 @@ export type tapsStateType = {
 };
 
 const defaultState = {
-  0: { text: 'Select Tap', href: 'select-tap', complete: true, active: false },
+  0: { text: 'Select Tap', href: 'select-tap', complete: false, active: false },
   1: {
     text: 'Configure Tap',
     href: 'configure-tap',
     complete: false,
-    active: true
+    active: false
   },
   2: {
     text: 'Replication Options',

@@ -28,6 +28,31 @@ if (app) {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
 
+const detectDocker = () =>
+  new Promise((resolve, reject) => {
+    // Run `docker -v` on the user's shell
+    const docker = spawn('docker', ['-v']);
+
+    // A version number was returned, docker is installed
+    docker.stdout.on('data', (version) => {
+      resolve(version.toString('utf8'));
+    });
+
+    // Threw error, no Docker
+    docker.on('error', (error) => {
+      reject(error.toString('utf8'));
+    });
+  });
+
+const getTaps = () =>
+  new Promise((resolve, reject) => {
+    if (taps) {
+      resolve(taps);
+    } else {
+      reject();
+    }
+  });
+
 const validateKnotsFolder = (knotPath) =>
   new Promise((resolve, reject) => {
     const validKnotFolder = [];
@@ -164,31 +189,6 @@ async function getKnots() {
     });
   }
 }
-
-const getTaps = () =>
-  new Promise((resolve, reject) => {
-    if (taps) {
-      resolve(taps);
-    } else {
-      reject();
-    }
-  });
-
-const detectDocker = () =>
-  new Promise((resolve, reject) => {
-    // Run `docker -v` on the user's shell
-    const docker = spawn('docker', ['-v']);
-
-    // A version number was returned, docker is installed
-    docker.stdout.on('data', (version) => {
-      resolve(version.toString('utf8'));
-    });
-
-    // Threw error, no Docker
-    docker.on('error', (error) => {
-      reject(error.toString('utf8'));
-    });
-  });
 
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
