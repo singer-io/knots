@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Container, Alert } from 'reactstrap';
+import { shell } from 'electron';
 
 import Header from '../Header';
 import Create from './Create';
@@ -17,6 +18,12 @@ export default class Home extends Component<Props> {
     this.props.detectDocker();
   }
 
+  dockerDownload = () => {
+    shell.openExternal(
+      'https://store.docker.com/editions/community/docker-ce-desktop-mac'
+    );
+  };
+
   render() {
     const { dockerVersion } = this.props.knotsStore;
 
@@ -28,13 +35,9 @@ export default class Home extends Component<Props> {
           {!dockerVersion && (
             <Alert color="danger" style={{ opacity: 1 }} isOpen>
               Oops! Docker must be installed before you can proceed.{' '}
-              <a
-                className="alert-link"
-                href="https://store.docker.com/editions/community/docker-ce-desktop-mac"
-                target="_target"
-              >
+              <button className="alert-link" onClick={this.dockerDownload}>
                 Click here to download it.
-              </a>
+              </button>
             </Alert>
           )}
           <Create dockerVersion={dockerVersion} />
