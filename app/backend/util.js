@@ -326,9 +326,11 @@ const writeConfig = (req) =>
                   cmdOutput = error.toString();
                 } catch (err) {
                   cmdOutput = stderr.toString();
+                  console.log(err, 'In Error');
                 } finally {
                   req.io.emit('live-logs', cmdOutput);
                 }
+                reject(cmdOutput);
               } else {
                 resolve();
               }

@@ -11,6 +11,7 @@ export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
 export const SET_KNOT = 'SET_KNOT';
 export const TAP_CONFIG_LOADING = 'TAP_CONFIG_LOADING';
+export const TAP_ERROR = 'TAP_ERROR';
 
 type actionType = {
   +type: string
@@ -78,7 +79,12 @@ export function submitConfig(config) {
           schema: response.data || []
         });
       })
-      .catch(() => {
+      .catch((error) => {
+        console.log(error, '-------');
+        dispatch({
+          type: TAP_ERROR,
+          tapError: error
+        });
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: []
