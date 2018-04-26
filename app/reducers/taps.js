@@ -5,7 +5,9 @@ import {
   UPDATE_TAP_FIELD,
   SCHEMA_RECEIVED,
   UPDATE_SCHEMA_FIELD,
-  SCHEMA_UPDATED
+  SCHEMA_UPDATED,
+  TAP_ERROR,
+  TOGGLE_MODAL
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -15,7 +17,8 @@ export type tapsStateType = {
   +fieldValues: {},
   +schema: Array<{}>,
   +schemaUpdated: false,
-  +error: boolean
+  +error: string,
+  +showModal: boolean
 };
 
 const defaultState = {
@@ -25,7 +28,8 @@ const defaultState = {
   fieldValues: {},
   schema: [],
   schemaUpdated: false,
-  error: ''
+  error: '',
+  showModal: false
 };
 
 export default function taps(state = defaultState, action) {
@@ -84,6 +88,15 @@ export default function taps(state = defaultState, action) {
         schemaUpdated: true,
         error: action.error
       });
+    case TAP_ERROR:
+      return Object.assign({}, state, {
+        showModal: true,
+        schema: [],
+        error: action.error,
+        tapsLoading: false
+      });
+    case TOGGLE_MODAL:
+      return { ...state, showModal: !state.showModal };
     default:
       return state;
   }
