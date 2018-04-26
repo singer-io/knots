@@ -37,6 +37,22 @@ router.get('/taps', (req, res) => {
     });
 });
 
+router.post('/taps/', (req, res) => {
+  const { tap, version, knot } = req.body;
+  addTap(tap, version, knot)
+    .then((config) => {
+      res.json({
+        config
+      });
+    })
+    .catch((error) => {
+      res.json({
+        config: null,
+        error
+      });
+    });
+});
+
 router.get('/knots', (req, res) => {
   detectDocker()
     .then(() => {
@@ -44,31 +60,6 @@ router.get('/knots', (req, res) => {
         .then((knots) => res.json({ knots, docker: true }))
         .catch(() => {
           res.json([]);
-        });
-    })
-    .catch(() => {
-      res.json({ docker: false });
-    });
-});
-
-router.post('/taps/', (req, res) => {
-  detectDocker()
-    .then((dockerVersion) => {
-      const { tap, version, knot } = req.body;
-      addTap(tap, version, knot)
-        .then((resObject) => {
-          res.json({
-            dockerVersion,
-            config: resObject.config,
-            fieldValues: resObject.fieldValues
-          });
-        })
-        .catch(() => {
-          res.json({
-            dockerVersion,
-            config: null,
-            fieldValues: null
-          });
         });
     })
     .catch(() => {

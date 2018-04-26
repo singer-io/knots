@@ -1,13 +1,17 @@
-import { TAPS_LOADING, UPDATE_TAPS } from '../actions/taps';
+import { TAPS_LOADING, UPDATE_TAPS, UPDATE_TAP_FIELDS } from '../actions/taps';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
-  +taps: Array<string>
+  +taps: Array<string>,
+  +tapFields: Array<{}>,
+  +error: boolean
 };
 
 const defaultState = {
   tapsLoading: false,
-  taps: []
+  taps: [],
+  tapFields: [],
+  error: ''
 };
 
 export default function taps(state = defaultState, action) {
@@ -18,6 +22,12 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapsLoading: false,
         taps: action.taps,
+        error: action.error
+      });
+    case UPDATE_TAP_FIELDS:
+      return Object.assign({}, state, {
+        tapsLoading: false,
+        tapFields: action.tapFields,
         error: action.error
       });
     default:

@@ -1,6 +1,5 @@
 // @flow
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styles from './Tap.css';
 
 type Props = {
@@ -8,7 +7,8 @@ type Props = {
   name: string,
   repo: string,
   tapKey: string,
-  version: string
+  version: string,
+  selectTap: (tap: string, version: string) => void
 };
 
 const Tap = (props: Props) => (
@@ -22,9 +22,14 @@ const Tap = (props: Props) => (
       />
     </div>
     <div className={styles.info}>
-      <Link to={`/connect/?tap=${props.tapKey}&version=${props.version}`}>
-        <h5 className={styles.name}>{props.name}</h5>
-      </Link>
+      <button
+        className={styles.name}
+        onClick={() => {
+          props.selectTap(props.tapKey, props.version);
+        }}
+      >
+        {props.name}
+      </button>
       <div className={styles.repo}>
         <a href={props.repo} target="_blank">
           View repo

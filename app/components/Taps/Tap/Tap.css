@@ -24,8 +24,9 @@ a:hover {
 }
 
 .name {
-  width: 100%;
-  color: black;
+  padding: 0;
+  background: none;
+  border: none;
 }
 
 .repo {

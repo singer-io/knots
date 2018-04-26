@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Container, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 
 import Loader from '../Loader';
@@ -19,8 +20,10 @@ type Props = {
       repo: string,
       tapKey: string,
       version: string
-    }>
-  }
+    }>,
+    tapFields: Array<{}>
+  },
+  selectTap: (tap: string, version: string) => void
 };
 
 export default class Taps extends Component<Props> {
@@ -29,7 +32,11 @@ export default class Taps extends Component<Props> {
   }
 
   render() {
-    const { tapsLoading, taps } = this.props.tapsStore;
+    const { tapsLoading, taps, tapFields } = this.props.tapsStore;
+
+    if (tapFields.length > 0) {
+      return <Redirect push to="/connect" />;
+    }
 
     return (
       <div>
@@ -52,12 +59,9 @@ export default class Taps extends Component<Props> {
                       <Col md={{ size: 4 }}>
                         {taps.map((tap) => (
                           <Tap
+                            {...tap}
                             key={tap.tapKey}
-                            name={tap.name}
-                            logo={tap.logo}
-                            repo={tap.repo}
-                            tapKey={tap.tapKey}
-                            version={tap.version}
+                            selectTap={this.props.selectTap}
                           />
                         ))}
                       </Col>
