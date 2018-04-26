@@ -1,7 +1,7 @@
 .progress {
   position: relative;
   top: 20px;
-  left: 12.5%;
+  left: 10%;
   z-index: -1;
   height: 2px;
   width: 80%;
