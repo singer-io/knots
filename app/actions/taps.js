@@ -1,3 +1,4 @@
+// @flow
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
@@ -5,6 +6,7 @@ const baseUrl = 'http://localhost:4321';
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
+export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 
 type actionType = {
   +type: string
@@ -61,5 +63,30 @@ export function selectTap(tap: string, version: string) {
           error
         })
       );
+  };
+}
+
+export function updateTapField(key: string, value: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TAP_FIELD,
+      key,
+      value
+    });
+  };
+}
+
+export function submitConfig(config: {}) {
+  return (dispatch: (action: actionType) => void) => {
+    axios
+      .post(`${baseUrl}/tap/schema/`, {
+        config
+      })
+      .then((response) => {
+        console.log('Done', response);
+      })
+      .catch((error) => {
+        console.log('Error', error);
+      });
   };
 }

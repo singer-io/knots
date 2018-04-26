@@ -53,6 +53,16 @@ router.post('/taps/', (req, res) => {
     });
 });
 
+router.post('/tap/schema/', (req, res) => {
+  addSchema(req)
+    .then((schema) => {
+      res.json(schema.streams);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
 router.get('/knots', (req, res) => {
   detectDocker()
     .then(() => {
@@ -64,16 +74,6 @@ router.get('/knots', (req, res) => {
     })
     .catch(() => {
       res.json({ docker: false });
-    });
-});
-
-router.post('/tap/schema/', (req, res) => {
-  addSchema(req)
-    .then((schema) => {
-      res.json(schema.streams);
-    })
-    .catch((err) => {
-      res.json(err);
     });
 });
 
