@@ -59,7 +59,7 @@ router.post('/tap/schema/', (req, res) => {
       res.json({ schema: schema.streams });
     })
     .catch((error) => {
-      res.json({ shema: [], error });
+      res.status(400).json({ schema: [], error });
     });
 });
 

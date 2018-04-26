@@ -10,6 +10,8 @@ export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
 export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
+export const TAP_ERROR = 'TAP_ERROR';
+export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 
 type actionType = {
   +type: string
@@ -92,14 +94,14 @@ export function submitConfig(config: {}) {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: response.data.schema,
-          error: response.data.error
+          error: ''
         });
       })
       .catch((error) => {
         dispatch({
-          type: SCHEMA_RECEIVED,
+          type: TAP_ERROR,
           schema: [],
-          error
+          error: error.response.data.error
         });
       });
   };
@@ -137,4 +139,9 @@ export function submitSchema(schema: {}) {
         });
       });
   };
+}
+
+export function toggle() {
+  return (dispatch: (action: actionType) => void) =>
+    dispatch({ type: TOGGLE_MODAL });
 }

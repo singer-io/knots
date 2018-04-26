@@ -328,7 +328,9 @@ const writeConfig = (req) =>
                   cmdOutput = stderr.toString();
                 } finally {
                   req.io.emit('live-logs', cmdOutput);
+                  reject(cmdOutput);
                 }
+                reject(cmdOutput);
               } else {
                 resolve();
               }
