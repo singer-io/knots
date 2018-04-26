@@ -8,6 +8,8 @@ export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
+export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
+export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 
 type actionType = {
   +type: string
@@ -97,6 +99,40 @@ export function submitConfig(config: {}) {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: [],
+          error
+        });
+      });
+  };
+}
+
+export function editSchemaField(field: string, index: string, value: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_SCHEMA_FIELD,
+      field,
+      index,
+      value
+    });
+  };
+}
+
+export function submitSchema(schema: {}) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: TAPS_LOADING
+    });
+    axios
+      .put(`${baseUrl}/schema/`, {
+        streams: schema
+      })
+      .then(() => {
+        dispatch({
+          type: SCHEMA_UPDATED
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: SCHEMA_UPDATED,
           error
         });
       });

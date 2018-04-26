@@ -639,7 +639,6 @@ const downloadKnot = (knotName) =>
 
 const getToken = (knot) =>
   new Promise((resolve, reject) => {
-    console.log('The knot', knot);
     if (knot) {
       readFile(path.resolve(tempFolder, 'knots', knot, 'target', 'config.json'))
         .then((configObject) => resolve(configObject.api_token))

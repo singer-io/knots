@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as SchemaActions from '../actions/schema';
+import * as TapActions from '../actions/taps';
 import Schema from '../components/Schema';
 
 function mapStateToProps(state) {
@@ -11,7 +11,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(SchemaActions, dispatch);
+  return bindActionCreators(TapActions, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Schema);

@@ -3,7 +3,9 @@ import {
   UPDATE_TAPS,
   UPDATE_TAP_FIELDS,
   UPDATE_TAP_FIELD,
-  SCHEMA_RECEIVED
+  SCHEMA_RECEIVED,
+  UPDATE_SCHEMA_FIELD,
+  SCHEMA_UPDATED
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -12,6 +14,7 @@ export type tapsStateType = {
   +tapFields: Array<{}>,
   +fieldValues: {},
   +schema: Array<{}>,
+  +schemaUpdated: false,
   +error: boolean
 };
 
@@ -21,11 +24,13 @@ const defaultState = {
   tapFields: [],
   fieldValues: {},
   schema: [],
+  schemaUpdated: false,
   error: ''
 };
 
 export default function taps(state = defaultState, action) {
   const { fieldValues } = state;
+  const { schema } = state;
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -50,6 +55,33 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapsLoading: false,
         schema: action.schema,
+        error: action.error
+      });
+    case UPDATE_SCHEMA_FIELD:
+      if (schema[action.index]) {
+        switch (action.field) {
+          case 'selected':
+            schema[action.index].metadata[0].metadata[action.field] =
+              action.value;
+
+            return Object.assign({}, state, {
+              tapSchema: schema
+            });
+          case 'replication_key':
+            schema[action.index].replication_key = action.value;
+
+            return Object.assign({}, state, {
+              tapSchema: schema
+            });
+          default:
+            return state;
+        }
+      }
+      return state;
+    case SCHEMA_UPDATED:
+      return Object.assign({}, state, {
+        tapsLoading: false,
+        schemaUpdated: true,
         error: action.error
       });
     default:

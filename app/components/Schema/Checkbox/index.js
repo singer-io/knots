@@ -1,7 +1,6 @@
 // @flow
-
 import React, { Component } from 'react';
-import styles from './Checkbox.css';
+import { FormGroup, Input } from 'reactstrap';
 
 type Props = {
   checked: boolean,
@@ -28,10 +27,13 @@ export default class Checkbox extends Component<Props, State> {
 
   render() {
     return (
-      // eslint-disable-next-line
-      <div className={styles.checkbox} onClick={this.toggle}>
-        {this.state.checked && <i className="fa fa-check" aria-hidden="true" />}
-      </div>
+      <FormGroup check>
+        <Input
+          type="checkbox"
+          onClick={this.toggle}
+          checked={this.state.checked}
+        />
+      </FormGroup>
     );
   }
 }

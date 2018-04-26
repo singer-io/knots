@@ -1,7 +1,8 @@
 import {
   UPDATE_TAPS,
   UPDATE_TAP_FIELDS,
-  SCHEMA_RECEIVED
+  SCHEMA_RECEIVED,
+  SCHEMA_UPDATED
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -59,12 +60,6 @@ export default function progress(state = defaultState, action) {
       });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
-        0: {
-          text: 'Select Tap',
-          href: 'select-tap',
-          complete: true,
-          active: false
-        },
         1: {
           text: 'Configure Tap',
           href: 'configure-tap',
@@ -74,6 +69,21 @@ export default function progress(state = defaultState, action) {
         2: {
           text: 'Replication Options',
           href: 'replication-options',
+          complete: false,
+          active: true
+        }
+      });
+    case SCHEMA_UPDATED:
+      return Object.assign({}, state, {
+        2: {
+          text: 'Replication Options',
+          href: 'replication-options',
+          complete: true,
+          active: false
+        },
+        3: {
+          text: 'Configure Target',
+          href: 'configure-target',
           complete: false,
           active: true
         }

@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Target.css';
@@ -14,7 +13,7 @@ type Props = {
 
 const Target = (props: Props) => {
   const install = () => {
-    props.handleInstall(props.target, props.version);
+    props.handleInstall();
   };
 
   return (

@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { FormGroup, Input } from 'reactstrap';
 
 type Props = {
   index: string,
@@ -8,27 +9,32 @@ type Props = {
 };
 
 export default class Dropdown extends Component<Props> {
-  constructor() {
-    super();
-
-    this.handleChange = this.handleChange.bind(this);
-  }
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = e.currentTarget;
     this.props.handleChange('replication_key', this.props.index, value);
   };
 
   render() {
+    if (this.props.columns.length < 1) {
+      return 'N/A';
+    }
+
     return (
-      <select onChange={this.handleChange}>
-        <option value=" ">None</option>
-        {this.props.columns.map((column) => (
-          <option key={column} value={column}>
-            {column}
-          </option>
-        ))}
-      </select>
+      <FormGroup style={{ margin: '0' }}>
+        <Input
+          type="select"
+          name="select"
+          id="replicationKeys"
+          onChange={this.handleChange}
+        >
+          <option value="">-</option>
+          {this.props.columns.map((column) => (
+            <option key={column} value={column}>
+              {column}
+            </option>
+          ))}
+        </Input>
+      </FormGroup>
     );
   }
 }
