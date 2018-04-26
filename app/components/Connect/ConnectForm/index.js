@@ -22,7 +22,7 @@ export default class ConnectForm extends Component<Props> {
             <FormGroup key={field.key}>
               <Label for={field.label}>{field.label}</Label>
               <Input
-                type="string"
+                type={field.key === 'password' ? 'password' : 'string'}
                 name={field.key}
                 id={field.label}
                 onChange={this.props.handleChange}

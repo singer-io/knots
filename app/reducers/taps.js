@@ -2,7 +2,8 @@ import {
   TAPS_LOADING,
   UPDATE_TAPS,
   UPDATE_TAP_FIELDS,
-  UPDATE_TAP_FIELD
+  UPDATE_TAP_FIELD,
+  SCHEMA_RECEIVED
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -10,6 +11,7 @@ export type tapsStateType = {
   +taps: Array<string>,
   +tapFields: Array<{}>,
   +fieldValues: {},
+  +schema: Array<{}>,
   +error: boolean
 };
 
@@ -18,6 +20,7 @@ const defaultState = {
   taps: [],
   tapFields: [],
   fieldValues: {},
+  schema: [],
   error: ''
 };
 
@@ -42,6 +45,12 @@ export default function taps(state = defaultState, action) {
       fieldValues[action.key] = action.value;
       return Object.assign({}, state, {
         fieldValues
+      });
+    case SCHEMA_RECEIVED:
+      return Object.assign({}, state, {
+        tapsLoading: false,
+        schema: action.schema,
+        error: action.error
       });
     default:
       return state;

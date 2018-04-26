@@ -56,10 +56,10 @@ router.post('/taps/', (req, res) => {
 router.post('/tap/schema/', (req, res) => {
   addSchema(req)
     .then((schema) => {
-      res.json(schema.streams);
+      res.json({ schema: schema.streams });
     })
-    .catch((err) => {
-      res.json(err);
+    .catch((error) => {
+      res.json({ shema: [], error });
     });
 });
 

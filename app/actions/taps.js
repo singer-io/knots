@@ -7,6 +7,7 @@ export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
+export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 
 type actionType = {
   +type: string
@@ -78,15 +79,26 @@ export function updateTapField(key: string, value: string) {
 
 export function submitConfig(config: {}) {
   return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: TAPS_LOADING
+    });
     axios
       .post(`${baseUrl}/tap/schema/`, {
         config
       })
       .then((response) => {
-        console.log('Done', response);
+        dispatch({
+          type: SCHEMA_RECEIVED,
+          schema: response.data.schema,
+          error: response.data.error
+        });
       })
       .catch((error) => {
-        console.log('Error', error);
+        dispatch({
+          type: SCHEMA_RECEIVED,
+          schema: [],
+          error
+        });
       });
   };
 }
