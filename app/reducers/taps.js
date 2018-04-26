@@ -92,8 +92,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         showModal: true,
         schema: [],
-        error: action.error,
-        tapsLoading: false
+        error: action.error
       });
     case TOGGLE_MODAL:
       return { ...state, showModal: !state.showModal };
