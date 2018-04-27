@@ -1,13 +1,19 @@
-import { UPDATE_TARGETS, TARGETS_LOADING } from '../actions/targets';
+import {
+  UPDATE_TARGETS,
+  TARGETS_LOADING,
+  TARGET_INSTALLED
+} from '../actions/targets';
 
 export type targetsStateType = {
   +targets: Array<{}>,
-  +targetsLoading: boolean
+  +targetsLoading: boolean,
+  +targetInstalled: boolean
 };
 
 const defaultState = {
   targets: [],
-  targetsLoading: false
+  targetsLoading: false,
+  targetInstalled: false
 };
 
 export default function targets(state = defaultState, action) {
@@ -20,6 +26,11 @@ export default function targets(state = defaultState, action) {
       return Object.assign({}, state, {
         targetsLoading: false,
         targets: action.targets
+      });
+    case TARGET_INSTALLED:
+      return Object.assign({}, state, {
+        targetsLoading: false,
+        targetInstalled: true
       });
     default:
       return state;

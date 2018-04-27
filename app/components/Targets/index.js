@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Container, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 
 import Header from '../Header';
@@ -17,8 +18,10 @@ type Props = {
       repo: string,
       targetKey: string,
       version: string
-    }>
-  }
+    }>,
+    targetInstalled: boolean
+  },
+  selectTarget: (tap: string, version: string) => void
 };
 
 export default class Targets extends Component<Props> {
@@ -28,7 +31,15 @@ export default class Targets extends Component<Props> {
 
   render() {
     console.log('The props', this.props);
-    const { targetsLoading, targets } = this.props.targetsStore;
+    const {
+      targetsLoading,
+      targets,
+      targetInstalled
+    } = this.props.targetsStore;
+
+    if (targetInstalled) {
+      return <Redirect push to="/target" />;
+    }
 
     return (
       <div>
@@ -50,7 +61,11 @@ export default class Targets extends Component<Props> {
                     <CardBody>
                       <Col md={{ size: 4 }}>
                         {targets.map((target) => (
-                          <Target {...target} key={target.targetKey} />
+                          <Target
+                            {...target}
+                            key={target.targetKey}
+                            selectTarget={this.props.selectTarget}
+                          />
                         ))}
                       </Col>
                     </CardBody>

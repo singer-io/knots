@@ -1,3 +1,4 @@
+// @flow
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
@@ -33,8 +34,13 @@ export function getTargets() {
   };
 }
 
-export function installTargets(target, version) {
+export function selectTarget(target: string, version: string) {
   return (dispatch: (action: actionType) => void) => {
+    console.log('Called', target, version);
+    dispatch({
+      type: TARGETS_LOADING
+    });
+
     axios
       .post(`${baseUrl}/target/install`, {
         target,
@@ -45,9 +51,10 @@ export function installTargets(target, version) {
           type: TARGET_INSTALLED
         });
       })
-      .catch(() => {
+      .catch((error) => {
         dispatch({
-          type: TARGETS_LOADING
+          type: TARGET_INSTALLED,
+          error
         });
       });
   };

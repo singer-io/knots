@@ -5,6 +5,8 @@ import {
   SCHEMA_UPDATED
 } from '../actions/taps';
 
+import { TARGET_INSTALLED } from '../actions/targets';
+
 export type tapsStateType = {
   +items: [{ active: boolean }]
 };
@@ -90,6 +92,21 @@ export default function progress(state = defaultState, action) {
         3: {
           text: 'Select Target',
           href: 'select-target',
+          complete: false,
+          active: true
+        }
+      });
+    case TARGET_INSTALLED:
+      return Object.assign({}, state, {
+        3: {
+          text: 'Select Target',
+          href: 'select-target',
+          complete: true,
+          active: false
+        },
+        4: {
+          text: 'Configure Target',
+          href: 'configure-target',
           complete: false,
           active: true
         }

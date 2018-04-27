@@ -5,7 +5,10 @@ import styles from './Target.css';
 type Props = {
   logo: string,
   name: string,
-  repo: string
+  repo: string,
+  targetKey: string,
+  version: string,
+  selectTarget: (tap: string, version: string) => void
 };
 
 const Target = (props: Props) => (
@@ -19,7 +22,14 @@ const Target = (props: Props) => (
       />
     </div>
     <div className={styles.info}>
-      <button className={styles.name}>{props.name}</button>
+      <button
+        className={styles.name}
+        onClick={() => {
+          props.selectTarget(props.targetKey, props.version);
+        }}
+      >
+        {props.name}
+      </button>
       <div className={styles.repo}>
         <a href={props.repo} target="_blank">
           View repo
