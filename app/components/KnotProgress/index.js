@@ -17,7 +17,7 @@ const calculateProgress = (items) => {
     }
   });
 
-  return (indexOfActiveItem * 25).toString();
+  return (indexOfActiveItem * 20).toString();
 };
 
 const KnotProgress = (props: Props) => (

@@ -1,51 +1,42 @@
 // @flow
-
-import React, { Component } from 'react';
-import Header from '../Header';
-import Loader from '../Loader';
-import Navigtion from '../Navigation';
-import DataWorld from '../../containers/DataWorld';
-
+import React from 'react';
 import styles from './Target.css';
 
 type Props = {
-  submitFields: (dataset: string, token: string) => void,
-  targetsStore: { loading: boolean },
-  userStore: { selectedDataset: string, token: string }
+  logo: string,
+  name: string,
+  repo: string,
+  tapKey: string,
+  version: string,
+  selectTap: (tap: string, version: string) => void
 };
 
-export default class Target extends Component<Props> {
-  submitFields = () => {
-    this.props.submitFields(
-      this.props.userStore.selectedDataset,
-      this.props.userStore.token
-    );
-  };
-
-  render() {
-    return (
-      <div className={styles.Connect}>
-        <Header>
-          Configure <span className={styles.emphasis}>data.world</span>{' '}
-          Connection
-        </Header>
-        <div className={styles.connectBody}>
-          {this.props.targetsStore.loading && <Loader />}
-          <DataWorld />
-          {!this.props.targetsStore.loading && (
-            <div>
-              <Navigtion
-                back={{ name: 'Targets', path: '/targets' }}
-                next={{
-                  name: 'Finish',
-                  path: '/sync',
-                  onClick: this.submitFields
-                }}
-              />
-            </div>
-          )}
-        </div>
+const Target = (props: Props) => (
+  <div className={styles.Tap}>
+    <div className={styles.logoContainer}>
+      <img
+        className="mr-3"
+        style={{ maxWidth: '64px' }}
+        src={props.logo}
+        alt={props.name}
+      />
+    </div>
+    <div className={styles.info}>
+      <button
+        className={styles.name}
+        onClick={() => {
+          props.selectTap(props.tapKey, props.version);
+        }}
+      >
+        {props.name}
+      </button>
+      <div className={styles.repo}>
+        <a href={props.repo} target="_blank">
+          View repo
+        </a>
       </div>
-    );
-  }
-}
+    </div>
+  </div>
+);
+
+export default Target;

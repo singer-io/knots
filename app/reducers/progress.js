@@ -24,12 +24,18 @@ const defaultState = {
     active: false
   },
   3: {
+    text: 'Select Target',
+    href: 'select-target',
+    complete: false,
+    active: false
+  },
+  4: {
     text: 'Configure Target',
     href: 'configure-target',
     complete: false,
     active: false
   },
-  4: { text: 'Save/Run', href: 'run', complete: false, active: false }
+  5: { text: 'Save/Run', href: 'run', complete: false, active: false }
 };
 
 export default function progress(state = defaultState, action) {
@@ -82,8 +88,8 @@ export default function progress(state = defaultState, action) {
           active: false
         },
         3: {
-          text: 'Configure Target',
-          href: 'configure-target',
+          text: 'Select Target',
+          href: 'select-target',
           complete: false,
           active: true
         }
