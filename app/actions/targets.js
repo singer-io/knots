@@ -36,7 +36,6 @@ export function getTargets() {
 
 export function selectTarget(target: string, version: string) {
   return (dispatch: (action: actionType) => void) => {
-    console.log('Called', target, version);
     dispatch({
       type: TARGETS_LOADING
     });

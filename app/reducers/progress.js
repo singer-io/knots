@@ -6,6 +6,7 @@ import {
 } from '../actions/taps';
 
 import { TARGET_INSTALLED } from '../actions/targets';
+import { TARGET_CONFIGURED } from '../actions/user';
 
 export type tapsStateType = {
   +items: [{ active: boolean }]
@@ -107,6 +108,21 @@ export default function progress(state = defaultState, action) {
         4: {
           text: 'Configure Target',
           href: 'configure-target',
+          complete: false,
+          active: true
+        }
+      });
+    case TARGET_CONFIGURED:
+      return Object.assign({}, state, {
+        4: {
+          text: 'Configure Target',
+          href: 'configure-target',
+          complete: true,
+          active: false
+        },
+        5: {
+          text: 'Save/Run',
+          href: 'run',
           complete: false,
           active: true
         }

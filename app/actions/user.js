@@ -2,27 +2,26 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
 
-export const UPDATE_TARGETS = 'UPDATE_TAPS';
-export const TOKEN_LOADING = 'TOKEN_LOADING';
-export const TOKEN_LOADED = 'TOKEN_LOADED';
-export const TOKEN_LOADING_ERROR = 'TOKEN_LOADING_ERROR';
 export const UPDATE_DATASETS = 'UPDATE_DATASETS';
 export const UPDATE_DATASET = 'UPDATE_DATASET';
 export const SET_TOKEN = 'SET_TOKEN';
+export const TARGET_CONFIGURED = 'TARGET_CONFIGURED';
 
 type actionType = {
   +type: string
 };
 
 export function submitFields(dataset, token) {
-  return () => {
+  return (dispatch: (action: actionType) => void) => {
     axios
       .post(`${baseUrl}/target/`, {
         dataset_id: dataset,
         api_token: token
       })
-      .then((response) => {
-        console.log('Final response', response);
+      .then(() => {
+        dispatch({
+          type: TARGET_CONFIGURED
+        });
       })
       .catch(() => {
         console.log('Final post failed');
