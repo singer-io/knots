@@ -1,15 +1,22 @@
-import { UPDATE_DATASETS, UPDATE_DATASET, SET_TOKEN } from '../actions/user';
+import {
+  UPDATE_DATASETS,
+  UPDATE_DATASET,
+  SET_TOKEN,
+  TARGET_CONFIGURED
+} from '../actions/user';
 
 export type targetsStateType = {
   +datasets: Array<{ id: string, owner: string }>,
   +token: string,
-  +selectedDataset: string
+  +selectedDataset: string,
+  +targetConfigured: boolean
 };
 
 const defaultState = {
   datasets: [],
   token: '',
-  selectedDataset: ''
+  selectedDataset: '',
+  targetConfigured: false
 };
 
 export default function targets(state = defaultState, action) {
@@ -23,6 +30,10 @@ export default function targets(state = defaultState, action) {
     case SET_TOKEN:
       return Object.assign({}, state, {
         token: action.token
+      });
+    case TARGET_CONFIGURED:
+      return Object.assign({}, state, {
+        targetConfigured: true
       });
     default:
       return state;

@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { Container, Row, Col, Button } from 'reactstrap';
 
 import Header from '../Header';
@@ -8,7 +9,11 @@ import DataWorld from '../../containers/DataWorld';
 
 type Props = {
   submitFields: (dataset: string, token: string) => void,
-  userStore: { selectedDataset: string, token: string }
+  userStore: {
+    selectedDataset: string,
+    token: string,
+    targetConfigured: boolean
+  }
 };
 
 export default class Target extends Component<Props> {
@@ -20,6 +25,10 @@ export default class Target extends Component<Props> {
   };
 
   render() {
+    if (this.props.userStore.targetConfigured) {
+      return <Redirect push to="/sync" />;
+    }
+
     return (
       <div>
         <Header />

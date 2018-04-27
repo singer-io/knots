@@ -6,8 +6,7 @@ import {
 
 export type targetsStateType = {
   +targets: Array<{}>,
-  +targetsLoading: boolean,
-  +targetInstalled: boolean
+  +targetsLoading: boolean
 };
 
 const defaultState = {
