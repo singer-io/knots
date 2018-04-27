@@ -7,9 +7,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Card,
-  CardText,
-  CardBody
+  Card
 } from 'reactstrap';
 
 import Header from '../Header';
@@ -27,17 +25,23 @@ type Props = {
     }>,
     fieldValues: {},
     error: string,
-    showModal: boolean
+    showModal: boolean,
+    liveLogs: string
   },
   toggle: () => void,
   updateTapField: (key: string, value: string) => void,
-  submitConfig: (fieldValues: {}) => void
+  submitConfig: (fieldValues: {}) => void,
+  discoveryLiveLogs: () => void
 };
 
 export default class Taps extends Component<Props> {
   constructor() {
     super();
     this.toggle = this.toggle.bind(this);
+  }
+
+  componentWillMount() {
+    this.props.discoveryLiveLogs();
   }
 
   toggle() {
@@ -54,7 +58,13 @@ export default class Taps extends Component<Props> {
   };
 
   render() {
-    const { tapsLoading, schema, error, showModal } = this.props.tapsStore;
+    const {
+      tapsLoading,
+      schema,
+      error,
+      showModal,
+      liveLogs
+    } = this.props.tapsStore;
     if (schema.length > 0) {
       return <Redirect push to="/schema" />;
     }
@@ -73,11 +83,7 @@ export default class Taps extends Component<Props> {
                 style={{ height: '340px' }}
                 className="pre-scrollable text-muted"
               >
-                live-logs live-logs! live-logs live-logs! live-logs live-logs!
-                live-logs live-logs! live-logs live-logs! live-logs live-logs!
-                live-logs live-logs! live-logs live-logs! live-logs live-logs!
-                live-logs live-logs! live-logs live-logs! live-logs live-logs!
-                live-logs live-logs! live-logs live-logs! live-logs live-logs!
+                {liveLogs}
               </pre>
             </Card>
             <Button color="primary" className="float-right mt-3">

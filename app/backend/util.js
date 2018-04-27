@@ -321,11 +321,11 @@ const writeConfig = (req) =>
           .then(() => {
             exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
               if (error || stderr) {
-                let cmdOutput;
+                let cmdOutput = 'Retrieving schema\n';
                 try {
-                  cmdOutput = error.toString();
+                  cmdOutput += error.toString();
                 } catch (err) {
-                  cmdOutput = stderr.toString();
+                  cmdOutput += stderr.toString();
                 } finally {
                   req.io.emit('live-logs', cmdOutput);
                   reject(cmdOutput);
