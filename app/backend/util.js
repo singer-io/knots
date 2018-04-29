@@ -282,22 +282,19 @@ const readFieldValues = (knot) =>
 
 const addTap = (tap, version, knot) =>
   new Promise((resolve, reject) => {
-    const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
-    installTap.on('close', () => {
-      createKnot(tap, version)
-        .then((config) => {
-          if (knot) {
-            readFieldValues(knot)
-              .then((fieldValues) => {
-                resolve({ config, fieldValues });
-              })
-              .catch(reject);
-          } else {
-            resolve(config);
-          }
-        })
-        .catch(reject);
-    });
+    createKnot(tap, version)
+      .then((config) => {
+        if (knot) {
+          readFieldValues(knot)
+            .then((fieldValues) => {
+              resolve({ config, fieldValues });
+            })
+            .catch(reject);
+        } else {
+          resolve(config);
+        }
+      })
+      .catch(reject);
   });
 
 const validateCatalogFile = (pathToCatalog) =>
@@ -330,34 +327,37 @@ const writeConfig = (req) =>
           tapRedshiftDockerCommand
         )
           .then(() => {
-            exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
-              if (error || stderr) {
-                let cmdOutput;
-                try {
-                  cmdOutput = error.toString();
-                } catch (err) {
-                  cmdOutput = stderr.toString();
-                } finally {
-                  req.io.emit('live-logs', cmdOutput);
+            const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
+            installTap.on('close', () => {
+              exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
+                if (error || stderr) {
+                  let cmdOutput;
+                  try {
+                    cmdOutput = error.toString();
+                  } catch (err) {
+                    cmdOutput = stderr.toString();
+                  } finally {
+                    req.io.emit('live-logs', cmdOutput);
+                    reject(cmdOutput);
+                  }
                   reject(cmdOutput);
+                } else {
+                  validateCatalogFile(
+                    path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+                  )
+                    .then((schema) => {
+                      try {
+                        JSON.parse(schema);
+                        resolve();
+                      } catch (e) {
+                        reject(e);
+                      }
+                    })
+                    .catch(() => {
+                      reject();
+                    });
                 }
-                reject(cmdOutput);
-              } else {
-                validateCatalogFile(
-                  path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
-                )
-                  .then((schema) => {
-                    try {
-                      JSON.parse(schema);
-                      resolve();
-                    } catch (e) {
-                      reject(e);
-                    }
-                  })
-                  .catch(() => {
-                    reject();
-                  });
-              }
+              });
             });
           })
           .catch(reject);
@@ -441,19 +441,13 @@ const getTargets = () =>
 
 const addTarget = (targetName, version) =>
   new Promise((resolve, reject) => {
-    const installTarget = spawn('docker', [
-      'run',
-      'gbolahan/target-datadotworld:1.0.0b3'
-    ]);
     const val = {
       name: targetName,
       version
     };
-    installTarget.on('close', () => {
-      addKnotAttribute(['target'], val)
-        .then(resolve)
-        .catch(reject);
-    });
+    addKnotAttribute(['target'], val)
+      .then(resolve)
+      .catch(reject);
   });
 
 const addTargetConfig = (config) =>
@@ -493,11 +487,17 @@ const sync = (req, knot, mode) =>
     } else {
       knotPath = `${tempFolder}/docker`;
     }
-    if (mode === 'full') {
-      syncData = exec(commands.runSync(knotPath));
-    } else {
-      syncData = exec(commands.runPartialSync(knotPath));
-    }
+    const installTarget = spawn('docker', [
+      'run',
+      'gbolahan/target-datadotworld:1.0.0b3'
+    ]);
+    installTarget.on('close', () => {
+      if (mode === 'full') {
+        syncData = exec(commands.runSync(knotPath));
+      } else {
+        syncData = exec(commands.runPartialSync(knotPath));
+      }
+    });
 
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
