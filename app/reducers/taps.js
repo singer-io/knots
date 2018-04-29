@@ -19,6 +19,7 @@ export type tapsStateType = {
   +schema: Array<{}>,
   +schemaUpdated: false,
   +error: string,
+  +syntaxError: boolean,
   +showModal: boolean,
   +liveLogs: string
 };
@@ -31,6 +32,7 @@ const defaultState = {
   schema: [],
   schemaUpdated: false,
   error: '',
+  syntaxError: false,
   showModal: false,
   liveLogs: ''
 };
@@ -95,7 +97,8 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         showModal: true,
         schema: [],
-        error: action.error
+        error: action.error,
+        syntaxError: action.syntaxError
       });
     case TOGGLE_MODAL:
       return { ...state, showModal: !state.showModal };
