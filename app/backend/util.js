@@ -300,6 +300,17 @@ const addTap = (tap, version, knot) =>
     });
   });
 
+const validateCatalogFile = (pathToCatalog) =>
+  new Promise((resolve, reject) => {
+    readFile(pathToCatalog)
+      .then((schemaObject) => {
+        resolve(schemaObject);
+      })
+      .catch(() => {
+        reject();
+      });
+  });
+
 const writeConfig = (req) =>
   new Promise((resolve, reject) => {
     const { config } = req.body;
@@ -321,18 +332,31 @@ const writeConfig = (req) =>
           .then(() => {
             exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
               if (error || stderr) {
-                let cmdOutput = 'Retrieving schema\n';
+                let cmdOutput;
                 try {
-                  cmdOutput += error.toString();
+                  cmdOutput = error.toString();
                 } catch (err) {
-                  cmdOutput += stderr.toString();
+                  cmdOutput = stderr.toString();
                 } finally {
                   req.io.emit('live-logs', cmdOutput);
                   reject(cmdOutput);
                 }
                 reject(cmdOutput);
               } else {
-                resolve();
+                validateCatalogFile(
+                  path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+                )
+                  .then((schema) => {
+                    try {
+                      JSON.parse(schema);
+                      resolve();
+                    } catch (e) {
+                      reject(e);
+                    }
+                  })
+                  .catch(() => {
+                    reject();
+                  });
               }
             });
           })

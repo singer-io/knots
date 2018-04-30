@@ -1,19 +1,13 @@
 // @flow
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Card
-} from 'reactstrap';
+import { Button, Card } from 'reactstrap';
 
 import Header from '../Header';
 import Loader from '../Loader';
 import KnotProgress from '../../containers/KnotProgress';
 import ConnectForm from './ConnectForm';
+import Modals from './Modal';
 
 type Props = {
   tapsStore: {
@@ -26,12 +20,14 @@ type Props = {
     fieldValues: {},
     error: string,
     showModal: boolean,
-    liveLogs: string
+    liveLogs: string,
+    syntaxError: boolean
   },
   toggle: () => void,
   updateTapField: (key: string, value: string) => void,
   submitConfig: (fieldValues: {}) => void,
-  discoveryLiveLogs: () => void
+  discoveryLiveLogs: () => void,
+  history: { goback: () => void }
 };
 
 export default class Taps extends Component<Props> {
@@ -57,14 +53,20 @@ export default class Taps extends Component<Props> {
     this.props.submitConfig(this.props.tapsStore.fieldValues);
   };
 
+  goBack = () => {
+    this.props.history.goBack();
+  };
+
   render() {
     const {
       tapsLoading,
       schema,
       error,
       showModal,
-      liveLogs
+      liveLogs,
+      syntaxError
     } = this.props.tapsStore;
+
     if (schema.length > 0) {
       return <Redirect push to="/schema" />;
     }
@@ -89,29 +91,26 @@ export default class Taps extends Component<Props> {
             <Button color="primary" className="float-right mt-3">
               Continue
             </Button>
-            {error && (
-              <Modal fade={false} isOpen={showModal} toggle={this.toggle}>
-                <ModalHeader className="text-danger">
-                  <span className="oi oi-warning" /> Tap error
-                </ModalHeader>
-                <ModalBody>
-                  <p>Unable too execute tap in discovery mode.</p>
-                  <pre className="bg-light border border-light p-1 rounded">
-                    {error}
-                  </pre>
-                </ModalBody>
-                <ModalFooter>
-                  <a href="" className="mr-auto text-secondary">
-                    <small>Contact Support</small>
-                  </a>
-                  <Button outline color="secondary" onClick={this.toggle}>
-                    Abort
-                  </Button>
-                  <Button color="primary" onClick={this.toggle}>
-                    Reconfigure
-                  </Button>
-                </ModalFooter>
-              </Modal>
+            {error &&
+              !syntaxError && (
+                <Modals
+                  showModal={showModal}
+                  toggle={() => this.toggle()}
+                  headerText="Tap error"
+                  body="Unable to execute tap in discovery mode."
+                  error={error}
+                  reconfigure={() => this.goBack()}
+                />
+              )}
+            {syntaxError && (
+              <Modals
+                showModal={showModal}
+                toggle={() => this.toggle()}
+                headerText="Invalid schema"
+                body="Tap generated an invalid schema."
+                error={error}
+                reconfigure={() => this.goBack()}
+              />
             )}
           </div>
         )}

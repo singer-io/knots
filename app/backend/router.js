@@ -54,12 +54,21 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/schema/', (req, res) => {
+  let invalidSyntaxError = false;
   addSchema(req)
     .then((schema) => {
       res.json({ schema: schema.streams });
     })
     .catch((error) => {
-      res.status(400).json({ schema: [], error });
+      if (error instanceof SyntaxError) {
+        invalidSyntaxError = true;
+      }
+      const syntaxError = error.toString();
+      res.status(400).json({
+        schema: [],
+        error: syntaxError,
+        invalidSyntaxError
+      });
     });
 });
 

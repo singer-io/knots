@@ -106,7 +106,8 @@ export function submitConfig(config: {}) {
         dispatch({
           type: TAP_ERROR,
           schema: [],
-          error: error.response.data.error
+          error: error.response.data.error,
+          syntaxError: error.response.data.invalidSyntaxError
         });
       });
   };
