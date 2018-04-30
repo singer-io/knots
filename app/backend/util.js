@@ -327,26 +327,26 @@ const writeConfig = (req) =>
           tapRedshiftDockerCommand
         )
           .then(() => {
-            exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
-              if (error || stderr) {
-                let cmdOutput;
-                try {
-                  cmdOutput = error.toString();
-                } catch (err) {
-                  cmdOutput = stderr.toString();
-                } finally {
-                  req.io.emit('live-logs', cmdOutput);
-                  reject(cmdOutput);
-                }
-                reject(cmdOutput);
-              } else {
+            const runTap = exec(commands.runDiscovery(tempFolder));
+            req.io.emit('live-logs', 'Attempting to retrieve schema');
+            runTap.stdout.on('data', (data) => {
+              req.io.emit('live-logs', data.toString());
+            });
+            runTap.stderr.on('data', (data) => {
+              req.io.emit('live-logs', data.toString());
+              reject(data);
+            });
+            runTap.on('exit', (code) => {
+              if (code === 0) {
                 validateCatalogFile(
                   path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
                 )
-                  .then((schema) => {
+                  .then((jsonSchema) => {
+                    const schema = JSON.stringify(jsonSchema);
                     try {
                       JSON.parse(schema);
-                      resolve();
+                      req.io.emit('live-logs', 'Finished successfully');
+                      resolve(jsonSchema);
                     } catch (e) {
                       reject(e);
                     }
@@ -354,6 +354,8 @@ const writeConfig = (req) =>
                   .catch(() => {
                     reject();
                   });
+              } else {
+                reject();
               }
             });
           })
