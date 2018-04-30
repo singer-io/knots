@@ -327,37 +327,34 @@ const writeConfig = (req) =>
           tapRedshiftDockerCommand
         )
           .then(() => {
-            const installTap = spawn('docker', ['run', 'gbolahan/tap-redshift:b4']);
-            installTap.on('close', () => {
-              exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
-                if (error || stderr) {
-                  let cmdOutput;
-                  try {
-                    cmdOutput = error.toString();
-                  } catch (err) {
-                    cmdOutput = stderr.toString();
-                  } finally {
-                    req.io.emit('live-logs', cmdOutput);
-                    reject(cmdOutput);
-                  }
+            exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
+              if (error || stderr) {
+                let cmdOutput;
+                try {
+                  cmdOutput = error.toString();
+                } catch (err) {
+                  cmdOutput = stderr.toString();
+                } finally {
+                  req.io.emit('live-logs', cmdOutput);
                   reject(cmdOutput);
-                } else {
-                  validateCatalogFile(
-                    path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
-                  )
-                    .then((schema) => {
-                      try {
-                        JSON.parse(schema);
-                        resolve();
-                      } catch (e) {
-                        reject(e);
-                      }
-                    })
-                    .catch(() => {
-                      reject();
-                    });
                 }
-              });
+                reject(cmdOutput);
+              } else {
+                validateCatalogFile(
+                  path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+                )
+                  .then((schema) => {
+                    try {
+                      JSON.parse(schema);
+                      resolve();
+                    } catch (e) {
+                      reject(e);
+                    }
+                  })
+                  .catch(() => {
+                    reject();
+                  });
+              }
             });
           })
           .catch(reject);
@@ -487,18 +484,11 @@ const sync = (req, knot, mode) =>
     } else {
       knotPath = `${tempFolder}/docker`;
     }
-    const installTarget = spawn('docker', [
-      'run',
-      'gbolahan/target-datadotworld:1.0.0b3'
-    ]);
-    installTarget.on('close', () => {
-      if (mode === 'full') {
-        syncData = exec(commands.runSync(knotPath));
-      } else {
-        syncData = exec(commands.runPartialSync(knotPath));
-      }
-    });
-
+    if (mode === 'full') {
+      syncData = exec(commands.runSync(knotPath));
+    } else {
+      syncData = exec(commands.runPartialSync(knotPath));
+    }
     syncData.stderr.on('data', (data) => {
       req.io.emit('live-sync-logs', data.toString());
     });
