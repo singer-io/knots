@@ -104,21 +104,6 @@ export default function taps(state = defaultState, action) {
         schemaUpdated: true,
         error: action.error
       });
-    case TAP_ERROR:
-      return Object.assign({}, state, {
-        showModal: true,
-        schema: [],
-        error: action.error,
-        syntaxError: action.syntaxError
-      });
-    case TOGGLE_MODAL:
-      return { ...state, showModal: !state.showModal };
-    case DISCOVER_SCHEMA:
-      return Object.assign({}, state, {
-        tapsLoading: true,
-        liveLogs: action.liveLogs,
-        schema: action.schema
-      });
     default:
       return state;
   }

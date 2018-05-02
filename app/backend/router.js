@@ -58,15 +58,7 @@ router.post('/tap/config/', (req, res) => {
   addConfig(tap, config)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
-      if (error instanceof SyntaxError) {
-        invalidSyntaxError = true;
-      }
-      const syntaxError = error.toString();
-      res.status(400).json({
-        schema: [],
-        error: syntaxError,
-        invalidSyntaxError
-      });
+      res.json({ error });
     });
 });
 

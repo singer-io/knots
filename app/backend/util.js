@@ -6,14 +6,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
-const {
-  taps,
-  commands,
-  targets,
-  tapRedshiftFields,
-  tapRedshiftDockerCommand,
-  targetDataWorldDockerCommand
-} = require('./constants');
+const { taps, commands, targets, tapRedshiftFields } = require('./constants');
 
 let tempFolder;
 
@@ -307,17 +300,6 @@ const addTap = (tap, version, knot) =>
         }
       })
       .catch(reject);
-  });
-
-const validateCatalogFile = (pathToCatalog) =>
-  new Promise((resolve, reject) => {
-    readFile(pathToCatalog)
-      .then((schemaObject) => {
-        resolve(schemaObject);
-      })
-      .catch(() => {
-        reject();
-      });
   });
 
 const writeConfig = (config) =>
