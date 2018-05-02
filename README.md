@@ -21,7 +21,7 @@ $ touch Dockerfile
 
 Within the Dockerfile, specify necessary commands to build your image.
 
-Sample of a Dockerfile to build an images from `tap-redshift` python package;
+Sample of a Dockerfile to build an image from `tap-redshift` python package and `python:latest` as the base image;
 
 ```python
 FROM python:latest
