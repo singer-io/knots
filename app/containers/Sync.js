@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as KnotActions from '../actions/knots';
+import * as knotActions from '../actions/knots';
 import Sync from '../components/Sync';
 
 function mapStateToProps(state) {
@@ -12,7 +12,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(KnotActions, dispatch);
+  return bindActionCreators(knotActions, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Sync);

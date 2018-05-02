@@ -31,9 +31,8 @@ const KnotProgress = (props: Props) => (
         {props.index + 1}
       </span>
       <span
-        className={classNames('oi', 'oi-check', styles.checkIcon, {
-          [styles.hidden]: !props.complete
-        })}
+        style={{ display: props.complete ? 'inline-block' : 'none' }}
+        className={classNames('oi', 'oi-check', styles.checkIcon)}
       />
     </NavLink>
     <small>{props.text}</small>

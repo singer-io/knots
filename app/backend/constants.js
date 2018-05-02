@@ -1,5 +1,3 @@
-const os = require('os');
-
 const taps = [
   {
     name: 'Redshift',
@@ -22,27 +20,60 @@ const targets = [
   }
 ];
 
-const tapRedshiftDockerCommand = `FROM python:latest${
-  os.EOL
-}MAINTAINER 'data.world, Inc.(http://data.world/)'${
-  os.EOL
-}RUN pip install tap-redshift==1.0.0b4${os.EOL}COPY ./ /app/tap-redshift${
-  os.EOL
-}WORKDIR /app${os.EOL}CMD ["tap-redshift"]`;
-
-const targetDataWorldDockerCommand = `FROM python:latest${
-  os.EOL
-}MAINTAINER 'data.world, Inc.(http://data.world/)'${
-  os.EOL
-}RUN pip install target-datadotworld==1.0.0b3${
-  os.EOL
-}COPY ./ /app/target-datadotworld${os.EOL}WORKDIR /app${
-  os.EOL
-}CMD ["target-datadotworld"]`;
+const tapRedshiftFields = [
+  {
+    key: 'host',
+    label: 'Host/IP',
+    required: true,
+    validationText: 'Must be a valid server hostname or IP address',
+    placeholder: ''
+  },
+  {
+    key: 'port',
+    label: 'Port',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'dbname',
+    label: 'Database name',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'schema',
+    label: 'Database schema',
+    required: false,
+    validationText: '',
+    placeholder: 'public'
+  },
+  {
+    key: 'user',
+    label: 'Username',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'password',
+    label: 'Password',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  }
+];
 
 const commands = {
-  runDiscovery: (folderPath) =>
-    `docker run -v ${folderPath}/docker/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/docker/tap/catalog.json`,
+  runDiscovery: (folderPath, tap) => {
+    switch (tap) {
+      case 'tap-redshift':
+        return `docker run -v ${folderPath}/configs/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
+      default:
+        return '';
+    }
+  },
   runSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`,
   runPartialSync: (folderPath) =>
@@ -51,8 +82,7 @@ const commands = {
 
 module.exports = {
   taps,
-  tapRedshiftDockerCommand,
-  targetDataWorldDockerCommand,
   commands,
-  targets
+  targets,
+  tapRedshiftFields
 };

@@ -5,12 +5,16 @@ import {
   UPDATE_TAP_FIELD,
   SCHEMA_RECEIVED,
   UPDATE_SCHEMA_FIELD,
-  SCHEMA_UPDATED
+  SCHEMA_LOADING,
+  SCHEMA_UPDATED,
+  SELECT_TAP
 } from '../actions/taps';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
+  +schemaLoading: boolean,
   +taps: Array<string>,
+  +selectedTap: string,
   +tapFields: Array<{}>,
   +fieldValues: {},
   +schema: Array<{}>,
@@ -20,6 +24,8 @@ export type tapsStateType = {
 
 const defaultState = {
   tapsLoading: false,
+  selectedTap: '',
+  schemaLoading: false,
   taps: [],
   tapFields: [],
   fieldValues: {},
@@ -40,6 +46,10 @@ export default function taps(state = defaultState, action) {
         taps: action.taps,
         error: action.error
       });
+    case SELECT_TAP:
+      return Object.assign({}, state, {
+        selectedTap: action.tap
+      });
     case UPDATE_TAP_FIELDS:
       return Object.assign({}, state, {
         tapsLoading: false,
@@ -51,9 +61,13 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         fieldValues
       });
+    case SCHEMA_LOADING:
+      return Object.assign({}, state, {
+        schemaLoading: true
+      });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
-        tapsLoading: false,
+        schemaLoading: false,
         schema: action.schema,
         error: action.error
       });

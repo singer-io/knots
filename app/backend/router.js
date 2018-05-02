@@ -6,8 +6,8 @@ const {
   getKnots,
   getTaps,
   detectDocker,
-  addTap,
-  addSchema,
+  fetchTapFields,
+  addConfig,
   readSchema,
   writeSchema,
   getTargets,
@@ -38,8 +38,8 @@ router.get('/taps', (req, res) => {
 });
 
 router.post('/taps/', (req, res) => {
-  const { tap, version, knot } = req.body;
-  addTap(tap, version, knot)
+  const { tap } = req.body;
+  fetchTapFields(tap)
     .then((config) => {
       res.json({
         config
@@ -53,11 +53,10 @@ router.post('/taps/', (req, res) => {
     });
 });
 
-router.post('/tap/schema/', (req, res) => {
-  addSchema(req)
-    .then((schema) => {
-      res.json({ schema: schema.streams });
-    })
+router.post('/tap/config/', (req, res) => {
+  const { tap, config } = req.body;
+  addConfig(tap, config)
+    .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
       res.json({ shema: [], error });
     });
@@ -143,8 +142,7 @@ router.post('/target/', (req, res) => {
 });
 
 router.post('/sync/', (req, res) => {
-  const { knot, mode } = req.body;
-  sync(req, knot, mode)
+  sync()
     .then(() => {
       res.json({ status: 200 });
     })

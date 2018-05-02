@@ -5,29 +5,10 @@ const baseUrl = 'http://localhost:4321';
 export const UPDATE_DATASETS = 'UPDATE_DATASETS';
 export const UPDATE_DATASET = 'UPDATE_DATASET';
 export const SET_TOKEN = 'SET_TOKEN';
-export const TARGET_CONFIGURED = 'TARGET_CONFIGURED';
 
 type actionType = {
   +type: string
 };
-
-export function submitFields(dataset, token) {
-  return (dispatch: (action: actionType) => void) => {
-    axios
-      .post(`${baseUrl}/target/`, {
-        dataset_id: dataset,
-        api_token: token
-      })
-      .then(() => {
-        dispatch({
-          type: TARGET_CONFIGURED
-        });
-      })
-      .catch(() => {
-        console.log('Final post failed');
-      });
-  };
-}
 
 export function setToken(token) {
   return (dispatch: (action: actionType) => void) => {

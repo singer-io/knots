@@ -10,7 +10,8 @@ import {
   Label,
   Input,
   Table,
-  Button
+  Button,
+  Progress
 } from 'reactstrap';
 
 import Header from '../Header';
@@ -27,6 +28,7 @@ type Props = {
         metadata: any // eslint-disable-line
       }>
     }>,
+    schemaLoading: boolean,
     schemaUpdated: boolean
   },
   editSchemaField: (field: string, index: string, value: string) => void,
@@ -66,64 +68,74 @@ export default class Schema extends Component<Props> {
 
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
-              <FormGroup className="form-row form-group form-inline mt-5">
-                <Label for="startDate" className="col-form-label">
-                  Start replication from:
-                </Label>
-                <Input
-                  type="date"
-                  name="date"
-                  id="exampleDate"
-                  placeholder="date placeholder"
-                />
-              </FormGroup>
-              <Table>
-                <thead className="thead-light">
-                  <tr>
-                    <th className="text-center">Include</th>
-                    <th>Table/Stream</th>
-                    <th>Replication Key</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {this.props.tapsStore.schema.map((stream, index) => (
-                    <tr key={stream.tap_stream_id}>
-                      <td className="text-center">
-                        <Checkbox
-                          checked={!!stream.metadata[0].metadata.selected}
-                          index={index.toString()}
-                          handleChange={this.handleChange}
-                        />
-                      </td>
-                      <td>{stream.stream}</td>
-                      <td>
-                        <Dropdown
-                          columns={
-                            stream.metadata[0].metadata[
-                              'valid-replication-keys'
-                            ] || []
-                          }
-                          index={index.toString()}
-                          handleChange={this.handleChange}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-              <Alert color="warning" style={{ opacity: 1 }}>
-                Start date will be ignored unless replication keys are selected
-              </Alert>
-              <Alert color="danger" style={{ opacity: 1 }}>
-                A minimum of one table/stream must be selected
-              </Alert>
-              <Button
-                color="primary"
-                className="float-right"
-                onClick={this.submit}
-              >
-                Continue
-              </Button>
+              {this.props.tapsStore.schemaLoading && (
+                <Progress value="100" striped animated className="mt-5">
+                  Retrieving schema information...
+                </Progress>
+              )}
+              {!this.props.tapsStore.schemaLoading && (
+                <div>
+                  <FormGroup className="form-row form-group form-inline mt-5">
+                    <Label for="startDate" className="col-form-label">
+                      Start replication from:
+                    </Label>
+                    <Input
+                      type="date"
+                      name="date"
+                      id="exampleDate"
+                      placeholder="date placeholder"
+                    />
+                  </FormGroup>
+                  <Table>
+                    <thead className="thead-light">
+                      <tr>
+                        <th className="text-center">Include</th>
+                        <th>Table/Stream</th>
+                        <th>Replication Key</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.props.tapsStore.schema.map((stream, index) => (
+                        <tr key={stream.tap_stream_id}>
+                          <td className="text-center">
+                            <Checkbox
+                              checked={!!stream.metadata[0].metadata.selected}
+                              index={index.toString()}
+                              handleChange={this.handleChange}
+                            />
+                          </td>
+                          <td>{stream.stream}</td>
+                          <td>
+                            <Dropdown
+                              columns={
+                                stream.metadata[0].metadata[
+                                  'valid-replication-keys'
+                                ] || []
+                              }
+                              index={index.toString()}
+                              handleChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                  <Alert color="warning" style={{ opacity: 1 }}>
+                    Start date will be ignored unless replication keys are
+                    selected
+                  </Alert>
+                  <Alert color="danger" style={{ opacity: 1 }}>
+                    A minimum of one table/stream must be selected
+                  </Alert>
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.submit}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              )}
             </Col>
           </Row>
         </Container>

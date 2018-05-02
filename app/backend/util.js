@@ -10,6 +10,7 @@ const {
   taps,
   commands,
   targets,
+  tapRedshiftFields,
   tapRedshiftDockerCommand,
   targetDataWorldDockerCommand
 } = require('./constants');
@@ -50,6 +51,17 @@ const getTaps = () =>
       resolve(taps);
     } else {
       reject();
+    }
+  });
+
+const fetchTapFields = (tap) =>
+  new Promise((resolve, reject) => {
+    switch (tap) {
+      case 'tap-redshift':
+        resolve(tapRedshiftFields);
+        break;
+      default:
+        reject(new Error('Unknown tap'));
     }
   });
 
@@ -300,88 +312,67 @@ const addTap = (tap, version, knot) =>
     });
   });
 
-const writeConfig = (req) =>
+const writeConfig = (config) =>
   new Promise((resolve, reject) => {
-    const { config } = req.body;
     writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
       .then(() => {
-        shell.rm('-rf', path.resolve(tempFolder, 'docker', 'tap'));
-        shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'tap'));
+        shell.rm('-rf', path.resolve(tempFolder, 'configs', 'tap'));
+        shell.mkdir('-p', path.resolve(tempFolder, 'configs', 'tap'));
         shell.mv(
           path.resolve(tempFolder, 'config.json'),
-          path.resolve(tempFolder, 'docker', 'tap')
+          path.resolve(tempFolder, 'configs', 'tap')
         );
-
-        shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'tap'));
-        shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'images', 'tap'));
-        writeFile(
-          path.resolve(tempFolder, 'docker', 'images', 'tap', 'Dockerfile'),
-          tapRedshiftDockerCommand
-        )
-          .then(() => {
-            exec(commands.runDiscovery(tempFolder), (error, stdout, stderr) => {
-              if (error || stderr) {
-                let cmdOutput;
-                try {
-                  cmdOutput = error.toString();
-                } catch (err) {
-                  cmdOutput = stderr.toString();
-                } finally {
-                  req.io.emit('live-logs', cmdOutput);
-                }
-              } else {
-                resolve();
-              }
-            });
-          })
-          .catch(reject);
+        resolve();
       })
       .catch(reject);
   });
 
-const readSchema = (knot) =>
+const getSchema = (tap) =>
   new Promise((resolve, reject) => {
-    let knotPath;
-    if (knot) {
-      knotPath = path.resolve(
-        tempFolder,
-        'knots',
-        knot,
-        'docker',
-        'tap',
-        'catalog.json'
-      );
-    } else {
-      knotPath = path.resolve(tempFolder, 'docker', 'tap', 'catalog.json');
-    }
+    const runDiscovery = exec(commands.runDiscovery(tempFolder, tap));
+
+    runDiscovery.stderr.on('data', (data) => {
+      console.log('Err', data.toString());
+    });
+
+    runDiscovery.stdout.on('data', (data) => {
+      console.log('OUT', data.toString());
+    });
+
+    runDiscovery.on('exit', (code) => {
+      console.log('Done', code.toString());
+      if (code > 0) {
+        reject(new Error('Failed to run discovery'));
+      } else {
+        resolve();
+      }
+    });
+  });
+
+const readSchema = () =>
+  new Promise((resolve, reject) => {
+    const knotPath = path.resolve(tempFolder, 'configs', 'tap', 'catalog.json');
     readFile(knotPath)
       .then(resolve)
       .catch(reject);
   });
 
-const getSchema = (req) =>
+const addConfig = (tap, config) =>
   new Promise((resolve, reject) => {
-    writeConfig(req)
+    // Write the config to configs/tap/
+    writeConfig(config)
       .then(() => {
-        readSchema()
-          .then(resolve)
+        // Get tap schema by running discovery mode
+        getSchema(tap)
+          .then(() => {
+            // Schema now on file, read it and return the result
+            readSchema()
+              .then(resolve)
+              .catch(reject);
+          })
           .catch(reject);
       })
       .catch(reject);
-  });
-
-const addSchema = (req) =>
-  new Promise((resolve, reject) => {
-    const { config } = req.body;
-    addKnotAttribute(['tap', 'config'], config)
-      .then(() => {
-        getSchema(req)
-          .then(resolve)
-          .catch(reject);
-      })
-      .catch((err) => {
-        reject(err);
-      });
   });
 
 const writeSchema = (schemaObject) =>
@@ -457,33 +448,21 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = (req, knot, mode) =>
+const sync = () =>
   new Promise((resolve) => {
-    let knotPath;
-    let syncData;
-
-    if (knot) {
-      knotPath = `${tempFolder}/knots/${knot}`;
-    } else {
-      knotPath = `${tempFolder}/docker`;
-    }
-    if (mode === 'full') {
-      syncData = exec(commands.runSync(knotPath));
-    } else {
-      syncData = exec(commands.runPartialSync(knotPath));
-    }
+    const syncData = exec(commands.runSync(tempFolder + '/docker'));
 
     syncData.stderr.on('data', (data) => {
-      req.io.emit('live-sync-logs', data.toString());
+      console.log('Err', data.toString());
     });
-    syncData.error.on('data', (error) => {
-      resolve(error.toString());
-    });
+
     syncData.stdout.on('data', (data) => {
-      resolve(data.toString());
+      console.log('OUT', data.toString());
     });
+
     syncData.on('exit', (code) => {
-      req.io.emit('complete', 'Finished emitting');
+      console.log('Done', code.toString());
+      resolve();
     });
   });
 
@@ -655,7 +634,8 @@ module.exports = {
   getTaps,
   detectDocker,
   addTap,
-  addSchema,
+  fetchTapFields,
+  addConfig,
   readSchema,
   writeSchema,
   getTargets,

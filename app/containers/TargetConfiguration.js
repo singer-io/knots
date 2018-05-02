@@ -1,8 +1,8 @@
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import * as userActions from '../actions/user';
-import Target from '../components/Target';
+import * as targetActions from '../actions/targets';
+import Target from '../components/Targets/TargetConfiguration';
 
 function mapStateToProps(state) {
   return {
@@ -12,7 +12,7 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(userActions, dispatch);
+  return bindActionCreators(targetActions, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Target);

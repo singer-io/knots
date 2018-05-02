@@ -69,8 +69,14 @@
 }
 
 .logos {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
+  background-color: white;
+}
+
+.form {
+  width: 100%;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
 }

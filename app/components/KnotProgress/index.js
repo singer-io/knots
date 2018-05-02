@@ -17,19 +17,34 @@ const calculateProgress = (items) => {
     }
   });
 
-  return (indexOfActiveItem * 20).toString();
+  if (items[3].complete) {
+    return 100;
+  }
+
+  return indexOfActiveItem * 33.3;
+};
+
+const currentActive = (items) => {
+  let active = '';
+  Object.keys(items).forEach((key) => {
+    if (items[key].active) {
+      active = items[key].text;
+    }
+  });
+
+  return active;
 };
 
 const KnotProgress = (props: Props) => (
   <Row>
     <Col md={{ size: 8, offset: 2 }}>
-      <div className={styles.progress}>
-        <Progress
-          bar
-          color="success"
-          value={calculateProgress(props.progressStore)}
-        />
-      </div>
+      <Progress
+        color="success"
+        value={calculateProgress(props.progressStore)}
+        className={styles.progress}
+        style={{ height: '2px' }}
+      />
+
       <Nav pills justified>
         {Object.keys(props.progressStore).map((item) => (
           <Item
@@ -39,6 +54,7 @@ const KnotProgress = (props: Props) => (
           />
         ))}
       </Nav>
+      <p className="display-4 mt-4">{currentActive(props.progressStore)}</p>
     </Col>
   </Row>
 );

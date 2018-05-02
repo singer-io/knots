@@ -25,7 +25,7 @@ export default function targets(state = defaultState, action) {
       return Object.assign({}, state, { datasets: action.datasets });
     case UPDATE_DATASET:
       return Object.assign({}, state, {
-        selectedDataset: `https://data.world/${action.selectedDataset}`
+        selectedDataset: action.selectedDataset
       });
     case SET_TOKEN:
       return Object.assign({}, state, {

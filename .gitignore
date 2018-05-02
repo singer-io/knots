@@ -55,3 +55,4 @@ npm-debug.log.*
 knot.json
 docker
 ./knots
+configs
