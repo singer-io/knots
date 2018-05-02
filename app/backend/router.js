@@ -16,7 +16,8 @@ const {
   addTarget,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  findWord
 } = require('./util');
 
 router.get('/docker', (req, res) => {
@@ -58,7 +59,14 @@ router.post('/tap/config/', (req, res) => {
   addConfig(tap, config)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
-      res.json({ error });
+      if (findWord('Mounts denied', error)) {
+        res.status(400).json({
+          error,
+          dockerError: true
+        });
+      } else {
+        res.status(400).json({ error });
+      }
     });
 });
 

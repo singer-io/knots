@@ -109,7 +109,9 @@ export function submitConfig(tap: string, config: {}) {
           type: TAP_ERROR,
           schema: [],
           error: error.response.data.error,
-          syntaxError: error.response.data.invalidSyntaxError
+          syntaxError: error.response.data.invalidSyntaxError,
+          dockerConfigError: error.response.data.dockerError,
+          showModal: true
         });
       });
   };

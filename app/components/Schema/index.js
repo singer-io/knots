@@ -18,6 +18,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
+import Modals from '../Modal';
 
 type Props = {
   tapsStore: {
@@ -29,7 +30,10 @@ type Props = {
       }>
     }>,
     schemaLoading: boolean,
-    schemaUpdated: boolean
+    schemaUpdated: boolean,
+    dockerConfigError: boolean,
+    error: string,
+    showModal: boolean
   },
   editSchemaField: (field: string, index: string, value: string) => void,
   submitSchema: (
@@ -43,7 +47,8 @@ type Props = {
         }
       }>
     }>
-  ) => void
+  ) => void,
+  toggle: () => void
 };
 
 export default class Schema extends Component<Props> {
@@ -55,10 +60,21 @@ export default class Schema extends Component<Props> {
     this.props.submitSchema(this.props.tapsStore.schema);
   };
 
+  toggle = () => {
+    this.props.toggle();
+  };
+
+  reconfigure = () => {
+    console.log('reconfigure');
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
     }
+    const { dockerConfigError, showModal } = this.props.tapsStore;
+    const modalBody =
+      'Please check Docker file sharing preferences and make sure that /Users is a shared directory.';
 
     return (
       <div>
@@ -69,9 +85,21 @@ export default class Schema extends Component<Props> {
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
               {this.props.tapsStore.schemaLoading && (
-                <Progress value="100" striped animated className="mt-5">
-                  Retrieving schema information...
-                </Progress>
+                <div>
+                  <Progress value="100" striped animated className="mt-5">
+                    Retrieving schema information...
+                  </Progress>
+                  {dockerConfigError && (
+                    <Modals
+                      showModal={showModal}
+                      headerText="Docker configuration error"
+                      body={modalBody}
+                      error=""
+                      toggle={this.toggle}
+                      reconfigure={this.reconfigure}
+                    />
+                  )}
+                </div>
               )}
               {!this.props.tapsStore.schemaLoading && (
                 <div>

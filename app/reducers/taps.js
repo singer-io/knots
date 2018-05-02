@@ -7,7 +7,9 @@ import {
   UPDATE_SCHEMA_FIELD,
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
-  SELECT_TAP
+  SELECT_TAP,
+  TAP_ERROR,
+  TOGGLE_MODAL
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -22,7 +24,8 @@ export type tapsStateType = {
   +error: string,
   +syntaxError: boolean,
   +showModal: boolean,
-  +liveLogs: string
+  +liveLogs: string,
+  +dockerConfigError: boolean
 };
 
 const defaultState = {
@@ -37,7 +40,8 @@ const defaultState = {
   error: '',
   syntaxError: false,
   showModal: false,
-  liveLogs: ''
+  liveLogs: '',
+  dockerConfigError: false
 };
 
 export default function taps(state = defaultState, action) {
@@ -70,6 +74,16 @@ export default function taps(state = defaultState, action) {
     case SCHEMA_LOADING:
       return Object.assign({}, state, {
         schemaLoading: true
+      });
+    case TAP_ERROR:
+      return Object.assign({}, state, {
+        showModal: true,
+        error: action.error,
+        dockerConfigError: action.dockerConfigError
+      });
+    case TOGGLE_MODAL:
+      return Object.assign({}, state, {
+        showModal: false
       });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {

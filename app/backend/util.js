@@ -323,6 +323,7 @@ const getSchema = (tap) =>
 
     runDiscovery.stderr.on('data', (data) => {
       console.log('Err', data.toString());
+      reject(data);
     });
 
     runDiscovery.stdout.on('data', (data) => {
@@ -601,6 +602,8 @@ const getToken = (knot) =>
     }
   });
 
+const findWord = (word, str) => RegExp(`\\b${word}\\b`).test(str);
+
 module.exports = {
   getKnots,
   getTaps,
@@ -616,5 +619,6 @@ module.exports = {
   sync,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  findWord
 };
