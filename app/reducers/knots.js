@@ -1,15 +1,26 @@
-import { UPDATE_DOCKER_VERSION, DOCKER_VERSION_ERROR } from '../actions/knots';
+import {
+  UPDATE_DOCKER_VERSION,
+  DOCKER_VERSION_ERROR,
+  UPDATE_NAME,
+  KNOT_SYNCING,
+  KNOT_SYNCED
+} from '../actions/knots';
 
 export type knotsStateType = {
   +dockerVersionDetected: boolean,
   +dockerVersion: string,
-  +dockerVersionError: string
+  +dockerVersionError: string,
+  +knotName: string,
+  +syncing: boolean
 };
 
 const defaultState = {
   dockerVersionDetected: false,
   dockerVersion: '',
-  dockerVersionError: ''
+  dockerVersionError: '',
+  knotName: '',
+  knotSyncing: false,
+  knotSynced: false
 };
 
 export default function knots(state = defaultState, action) {
@@ -25,6 +36,19 @@ export default function knots(state = defaultState, action) {
         dockerVersionDetected: true,
         dockerVersion: '',
         dockerVersionError: action.error
+      });
+    case UPDATE_NAME:
+      return Object.assign({}, state, {
+        knotName: action.name
+      });
+    case KNOT_SYNCING:
+      return Object.assign({}, state, {
+        knotSyncing: true
+      });
+    case KNOT_SYNCED:
+      return Object.assign({}, state, {
+        knotSyncing: false,
+        knotSynced: true
       });
     default:
       return state;

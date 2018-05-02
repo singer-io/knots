@@ -1,19 +1,37 @@
-import { UPDATE_TARGETS } from '../actions/targets';
+import {
+  UPDATE_TARGETS,
+  TARGETS_LOADING,
+  TARGET_SELECTED
+} from '../actions/targets';
 
 export type targetsStateType = {
   +targets: Array<{}>,
-  +loading: boolean
+  +targetsLoading: boolean,
+  +targetSelected: boolean
 };
 
 const defaultState = {
   targets: [],
-  loading: false
+  targetsLoading: false,
+  targetInstalled: false,
+  targetSelected: false
 };
 
 export default function targets(state = defaultState, action) {
   switch (action.type) {
+    case TARGET_SELECTED:
+      return Object.assign({}, state, {
+        targetSelected: true
+      });
+    case TARGETS_LOADING:
+      return Object.assign({}, state, {
+        targetsLoading: true
+      });
     case UPDATE_TARGETS:
-      return Object.assign({}, state, { targets: action.targets });
+      return Object.assign({}, state, {
+        targetsLoading: false,
+        targets: action.targets
+      });
     default:
       return state;
   }

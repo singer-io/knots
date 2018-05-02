@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as UserActions from '../actions/user';
-import DataWorld from '../components/Target/DataWorld';
+import DataWorld from '../components/Targets/TargetConfiguration/DataWorld';
 
 function mapStateToProps(state) {
   return {

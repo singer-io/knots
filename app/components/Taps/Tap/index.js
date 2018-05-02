@@ -32,7 +32,7 @@ const Tap = (props: Props) => (
       </button>
       <div className={styles.repo}>
         <a href={props.repo} target="_blank">
-          View repo
+          Learn more
         </a>
       </div>
     </div>

@@ -6,7 +6,8 @@ import Targets from '../components/Targets';
 
 function mapStateToProps(state) {
   return {
-    targetsStore: state.targets
+    targetsStore: state.targets,
+    userStore: state.user
   };
 }
 

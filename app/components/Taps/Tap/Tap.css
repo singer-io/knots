@@ -27,6 +27,7 @@ a:hover {
   padding: 0;
   background: none;
   border: none;
+  cursor: pointer;
 }
 
 .repo {

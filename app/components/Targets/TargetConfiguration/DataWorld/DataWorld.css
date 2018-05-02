@@ -1,0 +1,15 @@
+.DataWorld {
+  margin-top: 30px;
+  width: 100%;
+}
+
+.targetFields {
+  display: flex;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.buttonlabel {
+  font-weight: bold;
+  margin-bottom: 5px;
+}

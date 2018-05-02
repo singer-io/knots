@@ -1,24 +1,19 @@
 .Target {
   display: flex;
-  border: 1px solid #d3d3d3;
   width: 220px;
-  margin-right: 20px;
-  margin-top: 20px;
-  background: #343d48;
 }
 
 a:hover {
   text-decoration: none;
 }
 
-.logo-container {
+.logoContainer {
   margin: 5px;
 }
 
 .logo {
-  height: 55px;
-  width: 60px;
-  padding-left: 10px;
+  height: 70px;
+  width: 70px;
 }
 
 .info {
@@ -26,13 +21,12 @@ a:hover {
   flex-wrap: wrap;
   align-items: center;
   align-content: center;
-  margin-left: 10px;
 }
 
-.Target .name {
-  width: 100%;
-  color: #e8e4e4;
-  font-weight: bold;
+.name {
+  padding: 0;
+  background: none;
+  border: none;
 }
 
 .repo {

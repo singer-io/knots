@@ -2,17 +2,25 @@
   "name": "electron-react-boilerplate",
   "productName": "ElectronReact",
   "version": "0.13.2",
-  "description": "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
+  "description":
+    "Electron application boilerplate based on React, React Router, Webpack, React Hot Loader for rapid application development",
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
-    "build-dll": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
-    "build-main": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
-    "build-renderer": "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
-    "dev": "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 npm run start-renderer-dev",
-    "electron-rebuild": "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
+    "build-dll":
+      "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.dev.dll.js --colors",
+    "build-main":
+      "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.main.prod.js --colors",
+    "build-renderer":
+      "cross-env NODE_ENV=production node --trace-warnings -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.renderer.prod.js --colors",
+    "dev":
+      "cross-env START_HOT=1 node -r babel-register ./internals/scripts/CheckPortInUse.js && cross-env START_HOT=1 npm run start-renderer-dev",
+    "electron-rebuild":
+      "electron-rebuild --parallel --force --types prod,dev,optional --module-dir app",
     "flow": "flow",
-    "flow-typed": "rimraf flow-typed/npm && flow-typed install --overwrite || true",
-    "lint": "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
+    "flow-typed":
+      "rimraf flow-typed/npm && flow-typed install --overwrite || true",
+    "lint":
+      "cross-env NODE_ENV=development eslint --cache --format=node_modules/eslint-formatter-pretty .",
     "lint-fix": "npm run lint -- --fix",
     "lint-styles": "stylelint app/*.css app/components/*.css --syntax scss",
     "lint-styles-fix": "stylefmt -r app/*.css app/components/*.css",
@@ -20,24 +28,29 @@
     "package-all": "npm run build && build -mwl",
     "package-linux": "npm run build && build --linux",
     "package-win": "npm run build && build --win --x64",
-    "postinstall": "node -r babel-register internals/scripts/CheckNativeDep.js && npm run flow-typed && npm run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
+    "postinstall":
+      "node -r babel-register internals/scripts/CheckNativeDep.js && npm run flow-typed && npm run build-dll && electron-builder install-app-deps && node node_modules/fbjs-scripts/node/check-dev-engines.js package.json",
     "precommit": "lint-staged",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production electron ./app/",
     "start-server": "nodemon ./app/backend/index.js",
-    "start-main": "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
-    "start-main-dev": "concurrently \"npm run start-server\" \"npm run start-main\"",
-    "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
-    "test": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
-    "test-all": "npm run lint && npm run flow && npm run build && npm run test && npm run test-e2e",
-    "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
+    "start-main":
+      "cross-env HOT=1 NODE_ENV=development electron -r babel-register ./app/main.dev",
+    "start-main-dev":
+      "concurrently \"npm run start-server\" \"npm run start-main\"",
+    "start-renderer-dev":
+      "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
+    "test":
+      "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js",
+    "test-all":
+      "npm run lint && npm run flow && npm run build && npm run test && npm run test-e2e",
+    "test-e2e":
+      "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
     "test-watch": "npm test -- --watch"
   },
   "browserslist": "electron 1.6",
   "nodemonConfig": {
-    "watch": [
-      "backend/"
-    ]
+    "watch": ["backend/"]
   },
   "build": {
     "productName": "ElectronReact",
@@ -65,15 +78,10 @@
       ]
     },
     "win": {
-      "target": [
-        "nsis"
-      ]
+      "target": ["nsis"]
     },
     "linux": {
-      "target": [
-        "deb",
-        "AppImage"
-      ],
+      "target": ["deb", "AppImage"],
       "category": "Development"
     },
     "directories": {
@@ -106,30 +114,21 @@
     "reload"
   ],
   "lint-staged": {
-    "*.{js,json,css,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
   },
   "homepage": "https://github.com/chentsulin/electron-react-boilerplate#readme",
   "jest": {
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/internals/mocks/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+        "<rootDir>/internals/mocks/fileMock.js",
       "\\.(css|less|sass|scss)$": "identity-obj-proxy"
     },
-    "moduleFileExtensions": [
-      "js"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "app/node_modules"
-    ],
+    "moduleFileExtensions": ["js"],
+    "moduleDirectories": ["node_modules", "app/node_modules"],
     "transform": {
       "^.+\\.js$": "babel-jest"
     },
-    "setupFiles": [
-      "./internals/scripts/CheckBuiltsExist.js"
-    ]
+    "setupFiles": ["./internals/scripts/CheckBuiltsExist.js"]
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
@@ -208,7 +207,6 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "bootstrap": "^4.1.0",
-    "bootstrap3": "^3.3.5",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
     "easy-zip": "^0.0.4",

@@ -7,10 +7,12 @@ const socket = socketIOClient(baseUrl);
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
+export const SELECT_TAP = 'SELECT_TAP';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
+export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const TAP_ERROR = 'TAP_ERROR';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
@@ -47,17 +49,16 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: string, version: string) {
+export function selectTap(tap: string) {
   return (dispatch: (action: actionType) => void) => {
-    console.log('Called');
     dispatch({
-      type: TAPS_LOADING
+      type: SELECT_TAP,
+      tap
     });
 
     axios
       .post(`${baseUrl}/taps/`, {
-        tap,
-        version
+        tap
       })
       .then((response) =>
         dispatch({
@@ -86,13 +87,14 @@ export function updateTapField(key: string, value: string) {
   };
 }
 
-export function submitConfig(config: {}) {
+export function submitConfig(tap: string, config: {}) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
-      type: TAPS_LOADING
+      type: SCHEMA_LOADING
     });
     axios
-      .post(`${baseUrl}/tap/schema/`, {
+      .post(`${baseUrl}/tap/config/`, {
+        tap,
         config
       })
       .then((response) => {
@@ -126,9 +128,6 @@ export function editSchemaField(field: string, index: string, value: string) {
 
 export function submitSchema(schema: {}) {
   return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: TAPS_LOADING
-    });
     axios
       .put(`${baseUrl}/schema/`, {
         streams: schema
