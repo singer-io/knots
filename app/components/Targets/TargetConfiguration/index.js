@@ -10,6 +10,9 @@ type Props = {
     selectedDataset: string,
     token: string,
     targetConfigured: boolean
+  },
+  targetsStore: {
+    selectedTarget: string
   }
 };
 
@@ -21,13 +24,21 @@ export default class Target extends Component<Props> {
     );
   };
 
+  selectedTarget = () => {
+    const { selectedTarget } = this.props.targetsStore;
+    switch (selectedTarget) {
+      case 'target-datadotworld':
+        return <DataWorld />;
+      default:
+        return <div>Unknown Target</div>;
+    }
+  };
+
   render() {
     return (
       <div>
         <Container>
-          <Row>
-            <DataWorld />
-          </Row>
+          <Row>{this.selectedTarget()}</Row>
         </Container>
       </div>
     );

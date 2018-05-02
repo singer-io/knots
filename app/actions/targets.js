@@ -40,7 +40,8 @@ export function getTargets() {
 export function selectTarget(target: string, version: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
-      type: TARGET_SELECTED
+      type: TARGET_SELECTED,
+      target
     });
 
     axios

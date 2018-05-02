@@ -16,7 +16,7 @@ const KNOT_TARGET_CONTENT = ['config.json'];
 const KNOT_JSON_KEYS = ['tap', 'target'];
 
 // app is only defined in the packaged app, use app root directory during development
-if (app) {
+if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
 } else {
   tempFolder = path.resolve(__dirname, '..', '..');
@@ -407,34 +407,22 @@ const addTarget = (targetName, version) =>
 
 const addTargetConfig = (config) =>
   new Promise((resolve) => {
-    shell.rm('-rf', path.resolve(tempFolder, 'docker', 'images', 'target'));
-    shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'images', 'target'));
-    writeFile(
-      path.resolve(tempFolder, 'docker', 'images', 'target', 'Dockerfile'),
-      targetDataWorldDockerCommand
-    )
+    writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
       .then(() => {
-        writeFile(
+        shell.rm('-fr', path.resolve(tempFolder, 'configs', 'target'));
+        shell.mkdir('-p', path.resolve(tempFolder, 'configs', 'target'));
+        shell.mv(
           path.resolve(tempFolder, 'config.json'),
-          JSON.stringify(config)
-        )
-          .then(() => {
-            shell.rm('-fr', path.resolve(tempFolder, 'docker', 'target'));
-            shell.mkdir('-p', path.resolve(tempFolder, 'docker', 'target'));
-            shell.mv(
-              path.resolve(tempFolder, 'config.json'),
-              path.resolve(tempFolder, 'docker', 'target')
-            );
-            resolve();
-          })
-          .catch(console.log);
+          path.resolve(tempFolder, 'configs', 'target')
+        );
+        resolve();
       })
       .catch(console.log);
   });
 
 const sync = () =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(tempFolder + '/docker'));
+    const syncData = exec(commands.runSync(`${tempFolder}/configs`));
 
     syncData.stderr.on('data', (data) => {
       console.log('Err', data.toString());

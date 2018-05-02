@@ -6,6 +6,7 @@ import {
 
 export type targetsStateType = {
   +targets: Array<{}>,
+  +selectedTarget: '',
   +targetsLoading: boolean,
   +targetSelected: boolean
 };
@@ -21,7 +22,8 @@ export default function targets(state = defaultState, action) {
   switch (action.type) {
     case TARGET_SELECTED:
       return Object.assign({}, state, {
-        targetSelected: true
+        targetSelected: true,
+        selectedTarget: action.target
       });
     case TARGETS_LOADING:
       return Object.assign({}, state, {
