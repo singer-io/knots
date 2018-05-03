@@ -18,6 +18,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
+import ErrorModal from '../Modal';
 
 type Props = {
   tapsStore: {
@@ -29,7 +30,10 @@ type Props = {
       }>
     }>,
     schemaLoading: boolean,
-    schemaUpdated: boolean
+    schemaUpdated: boolean,
+    dockerConfigError: boolean,
+    error: string,
+    showModal: boolean
   },
   editSchemaField: (field: string, index: string, value: string) => void,
   submitSchema: (
@@ -43,7 +47,9 @@ type Props = {
         }
       }>
     }>
-  ) => void
+  ) => void,
+  toggle: () => void,
+  history: object
 };
 
 export default class Schema extends Component<Props> {
@@ -55,10 +61,19 @@ export default class Schema extends Component<Props> {
     this.props.submitSchema(this.props.tapsStore.schema);
   };
 
+  toggle = () => {
+    this.props.toggle();
+  };
+
+  reconfigure = () => {
+    this.props.history.goBack();
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
     }
+    const { dockerConfigError, showModal } = this.props.tapsStore;
 
     return (
       <div>
@@ -69,9 +84,31 @@ export default class Schema extends Component<Props> {
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
               {this.props.tapsStore.schemaLoading && (
-                <Progress value="100" striped animated className="mt-5">
-                  Retrieving schema information...
-                </Progress>
+                <div>
+                  <Progress value="100" striped animated className="mt-5">
+                    Retrieving schema information...
+                  </Progress>
+                  {dockerConfigError && (
+                    <ErrorModal
+                      showModal={showModal}
+                      headerText="Docker configuration error"
+                      body={
+                        <p>
+                          Please check Docker{' '}
+                          <a href="https://docs.docker.com/docker-for-mac/osxfs/#namespaces">
+                            file sharing preferences
+                          </a>{' '}
+                          and make sure that <code color="red">/User</code> is a
+                          shared directory.
+                        </p>
+                      }
+                      error=""
+                      toggle={this.toggle}
+                      reconfigure={this.reconfigure}
+                      buttonText="Retry"
+                    />
+                  )}
+                </div>
               )}
               {!this.props.tapsStore.schemaLoading && (
                 <div>

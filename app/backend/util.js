@@ -322,7 +322,12 @@ const getSchema = (tap) =>
     const runDiscovery = exec(commands.runDiscovery(tempFolder, tap));
 
     runDiscovery.stderr.on('data', (data) => {
-      console.log('Err', data.toString());
+      const errorOutput = data.toString();
+      if (errorOutput.indexOf('Mounts denied' !== -1)) {
+        reject(data);
+      } else {
+        console.log('Err', data.toString());
+      }
     });
 
     runDiscovery.stdout.on('data', (data) => {
