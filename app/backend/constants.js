@@ -73,6 +73,51 @@ const tapRedshiftFields = [
   }
 ];
 
+const tapSalesforceFields = [
+  {
+    key: 'client_id',
+    label: 'Client id',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'client_secret',
+    label: 'Client secrete key',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'refresh_token',
+    label: 'Refresh token',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'start_date',
+    label: 'Start date',
+    required: false,
+    validationText: '',
+    placeholder: ''
+  },
+  {
+    key: 'api_type',
+    label: 'API type',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  },
+  {
+    key: 'select_fields_by_default',
+    label: 'Select fields by default',
+    required: true,
+    validationText: 'Required',
+    placeholder: ''
+  }
+];
+
 const commands = {
   runDiscovery: (folderPath, tap) => {
     switch (tap) {
@@ -92,5 +137,6 @@ module.exports = {
   taps,
   commands,
   targets,
-  tapRedshiftFields
+  tapRedshiftFields,
+  tapSalesforceFields
 };

@@ -6,7 +6,13 @@ const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
-const { taps, commands, targets, tapRedshiftFields } = require('./constants');
+const {
+  taps,
+  commands,
+  targets,
+  tapRedshiftFields,
+  tapSalesforceFields
+} = require('./constants');
 
 let tempFolder;
 
@@ -52,6 +58,9 @@ const fetchTapFields = (tap) =>
     switch (tap) {
       case 'tap-redshift':
         resolve(tapRedshiftFields);
+        break;
+      case 'tap-salesforce':
+        resolve(tapSalesforceFields);
         break;
       default:
         reject(new Error('Unknown tap'));
