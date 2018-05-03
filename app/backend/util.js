@@ -322,8 +322,12 @@ const getSchema = (tap) =>
     const runDiscovery = exec(commands.runDiscovery(tempFolder, tap));
 
     runDiscovery.stderr.on('data', (data) => {
-      console.log('Err', data.toString());
-      reject(data);
+      const errorOutput = data.toString();
+      if (errorOutput.indexOf('Mounts denied' !== -1)) {
+        reject(data);
+      } else {
+        console.log('Err', data.toString());
+      }
     });
 
     runDiscovery.stdout.on('data', (data) => {
@@ -602,8 +606,6 @@ const getToken = (knot) =>
     }
   });
 
-const findWord = (word, str) => RegExp(`\\b${word}\\b`).test(str);
-
 module.exports = {
   getKnots,
   getTaps,
@@ -619,6 +621,5 @@ module.exports = {
   sync,
   saveKnot,
   downloadKnot,
-  getToken,
-  findWord
+  getToken
 };

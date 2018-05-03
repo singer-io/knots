@@ -79,7 +79,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         showModal: true,
         error: action.error,
-        dockerConfigError: action.dockerConfigError
+        dockerConfigError: action.error.indexOf('Mounts denied') !== -1
       });
     case TOGGLE_MODAL:
       return Object.assign({}, state, {

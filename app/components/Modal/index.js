@@ -5,12 +5,13 @@ type Props = {
   showModal: boolean,
   toggle: () => void,
   headerText: string,
-  body: string,
+  body: React.Node,
   error: string,
-  reconfigure: () => void
+  reconfigure: () => void,
+  buttonText: string
 };
 
-export default class Modals extends Component<Props> {
+export default class ErrorModal extends Component<Props> {
   render() {
     return (
       <Modal fade={false} isOpen={this.props.showModal}>
@@ -18,10 +19,12 @@ export default class Modals extends Component<Props> {
           <span className="oi oi-warning" /> {this.props.headerText}
         </ModalHeader>
         <ModalBody>
-          <p>{this.props.body}</p>
-          <pre className="bg-light border border-light p-1 rounded">
-            {this.props.error}
-          </pre>
+          {this.props.body}
+          {this.props.error && (
+            <pre className="bg-light border border-light p-1 rounded">
+              {this.props.error}
+            </pre>
+          )}
         </ModalBody>
         <ModalFooter>
           <a href="" className="mr-auto text-secondary">
@@ -35,7 +38,7 @@ export default class Modals extends Component<Props> {
             color="primary"
             onClick={this.props.reconfigure}
           >
-            Reconfigure
+            {this.props.buttonText}
           </Button>
         </ModalFooter>
       </Modal>

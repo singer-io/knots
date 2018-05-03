@@ -18,7 +18,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
-import Modals from '../Modal';
+import ErrorModal from '../Modal';
 
 type Props = {
   tapsStore: {
@@ -48,7 +48,8 @@ type Props = {
       }>
     }>
   ) => void,
-  toggle: () => void
+  toggle: () => void,
+  history: object
 };
 
 export default class Schema extends Component<Props> {
@@ -65,7 +66,7 @@ export default class Schema extends Component<Props> {
   };
 
   reconfigure = () => {
-    console.log('reconfigure');
+    this.props.history.goBack();
   };
 
   render() {
@@ -73,8 +74,6 @@ export default class Schema extends Component<Props> {
       return <Redirect push to="/targets" />;
     }
     const { dockerConfigError, showModal } = this.props.tapsStore;
-    const modalBody =
-      'Please check Docker file sharing preferences and make sure that /Users is a shared directory.';
 
     return (
       <div>
@@ -90,13 +89,23 @@ export default class Schema extends Component<Props> {
                     Retrieving schema information...
                   </Progress>
                   {dockerConfigError && (
-                    <Modals
+                    <ErrorModal
                       showModal={showModal}
                       headerText="Docker configuration error"
-                      body={modalBody}
+                      body={
+                        <p>
+                          Please check Docker{' '}
+                          <a href="https://docs.docker.com/docker-for-mac/osxfs/#namespaces">
+                            file sharing preferences
+                          </a>{' '}
+                          and make sure that <code color="red">/User</code> is a
+                          shared directory.
+                        </p>
+                      }
                       error=""
                       toggle={this.toggle}
                       reconfigure={this.reconfigure}
+                      buttonText="Retry"
                     />
                   )}
                 </div>

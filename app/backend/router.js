@@ -59,14 +59,7 @@ router.post('/tap/config/', (req, res) => {
   addConfig(tap, config)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
-      if (findWord('Mounts denied', error)) {
-        res.status(400).json({
-          error,
-          dockerError: true
-        });
-      } else {
-        res.status(400).json({ error });
-      }
+      res.status(400).json({ error });
     });
 });
 
