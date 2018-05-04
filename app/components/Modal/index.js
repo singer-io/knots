@@ -22,6 +22,7 @@ export default class ErrorModal extends Component<Props> {
           {this.props.body}
           {this.props.error && (
             <pre className="bg-light border border-light p-1 rounded">
+              <p>Error Details:</p>
               {this.props.error}
             </pre>
           )}

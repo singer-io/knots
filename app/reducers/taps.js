@@ -25,7 +25,9 @@ export type tapsStateType = {
   +syntaxError: boolean,
   +showModal: boolean,
   +liveLogs: string,
-  +dockerConfigError: boolean
+  +dockerConfigError: boolean,
+  +tapError: boolean,
+  +invalidSchemaError: boolean
 };
 
 const defaultState = {
@@ -41,7 +43,9 @@ const defaultState = {
   syntaxError: false,
   showModal: false,
   liveLogs: '',
-  dockerConfigError: false
+  dockerConfigError: false,
+  tapError: false,
+  invalidSchemaError: false
 };
 
 export default function taps(state = defaultState, action) {
@@ -79,7 +83,9 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         showModal: true,
         error: action.error,
-        dockerConfigError: action.error.indexOf('Mounts denied') !== -1
+        dockerConfigError: action.error.indexOf('Mounts denied') !== -1,
+        tapError: action.error.indexOf('CRITICAL') !== -1,
+        invalidSchemaError: action.error.indexOf('SyntaxError') !== -1
       });
     case TOGGLE_MODAL:
       return Object.assign({}, state, {

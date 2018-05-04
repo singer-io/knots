@@ -335,11 +335,23 @@ const getSchema = (tap) =>
     });
 
     runDiscovery.on('exit', (code) => {
-      console.log('Done', code.toString());
-      if (code > 0) {
-        reject(new Error('Failed to run discovery'));
+      if (code === 0) {
+        const x = path.resolve(tempFolder, 'docker', 'tap', 'catalog.json');
+        readFile(x)
+          .then((schemaObject) => {
+            const schema = JSON.stringify(schemaObject);
+            try {
+              JSON.parse(schema);
+              resolve(schemaObject);
+            } catch (e) {
+              reject(e.toString());
+            }
+          })
+          .catch(() => {
+            console.log('No file');
+          });
       } else {
-        resolve();
+        reject(new Error('Failed to run discovery'));
       }
     });
   });

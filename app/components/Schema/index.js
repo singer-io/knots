@@ -32,6 +32,8 @@ type Props = {
     schemaLoading: boolean,
     schemaUpdated: boolean,
     dockerConfigError: boolean,
+    tapError: boolean,
+    invalidSchemaError: boolean,
     error: string,
     showModal: boolean
   },
@@ -67,13 +69,20 @@ export default class Schema extends Component<Props> {
 
   reconfigure = () => {
     this.props.history.goBack();
+    this.props.toggle();
   };
 
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
     }
-    const { dockerConfigError, showModal } = this.props.tapsStore;
+    const {
+      dockerConfigError,
+      showModal,
+      tapError,
+      error,
+      invalidSchemaError
+    } = this.props.tapsStore;
 
     return (
       <div>
@@ -106,6 +115,28 @@ export default class Schema extends Component<Props> {
                       toggle={this.toggle}
                       reconfigure={this.reconfigure}
                       buttonText="Retry"
+                    />
+                  )}
+                  {tapError && (
+                    <ErrorModal
+                      showModal={showModal}
+                      headerText="Tap error"
+                      body={<p>Unable to execute tap in discovery mode.</p>}
+                      error={error}
+                      reconfigure={this.reconfigure}
+                      buttonText="Reconfigure"
+                      toggle={this.toggle}
+                    />
+                  )}
+                  {invalidSchemaError && (
+                    <ErrorModal
+                      showModal={showModal}
+                      headerText="Invalid schema"
+                      body={<p>Tap generated an invalid schema.</p>}
+                      error={error}
+                      reconfigure={this.reconfigure}
+                      buttonText="Reconfigure"
+                      toggle={this.toggle}
                     />
                   )}
                 </div>
