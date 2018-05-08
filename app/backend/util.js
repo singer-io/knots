@@ -6,7 +6,13 @@ const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
-const { taps, commands, targets, tapRedshiftFields } = require('./constants');
+const {
+  taps,
+  commands,
+  targets,
+  tapRedshiftFields,
+  tapSalesforceFields
+} = require('./constants');
 
 let tempFolder;
 
@@ -52,6 +58,9 @@ const fetchTapFields = (tap) =>
     switch (tap) {
       case 'tap-redshift':
         resolve(tapRedshiftFields);
+        break;
+      case 'tap-salesforce':
+        resolve(tapSalesforceFields);
         break;
       default:
         reject(new Error('Unknown tap'));
@@ -324,7 +333,7 @@ const getSchema = (tap) =>
     runDiscovery.stderr.on('data', (data) => {
       const errorOutput = data.toString();
       if (errorOutput.indexOf('Mounts denied' !== -1)) {
-        reject(data);
+        console.log(errorOutput);
       } else {
         console.log('Err', data.toString());
       }
@@ -344,6 +353,7 @@ const getSchema = (tap) =>
               JSON.parse(schema);
               resolve(schemaObject);
             } catch (e) {
+              console.log('reading catalog');
               reject(e.toString());
             }
           })
@@ -439,10 +449,12 @@ const addTargetConfig = (config) =>
 
 const sync = () =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(`${tempFolder}/configs`));
+    const syncData = exec(
+      commands.runSync(`${tempFolder}/configs`, 'tap-salesforce')
+    );
 
     syncData.stderr.on('data', (data) => {
-      console.log('Err', data.toString());
+      console.log(data.toString());
     });
 
     syncData.stdout.on('data', (data) => {

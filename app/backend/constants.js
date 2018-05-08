@@ -6,6 +6,14 @@ const taps = [
     repo: 'https://github.com/datadotworld/tap-redshift',
     logo:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAn1BMVEX///9SlM8gW5kuc7hQks0paqw9gMEgXJoAUZRHj8260uqrvdQAZbL6/P4LVJYcWZhDjcwASpEATpNZmNGuyuadsczb5/TI2u4rYp1jntPAzd7x9vvO2OW4xtk7a6LF2e0LYqp1qNcqeb6itc+1z+g9baOGsdxVfKs4iMrn7/jf5u9ujbaYvOCCnL+Qt955lbvJ0+Jfg699rNoARI6OpcXaVDOdAAADm0lEQVR4nO3d2XLaMBhA4ZiqtR1qvAAJAUz2Qtambd7/2SqBIQbsYAuvmXNuk5H0RZMLxMV/ckJEREREREREdChnePXzUDcDp+5jaucMXev7t0P9sMWg7pNqNuxZnU4GoSFsu43GW1f6sgkNaWzdPUa+rEJp9Iy7ug+do+7al13YKmPX3PjyCJfG07oPn6GwY7kdPWErjOEoiPvyCpWxf1k34pNCc8eXX9hoYzjb8+kIlfGiicZxkk9PuDSe1w3aKcWnK2yccXyf4tMXNsvo+Gm+Y4TSuGjKpw6nV47QsBFWFUKECOsPIUKE9fdFhI9nqT+qQzh9KNg3/eN73vXgLHHLioWT6XDuB4u/6X/y/L3NA9dU77aenaSsUOi8vc97gdzPFcK7Lsq4ep0wV5tK5eLi+XxSg3Ayfr/3pW65mSsKe+3oRq9n5sfG6i7jygqEUjezgtg+Srh8tTry9VF9exStam5vHr/LkoUP4cvMD3b2WAmVURzx7dzk3fp4vTb3DyCVXv/1clKaUEjd71FgJay/FqpT2M+Tw5ikxn585QThRpkOPE5ozPwk3bZQ3fVC70Wna8WXTBEulaUJ0xfeEhq23n9jA4QmQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiBAhQoQIESJEiLDVwn/xk6cKhbBLE6YPA9sSioXm9LXpPDZSPFEobNszft2VJuw+mb6VuHpMeNSYwOl8MxZ+T7jSnT6UOVlOHuGx+9QJLHd3h43w6DGIm3vcEqrJef3X02hSZunTAaVytDOBLRKKRQFjHqN73AjXE/M+fqOSCY87U/SWwsLGWKp7dM1kXWXCtTK6Syks5P4+jIFrSN3ufM6KharJ+GUWBD3XLm4M6drYT9RVLoyUo4J9n/dFJh5/EkKECOsPIUKE9YcQYQuEfjlCsWiK8GR8H6QZ9YXCu9CbmF5O41mKUVfYMJ8qxagnbKBPFSYZdYTSd1k3JqXQ3DPmFwqv31SfKhztGPMKG+5ThZ2tR+p8QuEZmu/zldY1LT1hS3yqrmvlF0rfXd0Hz9Ht2phV2DKfKjJmEwpbDOo+sEbDnpVNKGy7jT6ZM3StDMJ23l+UM7z6eaibQWM+QRARERERERFRg/sPWgsdm/HykUYAAAAASUVORK5CYII='
+  },
+  {
+    name: 'Salesforce',
+    tapKey: 'tap-salesforce',
+    version: '1.0',
+    repo: 'https://github.com/singer-io/tap-salesforce',
+    logo:
+      'https://assets.brandfolder.com/od3ecc-amazlc-9el8ys/original/Salesforce_Logo_RGB_1797c0_8_13_14.png'
   }
 ];
 
@@ -26,42 +34,101 @@ const tapRedshiftFields = [
     label: 'Host/IP',
     required: true,
     validationText: 'Must be a valid server hostname or IP address',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'port',
     label: 'Port',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'number'
   },
   {
     key: 'dbname',
     label: 'Database name',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'schema',
     label: 'Database schema',
     required: false,
     validationText: '',
-    placeholder: 'public'
+    placeholder: 'public',
+    type: 'text'
   },
   {
     key: 'user',
     label: 'Username',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'password',
     label: 'Password',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'password'
+  }
+];
+
+const tapSalesforceFields = [
+  {
+    key: 'client_id',
+    label: 'Client id',
+    required: true,
+    validationText: 'Required',
+    placeholder: '',
+    type: 'text'
+  },
+  {
+    key: 'client_secret',
+    label: 'Client secrete key',
+    required: true,
+    validationText: 'Required',
+    placeholder: '',
+    type: 'text'
+  },
+  {
+    key: 'refresh_token',
+    label: 'Refresh token',
+    required: true,
+    validationText: 'Required',
+    placeholder: '',
+    type: 'password'
+  },
+  {
+    key: 'start_date',
+    label: 'Start date',
+    required: false,
+    validationText: '',
+    placeholder: '',
+    type: 'date'
+  },
+  {
+    key: 'api_type',
+    label: 'API type',
+    required: true,
+    validationText: 'Required',
+    placeholder: '',
+    type: 'select',
+    options: ['BULK', 'REST']
+  },
+  {
+    key: 'select_fields_by_default',
+    label: 'Select fields by default',
+    required: true,
+    validationText: 'Required',
+    placeholder: '',
+    type: 'select',
+    options: ['true', 'false']
   }
 ];
 
@@ -70,12 +137,22 @@ const commands = {
     switch (tap) {
       case 'tap-redshift':
         return `docker run -v ${folderPath}/configs/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
+      case 'tap-salesforce':
+        return `docker run -v ${folderPath}/configs/tap:/app/tap-salesforce/data gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
       default:
         return '';
     }
   },
-  runSync: (folderPath) =>
-    `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`,
+  runSync: (folderPath, tap) => {
+    switch (tap) {
+      case 'tap-redshift':
+        return `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
+      case 'tap-salesforce':
+        return `docker run -v ${folderPath}/tap:/app/tap-salesforce/data --interactive gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json --properties tap-salesforce/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
+      default:
+        return '';
+    }
+  },
   runPartialSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/state.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`
 };
@@ -84,5 +161,6 @@ module.exports = {
   taps,
   commands,
   targets,
-  tapRedshiftFields
+  tapRedshiftFields,
+  tapSalesforceFields
 };

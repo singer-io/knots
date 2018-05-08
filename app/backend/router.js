@@ -16,8 +16,7 @@ const {
   addTarget,
   saveKnot,
   downloadKnot,
-  getToken,
-  findWord
+  getToken
 } = require('./util');
 
 router.get('/docker', (req, res) => {
@@ -55,8 +54,8 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/config/', (req, res) => {
-  const { tap, config } = req.body;
-  addConfig(tap, config)
+  const { tap, tapConfig } = req.body;
+  addConfig(tap, tapConfig)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
       res.status(400).json({ error });
