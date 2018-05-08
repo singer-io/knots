@@ -333,7 +333,7 @@ const getSchema = (tap) =>
     runDiscovery.stderr.on('data', (data) => {
       const errorOutput = data.toString();
       if (errorOutput.indexOf('Mounts denied' !== -1)) {
-        reject(data);
+        console.log(errorOutput);
       } else {
         console.log('Err', data.toString());
       }
@@ -353,6 +353,7 @@ const getSchema = (tap) =>
               JSON.parse(schema);
               resolve(schemaObject);
             } catch (e) {
+              console.log('reading catalog');
               reject(e.toString());
             }
           })
@@ -448,10 +449,12 @@ const addTargetConfig = (config) =>
 
 const sync = () =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(`${tempFolder}/configs`));
+    const syncData = exec(
+      commands.runSync(`${tempFolder}/configs`, 'tap-salesforce')
+    );
 
     syncData.stderr.on('data', (data) => {
-      console.log('Err', data.toString());
+      console.log(data.toString());
     });
 
     syncData.stdout.on('data', (data) => {

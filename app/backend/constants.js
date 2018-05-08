@@ -34,42 +34,48 @@ const tapRedshiftFields = [
     label: 'Host/IP',
     required: true,
     validationText: 'Must be a valid server hostname or IP address',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'port',
     label: 'Port',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'number'
   },
   {
     key: 'dbname',
     label: 'Database name',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'schema',
     label: 'Database schema',
     required: false,
     validationText: '',
-    placeholder: 'public'
+    placeholder: 'public',
+    type: 'text'
   },
   {
     key: 'user',
     label: 'Username',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'password',
     label: 'Password',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'password'
   }
 ];
 
@@ -79,42 +85,50 @@ const tapSalesforceFields = [
     label: 'Client id',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'client_secret',
     label: 'Client secrete key',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'text'
   },
   {
     key: 'refresh_token',
     label: 'Refresh token',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'password'
   },
   {
     key: 'start_date',
     label: 'Start date',
     required: false,
     validationText: '',
-    placeholder: ''
+    placeholder: '',
+    type: 'date'
   },
   {
     key: 'api_type',
     label: 'API type',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'select',
+    options: ['BULK', 'REST']
   },
   {
     key: 'select_fields_by_default',
     label: 'Select fields by default',
     required: true,
     validationText: 'Required',
-    placeholder: ''
+    placeholder: '',
+    type: 'select',
+    options: ['true', 'false']
   }
 ];
 
@@ -123,12 +137,22 @@ const commands = {
     switch (tap) {
       case 'tap-redshift':
         return `docker run -v ${folderPath}/configs/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
+      case 'tap-salesforce':
+        return `docker run -v ${folderPath}/configs/tap:/app/tap-salesforce/data gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
       default:
         return '';
     }
   },
-  runSync: (folderPath) =>
-    `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`,
+  runSync: (folderPath, tap) => {
+    switch (tap) {
+      case 'tap-redshift':
+        return `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
+      case 'tap-salesforce':
+        return `docker run -v ${folderPath}/tap:/app/tap-salesforce/data --interactive gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json --properties tap-salesforce/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
+      default:
+        return '';
+    }
+  },
   runPartialSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/state.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`
 };

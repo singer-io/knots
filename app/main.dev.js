@@ -18,12 +18,18 @@ const fixPath = require('fix-path');
 
 fixPath();
 
-const config = {
+const dwConfig = {
   authorizationUrl: 'https://data.world/oauth/authorize',
   clientId: 'knot-local',
   redirectUri: 'http://localhost:3000/callback',
   clientSecret: 'iEcKy7joLVrJgtbm6YzzhTuxwsxU.jVb',
   tokenUrl: 'https://data.world/oauth/access_token'
+};
+
+const sfConfig = {
+  authorizationUrl: 'https://login.salesforce.com/services/oauth2/authorize',
+  redirectUri: 'https://login.salesforce.com/services/oauth2/success',
+  tokenUrl: 'https://login.salesforce.com/services/oauth2/token'
 };
 
 let mainWindow = null;
@@ -107,7 +113,7 @@ app.on('ready', async () => {
     }
   };
 
-  const dataWorldOauth = electronOauth2(config, windowParams);
+  const dataWorldOauth = electronOauth2(dwConfig, windowParams);
 
   ipcMain.on('dataworld-oauth', (event) => {
     dataWorldOauth
@@ -115,6 +121,23 @@ app.on('ready', async () => {
       .then(
         (token) => {
           event.sender.send('dataworld-oauth-reply', token);
+        },
+        (err) => {
+          console.log('Error while getting token', err);
+        }
+      )
+      .catch((error) => console.log(error));
+  });
+
+  ipcMain.on('sf-oauth', (event, args) => {
+    sfConfig.clientId = args.clientId;
+    sfConfig.clientSecret = args.clientSecret;
+    const salesforceOauth = electronOauth2(sfConfig, windowParams);
+    salesforceOauth
+      .getAccessToken({})
+      .then(
+        (token) => {
+          event.sender.send('sf-oauth-reply', token);
         },
         (err) => {
           console.log('Error while getting token', err);

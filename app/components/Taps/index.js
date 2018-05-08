@@ -37,7 +37,10 @@ type Props = {
       required: boolean,
       placeholder: string
     }>,
-    fieldValues: { password?: string }
+    fieldValues: {
+      password?: string,
+      client_id?: string
+    }
   },
   history: { push: (path: string) => void },
   selectTap: (tap: string, version: string) => void,
@@ -95,6 +98,10 @@ export default class Taps extends Component<Props, State> {
     const { selectedTap, fieldValues } = this.props.tapsStore;
     this.props.submitConfig(selectedTap, fieldValues);
     this.props.history.push('/schema');
+  };
+
+  setSfRefreshToken = (token) => {
+    this.props.updateTapField('refresh_token', token);
   };
 
   render() {
@@ -155,6 +162,8 @@ export default class Taps extends Component<Props, State> {
                       fieldValues={this.props.tapsStore.fieldValues}
                       submit={this.submit}
                       handleChange={this.handleChange}
+                      setSfRefreshToken={this.setSfRefreshToken}
+                      sfToken={this.props.tapsStore.sfToken}
                     />
                   </CardBody>
                 </Card>

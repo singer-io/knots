@@ -13,7 +13,8 @@ type Props = {
   }>,
   fieldValues: { password?: string },
   handleChange: (event: SyntheticEvent<HTMLButtonElement>) => void,
-  submit: () => void
+  submit: () => void,
+  setSfRefreshToken: (token: string) => void
 };
 
 export default class Taps extends Component<Props> {
@@ -25,6 +26,7 @@ export default class Taps extends Component<Props> {
           fieldValues={this.props.fieldValues}
           handleChange={this.props.handleChange}
           submit={this.props.submit}
+          setSfRefreshToken={this.props.setSfRefreshToken}
         />
       </div>
     );

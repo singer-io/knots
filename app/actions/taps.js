@@ -87,15 +87,31 @@ export function updateTapField(key: string, value: string) {
   };
 }
 
+function ISODateString(d) {
+  function pad(n) {
+    return n < 10 ? `0${n}` : n;
+  }
+  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
+    d.getUTCDate()
+  )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
+    d.getUTCSeconds()
+  )}Z`;
+}
+
 export function submitConfig(tap: string, config: {}) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SCHEMA_LOADING
     });
+    const tapConfig = config;
+
+    if (Object.prototype.hasOwnProperty.call(tapConfig, 'start_date')) {
+      tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
+    }
     axios
       .post(`${baseUrl}/tap/config/`, {
         tap,
-        config
+        tapConfig
       })
       .then((response) => {
         dispatch({
