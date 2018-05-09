@@ -209,6 +209,7 @@
     "bootstrap": "^4.1.0",
     "classnames": "^2.2.5",
     "devtron": "^1.4.0",
+    "dotenv": "^5.0.1",
     "easy-zip": "^0.0.4",
     "electron-debug": "^1.5.0",
     "electron-oauth2": "^3.0.0",
