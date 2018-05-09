@@ -11,14 +11,20 @@ import {
   Input,
   Table,
   Button,
-  Progress
+  Progress,
+  Card,
+  CardBody
 } from 'reactstrap';
+import socketIOClient from 'socket.io-client';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import ErrorModal from '../Modal';
+
+const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
 
 type Props = {
   tapsStore: {
@@ -30,11 +36,12 @@ type Props = {
       }>
     }>,
     schemaLoading: boolean,
+    schemaLogs: Array<string>,
     schemaUpdated: boolean,
     dockerConfigError: boolean,
     tapError: boolean,
     invalidSchemaError: boolean,
-    error: string,
+    error?: string,
     showModal: boolean
   },
   editSchemaField: (field: string, index: string, value: string) => void,
@@ -51,10 +58,18 @@ type Props = {
     }>
   ) => void,
   toggle: () => void,
-  history: object
+  history: { goBack: () => void },
+  updateSchemaLogs: (log: string) => void
 };
 
 export default class Schema extends Component<Props> {
+  constructor() {
+    super();
+
+    socket.on('schemaLog', (log) => {
+      this.props.updateSchemaLogs(log);
+    });
+  }
   handleChange = (field: string, index: string, value: string) => {
     this.props.editSchemaField(field, index, value);
   };
@@ -77,6 +92,8 @@ export default class Schema extends Component<Props> {
       return <Redirect push to="/targets" />;
     }
     const {
+      schemaLoading,
+      schemaLogs,
       dockerConfigError,
       showModal,
       tapError,
@@ -92,7 +109,7 @@ export default class Schema extends Component<Props> {
 
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
-              {this.props.tapsStore.schemaLoading && (
+              {schemaLoading && (
                 <div>
                   <Progress value="100" striped animated className="mt-5">
                     Retrieving schema information...
@@ -139,6 +156,18 @@ export default class Schema extends Component<Props> {
                       toggle={this.toggle}
                     />
                   )}
+                  <Card className="bg-light mt-3">
+                    <CardBody>
+                      <pre className="pre-scrollable text-muted">
+                        {schemaLogs.map((log) => (
+                          <pre>
+                            {log}
+                            <br />
+                          </pre>
+                        ))}
+                      </pre>
+                    </CardBody>
+                  </Card>
                 </div>
               )}
               {!this.props.tapsStore.schemaLoading && (

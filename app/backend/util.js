@@ -326,43 +326,16 @@ const writeConfig = (config) =>
       .catch(reject);
   });
 
-const getSchema = (tap) =>
+const getSchema = (req) =>
   new Promise((resolve, reject) => {
-    const runDiscovery = exec(commands.runDiscovery(tempFolder, tap));
+    const runDiscovery = exec(commands.runDiscovery(tempFolder, req.body.tap));
 
     runDiscovery.stderr.on('data', (data) => {
-      const errorOutput = data.toString();
-      if (errorOutput.indexOf('Mounts denied' !== -1)) {
-        console.log(errorOutput);
-      } else {
-        console.log('Err', data.toString());
-      }
-    });
-
-    runDiscovery.stdout.on('data', (data) => {
-      console.log('OUT', data.toString());
+      req.io.emit('schemaLog', data.toString());
     });
 
     runDiscovery.on('exit', (code) => {
-      if (code === 0) {
-        const x = path.resolve(tempFolder, 'docker', 'tap', 'catalog.json');
-        readFile(x)
-          .then((schemaObject) => {
-            const schema = JSON.stringify(schemaObject);
-            try {
-              JSON.parse(schema);
-              resolve(schemaObject);
-            } catch (e) {
-              console.log('reading catalog');
-              reject(e.toString());
-            }
-          })
-          .catch(() => {
-            console.log('No file');
-          });
-      } else {
-        reject(new Error('Failed to run discovery'));
-      }
+      resolve();
     });
   });
 
@@ -370,17 +343,30 @@ const readSchema = () =>
   new Promise((resolve, reject) => {
     const knotPath = path.resolve(tempFolder, 'configs', 'tap', 'catalog.json');
     readFile(knotPath)
-      .then(resolve)
+      .then((schema) => {
+        // Stringify to turn back to object later
+        const schemaString = JSON.stringify(schema);
+        try {
+          // Try to turn to object to validate it's a valid object
+          JSON.parse(schemaString);
+
+          // All good, return the schema object
+          resolve(schema);
+        } catch (error) {
+          // Not a valid object, pass on the error
+          reject(error.toString());
+        }
+      })
       .catch(reject);
   });
 
-const addConfig = (tap, config) =>
+const addConfig = (req) =>
   new Promise((resolve, reject) => {
     // Write the config to configs/tap/
-    writeConfig(config)
+    writeConfig(req.body.config)
       .then(() => {
         // Get tap schema by running discovery mode
-        getSchema(tap)
+        getSchema(req)
           .then(() => {
             // Schema now on file, read it and return the result
             readSchema()

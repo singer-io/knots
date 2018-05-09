@@ -58,7 +58,8 @@ router.post('/tap/config/', (req, res) => {
   addConfig(tap, tapConfig)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
-      res.status(400).json({ error });
+      console.log('This is the supposed error', error);
+      res.json({ error });
     });
 });
 

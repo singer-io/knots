@@ -9,7 +9,8 @@ import {
   SCHEMA_UPDATED,
   SELECT_TAP,
   TAP_ERROR,
-  TOGGLE_MODAL
+  TOGGLE_MODAL,
+  UPDATE_SCHEMA_LOGS
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -20,6 +21,7 @@ export type tapsStateType = {
   +tapFields: Array<{}>,
   +fieldValues: {},
   +schema: Array<{}>,
+  +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
   +syntaxError: boolean,
@@ -34,6 +36,7 @@ const defaultState = {
   tapsLoading: false,
   selectedTap: '',
   schemaLoading: false,
+  schemaLogs: [],
   taps: [],
   tapFields: [],
   fieldValues: {},
@@ -49,8 +52,7 @@ const defaultState = {
 };
 
 export default function taps(state = defaultState, action) {
-  const { fieldValues } = state;
-  const { schema } = state;
+  const { fieldValues, schema } = state;
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -78,6 +80,10 @@ export default function taps(state = defaultState, action) {
     case SCHEMA_LOADING:
       return Object.assign({}, state, {
         schemaLoading: true
+      });
+    case UPDATE_SCHEMA_LOGS:
+      return Object.assign({}, state, {
+        schemaLogs: [...state.schemaLogs, action.newLog]
       });
     case TAP_ERROR:
       return Object.assign({}, state, {

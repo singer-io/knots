@@ -1,9 +1,7 @@
 // @flow
 import axios from 'axios';
-import socketIOClient from 'socket.io-client';
 
 const baseUrl = 'http://localhost:4321';
-const socket = socketIOClient(baseUrl);
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
@@ -17,6 +15,7 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const TAP_ERROR = 'TAP_ERROR';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
+export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 type actionType = {
   +type: string
@@ -117,14 +116,15 @@ export function submitConfig(tap: string, config: {}) {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: response.data.schema,
-          error: ''
+          error: response.data.error
         });
       })
       .catch((error) => {
+        console.log('This is the error', error);
         dispatch({
-          type: TAP_ERROR,
+          type: SCHEMA_RECEIVED,
           schema: [],
-          error: error.response.data.error
+          error: error.toString()
         });
       });
   };
@@ -166,11 +166,22 @@ export function toggle() {
     dispatch({ type: TOGGLE_MODAL });
 }
 
-export function discoveryLiveLogs() {
+export function updateSchemaLogs(newLog: string) {
+  console.log('Action called with', newLog);
+
   return (dispatch: (action: actionType) => void) => {
-    socket.on('live-logs', (data) => {
-      liveLogs = liveLogs.concat(`${data} \n`);
-      dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
+    dispatch({
+      type: UPDATE_SCHEMA_LOGS,
+      newLog
     });
   };
 }
+
+// export function discoveryLiveLogs() {
+//   return (dispatch: (action: actionType) => void) => {
+//     socket.on('live-logs', (data) => {
+//       liveLogs = liveLogs.concat(`${data} \n`);
+//       dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
+//     });
+//   };
+// }
