@@ -165,8 +165,6 @@ export function toggle() {
 }
 
 export function updateSchemaLogs(newLog: string) {
-  console.log('Action called with', newLog);
-
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA_LOGS,
@@ -174,12 +172,3 @@ export function updateSchemaLogs(newLog: string) {
     });
   };
 }
-
-// export function discoveryLiveLogs() {
-//   return (dispatch: (action: actionType) => void) => {
-//     socket.on('live-logs', (data) => {
-//       liveLogs = liveLogs.concat(`${data} \n`);
-//       dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
-//     });
-//   };
-// }

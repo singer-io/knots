@@ -38,6 +38,7 @@ type Props = {
       }>
     }>,
     schemaLoading: boolean,
+    schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
     dockerConfigError: boolean,
@@ -64,14 +65,23 @@ type Props = {
   updateSchemaLogs: (log: string) => void
 };
 
-export default class Schema extends Component<Props> {
+type State = {
+  showSchema: boolean
+};
+
+export default class Schema extends Component<Props, State> {
   constructor() {
     super();
+
+    this.state = {
+      showSchema: false
+    };
 
     socket.on('schemaLog', (log) => {
       this.props.updateSchemaLogs(log);
     });
   }
+
   handleChange = (field: string, index: string, value: string) => {
     this.props.editSchemaField(field, index, value);
   };
@@ -89,12 +99,17 @@ export default class Schema extends Component<Props> {
     this.props.toggle();
   };
 
+  showSchema = () => {
+    this.setState({ showSchema: true });
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
     }
     const {
       schemaLoading,
+      schemaLoaded,
       schemaLogs,
       dockerConfigError,
       showModal,
@@ -102,6 +117,8 @@ export default class Schema extends Component<Props> {
       error,
       invalidSchemaError
     } = this.props.tapsStore;
+
+    const { showSchema } = this.state;
 
     return (
       <div>
@@ -111,11 +128,14 @@ export default class Schema extends Component<Props> {
 
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
-              {schemaLoading && (
+              {!showSchema && (
                 <div>
-                  <Progress value="100" striped animated className="mt-5">
-                    Retrieving schema information...
-                  </Progress>
+                  {schemaLoading && (
+                    <Progress value="100" striped animated className="mt-5">
+                      Retrieving schema information...
+                    </Progress>
+                  )}
+
                   {dockerConfigError && (
                     <ErrorModal
                       showModal={showModal}
@@ -166,15 +186,22 @@ export default class Schema extends Component<Props> {
                           height: '250px',
                           overflow: 'auto'
                         }}
-                        className="pre-scrollable text-muted"
                       >
                         {schemaLogs.map((log) => <Log key={log} log={log} />)}
                       </StayScrolled>
                     </CardBody>
                   </Card>
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.showSchema}
+                    disabled={!schemaLoaded}
+                  >
+                    Continue
+                  </Button>
                 </div>
               )}
-              {!this.props.tapsStore.schemaLoading && (
+              {showSchema && (
                 <div>
                   <FormGroup className="form-row form-group form-inline mt-5">
                     <Label for="startDate" className="col-form-label">

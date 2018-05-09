@@ -16,6 +16,7 @@ import {
 export type tapsStateType = {
   +tapsLoading: boolean,
   +schemaLoading: boolean,
+  +schemaLoaded: boolean,
   +taps: Array<string>,
   +selectedTap: string,
   +tapFields: Array<{}>,
@@ -36,6 +37,7 @@ const defaultState = {
   tapsLoading: false,
   selectedTap: '',
   schemaLoading: false,
+  schemaLoaded: false,
   schemaLogs: [],
   taps: [],
   tapFields: [],
@@ -100,6 +102,7 @@ export default function taps(state = defaultState, action) {
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
         schemaLoading: false,
+        schemaLoaded: true,
         schema: action.schema,
         error: action.error
       });
