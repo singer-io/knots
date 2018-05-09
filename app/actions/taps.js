@@ -21,8 +21,6 @@ type actionType = {
   +type: string
 };
 
-let liveLogs = '';
-
 export function fetchTaps() {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -97,16 +95,17 @@ function ISODateString(d) {
   )}Z`;
 }
 
-export function submitConfig(tap: string, config: {}) {
+export function submitConfig(tap: string, config: { start_date?: string }) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SCHEMA_LOADING
     });
     const tapConfig = config;
 
-    if (Object.prototype.hasOwnProperty.call(tapConfig, 'start_date')) {
+    if (tapConfig.start_date) {
       tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
     }
+
     axios
       .post(`${baseUrl}/tap/config/`, {
         tap,
@@ -120,7 +119,6 @@ export function submitConfig(tap: string, config: {}) {
         });
       })
       .catch((error) => {
-        console.log('This is the error', error);
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: [],

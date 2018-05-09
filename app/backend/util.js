@@ -327,14 +327,14 @@ const writeConfig = (config) =>
   });
 
 const getSchema = (req) =>
-  new Promise((resolve, reject) => {
+  new Promise((resolve) => {
     const runDiscovery = exec(commands.runDiscovery(tempFolder, req.body.tap));
 
     runDiscovery.stderr.on('data', (data) => {
       req.io.emit('schemaLog', data.toString());
     });
 
-    runDiscovery.on('exit', (code) => {
+    runDiscovery.on('exit', () => {
       resolve();
     });
   });
@@ -363,7 +363,7 @@ const readSchema = () =>
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
     // Write the config to configs/tap/
-    writeConfig(req.body.config)
+    writeConfig(req.body.tapConfig)
       .then(() => {
         // Get tap schema by running discovery mode
         getSchema(req)

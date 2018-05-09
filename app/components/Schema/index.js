@@ -15,6 +15,7 @@ import {
   Card,
   CardBody
 } from 'reactstrap';
+import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
 
 import Header from '../Header';
@@ -22,6 +23,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import ErrorModal from '../Modal';
+import Log from './Log';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
@@ -158,14 +160,16 @@ export default class Schema extends Component<Props> {
                   )}
                   <Card className="bg-light mt-3">
                     <CardBody>
-                      <pre className="pre-scrollable text-muted">
-                        {schemaLogs.map((log) => (
-                          <pre>
-                            {log}
-                            <br />
-                          </pre>
-                        ))}
-                      </pre>
+                      <StayScrolled
+                        component="div"
+                        style={{
+                          height: '250px',
+                          overflow: 'auto'
+                        }}
+                        className="pre-scrollable text-muted"
+                      >
+                        {schemaLogs.map((log) => <Log key={log} log={log} />)}
+                      </StayScrolled>
                     </CardBody>
                   </Card>
                 </div>

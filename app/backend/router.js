@@ -54,8 +54,7 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/config/', (req, res) => {
-  const { tap, tapConfig } = req.body;
-  addConfig(tap, tapConfig)
+  addConfig(req)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
       console.log('This is the supposed error', error);
