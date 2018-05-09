@@ -142,7 +142,8 @@ router.post('/target/', (req, res) => {
 });
 
 router.post('/sync/', (req, res) => {
-  sync()
+  const { tap } = req.body;
+  sync(tap)
     .then(() => {
       res.json({ status: 200 });
     })

@@ -41,14 +41,14 @@ export function updateName(name) {
   };
 }
 
-export function sync() {
+export function sync(tap) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
     });
 
     axios
-      .post(`${baseUrl}/sync`, {})
+      .post(`${baseUrl}/sync`, { tap })
       .then(() =>
         dispatch({
           type: KNOT_SYNCED

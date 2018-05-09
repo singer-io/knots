@@ -447,11 +447,9 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = () =>
+const sync = (tap) =>
   new Promise((resolve) => {
-    const syncData = exec(
-      commands.runSync(`${tempFolder}/configs`, 'tap-salesforce')
-    );
+    const syncData = exec(commands.runSync(`${tempFolder}/configs`, tap));
 
     syncData.stderr.on('data', (data) => {
       console.log(data.toString());

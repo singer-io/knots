@@ -22,7 +22,8 @@ import styles from './Sync.css';
 type Props = {
   knotsStore: { knotName: string, knotSyncing: boolean, knotSynced: boolean },
   updateName: (name: string) => void,
-  sync: () => void
+  sync: (tap: string) => void,
+  tapStore: { selectedTap: string }
 };
 
 export default class Sync extends Component<Props> {
@@ -33,7 +34,8 @@ export default class Sync extends Component<Props> {
   };
 
   submit = () => {
-    this.props.sync();
+    const { selectedTap } = this.props.tapStore;
+    this.props.sync(selectedTap);
   };
 
   render() {
