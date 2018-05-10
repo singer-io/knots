@@ -36,12 +36,26 @@ Build the image;
 $ docker build -t dataworld/tap-redshift:1.0 .
 ```
 
+Create a `.env` file in the root folder and add the newly created docker image.
+
+Sample of the `.env` file should look like;
+
+```sh
+TAP_REDSHIFT="dataworld/tap-redshift:1.0"
+```
+
 #### Updating docker images
 
 Make changes to the Dockerfile of the image to update then build and tag the image with a different version from the previous;
 
 ```sh
-$ docker build -t dataworlf/{IMAGE_NAME}:{NEW_VERSION} .
+$ docker build -t dataworld/{IMAGE_NAME}:{NEW_VERSION} .
+```
+
+For example, once updates are made to the `tap-redshift` image, make a new build, update `.env` file with the new version and test;
+
+```sh
+$ docker build -t dataworld/tap-redshift:2.0 .
 ```
 
 #### Releasing created and updated images
