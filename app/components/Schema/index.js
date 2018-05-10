@@ -23,7 +23,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import ErrorModal from '../Modal';
-import Log from './Log';
+import Log from '../Log';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);

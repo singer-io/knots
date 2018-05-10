@@ -146,7 +146,7 @@ const commands = {
   runSync: (folderPath, tap) => {
     switch (tap) {
       case 'tap-redshift':
-        return `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
+        return `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json 2> tap.log | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json 2> $(pwd)/target.log`;
       case 'tap-salesforce':
         return `docker run -v ${folderPath}/tap:/app/tap-salesforce/data --interactive gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json --properties tap-salesforce/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
       default:

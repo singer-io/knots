@@ -4,6 +4,8 @@ const baseUrl = 'http://localhost:4321';
 
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
 export const DOCKER_VERSION_ERROR = 'DOCKER_VERSION_ERROR';
+export const UPDATE_TAP_LOGS = 'UPDATE_TAP_LOGS';
+export const UPDATE_TARGET_LOGS = 'UPDATE_TARGET_LOGS';
 export const UPDATE_NAME = 'UPDATE_NAME';
 export const KNOT_SYNCING = 'KNOT_SYNCING';
 export const KNOT_SYNCED = 'KNOT_SYNCED';
@@ -59,5 +61,23 @@ export function sync(tap) {
           type: KNOT_SYNCED
         })
       );
+  };
+}
+
+export function updateTapLogs(newLog: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TAP_LOGS,
+      newLog
+    });
+  };
+}
+
+export function updateTargetLogs(newLog: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TARGET_LOGS,
+      newLog
+    });
   };
 }

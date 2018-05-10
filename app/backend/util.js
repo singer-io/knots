@@ -433,20 +433,25 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = (tap) =>
+const sync = (req) =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(`${tempFolder}/configs`, tap));
+    const syncData = exec(
+      commands.runSync(`${tempFolder}/configs`, req.body.tap)
+    );
 
-    syncData.stderr.on('data', (data) => {
-      console.log(data.toString());
+    fs.watchFile('tap.log', () => {
+      exec('tail -n 1 tap.log', (error, stdout) => {
+        req.io.emit('tapLog', stdout.toString());
+      });
     });
 
-    syncData.stdout.on('data', (data) => {
-      console.log('OUT', data.toString());
+    fs.watchFile('target.log', () => {
+      exec('tail -n 1 target.log', (error, stdout) => {
+        req.io.emit('targetLog', stdout.toString());
+      });
     });
 
     syncData.on('exit', (code) => {
-      console.log('Done', code.toString());
       resolve();
     });
   });

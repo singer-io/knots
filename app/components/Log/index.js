@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import { scrolled } from 'react-stay-scrolled';
+import classNames from 'classnames';
+
+import styles from './Log.css';
 
 type Props = {
   log: text,
@@ -15,7 +18,7 @@ class Log extends Component<Props> {
   render() {
     const { log } = this.props;
 
-    return <pre className="text-muted">{log}</pre>;
+    return <pre className={classNames(styles.wrap, 'text-muted')}>{log}</pre>;
   }
 }
 

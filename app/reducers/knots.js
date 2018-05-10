@@ -1,6 +1,8 @@
 import {
   UPDATE_DOCKER_VERSION,
   DOCKER_VERSION_ERROR,
+  UPDATE_TAP_LOGS,
+  UPDATE_TARGET_LOGS,
   UPDATE_NAME,
   KNOT_SYNCING,
   KNOT_SYNCED
@@ -10,6 +12,8 @@ export type knotsStateType = {
   +dockerVersionDetected: boolean,
   +dockerVersion: string,
   +dockerVersionError: string,
+  +tapLogs: [],
+  +targetLogs: [],
   +knotName: string,
   +syncing: boolean
 };
@@ -18,6 +22,8 @@ const defaultState = {
   dockerVersionDetected: false,
   dockerVersion: '',
   dockerVersionError: '',
+  tapLogs: [],
+  targetLogs: [],
   knotName: '',
   knotSyncing: false,
   knotSynced: false
@@ -36,6 +42,14 @@ export default function knots(state = defaultState, action) {
         dockerVersionDetected: true,
         dockerVersion: '',
         dockerVersionError: action.error
+      });
+    case UPDATE_TAP_LOGS:
+      return Object.assign({}, state, {
+        tapLogs: [...state.tapLogs, action.newLog]
+      });
+    case UPDATE_TARGET_LOGS:
+      return Object.assign({}, state, {
+        targetLogs: [...state.targetLogs, action.newLog]
       });
     case UPDATE_NAME:
       return Object.assign({}, state, {
