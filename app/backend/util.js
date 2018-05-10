@@ -343,7 +343,7 @@ const getSchema = (tap) =>
       const errorOutput = data.toString();
       if (errorOutput.indexOf('Mounts denied' !== -1)) {
         console.log(errorOutput);
-        reject(errorOutput);
+        // reject(errorOutput);
       } else {
         console.log('Err', data.toString());
       }
@@ -357,7 +357,7 @@ const getSchema = (tap) =>
       if (code === 0) {
         const catalogFile = path.resolve(
           tempFolder,
-          'docker',
+          'configs',
           'tap',
           'catalog.json'
         );
@@ -368,7 +368,6 @@ const getSchema = (tap) =>
               JSON.parse(schema);
               resolve(schemaObject);
             } catch (e) {
-              console.log('reading catalog');
               reject(e.toString());
             }
           })
@@ -420,7 +419,7 @@ const writeSchema = (schemaObject) =>
         );
         shell.mv(
           path.resolve(tempFolder, 'catalog.json'),
-          path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+          path.resolve(tempFolder, 'configs', 'tap')
         );
         resolve();
       })

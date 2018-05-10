@@ -36,7 +36,13 @@ const defaultState = {
   schemaLoading: false,
   taps: [],
   tapFields: [],
-  fieldValues: {},
+  fieldValues: {
+    host: 'examplecluster.ctjbcssjmnx4.us-west-2.redshift.amazonaws.com',
+    user: 'masteruser',
+    password: 'Pastor-02',
+    dbname: 'dev',
+    port: '5439'
+  },
   schema: [],
   schemaUpdated: false,
   error: '',
