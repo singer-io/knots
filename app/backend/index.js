@@ -9,7 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1500kb' }));
 app.use((req, res, next) => {
   req.io = io;
   next();
