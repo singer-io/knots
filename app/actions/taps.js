@@ -17,7 +17,6 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const TAP_ERROR = 'TAP_ERROR';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
-export const SCHEMA_ERROR = 'SCHEMA_ERROR';
 
 type actionType = {
   +type: string
@@ -155,7 +154,7 @@ export function submitSchema(schema: {}) {
       })
       .catch((error) => {
         dispatch({
-          type: SCHEMA_ERROR,
+          type: SCHEMA_UPDATED,
           error
         });
       });

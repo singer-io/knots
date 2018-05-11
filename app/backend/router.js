@@ -68,7 +68,7 @@ router.put('/schema/', (req, res) => {
       res.json({ status: 200 });
     })
     .catch((err) => {
-      res.status().json({ err });
+      res.json(err);
     });
 });
 

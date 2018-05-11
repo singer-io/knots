@@ -9,8 +9,7 @@ import {
   SCHEMA_UPDATED,
   SELECT_TAP,
   TAP_ERROR,
-  TOGGLE_MODAL,
-  SCHEMA_ERROR
+  TOGGLE_MODAL
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -37,13 +36,7 @@ const defaultState = {
   schemaLoading: false,
   taps: [],
   tapFields: [],
-  fieldValues: {
-    host: 'examplecluster.ctjbcssjmnx4.us-west-2.redshift.amazonaws.com',
-    user: 'masteruser',
-    password: 'Pastor-02',
-    dbname: 'dev',
-    port: '5439'
-  },
+  fieldValues: {},
   schema: [],
   schemaUpdated: false,
   error: '',
@@ -134,12 +127,6 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapsLoading: false,
         schemaUpdated: true,
-        error: action.error
-      });
-    case SCHEMA_ERROR:
-      return Object.assign({}, state, {
-        schemaLoading: false,
-        schemaUpdated: false,
         error: action.error
       });
     default:
