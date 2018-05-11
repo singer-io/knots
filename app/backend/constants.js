@@ -133,26 +133,10 @@ const tapSalesforceFields = [
 ];
 
 const commands = {
-  runDiscovery: (folderPath, tap) => {
-    switch (tap) {
-      case 'tap-redshift':
-        return `docker run -v ${folderPath}/configs/tap:/app/tap-redshift/data gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
-      case 'tap-salesforce':
-        return `docker run -v ${folderPath}/configs/tap:/app/tap-salesforce/data gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json -d > ${folderPath}/configs/tap/catalog.json`;
-      default:
-        return '';
-    }
-  },
-  runSync: (folderPath, tap) => {
-    switch (tap) {
-      case 'tap-redshift':
-        return `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
-      case 'tap-salesforce':
-        return `docker run -v ${folderPath}/tap:/app/tap-salesforce/data --interactive gbolahan/tap-salesforce:1.0 tap-salesforce -c tap-salesforce/data/config.json --properties tap-salesforce/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`;
-      default:
-        return '';
-    }
-  },
+  runDiscovery: (folderPath, tap, image) =>
+    `docker run -v ${folderPath}/configs/tap:/app/${tap}/data ${image} ${tap} -c ${tap}/data/config.json -d > ${folderPath}/configs/tap/catalog.json`,
+  runSync: (folderPath, tap, tapImage) =>
+    `docker run -v ${folderPath}/tap:/app/${tap}/data --interactive ${tapImage} ${tap} -c ${tap}/data/config.json --properties ${tap}/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`,
   runPartialSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/state.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`
 };

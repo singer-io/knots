@@ -99,14 +99,19 @@ export default function taps(state = defaultState, action) {
       });
     case UPDATE_SCHEMA_FIELD:
       if (schema[action.index]) {
+        let indexToUpdate;
         switch (action.field) {
           case 'selected':
-            schema[action.index].metadata[0].metadata[action.field] =
-              action.value;
-
-            return Object.assign({}, state, {
-              tapSchema: schema
+            schema[action.index].metadata.forEach((metadata, index) => {
+              if (metadata.breadcrumb.length === 0) {
+                indexToUpdate = index;
+              }
             });
+            schema[action.index].metadata[indexToUpdate].metadata[
+              action.field
+            ] =
+              action.value;
+            return Object.assign({}, state, { tapSchema: schema });
           case 'replication_key':
             schema[action.index].replication_key = action.value;
 

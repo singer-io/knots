@@ -21,6 +21,11 @@ const KNOT_TAP_CONTENT = ['config.json', 'state.json', 'catalog.json'];
 const KNOT_TARGET_CONTENT = ['config.json'];
 const KNOT_JSON_KEYS = ['tap', 'target'];
 
+const TAP_ENV_NAME = {
+  'tap-redshift': 'TAP_REDSHIFT',
+  'tap-salesforce': 'TAP_SALESFORCE'
+};
+
 // app is only defined in the packaged app, use app root directory during development
 if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
@@ -328,12 +333,17 @@ const writeConfig = (config) =>
 
 const getSchema = (tap) =>
   new Promise((resolve, reject) => {
-    const runDiscovery = exec(commands.runDiscovery(tempFolder, tap));
+    let tapImage;
+    if (process.env.NODE_ENV === 'development') {
+      tapImage = process.env[TAP_ENV_NAME[tap]];
+    }
+    const runDiscovery = exec(commands.runDiscovery(tempFolder, tap, tapImage));
 
     runDiscovery.stderr.on('data', (data) => {
       const errorOutput = data.toString();
       if (errorOutput.indexOf('Mounts denied' !== -1)) {
         console.log(errorOutput);
+        // reject(errorOutput);
       } else {
         console.log('Err', data.toString());
       }
@@ -345,15 +355,19 @@ const getSchema = (tap) =>
 
     runDiscovery.on('exit', (code) => {
       if (code === 0) {
-        const x = path.resolve(tempFolder, 'docker', 'tap', 'catalog.json');
-        readFile(x)
+        const catalogFile = path.resolve(
+          tempFolder,
+          'configs',
+          'tap',
+          'catalog.json'
+        );
+        readFile(catalogFile)
           .then((schemaObject) => {
             const schema = JSON.stringify(schemaObject);
             try {
               JSON.parse(schema);
               resolve(schemaObject);
             } catch (e) {
-              console.log('reading catalog');
               reject(e.toString());
             }
           })
@@ -405,7 +419,7 @@ const writeSchema = (schemaObject) =>
         );
         shell.mv(
           path.resolve(tempFolder, 'catalog.json'),
-          path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
+          path.resolve(tempFolder, 'configs', 'tap')
         );
         resolve();
       })
@@ -449,7 +463,13 @@ const addTargetConfig = (config) =>
 
 const sync = (tap) =>
   new Promise((resolve) => {
-    const syncData = exec(commands.runSync(`${tempFolder}/configs`, tap));
+    let tapImage;
+    if (process.env.NODE_ENV === 'development') {
+      tapImage = process.env[TAP_ENV_NAME[tap]];
+    }
+    const syncData = exec(
+      commands.runSync(`${tempFolder}/configs`, tap, tapImage)
+    );
 
     syncData.stderr.on('data', (data) => {
       console.log(data.toString());

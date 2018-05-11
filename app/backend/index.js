@@ -3,12 +3,13 @@ const bodyParser = require('body-parser');
 const socketIo = require('socket.io');
 const http = require('http');
 const router = require('./router');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use((req, res, next) => {
   req.io = io;
   next();
