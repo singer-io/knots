@@ -21,7 +21,7 @@ Within the Dockerfile, specify necessary commands to build your image.
 
 Sample of a Dockerfile to build an image from `tap-redshift` python package and `python:latest` as the base image;
 
-```python
+```
 FROM python:latest
 MAINTAINER 'data.world, Inc.(http://data.world/)'
 RUN pip install tap-redshift==1.0.0b4
