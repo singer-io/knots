@@ -9,7 +9,8 @@ import {
   SCHEMA_UPDATED,
   SELECT_TAP,
   TAP_ERROR,
-  TOGGLE_MODAL
+  TOGGLE_MODAL,
+  SCHEMA_ERROR
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -133,6 +134,12 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapsLoading: false,
         schemaUpdated: true,
+        error: action.error
+      });
+    case SCHEMA_ERROR:
+      return Object.assign({}, state, {
+        schemaLoading: false,
+        schemaUpdated: false,
         error: action.error
       });
     default:
