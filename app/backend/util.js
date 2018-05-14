@@ -192,7 +192,7 @@ const validateKnotTargetContent = (validKnotPaths) =>
     });
   });
 
-async function getKnots() {
+async function getKnot() {
   try {
     const knotPath = path.resolve(tempFolder, 'knots');
     const data = await validateKnotsFolder(knotPath);
@@ -209,6 +209,14 @@ async function getKnots() {
     });
   }
 }
+
+const getKnots = () =>
+  new Promise((resolve) => {
+    const knots = fs.readdirSync(`${tempFolder}/knots`);
+    console.log('The knots', knots);
+
+    resolve(knots || []);
+  });
 
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {

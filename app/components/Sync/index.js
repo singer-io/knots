@@ -125,9 +125,6 @@ export default class Sync extends Component<Props> {
                   <div className="alert alert-success">
                     <strong className="">{`${knotName} has been saved! Running your knot could take a while...`}</strong>
                   </div>
-                  <Progress value="100" striped animated className="mt-5">
-                    Live logs will appear here
-                  </Progress>
                 </div>
               )}
 

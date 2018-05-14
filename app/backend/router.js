@@ -29,6 +29,14 @@ router.get('/docker', (req, res) => {
     });
 });
 
+router.get('/knots', (req, res) => {
+  getKnots()
+    .then((knots) => res.json({ knots }))
+    .catch((error) => {
+      res.json({ error });
+    });
+});
+
 router.get('/taps', (req, res) => {
   getTaps()
     .then((taps) => res.json({ taps }))
@@ -69,20 +77,6 @@ router.put('/schema/', (req, res) => {
     })
     .catch((err) => {
       res.json(err);
-    });
-});
-
-router.get('/knots', (req, res) => {
-  detectDocker()
-    .then(() => {
-      getKnots()
-        .then((knots) => res.json({ knots, docker: true }))
-        .catch(() => {
-          res.json([]);
-        });
-    })
-    .catch(() => {
-      res.json({ docker: false });
     });
 });
 
