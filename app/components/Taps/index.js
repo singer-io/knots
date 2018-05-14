@@ -23,12 +23,13 @@ type Props = {
   tapsStore: {
     selectedTap: string,
     tapsLoading: boolean,
+    sfToken?: string,
     taps: Array<{
       logo: string,
       name: string,
       repo: string,
       tapKey: string,
-      version: string
+      tapImage: string
     }>,
     tapFields: Array<{
       key: string,
@@ -100,13 +101,15 @@ export default class Taps extends Component<Props, State> {
     this.props.history.push('/schema');
   };
 
-  setSfRefreshToken = (token) => {
+  setSfRefreshToken = (token: string) => {
     this.props.updateTapField('refresh_token', token);
   };
 
   render() {
     const { taps, tapFields } = this.props.tapsStore;
     const { showTaps } = this.state;
+
+    console.log('The aadsfasdf', this.props);
 
     return (
       <div>

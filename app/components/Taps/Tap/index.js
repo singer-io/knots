@@ -7,7 +7,7 @@ type Props = {
   name: string,
   repo: string,
   tapKey: string,
-  version: string,
+  tapImage: string,
   selectTap: (tap: string, version: string) => void
 };
 
@@ -25,7 +25,7 @@ const Tap = (props: Props) => (
       <button
         className={styles.name}
         onClick={() => {
-          props.selectTap(props.tapKey, props.version);
+          props.selectTap(props.tapKey, props.tapImage);
         }}
       >
         {props.name}

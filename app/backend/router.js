@@ -47,8 +47,8 @@ router.get('/taps', (req, res) => {
 });
 
 router.post('/taps/', (req, res) => {
-  const { tap } = req.body;
-  fetchTapFields(tap)
+  const { tap, image } = req.body;
+  fetchTapFields(tap, image)
     .then((config) => {
       res.json({
         config
@@ -99,8 +99,8 @@ router.get('/targets/', (req, res) => {
 });
 
 router.post('/target/install', (req, res) => {
-  const { target, version } = req.body;
-  addTarget(target, version)
+  const { target, targetImage } = req.body;
+  addTarget(target, targetImage)
     .then(() => {
       res.json({ status: 200 });
     })

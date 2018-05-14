@@ -46,16 +46,18 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: string) {
+export function selectTap(tap: string, image: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SELECT_TAP,
-      tap
+      tap,
+      image
     });
 
     axios
       .post(`${baseUrl}/taps/`, {
-        tap
+        tap,
+        image
       })
       .then((response) =>
         dispatch({
