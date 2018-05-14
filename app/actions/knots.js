@@ -13,6 +13,7 @@ export const UPDATE_TARGET_LOGS = 'UPDATE_TARGET_LOGS';
 export const UPDATE_NAME = 'UPDATE_NAME';
 export const KNOT_SYNCING = 'KNOT_SYNCING';
 export const KNOT_SYNCED = 'KNOT_SYNCED';
+export const KNOT_DELETED = 'KNOT_DELETED';
 
 type actionType = {
   +type: string
@@ -134,5 +135,18 @@ export function updateTargetLogs(newLog: string) {
       type: UPDATE_TARGET_LOGS,
       newLog
     });
+  };
+}
+
+export function deleteKnot(knot: string) {
+  return (dispatch: (action: actionType) => void) => {
+    axios
+      .post(`${baseUrl}/delete`, { knot })
+      .then(() =>
+        dispatch({
+          type: KNOT_DELETED
+        })
+      )
+      .catch();
   };
 }

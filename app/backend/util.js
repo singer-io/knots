@@ -353,6 +353,12 @@ const getToken = (knot) =>
     }
   });
 
+const deleteKnot = (knot) =>
+  new Promise((resolve) => {
+    shell.rm('-rf', path.resolve(tempFolder, 'knots', knot));
+    resolve();
+  });
+
 module.exports = {
   getKnots,
   getTaps,
@@ -367,5 +373,6 @@ module.exports = {
   sync,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  deleteKnot
 };

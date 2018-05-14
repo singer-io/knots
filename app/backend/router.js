@@ -16,7 +16,8 @@ const {
   addTarget,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  deleteKnot
 } = require('./util');
 
 router.get('/docker', (req, res) => {
@@ -156,6 +157,17 @@ router.post('/save/', (req, res) => {
 
 router.post('/sync/', (req, res) => {
   sync(req)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
+});
+
+router.post('/delete/', (req, res) => {
+  const { knot } = req.body;
+  deleteKnot(knot)
     .then(() => {
       res.json({ status: 200 });
     })

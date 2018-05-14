@@ -8,7 +8,8 @@ import {
   KNOT_SYNCED,
   DETECTING_DOCKER,
   FETCHING_KNOTS,
-  FETCHED_KNOTS
+  FETCHED_KNOTS,
+  KNOT_DELETED
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -21,7 +22,8 @@ export type knotsStateType = {
   +tapLogs: Array<string>,
   +targetLogs: Array<string>,
   +knotName: string,
-  +syncing: boolean
+  +syncing: boolean,
+  +knotDeleted: boolean
 };
 
 const defaultState = {
@@ -35,7 +37,8 @@ const defaultState = {
   targetLogs: [],
   knotName: '',
   knotSyncing: false,
-  knotSynced: false
+  knotSynced: false,
+  knotDeleted: false
 };
 
 export default function knots(state = defaultState, action) {
@@ -46,7 +49,8 @@ export default function knots(state = defaultState, action) {
       });
     case FETCHING_KNOTS:
       return Object.assign({}, state, {
-        fetchingKnots: true
+        fetchingKnots: true,
+        knotDeleted: false
       });
     case FETCHED_KNOTS:
       return Object.assign({}, state, {
@@ -86,6 +90,10 @@ export default function knots(state = defaultState, action) {
       return Object.assign({}, state, {
         knotSyncing: false,
         knotSynced: true
+      });
+    case KNOT_DELETED:
+      return Object.assign({}, state, {
+        knotDeleted: true
       });
     default:
       return state;
