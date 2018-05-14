@@ -141,6 +141,23 @@ router.post('/target/', (req, res) => {
     .catch(console.log);
 });
 
+router.post('/save/', (req, res) => {
+  const { knotName } = req.body;
+  saveKnot(knotName)
+    .then(() => {
+      sync(req)
+        .then(() => {
+          res.json({ status: 200 });
+        })
+        .catch((error) => {
+          res.json({ status: 500, error });
+        });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
+});
+
 router.post('/sync/', (req, res) => {
   sync(req)
     .then(() => {

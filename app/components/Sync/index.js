@@ -37,9 +37,11 @@ type Props = {
     tapLogs: Array<string>,
     targetLogs: Array<string>
   },
+  tapStore: {
+    selectedTap: string
+  },
   updateName: (name: string) => void,
-  sync: (tap: string) => void,
-  tapStore: { selectedTap: string },
+  save: (selectedTap: string, knotName: string) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void
 };
@@ -65,7 +67,8 @@ export default class Sync extends Component<Props> {
 
   submit = () => {
     const { selectedTap } = this.props.tapStore;
-    this.props.sync(selectedTap);
+    const { knotName } = this.props.knotsStore;
+    this.props.save(selectedTap, knotName);
   };
 
   render() {
@@ -120,8 +123,7 @@ export default class Sync extends Component<Props> {
               {knotSyncing && (
                 <div>
                   <div className="alert alert-success">
-                    <strong
-                    >{`${knotName} has been saved! Running your knot could take a while...`}</strong>
+                    <strong className="">{`${knotName} has been saved! Running your knot could take a while...`}</strong>
                   </div>
                   <Progress value="100" striped animated className="mt-5">
                     Live logs will appear here

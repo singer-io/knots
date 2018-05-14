@@ -1,3 +1,4 @@
+// @flow
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
@@ -34,7 +35,7 @@ export function detectDocker() {
   };
 }
 
-export function updateName(name) {
+export function updateName(name: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_NAME,
@@ -43,7 +44,29 @@ export function updateName(name) {
   };
 }
 
-export function sync(tap) {
+export function save(selectedTap: string, knotName: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: KNOT_SYNCING
+    });
+
+    axios
+      .post(`${baseUrl}/save`, { tap: selectedTap, knotName })
+      .then(() =>
+        dispatch({
+          type: KNOT_SYNCED
+        })
+      )
+      .catch((error) =>
+        dispatch({
+          type: KNOT_SYNCED,
+          error: error.toString()
+        })
+      );
+  };
+}
+
+export function sync(tap: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
