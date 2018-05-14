@@ -150,3 +150,28 @@ export function deleteKnot(knot: string) {
       .catch();
   };
 }
+
+export function downloadKnot(knot: string) {
+  return () => {
+    axios
+      .post(`${baseUrl}/download/`, { knot })
+      .then(() => {
+        console.log('Progress');
+        axios({
+          url: `http://localhost:4321/download?knot=${knot}`,
+          method: 'GET',
+          responseType: 'blob' // important
+        })
+          .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${knot}.zip`);
+            document.body.appendChild(link);
+            link.click();
+          })
+          .catch();
+      })
+      .catch();
+  };
+}

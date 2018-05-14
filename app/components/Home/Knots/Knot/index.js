@@ -7,12 +7,18 @@ import styles from './Knot.css';
 
 type Props = {
   knot: { name: string, lastRun: string },
-  delete: ({ name: string }) => void
+  delete: ({ name: string }) => void,
+  download: ({ name: string }) => void
 };
 
 export default class Knots extends Component<Props> {
   delete = () => {
     this.props.delete(this.props.knot);
+  };
+
+  download = () => {
+    console.log('Download called');
+    this.props.download(this.props.knot);
   };
 
   render() {
@@ -68,6 +74,7 @@ export default class Knots extends Component<Props> {
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"
+              onClick={this.download}
               title="Download"
             >
               <span className="oi oi-cloud-download" />

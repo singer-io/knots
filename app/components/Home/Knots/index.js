@@ -9,6 +9,7 @@ type Props = {
     knotDeleted: boolean
   },
   deleteKnot: (knot: string) => void,
+  downloadKnot: (knot: string) => void,
   getKnots: () => void
 };
 
@@ -21,6 +22,11 @@ export default class Knots extends Component<Props> {
 
   delete = (knot: { name: string }) => {
     this.props.deleteKnot(knot.name);
+  };
+
+  download = (knot: { name: string }) => {
+    console.log('Second download called');
+    this.props.downloadKnot(knot.name);
   };
 
   render() {
@@ -43,7 +49,12 @@ export default class Knots extends Component<Props> {
             <th className="fit">Actions</th>
           </thead>
           {knots.map((knot) => (
-            <Knot key={knot.name} knot={knot} delete={this.delete} />
+            <Knot
+              key={knot.name}
+              knot={knot}
+              delete={this.delete}
+              download={this.download}
+            />
           ))}
         </table>
       </div>

@@ -197,15 +197,21 @@ router.post('/token/', (req, res) => {
 
   getToken(knot)
     .then((token) => {
-      console.log('This is what we are working wiht', token);
       res.json({ token });
     })
-    .catch((err) => console.log('Perhaps this', err));
+    .catch((error) => res.json({ error }));
+});
+
+router.post('/download/', (req, res) => {
+  const { knot } = req.body;
+  downloadKnot(knot)
+    .then(() => res.json({}))
+    .catch();
 });
 
 router.get('/download/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download('abc.zip');
+  res.download(`${req.query.knot}.zip`);
 });
 
 module.exports = router;
