@@ -141,13 +141,13 @@ router.post('/save/', (req, res) => {
     .then(() => {
       res.json({ status: 200 });
 
-      sync(req)
-        .then(() => {
-          res.json({ status: 200 });
-        })
-        .catch((error) => {
-          res.json({ status: 500, error });
-        });
+      // sync(req)
+      //   .then(() => {
+      //     res.json({ status: 200 });
+      //   })
+      //   .catch((error) => {
+      //     res.json({ status: 500, error });
+      //   });
     })
     .catch(() => {
       res.json({ status: 500 });
