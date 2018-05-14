@@ -18,7 +18,7 @@ type Props = {
     fetchingKnots: boolean,
     dockerVersionDetected: boolean,
     dockerVersion: string,
-    knots: Array<string>
+    knots: Array<{}>
   }
 };
 

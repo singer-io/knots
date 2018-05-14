@@ -51,7 +51,7 @@ export default function knots(state = defaultState, action) {
     case FETCHED_KNOTS:
       return Object.assign({}, state, {
         fetchingKnots: false,
-        knots: action.knots
+        knots: action.knots || []
       });
     case UPDATE_DOCKER_VERSION:
       return Object.assign({}, state, {

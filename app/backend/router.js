@@ -139,6 +139,8 @@ router.post('/save/', (req, res) => {
   const { knotName } = req.body;
   saveKnot(knotName)
     .then(() => {
+      res.json({ status: 200 });
+
       sync(req)
         .then(() => {
           res.json({ status: 200 });
@@ -181,7 +183,6 @@ router.post('/download/', (req, res) => {
 router.post('/token/', (req, res) => {
   const { knot } = req.body;
 
-  console.log('sfsd', knot);
   getToken(knot)
     .then((token) => {
       console.log('This is what we are working wiht', token);

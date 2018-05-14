@@ -11,7 +11,6 @@ import {
   InputGroupText,
   Input,
   Button,
-  Progress,
   Card,
   CardBody,
   CardHeader
