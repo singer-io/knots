@@ -132,17 +132,19 @@ export default class Taps extends Component<Props, State> {
                       show: this.state.showTaps
                     })}
                   >
-                    <Col md={{ size: 4 }}>
-                      <div id="collapseOne" aria-labelledby="headingOne">
-                        {taps.map((tap) => (
-                          <Tap
-                            {...tap}
-                            key={tap.tapKey}
-                            selectTap={this.props.selectTap}
-                          />
-                        ))}
-                      </div>
-                    </Col>
+                    <Row>
+                      {taps.map((tap) => (
+                        <Col xs="6" sm="4">
+                          <div id="collapseOne" aria-labelledby="headingOne">
+                            <Tap
+                              {...tap}
+                              key={tap.tapKey}
+                              selectTap={this.props.selectTap}
+                            />
+                          </div>
+                        </Col>
+                      ))}
+                    </Row>
                   </CardBody>
                 </Card>
 
