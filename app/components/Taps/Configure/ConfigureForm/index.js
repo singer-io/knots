@@ -23,7 +23,9 @@ type Props = {
   fieldValues: {
     password?: string,
     client_id?: string,
-    client_secret?: string
+    client_secret?: string,
+    api_type?: string,
+    select_fields_by_default?: boolean
   },
   handleChange: (event: SyntheticEvent<HTMLButtonElement>) => void,
   setSfRefreshToken: (token: string) => void
@@ -88,7 +90,11 @@ export default class ConnectForm extends Component<Props> {
                 </Input>
               ) : (
                 <Input
-                  readOnly={field.key === 'refresh_token'}
+                  readOnly={
+                    field.key === 'refresh_token' ||
+                    field.key === 'api_type' ||
+                    field.key === 'select_fields_by_default'
+                  }
                   type={field.type}
                   name={field.key}
                   value={this.props.fieldValues[field.key]}

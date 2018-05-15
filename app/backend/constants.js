@@ -118,8 +118,7 @@ const tapSalesforceFields = [
     required: true,
     validationText: 'Required',
     placeholder: '',
-    type: 'select',
-    options: ['BULK', 'REST']
+    type: 'text'
   },
   {
     key: 'select_fields_by_default',
@@ -127,8 +126,7 @@ const tapSalesforceFields = [
     required: true,
     validationText: 'Required',
     placeholder: '',
-    type: 'select',
-    options: ['true', 'false']
+    type: 'text'
   }
 ];
 

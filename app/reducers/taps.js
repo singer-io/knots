@@ -36,7 +36,10 @@ const defaultState = {
   schemaLoading: false,
   taps: [],
   tapFields: [],
-  fieldValues: {},
+  fieldValues: {
+    api_type: 'BULK',
+    select_fields_by_default: true
+  },
   schema: [],
   schemaUpdated: false,
   error: '',
