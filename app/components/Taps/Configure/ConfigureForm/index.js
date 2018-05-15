@@ -24,6 +24,7 @@ type Props = {
     password?: string,
     client_id?: string,
     client_secret?: string,
+    refresh_token?: string,
     api_type?: string,
     select_fields_by_default?: boolean
   },
@@ -108,6 +109,12 @@ export default class ConnectForm extends Component<Props> {
               {field.key === 'refresh_token' && (
                 <InputGroupAddon addonType="append">
                   <Button
+                    disabled={
+                      !(
+                        this.props.fieldValues.client_id &&
+                        this.props.fieldValues.client_secret
+                      ) || this.props.fieldValues.refresh_token
+                    }
                     outline
                     color="secondary"
                     onClick={(e) => {
