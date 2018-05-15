@@ -72,6 +72,18 @@ export default class Schema extends Component<Props> {
     this.props.toggle();
   };
 
+  validRepKeys = (stream) => {
+    let indexToUpdate;
+    stream.metadata.forEach((metadata, index) => {
+      if (metadata.breadcrumb.length === 0) {
+        indexToUpdate = index;
+      }
+    });
+    return (
+      stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
+    );
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
@@ -175,11 +187,7 @@ export default class Schema extends Component<Props> {
                           <td>{stream.stream}</td>
                           <td>
                             <Dropdown
-                              columns={
-                                stream.metadata[0].metadata[
-                                  'valid-replication-keys'
-                                ] || []
-                              }
+                              columns={this.validRepKeys(stream)}
                               index={index.toString()}
                               handleChange={this.handleChange}
                             />
