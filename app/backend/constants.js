@@ -90,7 +90,7 @@ const tapSalesforceFields = [
   },
   {
     key: 'client_secret',
-    label: 'Client secrete key',
+    label: 'Client secret key',
     required: true,
     validationText: 'Required',
     placeholder: '',
