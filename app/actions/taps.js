@@ -1,9 +1,7 @@
 // @flow
 import axios from 'axios';
-import socketIOClient from 'socket.io-client';
 
 const baseUrl = 'http://localhost:4321';
-const socket = socketIOClient(baseUrl);
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
@@ -17,12 +15,11 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const TAP_ERROR = 'TAP_ERROR';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
+export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 type actionType = {
   +type: string
 };
-
-let liveLogs = '';
 
 export function fetchTaps() {
   return (dispatch: (action: actionType) => void) => {
@@ -49,16 +46,18 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: string) {
+export function selectTap(tap: string, image: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SELECT_TAP,
-      tap
+      tap,
+      image
     });
 
     axios
       .post(`${baseUrl}/taps/`, {
-        tap
+        tap,
+        image
       })
       .then((response) =>
         dispatch({
@@ -98,16 +97,17 @@ function ISODateString(d) {
   )}Z`;
 }
 
-export function submitConfig(tap: string, config: {}) {
+export function submitConfig(tap: string, config: { start_date?: string }) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SCHEMA_LOADING
     });
     const tapConfig = config;
 
-    if (Object.prototype.hasOwnProperty.call(tapConfig, 'start_date')) {
+    if (tapConfig.start_date) {
       tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
     }
+
     axios
       .post(`${baseUrl}/tap/config/`, {
         tap,
@@ -117,14 +117,14 @@ export function submitConfig(tap: string, config: {}) {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: response.data.schema,
-          error: ''
+          error: response.data.error
         });
       })
       .catch((error) => {
         dispatch({
-          type: TAP_ERROR,
+          type: SCHEMA_RECEIVED,
           schema: [],
-          error: error.response.data.error
+          error: error.toString()
         });
       });
   };
@@ -166,11 +166,11 @@ export function toggle() {
     dispatch({ type: TOGGLE_MODAL });
 }
 
-export function discoveryLiveLogs() {
+export function updateSchemaLogs(newLog: string) {
   return (dispatch: (action: actionType) => void) => {
-    socket.on('live-logs', (data) => {
-      liveLogs = liveLogs.concat(`${data} \n`);
-      dispatch({ type: DISCOVER_SCHEMA, schema: [], liveLogs });
+    dispatch({
+      type: UPDATE_SCHEMA_LOGS,
+      newLog
     });
   };
 }

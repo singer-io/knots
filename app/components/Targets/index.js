@@ -26,7 +26,7 @@ type Props = {
       name: string,
       repo: string,
       targetKey: string,
-      version: string
+      targetImage: string
     }>,
     targetInstalled: boolean
   },

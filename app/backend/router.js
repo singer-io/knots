@@ -16,7 +16,8 @@ const {
   addTarget,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  deleteKnot
 } = require('./util');
 
 router.get('/docker', (req, res) => {
@@ -29,6 +30,14 @@ router.get('/docker', (req, res) => {
     });
 });
 
+router.get('/knots', (req, res) => {
+  getKnots()
+    .then((knots) => res.json({ knots }))
+    .catch((error) => {
+      res.json({ error });
+    });
+});
+
 router.get('/taps', (req, res) => {
   getTaps()
     .then((taps) => res.json({ taps }))
@@ -38,8 +47,8 @@ router.get('/taps', (req, res) => {
 });
 
 router.post('/taps/', (req, res) => {
-  const { tap } = req.body;
-  fetchTapFields(tap)
+  const { tap, image } = req.body;
+  fetchTapFields(tap, image)
     .then((config) => {
       res.json({
         config
@@ -54,11 +63,11 @@ router.post('/taps/', (req, res) => {
 });
 
 router.post('/tap/config/', (req, res) => {
-  const { tap, tapConfig } = req.body;
-  addConfig(tap, tapConfig)
+  addConfig(req)
     .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
-      res.status(400).json({ error });
+      console.log('This is the supposed error', error);
+      res.json({ error });
     });
 });
 
@@ -69,20 +78,6 @@ router.put('/schema/', (req, res) => {
     })
     .catch((err) => {
       res.json(err);
-    });
-});
-
-router.get('/knots', (req, res) => {
-  detectDocker()
-    .then(() => {
-      getKnots()
-        .then((knots) => res.json({ knots, docker: true }))
-        .catch(() => {
-          res.json([]);
-        });
-    })
-    .catch(() => {
-      res.json({ docker: false });
     });
 });
 
@@ -104,8 +99,8 @@ router.get('/targets/', (req, res) => {
 });
 
 router.post('/target/install', (req, res) => {
-  const { target, version } = req.body;
-  addTarget(target, version)
+  const { target, targetImage } = req.body;
+  addTarget(target, targetImage)
     .then(() => {
       res.json({ status: 200 });
     })
@@ -141,9 +136,38 @@ router.post('/target/', (req, res) => {
     .catch(console.log);
 });
 
+router.post('/save/', (req, res) => {
+  const { knotName } = req.body;
+  saveKnot(knotName)
+    .then(() => {
+      res.json({ status: 200 });
+
+      // sync(req)
+      //   .then(() => {
+      //     res.json({ status: 200 });
+      //   })
+      //   .catch((error) => {
+      //     res.json({ status: 500, error });
+      //   });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
+});
+
 router.post('/sync/', (req, res) => {
-  const { tap } = req.body;
-  sync(tap)
+  sync(req)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
+});
+
+router.post('/delete/', (req, res) => {
+  const { knot } = req.body;
+  deleteKnot(knot)
     .then(() => {
       res.json({ status: 200 });
     })
@@ -171,18 +195,23 @@ router.post('/download/', (req, res) => {
 router.post('/token/', (req, res) => {
   const { knot } = req.body;
 
-  console.log('sfsd', knot);
   getToken(knot)
     .then((token) => {
-      console.log('This is what we are working wiht', token);
       res.json({ token });
     })
-    .catch((err) => console.log('Perhaps this', err));
+    .catch((error) => res.json({ error }));
+});
+
+router.post('/download/', (req, res) => {
+  const { knot } = req.body;
+  downloadKnot(knot)
+    .then(() => res.json({}))
+    .catch();
 });
 
 router.get('/download/', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download('abc.zip');
+  res.download(`${req.query.knot}.zip`);
 });
 
 module.exports = router;

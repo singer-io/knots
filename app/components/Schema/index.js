@@ -11,14 +11,22 @@ import {
   Input,
   Table,
   Button,
-  Progress
+  Progress,
+  Card,
+  CardBody
 } from 'reactstrap';
+import StayScrolled from 'react-stay-scrolled';
+import socketIOClient from 'socket.io-client';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import ErrorModal from '../Modal';
+import Log from '../Log';
+
+const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
 
 type Props = {
   tapsStore: {
@@ -30,11 +38,13 @@ type Props = {
       }>
     }>,
     schemaLoading: boolean,
+    schemaLoaded: boolean,
+    schemaLogs: Array<string>,
     schemaUpdated: boolean,
     dockerConfigError: boolean,
     tapError: boolean,
     invalidSchemaError: boolean,
-    error: string,
+    error?: string,
     showModal: boolean
   },
   editSchemaField: (field: string, index: string, value: string) => void,
@@ -51,10 +61,27 @@ type Props = {
     }>
   ) => void,
   toggle: () => void,
-  history: object
+  history: { goBack: () => void },
+  updateSchemaLogs: (log: string) => void
 };
 
-export default class Schema extends Component<Props> {
+type State = {
+  showSchema: boolean
+};
+
+export default class Schema extends Component<Props, State> {
+  constructor() {
+    super();
+
+    this.state = {
+      showSchema: false
+    };
+
+    socket.on('schemaLog', (log) => {
+      this.props.updateSchemaLogs(log);
+    });
+  }
+
   handleChange = (field: string, index: string, value: string) => {
     this.props.editSchemaField(field, index, value);
   };
@@ -84,17 +111,26 @@ export default class Schema extends Component<Props> {
     );
   };
 
+  showSchema = () => {
+    this.setState({ showSchema: true });
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
     }
     const {
+      schemaLoading,
+      schemaLoaded,
+      schemaLogs,
       dockerConfigError,
       showModal,
       tapError,
       error,
       invalidSchemaError
     } = this.props.tapsStore;
+
+    const { showSchema } = this.state;
 
     return (
       <div>
@@ -104,11 +140,14 @@ export default class Schema extends Component<Props> {
 
           <Row>
             <Col md={{ size: 8, offset: 2 }}>
-              {this.props.tapsStore.schemaLoading && (
+              {!showSchema && (
                 <div>
-                  <Progress value="100" striped animated className="mt-5">
-                    Retrieving schema information...
-                  </Progress>
+                  {schemaLoading && (
+                    <Progress value="100" striped animated className="mt-5">
+                      Retrieving schema information...
+                    </Progress>
+                  )}
+
                   {dockerConfigError && (
                     <ErrorModal
                       showModal={showModal}
@@ -151,9 +190,30 @@ export default class Schema extends Component<Props> {
                       toggle={this.toggle}
                     />
                   )}
+                  <Card className="bg-light mt-3">
+                    <CardBody>
+                      <StayScrolled
+                        component="div"
+                        style={{
+                          height: '250px',
+                          overflow: 'auto'
+                        }}
+                      >
+                        {schemaLogs.map((log) => <Log key={log} log={log} />)}
+                      </StayScrolled>
+                    </CardBody>
+                  </Card>
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.showSchema}
+                    disabled={!schemaLoaded}
+                  >
+                    Continue
+                  </Button>
                 </div>
               )}
-              {!this.props.tapsStore.schemaLoading && (
+              {showSchema && (
                 <div>
                   <FormGroup className="form-row form-group form-inline mt-5">
                     <Label for="startDate" className="col-form-label">

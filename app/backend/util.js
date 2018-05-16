@@ -16,16 +16,6 @@ const {
 
 let tempFolder;
 
-const KNOT_CONTENT = ['tap', 'target', 'knots.json', 'Makefile'];
-const KNOT_TAP_CONTENT = ['config.json', 'state.json', 'catalog.json'];
-const KNOT_TARGET_CONTENT = ['config.json'];
-const KNOT_JSON_KEYS = ['tap', 'target'];
-
-const TAP_ENV_NAME = {
-  'tap-redshift': 'TAP_REDSHIFT',
-  'tap-salesforce': 'TAP_SALESFORCE'
-};
-
 // app is only defined in the packaged app, use app root directory during development
 if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
@@ -58,156 +48,43 @@ const getTaps = () =>
     }
   });
 
-const fetchTapFields = (tap) =>
+const fetchTapFields = (tap, image) =>
   new Promise((resolve, reject) => {
-    switch (tap) {
-      case 'tap-redshift':
-        resolve(tapRedshiftFields);
-        break;
-      case 'tap-salesforce':
-        resolve(tapSalesforceFields);
-        break;
-      default:
-        reject(new Error('Unknown tap'));
-    }
-  });
-
-const validateKnotsFolder = (knotPath) =>
-  new Promise((resolve, reject) => {
-    const validKnotFolder = [];
-    fs.lstat(knotPath, (error, knots) => {
-      if (error) reject(error);
-
-      if (knots.isDirectory()) {
-        try {
-          fs.readdir(knotPath, (e, savedKnots) => {
-            savedKnots.forEach((folder) => {
-              validKnotFolder.push(folder);
-            });
-            resolve(validKnotFolder);
-          });
-        } catch (e) {
-          reject(e);
+    createKnot(tap, image)
+      .then(() => {
+        switch (tap) {
+          case 'tap-redshift':
+            resolve(tapRedshiftFields);
+            break;
+          case 'tap-salesforce':
+            resolve(tapSalesforceFields);
+            break;
+          default:
+            reject(new Error('Unknown tap'));
         }
-      } else {
-        reject();
-      }
-    });
+      })
+      .catch(reject);
   });
 
-const validateKnotContent = (validKnots) =>
+const getKnots = () =>
   new Promise((resolve, reject) => {
-    const knots = [];
     try {
-      validKnots.forEach((knotFolder) => {
-        const pathToKnot = path.resolve(tempFolder, 'knots', knotFolder);
-        const knotContent = fs.readdirSync(pathToKnot);
-        if (knotContent.sort().join(',') === KNOT_CONTENT.sort().join(',')) {
-          knots.push(pathToKnot);
-        }
-      });
-      resolve(knots);
-    } catch (e) {
-      reject(e);
+      const knots = fs.readdirSync(`${tempFolder}/knots`);
+      console.log('The knots', knots);
+      const knotJsons = knots.map((knot) =>
+        readFile(`${tempFolder}/knots/${knot}/knot.json`)
+      );
+      Promise.all(knotJsons)
+        .then((values) => {
+          resolve(values);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    } catch (error) {
+      reject(error);
     }
   });
-
-const validateKnotJson = (validKnotPaths) =>
-  new Promise((resolve, reject) => {
-    const knots = [];
-    let counter = 0;
-    validKnotPaths.forEach((knotPath) => {
-      fs.readFile(path.resolve(knotPath, 'knots.json'), 'utf8', (e, data) => {
-        if (e) reject(e);
-        const knotConfig = JSON.parse(data);
-        KNOT_JSON_KEYS.every((k) => {
-          counter += 1;
-          if (k in knotConfig) {
-            knots.push(knotPath);
-          } else {
-            console.log('Missing keys in knot.json');
-          }
-          if (counter === validKnotPaths.length) {
-            resolve(knots);
-          }
-        });
-      });
-    });
-  });
-
-const validateKnotTapContent = (validKnotPaths) =>
-  new Promise((resolve, reject) => {
-    const knots = [];
-    let counter = 0;
-    validKnotPaths.forEach((knotPath) => {
-      fs.readdir(path.resolve(knotPath, 'tap'), (e, tapContent) => {
-        if (e) reject(e);
-        try {
-          counter += 1;
-          if (
-            tapContent.sort().join(',') === KNOT_TAP_CONTENT.sort().join(',')
-          ) {
-            knots.push(knotPath);
-          } else {
-            console.log('Tap does not have the required files');
-          }
-          if (counter === validKnotPaths.length) {
-            resolve(knots);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-  });
-
-const validateKnotTargetContent = (validKnotPaths) =>
-  new Promise((resolve, reject) => {
-    const validKnots = [];
-    let counter = 0;
-    validKnotPaths.forEach((knotPath) => {
-      fs.readdir(path.resolve(knotPath, 'target'), (e, targetContent) => {
-        if (e) reject(e);
-        try {
-          counter += 1;
-          const folder = path.basename(knotPath);
-          if (
-            targetContent.sort().join(',') ===
-            KNOT_TARGET_CONTENT.sort().join(',')
-          ) {
-            validKnots.push(folder);
-          } else {
-            console.log(
-              `knot ${folder} could not be retrieved: No target config.json`
-            );
-          }
-          if (counter === validKnotPaths.length) {
-            resolve(validKnots);
-          }
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-  });
-
-async function getKnots() {
-  try {
-    const knotPath = path.resolve(tempFolder, 'knots');
-    const data = await validateKnotsFolder(knotPath);
-    const file = await validateKnotContent(data);
-    const config = await validateKnotJson(file);
-    const paths = await validateKnotTapContent(config);
-    const validKnot = await validateKnotTargetContent(paths);
-    return new Promise((resolve) => {
-      resolve(validKnot);
-    });
-  } catch (error) {
-    return new Promise((resolve, reject) => {
-      reject(error);
-    });
-  }
-}
 
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
@@ -218,19 +95,6 @@ const writeFile = (filePath, content) =>
 
       reject();
     });
-  });
-
-const getTapConfig = () =>
-  new Promise((resolve) => {
-    // Hard code for now
-    resolve([
-      { key: 'host', label: 'Hostname', required: true },
-      { key: 'user', label: 'User name', required: true },
-      { key: 'password', label: 'Password', required: true },
-      { key: 'dbname', label: 'Database', required: true },
-      { key: 'port', label: 'Port', required: true },
-      { key: 'schema', label: 'Schema', required: false }
-    ]);
   });
 
 const readFile = (filePath) =>
@@ -265,53 +129,19 @@ const addKnotAttribute = (attributeArray, value) =>
       .catch(reject);
   });
 
-const createKnot = (tapName, tapVersion) =>
+const createKnot = (tapName, tapImage) =>
   new Promise((resolve, reject) => {
     writeFile(
       path.resolve(tempFolder, 'knot.json'),
       JSON.stringify({
         tap: {
           name: tapName,
-          version: tapVersion
+          image: tapImage
         }
       })
     )
       .then(() => {
-        getTapConfig(tapName)
-          .then((config) => {
-            addKnotAttribute(['tap', 'config'], config)
-              .then(() => {
-                resolve(config);
-              })
-              .catch(reject);
-          })
-          .catch(reject);
-      })
-      .catch(reject);
-  });
-
-const readFieldValues = (knot) =>
-  new Promise((resolve, reject) => {
-    readFile(path.resolve(tempFolder, 'knots', knot, 'knots.json'))
-      .then((knotObject) => {
-        resolve(knotObject.tap.config);
-      })
-      .catch(reject);
-  });
-
-const addTap = (tap, version, knot) =>
-  new Promise((resolve, reject) => {
-    createKnot(tap, version)
-      .then((config) => {
-        if (knot) {
-          readFieldValues(knot)
-            .then((fieldValues) => {
-              resolve({ config, fieldValues });
-            })
-            .catch(reject);
-        } else {
-          resolve(config);
-        }
+        resolve();
       })
       .catch(reject);
   });
@@ -331,52 +161,16 @@ const writeConfig = (config) =>
       .catch(reject);
   });
 
-const getSchema = (tap) =>
-  new Promise((resolve, reject) => {
-    let tapImage;
-    if (process.env.NODE_ENV === 'development') {
-      tapImage = process.env[TAP_ENV_NAME[tap]];
-    }
-    const runDiscovery = exec(commands.runDiscovery(tempFolder, tap, tapImage));
+const getSchema = (req) =>
+  new Promise((resolve) => {
+    const runDiscovery = exec(commands.runDiscovery(tempFolder, req.body.tap));
 
     runDiscovery.stderr.on('data', (data) => {
-      const errorOutput = data.toString();
-      if (errorOutput.indexOf('Mounts denied' !== -1)) {
-        console.log(errorOutput);
-        // reject(errorOutput);
-      } else {
-        console.log('Err', data.toString());
-      }
+      req.io.emit('schemaLog', data.toString());
     });
 
-    runDiscovery.stdout.on('data', (data) => {
-      console.log('OUT', data.toString());
-    });
-
-    runDiscovery.on('exit', (code) => {
-      if (code === 0) {
-        const catalogFile = path.resolve(
-          tempFolder,
-          'configs',
-          'tap',
-          'catalog.json'
-        );
-        readFile(catalogFile)
-          .then((schemaObject) => {
-            const schema = JSON.stringify(schemaObject);
-            try {
-              JSON.parse(schema);
-              resolve(schemaObject);
-            } catch (e) {
-              reject(e.toString());
-            }
-          })
-          .catch(() => {
-            console.log('No file');
-          });
-      } else {
-        reject(new Error('Failed to run discovery'));
-      }
+    runDiscovery.on('exit', () => {
+      resolve();
     });
   });
 
@@ -384,17 +178,30 @@ const readSchema = () =>
   new Promise((resolve, reject) => {
     const knotPath = path.resolve(tempFolder, 'configs', 'tap', 'catalog.json');
     readFile(knotPath)
-      .then(resolve)
+      .then((schema) => {
+        // Stringify to turn back to object later
+        const schemaString = JSON.stringify(schema);
+        try {
+          // Try to turn to object to validate it's a valid object
+          JSON.parse(schemaString);
+
+          // All good, return the schema object
+          resolve(schema);
+        } catch (error) {
+          // Not a valid object, pass on the error
+          reject(error.toString());
+        }
+      })
       .catch(reject);
   });
 
-const addConfig = (tap, config) =>
+const addConfig = (req) =>
   new Promise((resolve, reject) => {
     // Write the config to configs/tap/
-    writeConfig(config)
+    writeConfig(req.body.tapConfig)
       .then(() => {
         // Get tap schema by running discovery mode
-        getSchema(tap)
+        getSchema(req)
           .then(() => {
             // Schema now on file, read it and return the result
             readSchema()
@@ -435,11 +242,12 @@ const getTargets = () =>
     }
   });
 
-const addTarget = (targetName, version) =>
+const addTarget = (targetName, targetImage) =>
   new Promise((resolve, reject) => {
+    console.log('Paramas', targetName, targetImage);
     const val = {
       name: targetName,
-      version
+      image: targetImage
     };
     addKnotAttribute(['target'], val)
       .then(resolve)
@@ -461,169 +269,122 @@ const addTargetConfig = (config) =>
       .catch(console.log);
   });
 
-const sync = (tap) =>
+const sync = (req) =>
   new Promise((resolve) => {
     let tapImage;
     if (process.env.NODE_ENV === 'development') {
       tapImage = process.env[TAP_ENV_NAME[tap]];
     }
+
     const syncData = exec(
-      commands.runSync(`${tempFolder}/configs`, tap, tapImage)
+      commands.runSync(
+        `${tempFolder}/knots/${req.body.knotName}`,
+        req.body.tap,
+        tapImage || req.body.tapImage
+      )
     );
 
-    syncData.stderr.on('data', (data) => {
-      console.log(data.toString());
+    fs.watchFile('tap.log', () => {
+      exec('tail -n 1 tap.log', (error, stdout) => {
+        req.io.emit('tapLog', stdout.toString());
+      });
     });
 
-    syncData.stdout.on('data', (data) => {
-      console.log('OUT', data.toString());
+    fs.watchFile('target.log', () => {
+      exec('tail -n 1 target.log', (error, stdout) => {
+        req.io.emit('targetLog', stdout.toString());
+      });
     });
 
-    syncData.on('exit', (code) => {
-      console.log('Done', code.toString());
+    syncData.on('exit', () => {
       resolve();
     });
   });
 
-const createMakefile = () =>
+const createMakeFile = (knot, name) =>
   new Promise((resolve, reject) => {
-    // TODO: Refactor string interpolation for makefile content
     const fileContent =
       'install:\n' +
       '\t-' +
-      '\tdocker run gbolahan/tap-redshift:1.0.0b3\n' +
+      `\tdocker run ${knot.tap.image}\n` +
       '\t-' +
-      '\tdocker run gbolahan/target-datadotworld:1.0.0b3\n' +
+      `\tdocker run ${knot.target.image}\n` +
       'fullSync:\n' +
       '\tdocker run -v ${CURDIR}' +
-      '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
-      'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json | ' +
+      `/tap:/app/tap/data --interactive ${knot.tap.image} ` +
+      `${
+        knot.tap.name
+      } -c tap/data/config.json --properties tap/data/catalog.json | ` +
       'docker run -v ${CURDIR}' +
-      '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
-      'target-datadotworld -c target/data/config.json > ./tap/state.json\n' +
+      `/target:/app/target/data --interactive ${knot.target.image} ` +
+      `${knot.target.name} -c target/data/config.json > ./tap/state.json\n` +
       'sync:\n' +
       '\t-' +
       '\tdocker run -v ${CURDIR}' +
-      '/tap:/app/tap/data --interactive gbolahan/tap-redshift:1.0.0b3 ' +
-      'tap-redshift -c tap/data/config.json --properties tap/data/catalog.json ' +
+      `/tap:/app/tap/data --interactive ${knot.tap.image} ` +
+      `${
+        knot.tap.name
+      } -c tap/data/config.json --properties tap/data/catalog.json ` +
       '--state tap/data/state.json | ' +
       'docker run -v ${CURDIR}' +
-      '/target:/app/target/data --interactive gbolahan/target-datadotworld:1.0.0b3 ' +
-      'target-datadotworld -c target/data/config.json > /tmp/state.json\n' +
+      `/target:/app/target/data --interactive ${knot.target.image} ` +
+      `${knot.target.name} -c target/data/config.json > /tmp/state.json\n` +
       '\t-' +
       '\tcp /tmp/state.json ./tap/state.json';
 
-    writeFile(path.resolve(tempFolder, 'Makefile'), fileContent)
+    writeFile(path.resolve(tempFolder, 'knots', name, 'Makefile'), fileContent)
       .then(resolve)
       .catch(reject);
   });
 
-const validateIsDirectory = (pathToFolder) =>
-  new Promise((resolve, reject) => {
-    fs.lstat(pathToFolder, (err, file) => {
-      if (file.isDirectory()) {
-        resolve();
-      } else {
-        reject(err);
-      }
-    });
-  });
-
 const saveKnot = (name) =>
   new Promise((resolve, reject) => {
-    createMakefile();
-
-    shell.mkdir('-p', path.resolve(tempFolder, 'knots', name));
-
-    const pathToDockerTapFolder = path.resolve(tempFolder, 'docker', 'tap');
-    const pathToDockerTargetFolder = path.resolve(
-      tempFolder,
-      'docker',
-      'target'
-    );
-    const pathToKnotJson = path.resolve(tempFolder, 'knot.json');
-
-    validateIsDirectory(pathToDockerTapFolder)
+    addKnotAttribute(['name'], name)
       .then(() => {
-        try {
-          fs.readdir(pathToDockerTapFolder, (e, tapFolderContent) => {
-            if (e) reject(e);
-            if (
-              tapFolderContent.sort().join(',') ===
-              ['catalog.json', 'config.json'].sort().join(',')
-            ) {
-              shell.mv(
-                pathToDockerTapFolder,
-                path.resolve(tempFolder, 'knots', name, 'tap')
-              );
-            } else {
-              reject();
-            }
-          });
-        } catch (e) {
-          reject(e);
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
+        addKnotAttribute(['lastRun'], new Date().toISOString())
+          .then(() => {
+            readFile(path.resolve(tempFolder, 'knot.json'))
+              .then((knotObject) => {
+                try {
+                  // Create knots folder if it doesn't exist
+                  shell.mkdir('-p', path.resolve(tempFolder, 'knots', name));
 
-    validateIsDirectory(pathToDockerTargetFolder)
-      .then(() => {
-        try {
-          fs.readdir(pathToDockerTargetFolder, (e, targetFolderContent) => {
-            if (e) reject(e);
-            if (targetFolderContent === ['config.json']) {
-              shell.mv(
-                pathToDockerTargetFolder,
-                path.resolve(tempFolder, 'knots', 'name', 'target')
-              );
-            } else {
-              reject();
-            }
-          });
-        } catch (e) {
-          reject(e);
-        }
-      })
-      .catch((e) => {
-        reject(e);
-      });
-
-    fs.readdir(tempFolder, (e, files) => {
-      if (e) reject(e);
-      if ('knot.json' in files) {
-        readFile(pathToKnotJson)
-          .then((config) => {
-            const knotConfig = JSON.parse(config);
-            try {
-              KNOT_JSON_KEYS.every((k) => {
-                if (k in knotConfig) {
+                  // Move tap config to knot's folder
                   shell.mv(
-                    pathToKnotJson,
-                    path.resolve(tempFolder, 'knots', name, 'knots.json')
+                    path.resolve(tempFolder, 'configs', 'tap'),
+                    path.resolve(tempFolder, 'knots', name, 'tap')
                   );
-                } else {
-                  reject();
-                }
-              });
-            } catch (error) {
-              reject(error);
-            }
-          })
-          .catch(() => {
-            reject(e);
-          });
-      }
 
-      if ('Makefile' in files) {
-        shell.mv(
-          path.resolve(tempFolder, 'Makefile'),
-          path.resolve(tempFolder, 'knots', name, 'Makefile')
-        );
-      }
-    });
-    resolve();
+                  // Move target config to knot's folder
+                  shell.mv(
+                    path.resolve(tempFolder, 'configs', 'target'),
+                    path.resolve(tempFolder, 'knots', name, 'target')
+                  );
+
+                  // Move knot.json to knot's folder
+                  shell.mv(
+                    path.resolve(tempFolder, 'knot.json'),
+                    path.resolve(tempFolder, 'knots', name, 'knot.json')
+                  );
+
+                  createMakeFile(knotObject, name);
+
+                  resolve();
+                } catch (error) {
+                  reject(error);
+                }
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
 
 const downloadKnot = (knotName) =>
@@ -648,11 +409,16 @@ const getToken = (knot) =>
     }
   });
 
+const deleteKnot = (knot) =>
+  new Promise((resolve) => {
+    shell.rm('-rf', path.resolve(tempFolder, 'knots', knot));
+    resolve();
+  });
+
 module.exports = {
   getKnots,
   getTaps,
   detectDocker,
-  addTap,
   fetchTapFields,
   addConfig,
   readSchema,
@@ -663,5 +429,6 @@ module.exports = {
   sync,
   saveKnot,
   downloadKnot,
-  getToken
+  getToken,
+  deleteKnot
 };

@@ -1,5 +1,4 @@
 // @flow
-
 import React, { Component } from 'react';
 
 import {
@@ -12,21 +11,53 @@ import {
   InputGroupText,
   Input,
   Button,
-  Progress
+  Card,
+  CardBody,
+  CardHeader
 } from 'reactstrap';
+import StayScrolled from 'react-stay-scrolled';
+import classNames from 'classnames';
+import socketIOClient from 'socket.io-client';
+
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
+import Log from '../Log';
 
 import styles from './Sync.css';
 
+const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
+
 type Props = {
-  knotsStore: { knotName: string, knotSyncing: boolean, knotSynced: boolean },
+  knotsStore: {
+    knotName: string,
+    knotSyncing: boolean,
+    knotSynced: boolean,
+    tapLogs: Array<string>,
+    targetLogs: Array<string>
+  },
+  tapStore: {
+    selectedTap: string
+  },
   updateName: (name: string) => void,
-  sync: (tap: string) => void,
-  tapStore: { selectedTap: string }
+  save: (selectedTap: string, knotName: string) => void,
+  updateTapLogs: (log: string) => void,
+  updateTargetLogs: (log: string) => void
 };
 
 export default class Sync extends Component<Props> {
+  constructor() {
+    super();
+
+    socket.on('tapLog', (log) => {
+      this.props.updateTapLogs(log);
+    });
+
+    socket.on('targetLog', (log) => {
+      this.props.updateTargetLogs(log);
+    });
+  }
+
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = event.currentTarget;
 
@@ -35,11 +66,18 @@ export default class Sync extends Component<Props> {
 
   submit = () => {
     const { selectedTap } = this.props.tapStore;
-    this.props.sync(selectedTap);
+    const { knotName } = this.props.knotsStore;
+    this.props.save(selectedTap, knotName);
   };
 
   render() {
-    const { knotSyncing, knotSynced, knotName } = this.props.knotsStore;
+    const {
+      knotSyncing,
+      knotSynced,
+      knotName,
+      tapLogs,
+      targetLogs
+    } = this.props.knotsStore;
     return (
       <div>
         <Header />
@@ -84,19 +122,54 @@ export default class Sync extends Component<Props> {
               {knotSyncing && (
                 <div>
                   <div className="alert alert-success">
-                    <strong
-                    >{`${knotName} has been saved! Running your knot could take a while...`}</strong>
+                    <strong className="">{`${knotName} has been saved! Running your knot could take a while...`}</strong>
                   </div>
-                  <Progress value="100" striped animated className="mt-5">
-                    Live logs will appear here
-                  </Progress>
                 </div>
               )}
+
               {knotSynced && (
                 <div className="alert alert-success">
                   <strong>{`${knotName} has been run successfully`}</strong>
                 </div>
               )}
+            </Col>
+          </Row>
+          <Row>
+            <Col xs="6">
+              <Card className="bg-light mt-3">
+                <CardHeader>
+                  <h3 className="pl-5">Redshift</h3>
+                </CardHeader>
+                <CardBody>
+                  <StayScrolled
+                    component="div"
+                    style={{
+                      height: '250px',
+                      overflow: 'auto'
+                    }}
+                  >
+                    {tapLogs.map((log) => <Log key={log} log={log} />)}
+                  </StayScrolled>
+                </CardBody>
+              </Card>
+            </Col>
+            <Col xs="6">
+              <Card className="bg-light mt-3">
+                <CardHeader>
+                  <h3 className={classNames('pl-5')}>data.world</h3>
+                </CardHeader>
+                <CardBody>
+                  <StayScrolled
+                    component="div"
+                    style={{
+                      height: '250px',
+                      overflow: 'auto'
+                    }}
+                  >
+                    {targetLogs.map((log) => <Log key={log} log={log} />)}
+                  </StayScrolled>
+                </CardBody>
+              </Card>
             </Col>
           </Row>
         </Container>

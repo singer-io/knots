@@ -1,32 +1,65 @@
 import {
   UPDATE_DOCKER_VERSION,
   DOCKER_VERSION_ERROR,
+  UPDATE_TAP_LOGS,
+  UPDATE_TARGET_LOGS,
   UPDATE_NAME,
   KNOT_SYNCING,
-  KNOT_SYNCED
+  KNOT_SYNCED,
+  DETECTING_DOCKER,
+  FETCHING_KNOTS,
+  FETCHED_KNOTS,
+  KNOT_DELETED
 } from '../actions/knots';
 
 export type knotsStateType = {
+  +detectingDocker: boolean,
+  +fetchingKnots: boolean,
+  +knots: Array<string>,
   +dockerVersionDetected: boolean,
   +dockerVersion: string,
   +dockerVersionError: string,
+  +tapLogs: Array<string>,
+  +targetLogs: Array<string>,
   +knotName: string,
-  +syncing: boolean
+  +syncing: boolean,
+  +knotDeleted: boolean
 };
 
 const defaultState = {
+  detectingDocker: false,
+  fetchingKnots: false,
   dockerVersionDetected: false,
   dockerVersion: '',
   dockerVersionError: '',
+  knots: [],
+  tapLogs: [],
+  targetLogs: [],
   knotName: '',
   knotSyncing: false,
-  knotSynced: false
+  knotSynced: false,
+  knotDeleted: false
 };
 
 export default function knots(state = defaultState, action) {
   switch (action.type) {
+    case DETECTING_DOCKER:
+      return Object.assign({}, state, {
+        detectingDocker: true
+      });
+    case FETCHING_KNOTS:
+      return Object.assign({}, state, {
+        fetchingKnots: true,
+        knotDeleted: false
+      });
+    case FETCHED_KNOTS:
+      return Object.assign({}, state, {
+        fetchingKnots: false,
+        knots: action.knots || []
+      });
     case UPDATE_DOCKER_VERSION:
       return Object.assign({}, state, {
+        detectingDocker: false,
         dockerVersionDetected: true,
         dockerVersion: action.version,
         dockerVersionError: action.error
@@ -36,6 +69,14 @@ export default function knots(state = defaultState, action) {
         dockerVersionDetected: true,
         dockerVersion: '',
         dockerVersionError: action.error
+      });
+    case UPDATE_TAP_LOGS:
+      return Object.assign({}, state, {
+        tapLogs: [...state.tapLogs, action.newLog]
+      });
+    case UPDATE_TARGET_LOGS:
+      return Object.assign({}, state, {
+        targetLogs: [...state.targetLogs, action.newLog]
       });
     case UPDATE_NAME:
       return Object.assign({}, state, {
@@ -49,6 +90,10 @@ export default function knots(state = defaultState, action) {
       return Object.assign({}, state, {
         knotSyncing: false,
         knotSynced: true
+      });
+    case KNOT_DELETED:
+      return Object.assign({}, state, {
+        knotDeleted: true
       });
     default:
       return state;

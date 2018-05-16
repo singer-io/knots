@@ -1,9 +1,10 @@
 // @flow
 import React, { Component } from 'react';
-import { Container, Alert } from 'reactstrap';
+import { Container, Alert, Progress } from 'reactstrap';
 import { shell } from 'electron';
 import classNames from 'classnames';
 
+import Knots from '../../containers/Knots';
 import Header from '../Header';
 import Create from './Create';
 
@@ -11,9 +12,13 @@ import styles from './Home.css';
 
 type Props = {
   detectDocker: () => void,
+  getKnots: () => void,
   knotsStore: {
+    detectingDocker: boolean,
+    fetchingKnots: boolean,
     dockerVersionDetected: boolean,
-    dockerVersion: string
+    dockerVersion: string,
+    knots: Array<{}>
   }
 };
 
@@ -28,12 +33,11 @@ export default class Home extends Component<Props, State> {
 
   componentWillMount() {
     this.props.detectDocker();
+    this.props.getKnots();
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (!nextProps.knotsStore.dockerVersion) {
-      this.setState({ showError: true });
-    }
+    this.setState({ showError: !nextProps.knotsStore.dockerVersion });
   }
 
   onDismiss = () => {
@@ -53,31 +57,46 @@ export default class Home extends Component<Props, State> {
   };
 
   render() {
-    const { dockerVersionDetected, dockerVersion } = this.props.knotsStore;
+    const {
+      dockerVersionDetected,
+      dockerVersion,
+      detectingDocker,
+      fetchingKnots,
+      knots
+    } = this.props.knotsStore;
 
     return (
       <div>
         <Header />
-
-        <Container className="mt-5">
-          {dockerVersionDetected && (
-            <Alert
-              color="danger"
-              style={{ opacity: 1 }}
-              isOpen={this.state.showError}
-              toggle={this.onDismiss}
-            >
-              Oops! Docker must be installed before you can proceed.{' '}
-              <button
-                onClick={this.dockerDownload}
-                className={classNames('alert-link', styles.download)}
-              >
-                Click here to download it.
-              </button>
-            </Alert>
+        {detectingDocker &&
+          fetchingKnots && (
+            <Progress value="100" striped animated className="mt-5" />
           )}
-          <Create dockerVersion={dockerVersion} />
-        </Container>
+
+        {!detectingDocker && (
+          <Container className="mt-5">
+            {dockerVersionDetected && (
+              <Alert
+                color="danger"
+                style={{ opacity: 1 }}
+                isOpen={this.state.showError}
+                toggle={this.onDismiss}
+              >
+                Oops! Docker must be installed before you can proceed.{' '}
+                <button
+                  onClick={this.dockerDownload}
+                  className={classNames('alert-link', styles.download)}
+                >
+                  Click here to download it.
+                </button>
+              </Alert>
+            )}
+
+            {knots.length > 0 && <Knots />}
+
+            {knots.length === 0 && <Create dockerVersion={dockerVersion} />}
+          </Container>
+        )}
       </div>
     );
   }
