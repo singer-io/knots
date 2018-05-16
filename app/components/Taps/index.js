@@ -21,7 +21,7 @@ import './Taps.css';
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
-    selectedTap: string,
+    selectedTap: { name: string, image: string },
     tapsLoading: boolean,
     sfToken?: string,
     taps: Array<{
@@ -44,9 +44,12 @@ type Props = {
     }
   },
   history: { push: (path: string) => void },
-  selectTap: (tap: string, version: string) => void,
+  selectTap: (tap: { name: string, image: string }) => void,
   updateTapField: (key: string, value: string) => void,
-  submitConfig: (selectedTap: string, fieldValues: {}) => void
+  submitConfig: (
+    selectedTap: { name: string, image: string },
+    fieldValues: {}
+  ) => void
 };
 
 type State = {
@@ -106,10 +109,8 @@ export default class Taps extends Component<Props, State> {
   };
 
   render() {
-    const { taps, tapFields } = this.props.tapsStore;
+    const { taps, tapFields, fieldValues, sfToken } = this.props.tapsStore;
     const { showTaps } = this.state;
-
-    console.log('The aadsfasdf', this.props);
 
     return (
       <div>
@@ -137,13 +138,9 @@ export default class Taps extends Component<Props, State> {
                   >
                     <Row>
                       {taps.map((tap) => (
-                        <Col xs="6" sm="4">
+                        <Col xs="6" sm="4" key={tap.tapKey}>
                           <div id="collapseOne" aria-labelledby="headingOne">
-                            <Tap
-                              {...tap}
-                              key={tap.tapKey}
-                              selectTap={this.props.selectTap}
-                            />
+                            <Tap {...tap} selectTap={this.props.selectTap} />
                           </div>
                         </Col>
                       ))}
@@ -163,12 +160,12 @@ export default class Taps extends Component<Props, State> {
                     })}
                   >
                     <Configure
-                      fields={this.props.tapsStore.tapFields}
-                      fieldValues={this.props.tapsStore.fieldValues}
+                      fields={tapFields}
+                      fieldValues={fieldValues}
                       submit={this.submit}
                       handleChange={this.handleChange}
                       setSfRefreshToken={this.setSfRefreshToken}
-                      sfToken={this.props.tapsStore.sfToken}
+                      sfToken={sfToken}
                     />
                   </CardBody>
                 </Card>

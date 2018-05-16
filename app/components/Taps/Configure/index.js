@@ -11,7 +11,7 @@ type Props = {
     required: boolean,
     placeholder: string
   }>,
-  fieldValues: { password?: string },
+  fieldValues: { password?: string, client_id?: string },
   handleChange: (event: SyntheticEvent<HTMLButtonElement>) => void,
   submit: () => void,
   setSfRefreshToken: (token: string) => void
@@ -19,6 +19,7 @@ type Props = {
 
 export default class Taps extends Component<Props> {
   render() {
+    console.log('The props', this.props);
     return (
       <div>
         <ConnectForm

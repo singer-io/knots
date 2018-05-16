@@ -163,7 +163,9 @@ const writeConfig = (config) =>
 
 const getSchema = (req) =>
   new Promise((resolve) => {
-    const runDiscovery = exec(commands.runDiscovery(tempFolder, req.body.tap));
+    const runDiscovery = exec(
+      commands.runDiscovery(tempFolder, req.body.tap.name, req.body.tap.image)
+    );
 
     runDiscovery.stderr.on('data', (data) => {
       req.io.emit('schemaLog', data.toString());

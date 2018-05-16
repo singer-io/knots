@@ -56,7 +56,8 @@ type Props = {
         metadata: {
           selected: string,
           ['valid-replication-keys']: Array<string>
-        }
+        },
+        breadcrumb: Array<{}>
       }>
     }>
   ) => void,
@@ -99,16 +100,22 @@ export default class Schema extends Component<Props, State> {
     this.props.toggle();
   };
 
-  validRepKeys = (stream) => {
+  validReplicationKeys = (stream: {
+    metadata: Array<{ breadcrumb: Array<{}> }>
+  }) => {
     let indexToUpdate;
     stream.metadata.forEach((metadata, index) => {
       if (metadata.breadcrumb.length === 0) {
         indexToUpdate = index;
       }
     });
-    return (
-      stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
-    );
+    if (indexToUpdate) {
+      return (
+        stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
+      );
+    }
+
+    return [];
   };
 
   showSchema = () => {
@@ -247,7 +254,7 @@ export default class Schema extends Component<Props, State> {
                           <td>{stream.stream}</td>
                           <td>
                             <Dropdown
-                              columns={this.validRepKeys(stream)}
+                              columns={this.validReplicationKeys(stream)}
                               index={index.toString()}
                               handleChange={this.handleChange}
                             />

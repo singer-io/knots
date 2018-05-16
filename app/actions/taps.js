@@ -46,26 +46,25 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: string, image: string) {
+export function selectTap(tap: { name: string, image: string }) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SELECT_TAP,
-      tap,
-      image
+      tap
     });
 
     axios
       .post(`${baseUrl}/taps/`, {
-        tap,
-        image
+        tap
       })
-      .then((response) =>
+      .then((response) => {
+        console.log('The tap fields', response.data);
         dispatch({
           type: UPDATE_TAP_FIELDS,
           tapFields: response.data.config,
           error: response.data.error
-        })
-      )
+        });
+      })
       .catch((error) =>
         dispatch({
           type: UPDATE_TAP_FIELDS,
@@ -97,7 +96,10 @@ function ISODateString(d) {
   )}Z`;
 }
 
-export function submitConfig(tap: string, config: { start_date?: string }) {
+export function submitConfig(
+  tap: { name: string, image: string },
+  config: { start_date?: string }
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SCHEMA_LOADING

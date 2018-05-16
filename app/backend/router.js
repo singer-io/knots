@@ -47,8 +47,8 @@ router.get('/taps', (req, res) => {
 });
 
 router.post('/taps/', (req, res) => {
-  const { tap, image } = req.body;
-  fetchTapFields(tap, image)
+  const { tap } = req.body;
+  fetchTapFields(tap.name, tap.image)
     .then((config) => {
       res.json({
         config
@@ -56,8 +56,8 @@ router.post('/taps/', (req, res) => {
     })
     .catch((error) => {
       res.json({
-        config: null,
-        error
+        config: [],
+        error: error.toString()
       });
     });
 });
