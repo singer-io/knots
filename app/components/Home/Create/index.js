@@ -1,7 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Jumbotron, Button } from 'reactstrap';
+import { Card, CardBody, Button } from 'reactstrap';
 
 type Props = {
   dockerVersion: string
@@ -10,24 +10,27 @@ type Props = {
 class Create extends Component<Props> {
   render() {
     return (
-      <Jumbotron>
-        <h1 className="display-4">
-          There is <em>knothing</em> here!
-        </h1>
-        <p className="lead">
-          This app allows you to configure and download executable Singer
-          pipelines.
-        </p>
-        <Link to="/taps">
-          <Button
-            color="primary"
-            size="lg"
-            disabled={!this.props.dockerVersion}
-          >
-            Get Started
-          </Button>
-        </Link>
-      </Jumbotron>
+      <Card className="card text-center">
+        <CardBody className="py-5">
+          <h3>
+            There is <em>knothing</em> here yet.
+          </h3>
+          <p>
+            Knot allows you to configure and download executable Singer
+            pipelines.
+          </p>
+          <Link to="/taps">
+            <Button
+              outline
+              color="secondary"
+              disabled={!this.props.dockerVersion}
+              className="mt-3"
+            >
+              Get Started
+            </Button>
+          </Link>
+        </CardBody>
+      </Card>
     );
   }
 }
