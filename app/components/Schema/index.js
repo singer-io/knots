@@ -39,7 +39,11 @@ type Props = {
     schemaUpdated: boolean,
     error?: string
   },
-  editSchemaField: (field: string, index: string, value: string) => void,
+  editSchemaField: (
+    field: string,
+    index: string,
+    value: boolean | string
+  ) => void,
   submitSchema: (schema: Array<Stream>) => void,
   toggle: () => void,
   history: { goBack: () => void },
@@ -74,7 +78,7 @@ export default class Schema extends Component<Props, State> {
     });
   }
 
-  handleChange = (field: string, index: string, value: string) => {
+  handleChange = (field: string, index: string, value: boolean | string) => {
     this.props.editSchemaField(field, index, value);
   };
 
@@ -98,7 +102,7 @@ export default class Schema extends Component<Props, State> {
         indexToUpdate = index;
       }
     });
-    if (indexToUpdate) {
+    if (indexToUpdate !== undefined) {
       return (
         stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
       );
@@ -152,7 +156,10 @@ export default class Schema extends Component<Props, State> {
                         overflow: 'auto'
                       }}
                     >
-                      {schemaLogs.map((log) => <Log key={log} log={log} />)}
+                      {schemaLogs.map((log, index) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <Log key={index} log={log} />
+                      ))}
                     </StayScrolled>
                   </CardBody>
                 </Card>

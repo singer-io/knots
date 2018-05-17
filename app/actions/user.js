@@ -50,7 +50,6 @@ export function setDataset(selectedDataset) {
 
 export function fetchToken(knot) {
   return (dispatch: (action: actionType) => void) => {
-    console.log('What I have received', knot);
     axios
       .post(`${baseUrl}/token/`, {
         knot

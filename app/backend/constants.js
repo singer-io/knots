@@ -2,7 +2,7 @@ const taps = [
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
-    tapImage: 'gbolahan/tap-redshift:1.0.0b3',
+    tapImage: 'gbolahan/tap-redshift:b4',
     repo: 'https://github.com/datadotworld/tap-redshift',
     options: [],
     logo:

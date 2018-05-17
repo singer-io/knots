@@ -117,7 +117,7 @@ export default class ConnectForm extends Component<Props> {
                       !(
                         this.props.fieldValues.client_id &&
                         this.props.fieldValues.client_secret
-                      ) || this.props.fieldValues.refresh_token
+                      ) || !!this.props.fieldValues.refresh_token
                     }
                     outline
                     color="secondary"

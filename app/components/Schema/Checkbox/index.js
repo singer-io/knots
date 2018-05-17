@@ -5,7 +5,7 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   checked: boolean,
   index: string,
-  handleChange: (field: string, index: string, value: string) => void
+  handleChange: (field: string, index: string, value: boolean) => void
 };
 
 type State = {
@@ -21,7 +21,7 @@ export default class Checkbox extends Component<Props, State> {
 
   toggle = () => {
     const checked = !this.state.checked;
-    this.props.handleChange('selected', this.props.index, checked.toString());
+    this.props.handleChange('selected', this.props.index, checked);
     this.setState({ checked });
   };
 

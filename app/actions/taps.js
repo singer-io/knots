@@ -58,7 +58,6 @@ export function selectTap(tap: { name: string, image: string }) {
         tap
       })
       .then((response) => {
-        console.log('The tap fields', response.data);
         dispatch({
           type: UPDATE_TAP_FIELDS,
           tapFields: response.data.config,
@@ -134,7 +133,11 @@ export function submitConfig(
   };
 }
 
-export function editSchemaField(field: string, index: string, value: string) {
+export function editSchemaField(
+  field: string,
+  index: string,
+  value: boolean | string
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA_FIELD,
