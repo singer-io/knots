@@ -1,14 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  Button
-} from 'reactstrap';
+import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
 
 import Header from '../Header';
@@ -109,77 +101,72 @@ export default class Taps extends Component<Props, State> {
   };
 
   render() {
-    const { taps, tapFields, fieldValues, sfToken } = this.props.tapsStore;
+    const {
+      taps,
+      tapFields,
+      fieldValues,
+      sfToken,
+      selectedTap
+    } = this.props.tapsStore;
     const { showTaps } = this.state;
+    console.log('tHE PROPS', this.props);
 
     return (
       <div>
         <Header />
         <Container>
           <KnotProgress />
-
-          <Row>
-            <Col md={{ size: 8, offset: 2 }}>
-              <p className="mt-4">
-                <strong>Taps</strong> extract data from any source and write it
-                to a standard stream.
-              </p>
-              <div id="accordion">
-                <Card className="mt-3">
-                  <CardHeader>
-                    <Button color="link" onClick={this.toggleShowTaps}>
-                      Selection
-                    </Button>
-                  </CardHeader>
-                  <CardBody
-                    className={classNames('collapse', {
-                      show: this.state.showTaps
-                    })}
-                  >
-                    <Row>
-                      {taps.map((tap) => (
-                        <Col xs="6" sm="4" key={tap.tapKey}>
-                          <div id="collapseOne" aria-labelledby="headingOne">
-                            <Tap {...tap} selectTap={this.props.selectTap} />
-                          </div>
-                        </Col>
-                      ))}
-                    </Row>
-                  </CardBody>
-                </Card>
-
-                <Card className="mt-3">
-                  <CardHeader>
-                    <Button color="link" disabled>
-                      Configuration
-                    </Button>
-                  </CardHeader>
-                  <CardBody
-                    className={classNames('collapse', {
-                      show: !showTaps && tapFields.length > 0
-                    })}
-                  >
-                    <Configure
-                      fields={tapFields}
-                      fieldValues={fieldValues}
-                      submit={this.submit}
-                      handleChange={this.handleChange}
-                      setSfRefreshToken={this.setSfRefreshToken}
-                      sfToken={sfToken}
-                    />
-                  </CardBody>
-                </Card>
-              </div>
-              <Button
-                color="primary"
-                className="float-right my-3"
-                onClick={this.submit}
-                disabled={!this.formValid()}
+          <h2 className="mb-1 pt-4">Configure Tap</h2>
+          <p className="mb-4">
+            Taps extract data from any source and write it to a standard stream.
+          </p>
+          <div id="accordion">
+            <Card className="mt-3">
+              <CardHeader>
+                <Button color="link" onClick={this.toggleShowTaps}>
+                  Selection
+                </Button>
+              </CardHeader>
+              <CardBody
+                className={classNames('collapse', {
+                  show: this.state.showTaps
+                })}
               >
-                Continue
-              </Button>
-            </Col>
-          </Row>
+                <Row>
+                  {taps.map((tap) => (
+                    <Tap
+                      key={tap.name}
+                      {...tap}
+                      selectTap={this.props.selectTap}
+                      selected={selectedTap.name}
+                    />
+                  ))}
+                </Row>
+              </CardBody>
+            </Card>
+
+            <Card className="mt-3">
+              <CardHeader>
+                <Button color="link" disabled>
+                  Configuration
+                </Button>
+              </CardHeader>
+              <CardBody
+                className={classNames('collapse', {
+                  show: !showTaps && tapFields.length > 0
+                })}
+              >
+                <Configure
+                  fields={tapFields}
+                  fieldValues={fieldValues}
+                  submit={this.submit}
+                  handleChange={this.handleChange}
+                  setSfRefreshToken={this.setSfRefreshToken}
+                  sfToken={sfToken}
+                />
+              </CardBody>
+            </Card>
+          </div>
         </Container>
       </div>
     );

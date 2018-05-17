@@ -54,7 +54,6 @@ const KnotProgress = (props: Props) => (
           />
         ))}
       </Nav>
-      <p className="display-4 mt-4">{currentActive(props.progressStore)}</p>
     </Col>
   </Row>
 );
