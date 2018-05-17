@@ -19,7 +19,7 @@ type Props = {
     validationText: string,
     required: boolean,
     placeholder: string,
-    options?: Array<string>,
+    options: Array<string>,
     type?: string
   }>,
   fieldValues: {
@@ -66,6 +66,8 @@ export default class ConnectForm extends Component<Props> {
   };
 
   render() {
+    console.log('The current field', this.props.fields);
+
     return (
       <Form>
         {this.props.fields.map((field) => (

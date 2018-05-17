@@ -156,7 +156,6 @@ export function downloadKnot(knot: string) {
     axios
       .post(`${baseUrl}/download/`, { knot })
       .then(() => {
-        console.log('Progress');
         axios({
           url: `http://localhost:4321/download?knot=${knot}`,
           method: 'GET',
@@ -167,6 +166,7 @@ export function downloadKnot(knot: string) {
             const link = document.createElement('a');
             link.href = url;
             link.setAttribute('download', `${knot}.zip`);
+            // $FlowFixMe
             document.body.appendChild(link);
             link.click();
           })

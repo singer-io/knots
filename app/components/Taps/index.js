@@ -28,11 +28,17 @@ type Props = {
       label: string,
       validationText: string,
       required: boolean,
-      placeholder: string
+      placeholder: string,
+      options: Array<string>,
+      type?: string
     }>,
     fieldValues: {
       password?: string,
-      client_id?: string
+      client_id?: string,
+      client_secret?: string,
+      refresh_token?: string,
+      api_type?: string,
+      select_fields_by_default?: boolean
     }
   },
   history: { push: (path: string) => void },

@@ -25,12 +25,7 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +syntaxError: boolean,
-  +showModal: boolean,
-  +liveLogs: string,
-  +dockerConfigError: boolean,
-  +tapError: boolean,
-  +invalidSchemaError: boolean
+  +liveLogs: string
 };
 
 const defaultState = {
@@ -48,12 +43,7 @@ const defaultState = {
   schema: [],
   schemaUpdated: false,
   error: '',
-  syntaxError: false,
-  showModal: false,
-  liveLogs: '',
-  dockerConfigError: false,
-  tapError: false,
-  invalidSchemaError: false
+  liveLogs: ''
 };
 
 export default function taps(state = defaultState, action) {
