@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -13,10 +13,16 @@ import {
   Button,
   Progress,
   Card,
-  CardBody
+  CardBody,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
+import classNames from 'classnames';
+import { shell } from 'electron';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
@@ -24,6 +30,8 @@ import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import ErrorModal from '../Modal';
 import Log from '../Log';
+
+import styles from './Schema.css';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
@@ -53,11 +61,11 @@ type Props = {
       stream: string,
       tap_stream_id: string,
       metadata: Array<{
+        breadcrumb: Array<{}>,
         metadata: {
           selected: string,
           ['valid-replication-keys']: Array<string>
-        },
-        breadcrumb: Array<{}>
+        }
       }>
     }>
   ) => void,
@@ -100,26 +108,34 @@ export default class Schema extends Component<Props, State> {
     this.props.toggle();
   };
 
-  validReplicationKeys = (stream: {
-    metadata: Array<{ breadcrumb: Array<{}> }>
-  }) => {
+  validReplicationKeys = (stream: {}) => {
+    console.log('The stream', stream);
     let indexToUpdate;
-    stream.metadata.forEach((metadata, index) => {
-      if (metadata.breadcrumb.length === 0) {
-        indexToUpdate = index;
-      }
-    });
-    if (indexToUpdate) {
-      return (
-        stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
-      );
+    for (const metadata of stream.metadata) {
+      console.log(metadata);
     }
+    // let indexToUpdate;
+    // console.log('The stream', stream);
+    // stream.metadata.forEach((metadata, index) => {
+    //   if (metadata.breadcrumb.length === 0) {
+    //     indexToUpdate = index;
+    //   }
+    // });
+    // if (indexToUpdate) {
+    //   return (
+    //     stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
+    //   );
+    // }
 
-    return [];
+    // return [];
   };
 
   showSchema = () => {
     this.setState({ showSchema: true });
+  };
+
+  openLink = (repo: string) => {
+    shell.openExternal(repo);
   };
 
   render() {
@@ -254,10 +270,11 @@ export default class Schema extends Component<Props, State> {
                           <td>{stream.stream}</td>
                           <td>
                             <Dropdown
-                              columns={this.validReplicationKeys(stream)}
+                              columns={['ab', 'cd']}
                               index={index.toString()}
                               handleChange={this.handleChange}
                             />
+                            {this.validReplicationKeys(stream)}
                           </td>
                         </tr>
                       ))}
@@ -281,6 +298,38 @@ export default class Schema extends Component<Props, State> {
               )}
             </Col>
           </Row>
+          <Modal isOpen={!!error}>
+            <ModalHeader className="text-danger">
+              <span className="oi oi-warning" /> Tap error
+            </ModalHeader>
+            <ModalBody>
+              Unable to execute tap in discovery mode.
+              {console.log('This is the error', error)}
+              <pre
+                className="bg-light border border-light p-1 rounded"
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                Error details:<br />
+                {error ? error.toString() : ''}
+              </pre>
+            </ModalBody>
+            <ModalFooter>
+              <button
+                onClick={() => this.openLink('https://help.data.world')}
+                className={classNames('mr-auto text-secondary', styles.link)}
+              >
+                <small>Contact Support</small>
+              </button>
+              <Link to="/">
+                <Button outline color="secondary">
+                  Abort
+                </Button>
+              </Link>
+              <Link to="/taps">
+                <Button color="primary">Reconfigure</Button>
+              </Link>
+            </ModalFooter>
+          </Modal>
         </Container>
       </div>
     );

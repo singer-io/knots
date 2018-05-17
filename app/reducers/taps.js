@@ -18,7 +18,7 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: string,
+  +selectedTap: { name: string, image: string },
   +tapFields: Array<{}>,
   +fieldValues: {},
   +schema: Array<{}>,
@@ -35,7 +35,7 @@ export type tapsStateType = {
 
 const defaultState = {
   tapsLoading: false,
-  selectedTap: '',
+  selectedTap: { name: '', image: '' },
   schemaLoading: false,
   schemaLoaded: false,
   schemaLogs: [],

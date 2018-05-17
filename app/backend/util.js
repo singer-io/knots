@@ -162,7 +162,7 @@ const writeConfig = (config) =>
   });
 
 const getSchema = (req) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     const runDiscovery = exec(
       commands.runDiscovery(tempFolder, req.body.tap.name, req.body.tap.image)
     );
@@ -171,7 +171,18 @@ const getSchema = (req) =>
       req.io.emit('schemaLog', data.toString());
     });
 
-    runDiscovery.on('exit', () => {
+    runDiscovery.on('exit', (code) => {
+      if (code > 0) {
+        reject(
+          new Error(
+            `${commands.runDiscovery(
+              tempFolder,
+              req.body.tap.name,
+              req.body.tap.image
+            )} command failed`
+          )
+        );
+      }
       resolve();
     });
   });
@@ -191,7 +202,7 @@ const readSchema = () =>
           resolve(schema);
         } catch (error) {
           // Not a valid object, pass on the error
-          reject(error.toString());
+          reject(error);
         }
       })
       .catch(reject);

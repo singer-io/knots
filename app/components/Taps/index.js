@@ -109,7 +109,6 @@ export default class Taps extends Component<Props, State> {
       selectedTap
     } = this.props.tapsStore;
     const { showTaps } = this.state;
-    console.log('tHE PROPS', this.props);
 
     return (
       <div>
@@ -167,6 +166,14 @@ export default class Taps extends Component<Props, State> {
               </CardBody>
             </Card>
           </div>
+          <Button
+            color="primary"
+            className="float-right my-3"
+            onClick={this.submit}
+            disabled={!this.formValid()}
+          >
+            Continue
+          </Button>
         </Container>
       </div>
     );

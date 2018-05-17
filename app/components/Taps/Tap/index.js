@@ -1,6 +1,9 @@
 // @flow
 import React, { Component } from 'react';
 import { Col, Card, CardBody } from 'reactstrap';
+import { shell } from 'electron';
+
+import styles from './Tap.css';
 
 type Props = {
   logo: string,
@@ -34,8 +37,12 @@ export default class Tap extends Component<Props, State> {
     return '';
   };
 
+  openLink = (repo: string) => {
+    shell.openExternal(repo);
+  };
+
   render() {
-    const { tapKey } = this.props;
+    const { tapKey, repo } = this.props;
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card
@@ -61,9 +68,12 @@ export default class Tap extends Component<Props, State> {
               <div className="media-body">
                 <h6 className="card-title mb-0">{this.props.name}</h6>
                 <small>
-                  <a href={this.props.repo} target="_blank">
+                  <button
+                    onClick={() => this.openLink(repo)}
+                    className={styles.link}
+                  >
                     Learn more
-                  </a>
+                  </button>
                 </small>
               </div>
             </div>

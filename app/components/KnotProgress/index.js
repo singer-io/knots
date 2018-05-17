@@ -24,17 +24,6 @@ const calculateProgress = (items) => {
   return indexOfActiveItem * 33.3;
 };
 
-const currentActive = (items) => {
-  let active = '';
-  Object.keys(items).forEach((key) => {
-    if (items[key].active) {
-      active = items[key].text;
-    }
-  });
-
-  return active;
-};
-
 const KnotProgress = (props: Props) => (
   <Row>
     <Col md={{ size: 8, offset: 2 }}>

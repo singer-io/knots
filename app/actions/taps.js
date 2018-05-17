@@ -126,7 +126,9 @@ export function submitConfig(
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: [],
-          error: error.toString()
+          error: JSON.stringify(
+            error.response ? error.response.data.message : JSON.stringify(error)
+          )
         });
       });
   };

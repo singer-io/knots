@@ -18,7 +18,9 @@ type Props = {
     label: string,
     validationText: string,
     required: boolean,
-    placeholder: string
+    placeholder: string,
+    options?: Array<string>,
+    type?: string
   }>,
   fieldValues: {
     password?: string,
@@ -51,13 +53,13 @@ export default class ConnectForm extends Component<Props> {
     });
   }
 
-  authorize = (clientId, clientSecret) => {
+  authorize = (clientId?: string, clientSecret?: string) => {
     const authorizationCredentials = { clientId, clientSecret };
     ipcRenderer.send('sf-oauth', authorizationCredentials);
   };
 
-  onGetRefreshToken = (e) => {
-    e.preventDefault();
+  onGetRefreshToken = (event: SyntheticEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     const clientId = this.props.fieldValues.client_id;
     const clientSecret = this.props.fieldValues.client_secret;
     this.authorize(clientId, clientSecret);
