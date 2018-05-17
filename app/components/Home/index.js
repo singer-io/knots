@@ -77,18 +77,27 @@ export default class Home extends Component<Props, State> {
           <Container className="mt-5">
             {dockerVersionDetected && (
               <Alert
-                color="danger"
-                style={{ opacity: 1 }}
                 isOpen={this.state.showError}
-                toggle={this.onDismiss}
+                color="warning"
+                className="d-flex justify-content-between"
               >
-                Oops! Docker must be installed before you can proceed.{' '}
-                <button
-                  onClick={this.dockerDownload}
-                  className={classNames('alert-link', styles.download)}
-                >
-                  Click here to download it.
-                </button>
+                <span className="align-self-center">
+                  <span>Docker must be installed before you can proceed. </span>
+                  <button
+                    onClick={this.dockerDownload}
+                    className={classNames('alert-link', styles.download)}
+                  >
+                    Download Docker
+                  </button>
+                </span>
+                <span>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={this.onDismiss}
+                  >
+                    Continue
+                  </button>
+                </span>
               </Alert>
             )}
 
