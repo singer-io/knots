@@ -29,7 +29,7 @@ type Props = {
   },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: () => void
+  submitFields: ({}) => void
 };
 
 type State = {
@@ -74,6 +74,15 @@ export default class Targets extends Component<Props, State> {
     });
 
     return valid;
+  };
+
+  submit = () => {
+    const { name } = this.props.targetsStore.selectedTarget;
+    const { fieldValues } = this.props.userStore[name];
+
+    this.props.submitFields(fieldValues);
+
+    this.props.history.push('/sync');
   };
 
   render() {
@@ -134,6 +143,7 @@ export default class Targets extends Component<Props, State> {
               color="primary"
               className="float-right my-3"
               disabled={!this.formValid()}
+              onClick={this.submit}
             >
               Continue
             </Button>

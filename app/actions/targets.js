@@ -60,19 +60,14 @@ export function selectTarget(target: { name: string, image: string }) {
   };
 }
 
-export function submitFields(dataset: string, token: string) {
+export function submitFields(fieldValues: {}) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TARGET_CONFIGURING
     });
 
-    const datasetArray = dataset.split('/');
     axios
-      .post(`${baseUrl}/target/`, {
-        owner: datasetArray[0],
-        dataset_id: datasetArray[1],
-        api_token: token
-      })
+      .post(`${baseUrl}/target/`, fieldValues)
       .then(() => {
         dispatch({
           type: TARGET_CONFIGURED
