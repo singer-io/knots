@@ -164,7 +164,7 @@ const commands = {
       target.name
     }/data --interactive ${target.image} ${target.name} -c ${
       target.name
-    }/data/config.json 2> target.log > state.json`,
+    }/data/config.json 2> target.log > ${folderPath}/tap/state.json`,
   runPartialSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/state.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`
 };

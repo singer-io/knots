@@ -137,6 +137,7 @@ export default class Schema extends Component<Props, State> {
         <Header />
         <Container>
           <KnotProgress />
+          <h2 className="mb-1 pt-4">Replication Options</h2>
 
           <div>
             {!showSchema && (
