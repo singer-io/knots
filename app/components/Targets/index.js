@@ -23,6 +23,10 @@ type Props = {
     targetInstalled: boolean,
     selectedTarget: { name: string, image: string }
   },
+  userStore: {
+    'target-stitch': { fieldValues: {} },
+    'target-datadotworld': { fieldValues: {} }
+  },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
   submitFields: () => void
@@ -49,6 +53,27 @@ export default class Targets extends Component<Props, State> {
 
   toggleShowTargets = () => {
     this.setState({ showTargets: !this.state.showTargets });
+  };
+
+  formValid = () => {
+    const { name } = this.props.targetsStore.selectedTarget;
+
+    if (!name) {
+      return false;
+    }
+
+    // eslint-disable-next-line react/prop-types
+    const { fieldValues } = this.props.userStore[name];
+
+    let valid = true;
+
+    Object.keys(fieldValues).forEach((field) => {
+      if (!fieldValues[field]) {
+        valid = false;
+      }
+    });
+
+    return valid;
   };
 
   render() {
@@ -105,7 +130,11 @@ export default class Targets extends Component<Props, State> {
                 <TargetConfiguration />
               </CardBody>
             </Card>
-            <Button color="primary" className="float-right my-3">
+            <Button
+              color="primary"
+              className="float-right my-3"
+              disabled={!this.formValid()}
+            >
               Continue
             </Button>
           </div>

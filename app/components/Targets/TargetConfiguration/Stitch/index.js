@@ -7,7 +7,7 @@ import styles from './Stitch.css';
 
 type Props = {
   userStore: {
-    stitch: {
+    'target-stitch': {
       fieldValues: { client_id: string, token: string }
     }
   },
@@ -17,12 +17,14 @@ type Props = {
 export default class Stitch extends Component<Props> {
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    this.props.updateField('stitch', name, value);
+    this.props.updateField('target-stitch', name, value);
   };
 
   render() {
-    // eslint-disable-next-line camelcase
-    const { client_id, token } = this.props.userStore.stitch.fieldValues;
+    // eslint-disable-next-line
+    const { client_id, token } = this.props.userStore[
+      'target-stitch'
+    ].fieldValues;
     return (
       <div className={styles.Stitch}>
         <FormGroup>

@@ -8,14 +8,17 @@ import {
 
 export type targetsStateType = {
   +targetConfigured: boolean,
-  +dataDotWorld: { token: '', fieldValues: { dataset: '', owner: '' } },
-  +stitch: { fieldValues: { client_id: string, token: string } }
+  +'target-datadotworld': {
+    token: '',
+    fieldValues: { dataset: '', owner: '' }
+  },
+  +'target-stitch': { fieldValues: { client_id: string, token: string } }
 };
 
 const defaultState = {
   targetConfigured: false,
-  dataDotWorld: { token: '', fieldValues: { dataset: '', owner: '' } },
-  stitch: { fieldValues: { client_id: '', token: '' } }
+  'target-datadotworld': { token: '', fieldValues: { dataset: '', owner: '' } },
+  'target-stitch': { fieldValues: { client_id: '', token: '' } }
 };
 
 export default function targets(state = defaultState, action) {
