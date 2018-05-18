@@ -64,6 +64,7 @@ export default class Targets extends Component<Props, State> {
 
     // eslint-disable-next-line react/prop-types
     const { fieldValues } = this.props.userStore[name];
+    console.log('These are the field values', fieldValues);
 
     let valid = true;
 

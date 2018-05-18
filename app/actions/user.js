@@ -21,15 +21,6 @@ export function setToken(token: string) {
   };
 }
 
-export function setDataset(selectedDataset: string) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: UPDATE_DATASET,
-      selectedDataset
-    });
-  };
-}
-
 export function fetchToken(knot: string) {
   return (dispatch: (action: actionType) => void) => {
     axios

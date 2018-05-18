@@ -1,7 +1,7 @@
 // @flow
 
 import React from 'react';
-import { NavItem, NavLink } from 'reactstrap';
+import { NavItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
@@ -18,8 +18,7 @@ type Props = {
 const KnotProgress = (props: Props) => (
   <NavItem>
     <Link to={props.href}>
-      <NavLink
-        href={props.href}
+      <div
         className={classNames(styles.navLink, {
           [styles.completed]: props.complete,
           [styles.active]: props.active
@@ -36,7 +35,7 @@ const KnotProgress = (props: Props) => (
           style={{ display: props.complete ? 'inline-block' : 'none' }}
           className={classNames('oi', 'oi-check', styles.checkIcon)}
         />
-      </NavLink>
+      </div>
       <small style={{ color: 'black' }}>{props.text}</small>
     </Link>
   </NavItem>

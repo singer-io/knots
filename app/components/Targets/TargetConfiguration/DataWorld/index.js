@@ -1,4 +1,6 @@
 // @flow
+/* eslint-disable camelcase */
+/* eslint-disable react/prop-types */
 import React, { Component } from 'react';
 import {
   Label,
@@ -15,9 +17,7 @@ import { ipcRenderer } from 'electron';
 import styles from './DataWorld.css';
 
 type Props = {
-  setToken: (token: string) => void,
-  userStore: { token: string, selectedDataset: string },
-  setDataset: (value: string) => void
+  updateField: (target: string, field: string, value: string) => void
 };
 
 export default class DataWorld extends Component<Props> {
@@ -34,12 +34,12 @@ export default class DataWorld extends Component<Props> {
   };
 
   setToken = (token: string) => {
-    this.props.setToken(token);
+    this.props.updateField('target-datadotworld', 'api_token', token);
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
-    const { value } = e.currentTarget;
-    this.props.setDataset(value);
+    const { name, value } = e.currentTarget;
+    this.props.updateField('target-datadotworld', name, value);
   };
 
   showDatasetSelector = () => {
@@ -53,30 +53,55 @@ export default class DataWorld extends Component<Props> {
 
     datasetSelector.success((datasets) => {
       const selectedDataset = datasets[0];
-      this.props.setDataset(`${selectedDataset.owner}/${selectedDataset.id}`);
+
+      this.props.updateField(
+        'target-datadotworld',
+        'dataset_id',
+        selectedDataset.id
+      );
+
+      this.props.updateField(
+        'target-datadotworld',
+        'dataset_owner',
+        selectedDataset.owner
+      );
     });
 
     datasetSelector.show();
   };
 
-  validDataset() {
-    const datasetArray = this.props.userStore.selectedDataset.split('/');
-
-    if (datasetArray.length !== 2) {
-      return false;
+  validDataset = (id?: string, owner?: string) => {
+    if (id && owner) {
+      return true;
     }
 
-    return true;
-  }
+    return false;
+  };
+
+  getDataset = (id?: string, owner?: string) => {
+    if (id && owner) {
+      return `${id}/${owner}`;
+    }
+
+    return '';
+  };
 
   render() {
-    const { token } = this.props.userStore;
+    // $FlowFixMe
+    const { dataset_id, dataset_owner, api_token } = this.props.userStore[
+      'target-datadotworld'
+    ].fieldValues;
     return (
       <div className={styles.DataWorld}>
         <FormGroup>
           <Label for="apiToken">API Token</Label>
           <InputGroup>
-            <Input readOnly value={token} invalid={!token} />
+            <Input
+              readOnly
+              type="password"
+              value={api_token}
+              invalid={!api_token}
+            />
             <InputGroupAddon addonType="append">
               <Button outline color="secondary" onClick={this.authorize}>
                 Authenticate
@@ -92,10 +117,12 @@ export default class DataWorld extends Component<Props> {
               <InputGroupText>https://data.world/</InputGroupText>
             </InputGroupAddon>
             <Input
+              name="dataset"
               placeholder="jonloyens/intro-to-dataworld-dataset"
-              value={this.props.userStore.selectedDataset}
+              value={this.getDataset(dataset_id, dataset_owner)}
               onChange={this.handleChange}
-              invalid={!this.validDataset()}
+              invalid={!this.validDataset(dataset_id, dataset_owner)}
+              disabled
             />
             <InputGroupAddon addonType="append">
               <Button

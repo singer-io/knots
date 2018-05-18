@@ -9,8 +9,11 @@ import {
 export type targetsStateType = {
   +targetConfigured: boolean,
   +'target-datadotworld': {
-    token: '',
-    fieldValues: { dataset: '', owner: '' }
+    fieldValues: {
+      dataset_id: string,
+      dataset_owner: string,
+      api_token: string
+    }
   },
   +'target-stitch': { fieldValues: { client_id: string, token: string } }
 };
