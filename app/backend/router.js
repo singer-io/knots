@@ -98,8 +98,7 @@ router.get('/targets/', (req, res) => {
 });
 
 router.post('/target/install', (req, res) => {
-  const { target, targetImage } = req.body;
-  addTarget(target, targetImage)
+  addTarget(req.body)
     .then(() => {
       res.json({ status: 200 });
     })

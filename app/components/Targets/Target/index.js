@@ -1,5 +1,8 @@
 // @flow
-import React from 'react';
+import React, { Component } from 'react';
+import { Col, Card, CardBody } from 'reactstrap';
+import { shell } from 'electron';
+
 import styles from './Target.css';
 
 type Props = {
@@ -8,35 +11,75 @@ type Props = {
   repo: string,
   targetKey: string,
   targetImage: string,
-  selectTarget: (tap: string, version: string) => void
+  selected: string,
+  selectTarget: (tap: { name: string, image: string }) => void
 };
 
-const Target = (props: Props) => (
-  <div className={styles.Target}>
-    <div className={styles.logoContainer}>
-      <img
-        className="mr-3"
-        style={{ maxWidth: '64px' }}
-        src={props.logo}
-        alt={props.name}
-      />
-    </div>
-    <div className={styles.info}>
-      <button
-        className={styles.name}
-        onClick={() => {
-          props.selectTarget(props.targetKey, props.targetImage);
-        }}
-      >
-        {props.name}
-      </button>
-      <div className={styles.repo}>
-        <a href={props.repo} target="_blank">
-          Learn more
-        </a>
-      </div>
-    </div>
-  </div>
-);
+type State = {
+  hovered: boolean
+};
 
-export default Target;
+export default class Target extends Component<Props, State> {
+  state = {
+    hovered: false
+  };
+
+  getBorderState = () => {
+    const { hovered } = this.state;
+    const { targetKey, selected } = this.props;
+
+    if (hovered) {
+      return 'border-primary';
+    } else if (selected === targetKey) {
+      return 'border-success';
+    }
+
+    return '';
+  };
+
+  openLink = (repo: string) => {
+    shell.openExternal(repo);
+  };
+
+  render() {
+    const { targetKey, repo } = this.props;
+    return (
+      <Col sm="12" md={{ size: 4 }}>
+        <Card
+          className={this.getBorderState()}
+          style={{ cursor: 'pointer' }}
+          onMouseEnter={() => this.setState({ hovered: true })}
+          onMouseLeave={() => this.setState({ hovered: false })}
+          onClick={() => {
+            this.props.selectTarget({
+              name: targetKey,
+              image: this.props.targetImage
+            });
+          }}
+        >
+          <CardBody>
+            <div className="media">
+              <img
+                src={this.props.logo}
+                alt={this.props.name}
+                className="mr-3"
+                style={{ maxWidth: '44px' }}
+              />
+              <div className="media-body">
+                <h6 className="card-title mb-0">{this.props.name}</h6>
+                <small>
+                  <button
+                    onClick={() => this.openLink(repo)}
+                    className={styles.link}
+                  >
+                    Learn more
+                  </button>
+                </small>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      </Col>
+    );
+  }
+}

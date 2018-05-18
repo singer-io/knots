@@ -1,14 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardHeader,
-  CardBody,
-  Button
-} from 'reactstrap';
+import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
 
 import Header from '../Header';
@@ -28,14 +20,15 @@ type Props = {
       targetKey: string,
       targetImage: string
     }>,
-    targetInstalled: boolean
+    targetInstalled: boolean,
+    selectedTarget: { name: string, image: string }
   },
   userStore: {
     token: string,
     selectedDataset: string
   },
   history: { push: (path: string) => void },
-  selectTarget: (tap: string, version: string) => void,
+  selectTarget: (target: { name: string, image: string }) => void,
   submitFields: (dataset: string, token: string) => void
 };
 
@@ -79,71 +72,67 @@ export default class Targets extends Component<Props, State> {
 
   render() {
     const { showTargets } = this.state;
-    const { targets } = this.props.targetsStore;
+    const { targets, selectedTarget } = this.props.targetsStore;
 
     return (
       <div>
         <Header />
         <Container>
           <KnotProgress />
+          <h2 className="mb-1 pt-4">Configure Target</h2>
+          <p className="mb-4">
+            <strong>Targets</strong> consume data from taps and do something
+            with it, like load it into a file, API or database.
+          </p>
 
-          <Row>
-            <Col md={{ size: 8, offset: 2 }}>
-              <p className="mt-5">
-                <strong>Targets</strong> consume data from taps and do something
-                with it, like load it into a file, API or database.
-              </p>
-              <div id="accordion">
-                <Card className="mt-3">
-                  <CardHeader>
-                    <Button color="link" onClick={this.toggleShowTargets}>
-                      Selection
-                    </Button>
-                  </CardHeader>
-                  <CardBody
-                    className={classNames('collapse', {
-                      show: showTargets
-                    })}
-                  >
-                    <Col md={{ size: 4 }}>
-                      <div id="collapseOne" aria-labelledby="headingOne">
-                        {targets.map((target) => (
-                          <Target
-                            {...target}
-                            key={target.targetKey}
-                            selectTarget={this.props.selectTarget}
-                          />
-                        ))}
-                      </div>
-                    </Col>
-                  </CardBody>
-                </Card>
-
-                <Card className="mt-3">
-                  <CardHeader>
-                    <Button color="link" disabled>
-                      Configuration
-                    </Button>
-                  </CardHeader>
-                  <CardBody
-                    className={classNames('collapse', {
-                      show: !showTargets
-                    })}
-                  >
-                    <TargetConfiguration />
-                  </CardBody>
-                </Card>
-              </div>
-              <Button
-                color="primary"
-                className="float-right my-3"
-                disabled={!this.formValid()}
-                onClick={this.submit}
+          <div id="accordion">
+            <Card className="mt-3">
+              <CardHeader>
+                <Button color="link" onClick={this.toggleShowTargets}>
+                  Selection
+                </Button>
+              </CardHeader>
+              <CardBody
+                className={classNames('collapse', {
+                  show: showTargets
+                })}
               >
-                Continue
-              </Button>
-            </Col>
-          </Row>
+                <Row>
+                  {targets.map((target) => (
+                    <Target
+                      {...target}
+                      key={target.targetKey}
+                      selectTarget={this.props.selectTarget}
+                      selected={selectedTarget.name}
+                    />
+                  ))}
+                </Row>
+              </CardBody>
+            </Card>
+
+            <Card className="mt-3">
+              <CardHeader>
+                <Button color="link" disabled>
+                  Configuration
+                </Button>
+              </CardHeader>
+              <CardBody
+                className={classNames('collapse', {
+                  show: !showTargets && selectedTarget
+                })}
+              >
+                <TargetConfiguration />
+              </CardBody>
+            </Card>
+            <Button
+              color="primary"
+              className="float-right my-3"
+              disabled={!this.formValid()}
+              onClick={this.submit}
+            >
+              Continue
+            </Button>
+          </div>
         </Container>
       </div>
     );

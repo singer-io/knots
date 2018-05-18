@@ -6,25 +6,21 @@ import {
 
 export type targetsStateType = {
   +targets: Array<{}>,
-  +selectedTarget: '',
   +targetsLoading: boolean,
-  +targetSelected: boolean
+  +targetSelected: boolean,
+  +selectedTarget: { name: sring, image: string }
 };
 
 const defaultState = {
   targets: [],
   targetsLoading: false,
   targetInstalled: false,
-  targetSelected: false
+  targetSelected: false,
+  selectedTarget: { name: '', image: '' }
 };
 
 export default function targets(state = defaultState, action) {
   switch (action.type) {
-    case TARGET_SELECTED:
-      return Object.assign({}, state, {
-        targetSelected: true,
-        selectedTarget: action.target
-      });
     case TARGETS_LOADING:
       return Object.assign({}, state, {
         targetsLoading: true
@@ -33,6 +29,11 @@ export default function targets(state = defaultState, action) {
       return Object.assign({}, state, {
         targetsLoading: false,
         targets: action.targets
+      });
+    case TARGET_SELECTED:
+      return Object.assign({}, state, {
+        targetSelected: true,
+        selectedTarget: action.target
       });
     default:
       return state;

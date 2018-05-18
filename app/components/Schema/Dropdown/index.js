@@ -5,7 +5,7 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   index: string,
   columns: Array<string>,
-  handleChange: (field: string, index: string, value: string) => void
+  handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
 export default class Dropdown extends Component<Props> {

@@ -28,9 +28,8 @@ type Props = {
   setSfRefreshToken: (token: string) => void
 };
 
-export default class Taps extends Component<Props> {
+export default class Configure extends Component<Props> {
   render() {
-    console.log('The props', this.props);
     return (
       <div>
         <ConnectForm

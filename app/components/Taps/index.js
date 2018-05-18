@@ -123,7 +123,8 @@ export default class Taps extends Component<Props, State> {
           <KnotProgress />
           <h2 className="mb-1 pt-4">Configure Tap</h2>
           <p className="mb-4">
-            Taps extract data from any source and write it to a standard stream.
+            <strong>Taps</strong> extract data from any source and write it to a
+            standard stream.
           </p>
           <div id="accordion">
             <Card className="mt-3">

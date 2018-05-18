@@ -5,7 +5,7 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   checked: boolean,
   index: string,
-  handleChange: (field: string, index: string, value: boolean) => void
+  handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
 type State = {

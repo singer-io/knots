@@ -12,7 +12,7 @@ type Props = {
     targetConfigured: boolean
   },
   targetsStore: {
-    selectedTarget: string
+    selectedTarget: { name: string, image: string }
   }
 };
 
@@ -26,7 +26,7 @@ export default class Target extends Component<Props> {
 
   selectedTarget = () => {
     const { selectedTarget } = this.props.targetsStore;
-    switch (selectedTarget) {
+    switch (selectedTarget.name) {
       case 'target-datadotworld':
         return <DataWorld />;
       default:

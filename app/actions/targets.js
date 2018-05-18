@@ -37,7 +37,7 @@ export function getTargets() {
   };
 }
 
-export function selectTarget(target: string, targetImage: string) {
+export function selectTarget(target: { name: string, image: string }) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TARGET_SELECTED,
@@ -45,10 +45,7 @@ export function selectTarget(target: string, targetImage: string) {
     });
 
     axios
-      .post(`${baseUrl}/target/install`, {
-        target,
-        targetImage
-      })
+      .post(`${baseUrl}/target/install`, target)
       .then(() => {
         dispatch({
           type: TARGET_INSTALLED

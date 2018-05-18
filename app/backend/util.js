@@ -255,14 +255,9 @@ const getTargets = () =>
     }
   });
 
-const addTarget = (targetName, targetImage) =>
+const addTarget = (target) =>
   new Promise((resolve, reject) => {
-    console.log('Paramas', targetName, targetImage);
-    const val = {
-      name: targetName,
-      image: targetImage
-    };
-    addKnotAttribute(['target'], val)
+    addKnotAttribute(['target'], target)
       .then(resolve)
       .catch(reject);
   });

@@ -66,8 +66,6 @@ export default class ConnectForm extends Component<Props> {
   };
 
   render() {
-    console.log('The current field', this.props.fields);
-
     return (
       <Form>
         {this.props.fields.map((field) => (
