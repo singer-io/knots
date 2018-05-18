@@ -160,7 +160,7 @@ const commands = {
       tap.image
     } ${tap.name} -c ${tap.name}/data/config.json --properties ${
       tap.name
-    }/data/catalog.json 2> tap.log| docker run -v ${folderPath}/target:/app/${
+    }/data/catalog.json 2> tap.log | docker run -v ${folderPath}/target:/app/${
       target.name
     }/data --interactive ${target.image} ${target.name} -c ${
       target.name

@@ -115,4 +115,5 @@ class Knots extends Component<Props> {
   }
 }
 
-export default withRouter(Knots); // $FlowFixMe
+// $FlowFixMe
+export default withRouter(Knots);

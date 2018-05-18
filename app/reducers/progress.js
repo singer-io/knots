@@ -9,23 +9,23 @@ export type tapsStateType = {
 const defaultState = {
   0: {
     text: 'Configure Tap',
-    href: 'configure-tap',
+    href: '/taps',
     complete: false,
     active: false
   },
   1: {
     text: 'Replication Options',
-    href: 'replication-options',
+    href: '/schema',
     complete: false,
     active: false
   },
   2: {
     text: 'Configure Target',
-    href: 'configure-target',
+    href: '/targets',
     complete: false,
     active: false
   },
-  3: { text: 'Save & Run', href: 'run', complete: false, active: false }
+  3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
 };
 
 export default function progress(state = defaultState, action) {
@@ -34,7 +34,7 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         0: {
           text: 'Configure Tap',
-          href: 'configure-tap',
+          href: '/taps',
           complete: false,
           active: true
         }
@@ -43,13 +43,13 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         0: {
           text: 'Configure Tap',
-          href: 'configure-tap',
+          href: '/taps',
           complete: true,
           active: false
         },
         1: {
           text: 'Replication Options',
-          href: 'replication-options',
+          href: '/schema',
           complete: false,
           active: true
         }
@@ -58,13 +58,13 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         1: {
           text: 'Replication Options',
-          href: 'replication-options',
+          href: '/schema',
           complete: true,
           active: false
         },
         2: {
           text: 'Configure Target',
-          href: 'configure-target',
+          href: '/targets',
           complete: false,
           active: true
         }
@@ -73,7 +73,7 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         2: {
           text: 'Configure Target',
-          href: 'configure-target',
+          href: '/targets',
           complete: true,
           active: false
         },
@@ -88,7 +88,7 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         3: {
           text: 'Save & Run',
-          href: 'run',
+          href: 'sync',
           complete: true,
           active: false
         }
@@ -97,23 +97,23 @@ export default function progress(state = defaultState, action) {
       return Object.assign({}, state, {
         0: {
           text: 'Configure Tap',
-          href: 'configure-tap',
+          href: '/taps',
           complete: true,
           active: true
         },
         1: {
           text: 'Replication Options',
-          href: 'replication-options',
+          href: '/schema',
           complete: true,
           active: true
         },
         2: {
           text: 'Configure Target',
-          href: 'configure-target',
+          href: '/targets',
           complete: true,
           active: true
         },
-        3: { text: 'Save & Run', href: 'run', complete: false, active: true }
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: true }
       });
     default:
       return state;
