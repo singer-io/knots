@@ -17,7 +17,8 @@ const {
   saveKnot,
   downloadKnot,
   getToken,
-  deleteKnot
+  deleteKnot,
+  partialSync
 } = require('./util');
 
 router.get('/docker', (req, res) => {
@@ -153,6 +154,16 @@ router.post('/save/', (req, res) => {
 
 router.post('/sync/', (req, res) => {
   sync(req)
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch(() => {
+      res.json({ status: 500 });
+    });
+});
+
+router.post('/sync/partial/', (req, res) => {
+  partialSync(req)
     .then(() => {
       res.json({ status: 200 });
     })

@@ -279,29 +279,96 @@ const addTargetConfig = (config) =>
 
 const sync = (req) =>
   new Promise((resolve) => {
-    const syncData = exec(
-      commands.runSync(
-        `${tempFolder}/knots/${req.body.knotName}`,
-        req.body.tap,
-        req.body.target
-      )
-    );
+    const { knotName } = req.body;
+    console.log('thE KNOT', knotName);
 
-    fs.watchFile('tap.log', () => {
-      exec('tail -n 1 tap.log', (error, stdout) => {
-        req.io.emit('tapLog', stdout.toString());
+    // Get the stored knot object
+    readFile(path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json'))
+      .then((knotObject) => {
+        // Get tap and target from the knot object
+        const syncData = exec(
+          commands.runSync(
+            `${tempFolder}/knots/${req.body.knotName}`,
+            knotObject.tap,
+            knotObject.target
+          )
+        );
+
+        console.log(
+          'This is it',
+          commands.runSync(
+            `${tempFolder}/knots/${req.body.knotName}`,
+            knotObject.tap,
+            knotObject.target
+          )
+        );
+
+        fs.watchFile('tap.log', () => {
+          exec('tail -n 1 tap.log', (error, stdout) => {
+            req.io.emit('tapLog', stdout.toString());
+          });
+        });
+
+        fs.watchFile('target.log', () => {
+          exec('tail -n 1 target.log', (error, stdout) => {
+            req.io.emit('targetLog', stdout.toString());
+          });
+        });
+
+        syncData.on('exit', (code) => {
+          resolve();
+        });
+      })
+      .catch((err) => {
+        console.log('Bane', err);
       });
-    });
+  });
 
-    fs.watchFile('target.log', () => {
-      exec('tail -n 1 target.log', (error, stdout) => {
-        req.io.emit('targetLog', stdout.toString());
+const partialSync = (req) =>
+  new Promise((resolve) => {
+    const { knotName } = req.body;
+    console.log('thE KNOT', knotName);
+
+    // Get the stored knot object
+    readFile(path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json'))
+      .then((knotObject) => {
+        // Get tap and target from the knot object
+        const syncData = exec(
+          commands.runPartialSync(
+            `${tempFolder}/knots/${req.body.knotName}`,
+            knotObject.tap,
+            knotObject.target
+          )
+        );
+
+        console.log(
+          'This is it',
+          commands.runPartialSync(
+            `${tempFolder}/knots/${req.body.knotName}`,
+            knotObject.tap,
+            knotObject.target
+          )
+        );
+
+        fs.watchFile('tap.log', () => {
+          exec('tail -n 1 tap.log', (error, stdout) => {
+            req.io.emit('tapLog', stdout.toString());
+          });
+        });
+
+        fs.watchFile('target.log', () => {
+          exec('tail -n 1 target.log', (error, stdout) => {
+            req.io.emit('targetLog', stdout.toString());
+          });
+        });
+
+        syncData.on('exit', (code) => {
+          resolve();
+        });
+      })
+      .catch((err) => {
+        console.log('Bane', err);
       });
-    });
-
-    syncData.on('exit', (code) => {
-      resolve();
-    });
   });
 
 const createMakeFile = (knot, name) =>
@@ -430,6 +497,7 @@ module.exports = {
   addTarget,
   addTargetConfig,
   sync,
+  partialSync,
   saveKnot,
   downloadKnot,
   getToken,

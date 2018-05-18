@@ -18,6 +18,7 @@ import {
 import StayScrolled from 'react-stay-scrolled';
 import classNames from 'classnames';
 import socketIOClient from 'socket.io-client';
+import queryString from 'query-string';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
@@ -49,7 +50,10 @@ type Props = {
     selectedTarget: { name: string, image: string }
   ) => void,
   updateTapLogs: (log: string) => void,
-  updateTargetLogs: (log: string) => void
+  updateTargetLogs: (log: string) => void,
+  location: { search: string },
+  sync: (knot: string) => void,
+  partialSync: (knot: string) => void
 };
 
 export default class Sync extends Component<Props> {
@@ -63,6 +67,15 @@ export default class Sync extends Component<Props> {
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
     });
+  }
+
+  componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
+    if (mode === 'full') {
+      this.props.sync(knot);
+    } else if (mode === 'partial') {
+      this.props.partialSync(knot);
+    }
   }
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {

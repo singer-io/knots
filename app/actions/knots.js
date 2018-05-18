@@ -14,6 +14,7 @@ export const UPDATE_NAME = 'UPDATE_NAME';
 export const KNOT_SYNCING = 'KNOT_SYNCING';
 export const KNOT_SYNCED = 'KNOT_SYNCED';
 export const KNOT_DELETED = 'KNOT_DELETED';
+export const FINAL_STEP = 'FINAL_STEP';
 
 type actionType = {
   +type: string
@@ -107,14 +108,41 @@ export function save(
   };
 }
 
-export function sync(tap: string) {
+export function sync(knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
     });
+    dispatch({
+      type: FINAL_STEP
+    });
 
     axios
-      .post(`${baseUrl}/sync`, { tap })
+      .post(`${baseUrl}/sync`, { knotName })
+      .then(() =>
+        dispatch({
+          type: KNOT_SYNCED
+        })
+      )
+      .catch(() =>
+        dispatch({
+          type: KNOT_SYNCED
+        })
+      );
+  };
+}
+
+export function partialSync(knotName: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: KNOT_SYNCING
+    });
+    dispatch({
+      type: FINAL_STEP
+    });
+
+    axios
+      .post(`${baseUrl}/sync/partial`, { knotName })
       .then(() =>
         dispatch({
           type: KNOT_SYNCED

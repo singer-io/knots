@@ -2,16 +2,18 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import classNames from 'classnames';
+import { withRouter } from 'react-router-dom';
 
 import styles from './Knot.css';
 
 type Props = {
   knot: { name: string, lastRun: string },
   delete: ({ name: string }) => void,
-  download: ({ name: string }) => void
+  download: ({ name: string }) => void,
+  history: { push: (path: string) => void }
 };
 
-export default class Knots extends Component<Props> {
+class Knots extends Component<Props> {
   delete = () => {
     this.props.delete(this.props.knot);
   };
@@ -19,6 +21,20 @@ export default class Knots extends Component<Props> {
   download = () => {
     console.log('Download called');
     this.props.download(this.props.knot);
+  };
+
+  fullSync = () => {
+    const { name } = this.props.knot;
+    console.log('Full sync called', name, this.props);
+
+    this.props.history.push(`/sync?knot=${name}&mode=full`);
+  };
+
+  partialSync = () => {
+    const { name } = this.props.knot;
+    console.log('Partial sync called', name, this.props);
+
+    this.props.history.push(`/sync?knot=${name}&mode=partial`);
   };
 
   render() {
@@ -45,6 +61,7 @@ export default class Knots extends Component<Props> {
               data-toggle="tooltip"
               data-placement="top"
               title="Run"
+              onClick={this.partialSync}
             >
               <span className="oi oi-media-play" />
             </button>
@@ -55,6 +72,7 @@ export default class Knots extends Component<Props> {
               data-toggle="tooltip"
               data-placement="top"
               title="Full sync"
+              onClick={this.fullSync}
             >
               <span className="oi oi-reload" />
             </button>
@@ -96,3 +114,5 @@ export default class Knots extends Component<Props> {
     );
   }
 }
+
+export default withRouter(Knots); // $FlowFixMe

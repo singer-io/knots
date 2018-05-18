@@ -1,6 +1,6 @@
 import { UPDATE_TAPS, SCHEMA_LOADING } from '../actions/taps';
 import { TARGETS_LOADING, TARGET_CONFIGURING } from '../actions/targets';
-import { KNOT_SYNCED } from '../actions/knots';
+import { KNOT_SYNCED, FINAL_STEP } from '../actions/knots';
 
 export type tapsStateType = {
   +items: [{ active: boolean }]
@@ -92,6 +92,28 @@ export default function progress(state = defaultState, action) {
           complete: true,
           active: false
         }
+      });
+    case FINAL_STEP:
+      return Object.assign({}, state, {
+        0: {
+          text: 'Configure Tap',
+          href: 'configure-tap',
+          complete: true,
+          active: true
+        },
+        1: {
+          text: 'Replication Options',
+          href: 'replication-options',
+          complete: true,
+          active: true
+        },
+        2: {
+          text: 'Configure Target',
+          href: 'configure-target',
+          complete: true,
+          active: true
+        },
+        3: { text: 'Save & Run', href: 'run', complete: false, active: true }
       });
     default:
       return state;

@@ -25,13 +25,11 @@ export default class Knots extends Component<Props> {
   };
 
   download = (knot: { name: string }) => {
-    console.log('Second download called');
     this.props.downloadKnot(knot.name);
   };
 
   render() {
     const { knots } = this.props.knotsStore;
-    console.log('The props', this.props);
     return (
       <div className="container mt-5">
         <p className="display-4">My Knots</p>
