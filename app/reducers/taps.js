@@ -10,7 +10,8 @@ import {
   SELECT_TAP,
   TAP_ERROR,
   TOGGLE_MODAL,
-  UPDATE_SCHEMA_LOGS
+  UPDATE_SCHEMA_LOGS,
+  TERMINATE_PROCESS
 } from '../actions/taps';
 
 export type tapsStateType = {
@@ -25,7 +26,8 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +liveLogs: string
+  +liveLogs: string,
+  +discoveryTerminated: boolean
 };
 
 const defaultState = {
@@ -43,7 +45,8 @@ const defaultState = {
   schema: [],
   schemaUpdated: false,
   error: '',
-  liveLogs: ''
+  liveLogs: '',
+  discoveryTerminated: false
 };
 
 export default function taps(state = defaultState, action) {
@@ -130,6 +133,13 @@ export default function taps(state = defaultState, action) {
         tapsLoading: false,
         schemaUpdated: true,
         error: action.error
+      });
+    case TERMINATE_PROCESS:
+      return Object.assign({}, state, {
+        sschemaLoading: false,
+        schemaLoaded: false,
+        discoveryTerminated: true,
+        error: ''
       });
     default:
       return state;

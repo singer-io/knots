@@ -5,6 +5,7 @@ const { set } = require('lodash');
 const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
+const terminate = require('terminate');
 
 const {
   taps,
@@ -16,6 +17,7 @@ const {
 
 let tempFolder;
 
+let runDiscoveryProcessId;
 // app is only defined in the packaged app, use app root directory during development
 if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
@@ -167,6 +169,7 @@ const getSchema = (req) =>
     const runDiscovery = exec(
       commands.runDiscovery(tempFolder, req.body.tap.name, req.body.tap.image)
     );
+    runDiscoveryProcessId = runDiscovery.pid;
 
     runDiscovery.stderr.on('data', (data) => {
       req.io.emit('schemaLog', data.toString());
@@ -185,6 +188,17 @@ const getSchema = (req) =>
         );
       }
       resolve();
+    });
+  });
+
+const terminateProcess = () =>
+  new Promise((resolve, reject) => {
+    terminate(runDiscoveryProcessId, (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
     });
   });
 
@@ -293,6 +307,7 @@ const sync = (req) =>
             knotObject.target
           )
         );
+        runDiscoveryProcessId = syncData.pid;
 
         fs.watchFile('tap.log', () => {
           exec('tail -n 1 tap.log', (error, stdout) => {
@@ -497,5 +512,6 @@ module.exports = {
   saveKnot,
   downloadKnot,
   getToken,
-  deleteKnot
+  deleteKnot,
+  terminateProcess
 };

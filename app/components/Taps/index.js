@@ -15,6 +15,7 @@ type Props = {
   tapsStore: {
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
+    discoveryTerminated: boolean,
     sfToken?: string,
     taps: Array<{
       logo: string,
@@ -112,7 +113,8 @@ export default class Taps extends Component<Props, State> {
       tapFields,
       fieldValues,
       sfToken,
-      selectedTap
+      selectedTap,
+      discoveryTerminated
     } = this.props.tapsStore;
     const { showTaps } = this.state;
 
@@ -126,6 +128,11 @@ export default class Taps extends Component<Props, State> {
             <strong>Taps</strong> extract data from any source and write it to a
             standard stream.
           </p>
+          {discoveryTerminated && (
+            <div className="alert alert-warning">
+              <strong>Discovery process was terminated</strong>
+            </div>
+          )}
           <div id="accordion">
             <Card className="mt-3">
               <CardHeader>

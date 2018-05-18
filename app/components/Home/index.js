@@ -18,7 +18,8 @@ type Props = {
     fetchingKnots: boolean,
     dockerVersionDetected: boolean,
     dockerVersion: string,
-    knots: Array<{}>
+    knots: Array<{}>,
+    syncTerminated: boolean
   }
 };
 
@@ -62,7 +63,8 @@ export default class Home extends Component<Props, State> {
       dockerVersion,
       detectingDocker,
       fetchingKnots,
-      knots
+      knots,
+      syncTerminated
     } = this.props.knotsStore;
 
     return (
@@ -99,6 +101,12 @@ export default class Home extends Component<Props, State> {
                   </button>
                 </span>
               </Alert>
+            )}
+
+            {syncTerminated && (
+              <div className="alert alert-warning">
+                <strong>Sync process was terminated</strong>
+              </div>
             )}
 
             {knots.length > 0 && <Knots />}
