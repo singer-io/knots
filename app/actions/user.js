@@ -1,3 +1,4 @@
+// @flow
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
@@ -5,6 +6,7 @@ const baseUrl = 'http://localhost:4321';
 export const UPDATE_DATASETS = 'UPDATE_DATASETS';
 export const UPDATE_DATASET = 'UPDATE_DATASET';
 export const SET_TOKEN = 'SET_TOKEN';
+export const UPDATE_TARGET_FIELD = 'UPDATE_TARGET_FIELD';
 
 type actionType = {
   +type: string
@@ -63,5 +65,17 @@ export function fetchToken(knot) {
       .catch(() => {
         console.log('Final post failed');
       });
+  };
+}
+
+export function updateField(target: string, field: string, value: string) {
+  return (dispatch: (action: actionType) => void) => {
+    console.log('Hello', target, field, value);
+    dispatch({
+      type: UPDATE_TARGET_FIELD,
+      target,
+      field,
+      value
+    });
   };
 }

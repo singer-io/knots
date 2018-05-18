@@ -23,13 +23,9 @@ type Props = {
     targetInstalled: boolean,
     selectedTarget: { name: string, image: string }
   },
-  userStore: {
-    token: string,
-    selectedDataset: string
-  },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: (dataset: string, token: string) => void
+  submitFields: () => void
 };
 
 type State = {
@@ -53,21 +49,6 @@ export default class Targets extends Component<Props, State> {
 
   toggleShowTargets = () => {
     this.setState({ showTargets: !this.state.showTargets });
-  };
-
-  formValid = () => {
-    const { token, selectedDataset } = this.props.userStore;
-
-    return token && selectedDataset.split('/').length === 2;
-  };
-
-  submit = () => {
-    this.props.submitFields(
-      this.props.userStore.selectedDataset,
-      this.props.userStore.token
-    );
-
-    this.props.history.push('/sync');
   };
 
   render() {
@@ -124,12 +105,7 @@ export default class Targets extends Component<Props, State> {
                 <TargetConfiguration />
               </CardBody>
             </Card>
-            <Button
-              color="primary"
-              className="float-right my-3"
-              disabled={!this.formValid()}
-              onClick={this.submit}
-            >
+            <Button color="primary" className="float-right my-3">
               Continue
             </Button>
           </div>

@@ -3,32 +3,22 @@ import React, { Component } from 'react';
 import { Container, Row } from 'reactstrap';
 
 import DataWorld from '../../../containers/DataWorld';
+import Stitch from '../../../containers/Stitch';
 
 type Props = {
-  submitFields: (dataset: string, token: string) => void,
-  userStore: {
-    selectedDataset: string,
-    token: string,
-    targetConfigured: boolean
-  },
   targetsStore: {
     selectedTarget: { name: string, image: string }
   }
 };
 
 export default class Target extends Component<Props> {
-  submit = () => {
-    this.props.submitFields(
-      this.props.userStore.selectedDataset,
-      this.props.userStore.token
-    );
-  };
-
   selectedTarget = () => {
     const { selectedTarget } = this.props.targetsStore;
     switch (selectedTarget.name) {
       case 'target-datadotworld':
         return <DataWorld />;
+      case 'target-stitch':
+        return <Stitch />;
       default:
         return <div>Unknown Target</div>;
     }
