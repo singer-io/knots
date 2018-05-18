@@ -279,16 +279,11 @@ const addTargetConfig = (config) =>
 
 const sync = (req) =>
   new Promise((resolve) => {
-    let tapImage;
-    if (process.env.NODE_ENV === 'development') {
-      tapImage = process.env[TAP_ENV_NAME[tap]];
-    }
-
     const syncData = exec(
       commands.runSync(
         `${tempFolder}/knots/${req.body.knotName}`,
         req.body.tap,
-        tapImage || req.body.tapImage
+        req.body.target
       )
     );
 
@@ -304,7 +299,7 @@ const sync = (req) =>
       });
     });
 
-    syncData.on('exit', () => {
+    syncData.on('exit', (code) => {
       resolve();
     });
   });

@@ -12,7 +12,7 @@ type actionType = {
   +type: string
 };
 
-export function setToken(token) {
+export function setToken(token: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SET_TOKEN,
@@ -21,27 +21,7 @@ export function setToken(token) {
   };
 }
 
-export function getDatasets(token) {
-  return (dispatch: (action: actionType) => void) => {
-    axios({
-      method: 'GET',
-      url: 'https://api.data.world/v0/user/datasets/own',
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
-      .then((response) => {
-        const datasets = response.data.records;
-        dispatch({
-          type: UPDATE_DATASETS,
-          datasets
-        });
-      })
-      .catch(console.log);
-  };
-}
-
-export function setDataset(selectedDataset) {
+export function setDataset(selectedDataset: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_DATASET,
@@ -50,7 +30,7 @@ export function setDataset(selectedDataset) {
   };
 }
 
-export function fetchToken(knot) {
+export function fetchToken(knot: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
       .post(`${baseUrl}/token/`, {
@@ -70,7 +50,6 @@ export function fetchToken(knot) {
 
 export function updateField(target: string, field: string, value: string) {
   return (dispatch: (action: actionType) => void) => {
-    console.log('Hello', target, field, value);
     dispatch({
       type: UPDATE_TARGET_FIELD,
       target,

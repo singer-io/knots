@@ -37,10 +37,17 @@ type Props = {
     targetLogs: Array<string>
   },
   tapStore: {
-    selectedTap: string
+    selectedTap: { name: string, image: string }
+  },
+  targetsStore: {
+    selectedTarget: { name: string, image: string }
   },
   updateName: (name: string) => void,
-  save: (selectedTap: string, knotName: string) => void,
+  save: (
+    knotName: string,
+    selectedTap: { name: string, image: string },
+    selectedTarget: { name: string, image: string }
+  ) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void
 };
@@ -66,8 +73,9 @@ export default class Sync extends Component<Props> {
 
   submit = () => {
     const { selectedTap } = this.props.tapStore;
+    const { selectedTarget } = this.props.targetsStore;
     const { knotName } = this.props.knotsStore;
-    this.props.save(selectedTap, knotName);
+    this.props.save(knotName, selectedTap, selectedTarget);
   };
 
   render() {
@@ -78,6 +86,9 @@ export default class Sync extends Component<Props> {
       tapLogs,
       targetLogs
     } = this.props.knotsStore;
+    const { selectedTap } = this.props.tapStore;
+    const { selectedTarget } = this.props.targetsStore;
+
     return (
       <div>
         <Header />
@@ -138,7 +149,7 @@ export default class Sync extends Component<Props> {
             <Col xs="6">
               <Card className="bg-light mt-3">
                 <CardHeader>
-                  <h3 className="pl-5">Redshift</h3>
+                  <h3 className="pl-5">{selectedTap.name}</h3>
                 </CardHeader>
                 <CardBody>
                   <StayScrolled
@@ -156,7 +167,7 @@ export default class Sync extends Component<Props> {
             <Col xs="6">
               <Card className="bg-light mt-3">
                 <CardHeader>
-                  <h3 className={classNames('pl-5')}>data.world</h3>
+                  <h3 className={classNames('pl-5')}>{selectedTarget.name}</h3>
                 </CardHeader>
                 <CardBody>
                   <StayScrolled

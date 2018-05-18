@@ -77,14 +77,22 @@ export function updateName(name: string) {
   };
 }
 
-export function save(selectedTap: string, knotName: string) {
+export function save(
+  knotName: string,
+  selectedTap: { name: string, image: string },
+  selectedTarget: { name: string, image: string }
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
     });
 
     axios
-      .post(`${baseUrl}/save`, { tap: selectedTap, knotName })
+      .post(`${baseUrl}/save`, {
+        knotName,
+        tap: selectedTap,
+        target: selectedTarget
+      })
       .then(() =>
         dispatch({
           type: KNOT_SYNCED

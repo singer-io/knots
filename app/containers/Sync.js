@@ -8,7 +8,8 @@ function mapStateToProps(state) {
   return {
     knotsStore: state.knots,
     userStore: state.user,
-    tapStore: state.taps
+    tapStore: state.taps,
+    targetsStore: state.targets
   };
 }
 

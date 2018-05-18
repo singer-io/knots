@@ -155,8 +155,16 @@ const tapSalesforceFields = [
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
     `docker run -v ${folderPath}/configs/tap:/app/${tap}/data ${image} ${tap} -c ${tap}/data/config.json -d > ${folderPath}/configs/tap/catalog.json`,
-  runSync: (folderPath, tap, tapImage) =>
-    `docker run -v ${folderPath}/tap:/app/${tap}/data --interactive ${tapImage} ${tap} -c ${tap}/data/config.json --properties ${tap}/data/catalog.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`,
+  runSync: (folderPath, tap, target) =>
+    `docker run -v ${folderPath}/tap:/app/${tap.name}/data --interactive ${
+      tap.image
+    } ${tap.name} -c ${tap.name}/data/config.json --properties ${
+      tap.name
+    }/data/catalog.json 2> tap.log| docker run -v ${folderPath}/target:/app/${
+      target.name
+    }/data --interactive ${target.image} ${target.name} -c ${
+      target.name
+    }/data/config.json 2> target.log > state.json`,
   runPartialSync: (folderPath) =>
     `docker run -v ${folderPath}/tap:/app/tap-redshift/data --interactive gbolahan/tap-redshift:b4 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/state.json | docker run -v ${folderPath}/target:/app/target-datadotworld/data --interactive gbolahan/target-datadotworld:1.0.0b3 target-datadotworld -c target-datadotworld/data/config.json > ${folderPath}/tap/state.json`
 };
