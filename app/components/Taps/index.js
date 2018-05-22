@@ -15,6 +15,7 @@ type Props = {
   tapsStore: {
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
+    discoveryTerminated: boolean,
     sfToken?: string,
     taps: Array<{
       logo: string,
@@ -112,7 +113,8 @@ export default class Taps extends Component<Props, State> {
       tapFields,
       fieldValues,
       sfToken,
-      selectedTap
+      selectedTap,
+      discoveryTerminated
     } = this.props.tapsStore;
     const { showTaps } = this.state;
 

@@ -37,7 +37,8 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
-    error?: string
+    error?: string,
+    discoveryTerminated: boolean
   },
   editSchemaField: (
     field: string,
@@ -47,7 +48,8 @@ type Props = {
   submitSchema: (schema: Array<Stream>) => void,
   toggle: () => void,
   history: { goBack: () => void },
-  updateSchemaLogs: (log: string) => void
+  updateSchemaLogs: (log: string) => void,
+  terminateProcess: () => void
 };
 
 type State = {
@@ -115,6 +117,10 @@ export default class Schema extends Component<Props, State> {
     this.setState({ showSchema: true });
   };
 
+  terminateProcess = () => {
+    this.props.terminateProcess();
+  };
+
   openLink = (repo: string) => {
     shell.openExternal(repo);
   };
@@ -122,6 +128,10 @@ export default class Schema extends Component<Props, State> {
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
+    }
+
+    if (this.props.tapsStore.discoveryTerminated) {
+      return <Redirect push to="/taps" />;
     }
     const {
       schemaLoading,
@@ -147,7 +157,6 @@ export default class Schema extends Component<Props, State> {
                     Retrieving schema information...
                   </Progress>
                 )}
-
                 <Card className="bg-light mt-3">
                   <CardBody>
                     <StayScrolled
@@ -171,6 +180,17 @@ export default class Schema extends Component<Props, State> {
                   disabled={!schemaLoaded}
                 >
                   Continue
+                </Button>
+                <Button
+                  color="secondary"
+                  onClick={this.terminateProcess}
+                  disabled={schemaLoaded}
+                  className={classNames(
+                    'float-right my-3',
+                    styles.cancelProcess
+                  )}
+                >
+                  Cancel
                 </Button>
               </div>
             )}

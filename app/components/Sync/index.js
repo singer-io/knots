@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-
+import { Redirect } from 'react-router-dom';
 import {
   Container,
   Row,
@@ -13,7 +13,8 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader
+  CardHeader,
+  Alert
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import classNames from 'classnames';
@@ -35,7 +36,8 @@ type Props = {
     knotSyncing: boolean,
     knotSynced: boolean,
     tapLogs: Array<string>,
-    targetLogs: Array<string>
+    targetLogs: Array<string>,
+    syncTerminated: boolean
   },
   tapStore: {
     selectedTap: { name: string, image: string }
@@ -53,7 +55,8 @@ type Props = {
   updateTargetLogs: (log: string) => void,
   location: { search: string },
   sync: (knot: string) => void,
-  partialSync: (knot: string) => void
+  partialSync: (knot: string) => void,
+  terminateProcess: () => void
 };
 
 export default class Sync extends Component<Props> {
@@ -91,16 +94,25 @@ export default class Sync extends Component<Props> {
     this.props.save(knotName, selectedTap, selectedTarget);
   };
 
+  terminateProcess = () => {
+    this.props.terminateProcess();
+  };
+
   render() {
     const {
       knotSyncing,
       knotSynced,
       knotName,
       tapLogs,
-      targetLogs
+      targetLogs,
+      syncTerminated
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
+
+    if (syncTerminated) {
+      return <Redirect push to="/" />;
+    }
 
     return (
       <div>
@@ -193,6 +205,14 @@ export default class Sync extends Component<Props> {
               </Card>
             </Col>
           </Row>
+          <Button
+            color="secondary"
+            className="float-right my-3"
+            onClick={this.terminateProcess}
+            disabled={!this.props.knotsStore.knotName}
+          >
+            Cancel
+          </Button>
         </Container>
       </div>
     );

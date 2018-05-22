@@ -18,8 +18,17 @@ const {
   downloadKnot,
   getToken,
   deleteKnot,
-  partialSync
+  partialSync,
+  terminateProcess
 } = require('./util');
+
+router.get('/terminate', (req, res) => {
+  terminateProcess()
+    .then(() => {
+      res.json({ status: 200 });
+    })
+    .catch();
+});
 
 router.get('/docker', (req, res) => {
   detectDocker()

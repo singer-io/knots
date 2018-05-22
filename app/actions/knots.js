@@ -15,6 +15,7 @@ export const KNOT_SYNCING = 'KNOT_SYNCING';
 export const KNOT_SYNCED = 'KNOT_SYNCED';
 export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
+export const SYNC_PROCESS_TERMINATED = 'SYNC_PROCESS_TERMINATED';
 
 type actionType = {
   +type: string
@@ -209,5 +210,21 @@ export function downloadKnot(knot: string) {
           .catch();
       })
       .catch();
+  };
+}
+
+export function terminateProcess() {
+  return (dispatch: (action: actionType) => void) => {
+    axios
+      .get(`${baseUrl}/terminate`)
+      .then(() => {
+        dispatch({ type: SYNC_PROCESS_TERMINATED });
+      })
+      .catch((error) => {
+        dispatch({
+          type: SYNC_PROCESS_TERMINATED,
+          error
+        });
+      });
   };
 }

@@ -18,7 +18,8 @@ type Props = {
     fetchingKnots: boolean,
     dockerVersionDetected: boolean,
     dockerVersion: string,
-    knots: Array<{}>
+    knots: Array<{}>,
+    syncTerminated: boolean
   }
 };
 
@@ -62,7 +63,8 @@ export default class Home extends Component<Props, State> {
       dockerVersion,
       detectingDocker,
       fetchingKnots,
-      knots
+      knots,
+      syncTerminated
     } = this.props.knotsStore;
 
     return (

@@ -16,6 +16,7 @@ export const TAP_ERROR = 'TAP_ERROR';
 export const TOGGLE_MODAL = 'TOGGLE_MODAL';
 export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
 export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
+export const TERMINATE_PROCESS = 'TERMINATE_PROCESS';
 
 type actionType = {
   +type: string
@@ -171,6 +172,24 @@ export function submitSchema(schema: {}) {
 export function toggle() {
   return (dispatch: (action: actionType) => void) =>
     dispatch({ type: TOGGLE_MODAL });
+}
+
+export function terminateProcess() {
+  return (dispatch: (action: actionType) => void) => {
+    axios
+      .get(`${baseUrl}/terminate`)
+      .then(() => {
+        dispatch({
+          type: TERMINATE_PROCESS
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: TERMINATE_PROCESS,
+          error
+        });
+      });
+  };
 }
 
 export function updateSchemaLogs(newLog: string) {
