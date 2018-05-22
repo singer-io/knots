@@ -58,7 +58,8 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         tapsLoading: false,
         taps: action.taps,
-        error: action.error
+        error: action.error,
+        discoveryTerminated: false
       });
     case SELECT_TAP:
       return Object.assign({}, state, {
@@ -138,8 +139,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         sschemaLoading: false,
         schemaLoaded: false,
-        discoveryTerminated: true,
-        error: ''
+        discoveryTerminated: true
       });
     default:
       return state;

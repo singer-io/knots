@@ -184,7 +184,10 @@ export function terminateProcess() {
         });
       })
       .catch((error) => {
-        console.log('Process terminated error', error);
+        dispatch({
+          type: TERMINATE_PROCESS,
+          error
+        });
       });
   };
 }

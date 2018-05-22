@@ -221,7 +221,10 @@ export function terminateProcess() {
         dispatch({ type: SYNC_PROCESS_TERMINATED });
       })
       .catch((error) => {
-        console.log('this is the termination error', error);
+        dispatch({
+          type: SYNC_PROCESS_TERMINATED,
+          error
+        });
       });
   };
 }

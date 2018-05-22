@@ -4,3 +4,7 @@
   border: none;
   cursor: pointer;
 }
+
+.cancelProcess {
+  margin-right: 10px;
+}

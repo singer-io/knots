@@ -103,12 +103,6 @@ export default class Home extends Component<Props, State> {
               </Alert>
             )}
 
-            {syncTerminated && (
-              <div className="alert alert-warning">
-                <strong>Sync process was terminated</strong>
-              </div>
-            )}
-
             {knots.length > 0 && <Knots />}
 
             {knots.length === 0 && <Create dockerVersion={dockerVersion} />}

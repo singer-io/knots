@@ -17,7 +17,7 @@ const {
 
 let tempFolder;
 
-let runDiscoveryProcessId;
+let runningProcess;
 // app is only defined in the packaged app, use app root directory during development
 if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
@@ -169,7 +169,7 @@ const getSchema = (req) =>
     const runDiscovery = exec(
       commands.runDiscovery(tempFolder, req.body.tap.name, req.body.tap.image)
     );
-    runDiscoveryProcessId = runDiscovery.pid;
+    runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
       req.io.emit('schemaLog', data.toString());
@@ -193,7 +193,7 @@ const getSchema = (req) =>
 
 const terminateProcess = () =>
   new Promise((resolve, reject) => {
-    terminate(runDiscoveryProcessId, (err) => {
+    terminate(runningProcess.pid, (err) => {
       if (err) {
         reject(err);
       } else {
@@ -232,9 +232,13 @@ const addConfig = (req) =>
         getSchema(req)
           .then(() => {
             // Schema now on file, read it and return the result
-            readSchema()
-              .then(resolve)
-              .catch(reject);
+            if (runningProcess.signalCode == 'SIGKILL') {
+              resolve;
+            } else {
+              readSchema()
+                .then(resolve)
+                .catch(reject);
+            }
           })
           .catch(reject);
       })
@@ -307,7 +311,7 @@ const sync = (req) =>
             knotObject.target
           )
         );
-        runDiscoveryProcessId = syncData.pid;
+        runningProcess = syncData;
 
         fs.watchFile('tap.log', () => {
           exec('tail -n 1 tap.log', (error, stdout) => {
@@ -354,6 +358,8 @@ const partialSync = (req) =>
             knotObject.target
           )
         );
+
+        runningProcess = syncData;
 
         fs.watchFile('tap.log', () => {
           exec('tail -n 1 tap.log', (error, stdout) => {

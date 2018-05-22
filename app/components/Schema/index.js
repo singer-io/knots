@@ -183,9 +183,12 @@ export default class Schema extends Component<Props, State> {
                 </Button>
                 <Button
                   color="secondary"
-                  className="float-right my-3"
                   onClick={this.terminateProcess}
                   disabled={schemaLoaded}
+                  className={classNames(
+                    'float-right my-3',
+                    styles.cancelProcess
+                  )}
                 >
                   Cancel
                 </Button>
