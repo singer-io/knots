@@ -139,6 +139,36 @@ export default class Schema extends Component<Props, State> {
           <KnotProgress />
           <h2 className="mb-1 pt-4">Replication Options</h2>
 
+          <Alert
+            isOpen={!!error}
+            color="danger"
+            className="d-flex justify-content-between"
+          >
+            <span className="align-self-center">
+              <span>Unable to execute tap in discovery mode. </span>
+              <button
+                onClick={() => this.openLink('https://help.data.world')}
+                className={classNames('alert-link', styles.link)}
+              >
+                Contact Support
+              </button>
+            </span>
+            <span>
+              <Link to="/">
+                <Button
+                  className={classNames(
+                    'btn btn-outline-secondary',
+                    styles.abort
+                  )}
+                >
+                  Abort
+                </Button>
+              </Link>
+              <Link to="/taps">
+                <Button className="btn btn-outline-primary">Reconfigure</Button>
+              </Link>
+            </span>
+          </Alert>
           <div>
             {!showSchema && (
               <div>
@@ -168,7 +198,7 @@ export default class Schema extends Component<Props, State> {
                   color="primary"
                   className="float-right my-3"
                   onClick={this.showSchema}
-                  disabled={!schemaLoaded}
+                  disabled={!schemaLoaded || !!error}
                 >
                   Continue
                 </Button>
@@ -223,37 +253,6 @@ export default class Schema extends Component<Props, State> {
               </div>
             )}
           </div>
-          <Modal isOpen={!!error}>
-            <ModalHeader className="text-danger">
-              <span className="oi oi-warning" /> Tap error
-            </ModalHeader>
-            <ModalBody>
-              Unable to execute tap in discovery mode.
-              <pre
-                className="bg-light border border-light p-1 rounded"
-                style={{ whiteSpace: 'pre-wrap' }}
-              >
-                Error details:<br />
-                {error ? error.toString() : ''}
-              </pre>
-            </ModalBody>
-            <ModalFooter>
-              <button
-                onClick={() => this.openLink('https://help.data.world')}
-                className={classNames('mr-auto text-secondary', styles.link)}
-              >
-                <small>Contact Support</small>
-              </button>
-              <Link to="/">
-                <Button outline color="secondary">
-                  Abort
-                </Button>
-              </Link>
-              <Link to="/taps">
-                <Button color="primary">Reconfigure</Button>
-              </Link>
-            </ModalFooter>
-          </Modal>
         </Container>
       </div>
     );

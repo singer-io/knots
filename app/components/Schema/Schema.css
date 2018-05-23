@@ -4,3 +4,7 @@
   border: none;
   cursor: pointer;
 }
+
+.abort {
+  margin-right: 10px;
+}
