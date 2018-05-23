@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
   knotsFolder = app.getPath('home');
 } else {
   // Use the repo during development
-  knotsFolder = path.resolve(__dirname, '../../../..', 'knots');
+  knotsFolder = path.resolve(__dirname, '../../..', 'knots');
 }
 
 const getKnots = () =>

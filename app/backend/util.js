@@ -7,7 +7,6 @@ const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
 const {
-  taps,
   commands,
   targets,
   tapRedshiftFields,
@@ -23,13 +22,15 @@ if (process.env.NODE_ENV === 'production') {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
 
-const getTaps = () =>
+const readFile = (filePath) =>
   new Promise((resolve, reject) => {
-    if (taps) {
-      resolve(taps);
-    } else {
-      reject();
-    }
+    // Return contents of specified file as a string
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (!err) {
+        resolve(data);
+      }
+      reject(err);
+    });
   });
 
 const fetchTapFields = (tap, image) =>
@@ -58,20 +59,6 @@ const writeFile = (filePath, content) =>
       }
 
       reject();
-    });
-  });
-
-const readFile = (filePath) =>
-  new Promise((resolve, reject) => {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (!err) {
-        try {
-          resolve(JSON.parse(data));
-        } catch (error) {
-          reject(error);
-        }
-      }
-      reject(err);
     });
   });
 
@@ -447,7 +434,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  getTaps,
   fetchTapFields,
   addConfig,
   readSchema,

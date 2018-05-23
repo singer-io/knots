@@ -4,6 +4,7 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:4321';
 
 export const TAPS_LOADING = 'TAPS_LOADING';
+
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const SELECT_TAP = 'SELECT_TAP';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
@@ -29,20 +30,19 @@ export function fetchTaps() {
 
     axios
       .get(`${baseUrl}/taps/`)
-      .then((response) =>
+      .then((response) => {
         dispatch({
           type: UPDATE_TAPS,
-          taps: response.data.taps,
-          error: response.data.error
-        })
-      )
-      .catch((error) =>
+          taps: response.data.taps
+        });
+      })
+      .catch((error) => {
         dispatch({
           type: UPDATE_TAPS,
           taps: [],
-          error
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

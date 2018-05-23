@@ -5,9 +5,9 @@ const baseUrl = 'http://localhost:4321';
 
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
-
 export const FETCHING_KNOTS = 'FETCHING_KNOTS';
 export const FETCHED_KNOTS = 'FETCHED_KNOTS';
+
 export const UPDATE_TAP_LOGS = 'UPDATE_TAP_LOGS';
 export const UPDATE_TARGET_LOGS = 'UPDATE_TARGET_LOGS';
 export const UPDATE_NAME = 'UPDATE_NAME';
@@ -52,13 +52,12 @@ export function getKnots() {
 
     axios
       .get(`${baseUrl}/knots/`)
-      .then((response) =>
+      .then((response) => {
         dispatch({
           type: FETCHED_KNOTS,
-          knots: response.data.knots,
-          error: response.data.error
-        })
-      )
+          knots: response.data.knots
+        });
+      })
       .catch((error) => {
         dispatch({
           type: FETCHED_KNOTS,

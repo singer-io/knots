@@ -3,7 +3,6 @@ const axios = require('axios');
 
 const router = express.Router();
 const {
-  getTaps,
   fetchTapFields,
   addConfig,
   readSchema,
@@ -18,14 +17,6 @@ const {
   deleteKnot,
   partialSync
 } = require('./util');
-
-router.get('/taps', (req, res) => {
-  getTaps()
-    .then((taps) => res.json({ taps }))
-    .catch((error) => {
-      res.json({ taps: [], error });
-    });
-});
 
 router.post('/taps/', (req, res) => {
   const { tap } = req.body;
