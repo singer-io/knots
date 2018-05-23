@@ -4,10 +4,10 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:4321';
 
 export const TAPS_LOADING = 'TAPS_LOADING';
-
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const SELECT_TAP = 'SELECT_TAP';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
+
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
@@ -109,24 +109,21 @@ export function submitConfig(
     }
 
     axios
-      .post(`${baseUrl}/tap/config/`, {
+      .post(`${baseUrl}/taps/config/`, {
         tap,
         tapConfig
       })
       .then((response) => {
         dispatch({
           type: SCHEMA_RECEIVED,
-          schema: response.data.schema,
-          error: response.data.error
+          schema: response.data.schema
         });
       })
       .catch((error) => {
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: [],
-          error: JSON.stringify(
-            error.response ? error.response.data.message : JSON.stringify(error)
-          )
+          error: error.response ? error.response.data.message : error.message
         });
       });
   };

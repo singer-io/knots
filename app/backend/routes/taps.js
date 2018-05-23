@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { getTaps, fetchTapFields } = require('../controllers/taps');
+const { getTaps, fetchTapFields, addConfig } = require('../controllers/taps');
 
 router.get('/', (req, res) => {
   getTaps()
@@ -11,7 +11,6 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  console.log('Being called?');
   const { tap } = req.body;
   fetchTapFields(tap.name, tap.image)
     .then((config) => {
@@ -19,6 +18,14 @@ router.post('/', (req, res) => {
         config
       });
     })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.post('/config/', (req, res) => {
+  addConfig(req)
+    .then((schema) => res.json({ schema: schema.streams }))
     .catch((error) => {
       res.status(500).json({ message: error.message });
     });

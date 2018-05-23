@@ -6,12 +6,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
-const {
-  commands,
-  targets,
-  tapRedshiftFields,
-  tapSalesforceFields
-} = require('./constants');
+const { commands, targets } = require('./constants');
 
 let tempFolder;
 
@@ -63,86 +58,6 @@ const addKnotAttribute = (content, passedPath) =>
       .catch((error) => {
         reject(error);
       });
-  });
-
-const writeConfig = (config) =>
-  new Promise((resolve, reject) => {
-    writeFile(path.resolve(tempFolder, 'config.json'), JSON.stringify(config))
-      .then(() => {
-        shell.rm('-rf', path.resolve(tempFolder, 'configs', 'tap'));
-        shell.mkdir('-p', path.resolve(tempFolder, 'configs', 'tap'));
-        shell.mv(
-          path.resolve(tempFolder, 'config.json'),
-          path.resolve(tempFolder, 'configs', 'tap')
-        );
-        resolve();
-      })
-      .catch(reject);
-  });
-
-const getSchema = (req) =>
-  new Promise((resolve, reject) => {
-    const runDiscovery = exec(
-      commands.runDiscovery(tempFolder, req.body.tap.name, req.body.tap.image)
-    );
-
-    runDiscovery.stderr.on('data', (data) => {
-      req.io.emit('schemaLog', data.toString());
-    });
-
-    runDiscovery.on('exit', (code) => {
-      if (code > 0) {
-        reject(
-          new Error(
-            `${commands.runDiscovery(
-              tempFolder,
-              req.body.tap.name,
-              req.body.tap.image
-            )} command failed`
-          )
-        );
-      }
-      resolve();
-    });
-  });
-
-const readSchema = () =>
-  new Promise((resolve, reject) => {
-    const knotPath = path.resolve(tempFolder, 'configs', 'tap', 'catalog.json');
-    readFile(knotPath)
-      .then((schema) => {
-        // Stringify to turn back to object later
-        const schemaString = JSON.stringify(schema);
-        try {
-          // Try to turn to object to validate it's a valid object
-          JSON.parse(schemaString);
-
-          // All good, return the schema object
-          resolve(schema);
-        } catch (error) {
-          // Not a valid object, pass on the error
-          reject(error);
-        }
-      })
-      .catch(reject);
-  });
-
-const addConfig = (req) =>
-  new Promise((resolve, reject) => {
-    // Write the config to configs/tap/
-    writeConfig(req.body.tapConfig)
-      .then(() => {
-        // Get tap schema by running discovery mode
-        getSchema(req)
-          .then(() => {
-            // Schema now on file, read it and return the result
-            readSchema()
-              .then(resolve)
-              .catch(reject);
-          })
-          .catch(reject);
-      })
-      .catch(reject);
   });
 
 const writeSchema = (schemaObject) =>
@@ -400,8 +315,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  addConfig,
-  readSchema,
   writeSchema,
   getTargets,
   addTarget,

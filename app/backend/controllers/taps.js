@@ -1,11 +1,15 @@
 const path = require('path');
+const { exec } = require('child_process');
+const shell = require('shelljs');
 const { app } = require('electron');
-const { writeFile } = require('../util');
+
+const { writeFile, readFile } = require('../util');
 
 const {
   taps,
   tapRedshiftFields,
-  tapSalesforceFields
+  tapSalesforceFields,
+  commands
 } = require('../constants');
 
 let applicationFolder;
@@ -28,6 +32,97 @@ const createKnot = (tapName, tapImage) =>
     )
       .then(() => {
         resolve();
+      })
+      .catch(reject);
+  });
+
+const writeConfig = (config) =>
+  new Promise((resolve, reject) => {
+    writeFile(
+      path.resolve(applicationFolder, 'config.json'),
+      JSON.stringify(config)
+    )
+      .then(() => {
+        // Remove any previously saved temp config
+        shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
+        shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+        shell.mv(
+          path.resolve(applicationFolder, 'config.json'),
+          path.resolve(applicationFolder, 'configs', 'tap')
+        );
+        resolve();
+      })
+      .catch(reject);
+  });
+
+const getSchema = (req) =>
+  new Promise((resolve, reject) => {
+    const runDiscovery = exec(
+      commands.runDiscovery(
+        applicationFolder,
+        req.body.tap.name,
+        req.body.tap.image
+      )
+    );
+
+    runDiscovery.stderr.on('data', (data) => {
+      req.io.emit('schemaLog', data.toString());
+    });
+
+    runDiscovery.on('exit', (code) => {
+      if (code > 0) {
+        reject(
+          new Error(
+            `${commands.runDiscovery(
+              applicationFolder,
+              req.body.tap.name,
+              req.body.tap.image
+            )} command failed`
+          )
+        );
+      }
+      resolve();
+    });
+  });
+
+const readSchema = () =>
+  new Promise((resolve, reject) => {
+    const schemaPath = path.resolve(
+      applicationFolder,
+      'configs',
+      'tap',
+      'catalog.json'
+    );
+    readFile(schemaPath)
+      .then((schemaString) => {
+        try {
+          // Try to turn to object to validate it's a valid object
+          const schema = JSON.parse(schemaString);
+
+          // All good, return the schema object
+          resolve(schema);
+        } catch (error) {
+          // Not a valid object, pass on the error
+          reject(error);
+        }
+      })
+      .catch(reject);
+  });
+
+const addConfig = (req) =>
+  new Promise((resolve, reject) => {
+    // Write the config to configs/tap/
+    writeConfig(req.body.tapConfig)
+      .then(() => {
+        // Get tap schema by running discovery mode
+        getSchema(req)
+          .then(() => {
+            // Schema now on file, read it and return the result
+            readSchema()
+              .then(resolve)
+              .catch(reject);
+          })
+          .catch(reject);
       })
       .catch(reject);
   });
@@ -59,4 +154,4 @@ const fetchTapFields = (tap, image) =>
       .catch(reject);
   });
 
-module.exports = { getTaps, fetchTapFields };
+module.exports = { getTaps, fetchTapFields, addConfig };

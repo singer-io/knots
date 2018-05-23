@@ -3,7 +3,6 @@ const axios = require('axios');
 
 const router = express.Router();
 const {
-  addConfig,
   readSchema,
   writeSchema,
   getTargets,
@@ -16,14 +15,6 @@ const {
   deleteKnot,
   partialSync
 } = require('./util');
-
-router.post('/tap/config/', (req, res) => {
-  addConfig(req)
-    .then((schema) => res.json({ schema: schema.streams }))
-    .catch((error) => {
-      res.status(400).json({ message: error.message });
-    });
-});
 
 router.put('/schema/', (req, res) => {
   writeSchema(req.body)
