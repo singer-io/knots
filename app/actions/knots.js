@@ -59,13 +59,13 @@ export function getKnots() {
           error: response.data.error
         })
       )
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
           type: FETCHED_KNOTS,
           knots: [],
-          error: error.toString()
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

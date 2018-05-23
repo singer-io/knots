@@ -50,25 +50,6 @@ const fetchTapFields = (tap, image) =>
       .catch(reject);
   });
 
-const getKnots = () =>
-  new Promise((resolve, reject) => {
-    try {
-      const knots = fs.readdirSync(`${tempFolder}/knots`);
-      const knotJsons = knots.map((knot) =>
-        readFile(`${tempFolder}/knots/${knot}/knot.json`)
-      );
-      Promise.all(knotJsons)
-        .then((values) => {
-          resolve(values);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    } catch (error) {
-      reject(error);
-    }
-  });
-
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
     fs.writeFile(filePath, content, (err) => {
@@ -466,7 +447,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  getKnots,
   getTaps,
   fetchTapFields,
   addConfig,

@@ -1,6 +1,14 @@
 const router = require('express').Router();
 
-const { detectDocker } = require('../controllers/knots');
+const { detectDocker, getKnots } = require('../controllers/knots');
+
+router.get('/', (req, res) => {
+  getKnots()
+    .then((knots) => res.json({ knots }))
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
 
 router.get('/docker', (req, res) => {
   detectDocker()
