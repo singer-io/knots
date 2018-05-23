@@ -60,17 +60,16 @@ export function selectTap(tap: { name: string, image: string }) {
       .then((response) => {
         dispatch({
           type: UPDATE_TAP_FIELDS,
-          tapFields: response.data.config,
-          error: response.data.error
+          tapFields: response.data.config
         });
       })
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
           type: UPDATE_TAP_FIELDS,
           tapFields: [],
-          error
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

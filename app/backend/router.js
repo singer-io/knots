@@ -3,7 +3,6 @@ const axios = require('axios');
 
 const router = express.Router();
 const {
-  fetchTapFields,
   addConfig,
   readSchema,
   writeSchema,
@@ -17,22 +16,6 @@ const {
   deleteKnot,
   partialSync
 } = require('./util');
-
-router.post('/taps/', (req, res) => {
-  const { tap } = req.body;
-  fetchTapFields(tap.name, tap.image)
-    .then((config) => {
-      res.json({
-        config
-      });
-    })
-    .catch((error) => {
-      res.json({
-        config: [],
-        error: error.toString()
-      });
-    });
-});
 
 router.post('/tap/config/', (req, res) => {
   addConfig(req)

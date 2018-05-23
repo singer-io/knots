@@ -33,26 +33,9 @@ const readFile = (filePath) =>
     });
   });
 
-const fetchTapFields = (tap, image) =>
-  new Promise((resolve, reject) => {
-    createKnot(tap, image)
-      .then(() => {
-        switch (tap) {
-          case 'tap-redshift':
-            resolve(tapRedshiftFields);
-            break;
-          case 'tap-salesforce':
-            resolve(tapSalesforceFields);
-            break;
-          default:
-            reject(new Error('Unknown tap'));
-        }
-      })
-      .catch(reject);
-  });
-
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
+    // Write the content specified to the specified file
     fs.writeFile(filePath, content, (err) => {
       if (!err) {
         resolve();
@@ -80,23 +63,6 @@ const addKnotAttribute = (content, passedPath) =>
       .catch((error) => {
         reject(error);
       });
-  });
-
-const createKnot = (tapName, tapImage) =>
-  new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(tempFolder, 'knot.json'),
-      JSON.stringify({
-        tap: {
-          name: tapName,
-          image: tapImage
-        }
-      })
-    )
-      .then(() => {
-        resolve();
-      })
-      .catch(reject);
   });
 
 const writeConfig = (config) =>
@@ -434,7 +400,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  fetchTapFields,
   addConfig,
   readSchema,
   writeSchema,
@@ -446,5 +411,7 @@ module.exports = {
   saveKnot,
   downloadKnot,
   getToken,
-  deleteKnot
+  deleteKnot,
+  readFile,
+  writeFile
 };

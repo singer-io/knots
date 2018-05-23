@@ -8,7 +8,7 @@ const { readFile } = require('../util');
 let knotsFolder;
 if (process.env.NODE_ENV === 'production') {
   // Knots stored on user's home path on packaged app
-  knotsFolder = app.getPath('home');
+  knotsFolder = path.resolve(app.getPath('home'), 'knot', 'knots');
 } else {
   // Use the repo during development
   knotsFolder = path.resolve(__dirname, '../../..', 'knots');
