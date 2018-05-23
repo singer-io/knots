@@ -5,17 +5,19 @@ const baseUrl = 'http://localhost:4321';
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
+
+export const SCHEMA_LOADING = 'SCHEMA_LOADING';
+export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
+
 export const SELECT_TAP = 'SELECT_TAP';
 export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
-export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
+
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
-export const SCHEMA_LOADING = 'SCHEMA_LOADING';
+
 export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
-export const TAP_ERROR = 'TAP_ERROR';
-export const TOGGLE_MODAL = 'TOGGLE_MODAL';
-export const DISCOVER_SCHEMA = 'DISCOVER_SCHEMA';
+
 export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 type actionType = {
@@ -54,7 +56,7 @@ export function selectTap(tap: { name: string, image: string }) {
     });
 
     axios
-      .post(`${baseUrl}/taps/`, {
+      .post(`${baseUrl}/taps/select/`, {
         tap
       })
       .then((response) => {
@@ -147,7 +149,7 @@ export function editSchemaField(
 export function submitSchema(schema: {}) {
   return (dispatch: (action: actionType) => void) => {
     axios
-      .put(`${baseUrl}/schema/`, {
+      .put(`${baseUrl}/taps/schema/`, {
         streams: schema
       })
       .then(() => {
@@ -158,15 +160,10 @@ export function submitSchema(schema: {}) {
       .catch((error) => {
         dispatch({
           type: SCHEMA_UPDATED,
-          error
+          error: error.response ? error.response.data.message : error.message
         });
       });
   };
-}
-
-export function toggle() {
-  return (dispatch: (action: actionType) => void) =>
-    dispatch({ type: TOGGLE_MODAL });
 }
 
 export function updateSchemaLogs(newLog: string) {

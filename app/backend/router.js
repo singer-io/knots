@@ -4,7 +4,6 @@ const axios = require('axios');
 const router = express.Router();
 const {
   readSchema,
-  writeSchema,
   getTargets,
   addTargetConfig,
   sync,
@@ -15,16 +14,6 @@ const {
   deleteKnot,
   partialSync
 } = require('./util');
-
-router.put('/schema/', (req, res) => {
-  writeSchema(req.body)
-    .then(() => {
-      res.json({ status: 200 });
-    })
-    .catch((err) => {
-      res.json(err);
-    });
-});
 
 router.post('/schema/', (req, res) => {
   const { knot } = req.body;

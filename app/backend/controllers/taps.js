@@ -154,4 +154,24 @@ const fetchTapFields = (tap, image) =>
       .catch(reject);
   });
 
-module.exports = { getTaps, fetchTapFields, addConfig };
+const writeSchema = (schemaObject) =>
+  new Promise((resolve, reject) => {
+    writeFile(
+      path.resolve(applicationFolder, 'catalog.json'),
+      JSON.stringify(schemaObject)
+    )
+      .then(() => {
+        shell.rm(
+          '-f',
+          path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
+        );
+        shell.mv(
+          path.resolve(applicationFolder, 'catalog.json'),
+          path.resolve(applicationFolder, 'configs', 'tap')
+        );
+        resolve();
+      })
+      .catch(reject);
+  });
+
+module.exports = { getTaps, fetchTapFields, addConfig, writeSchema };

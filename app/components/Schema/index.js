@@ -45,7 +45,6 @@ type Props = {
     value: boolean | string
   ) => void,
   submitSchema: (schema: Array<Stream>) => void,
-  toggle: () => void,
   history: { goBack: () => void },
   updateSchemaLogs: (log: string) => void
 };

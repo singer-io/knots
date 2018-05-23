@@ -60,26 +60,6 @@ const addKnotAttribute = (content, passedPath) =>
       });
   });
 
-const writeSchema = (schemaObject) =>
-  new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(tempFolder, 'catalog.json'),
-      JSON.stringify(schemaObject)
-    )
-      .then(() => {
-        shell.rm(
-          '-f',
-          path.resolve(tempFolder, 'docker', 'tap', 'catalog.json')
-        );
-        shell.mv(
-          path.resolve(tempFolder, 'catalog.json'),
-          path.resolve(tempFolder, 'configs', 'tap')
-        );
-        resolve();
-      })
-      .catch(reject);
-  });
-
 const getTargets = () =>
   new Promise((resolve, reject) => {
     if (targets) {
@@ -315,7 +295,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  writeSchema,
   getTargets,
   addTarget,
   addTargetConfig,
