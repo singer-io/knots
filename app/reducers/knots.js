@@ -1,6 +1,5 @@
 import {
   UPDATE_DOCKER_VERSION,
-  DOCKER_VERSION_ERROR,
   UPDATE_TAP_LOGS,
   UPDATE_TARGET_LOGS,
   UPDATE_NAME,
@@ -47,6 +46,13 @@ export default function knots(state = defaultState, action) {
       return Object.assign({}, state, {
         detectingDocker: true
       });
+    case UPDATE_DOCKER_VERSION:
+      return Object.assign({}, state, {
+        detectingDocker: false,
+        dockerVersionDetected: true,
+        dockerVersion: action.version,
+        dockerVersionError: action.error
+      });
     case FETCHING_KNOTS:
       return Object.assign({}, state, {
         fetchingKnots: true,
@@ -56,19 +62,6 @@ export default function knots(state = defaultState, action) {
       return Object.assign({}, state, {
         fetchingKnots: false,
         knots: action.knots || []
-      });
-    case UPDATE_DOCKER_VERSION:
-      return Object.assign({}, state, {
-        detectingDocker: false,
-        dockerVersionDetected: true,
-        dockerVersion: action.version,
-        dockerVersionError: action.error
-      });
-    case DOCKER_VERSION_ERROR:
-      return Object.assign({}, state, {
-        dockerVersionDetected: true,
-        dockerVersion: '',
-        dockerVersionError: action.error
       });
     case UPDATE_TAP_LOGS:
       return Object.assign({}, state, {

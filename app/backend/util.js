@@ -1,5 +1,5 @@
 const fs = require('fs');
-const { spawn, exec } = require('child_process');
+const { exec } = require('child_process');
 const path = require('path');
 const { set } = require('lodash');
 const shell = require('shelljs');
@@ -22,22 +22,6 @@ if (process.env.NODE_ENV === 'production') {
 } else {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
-
-const detectDocker = () =>
-  new Promise((resolve, reject) => {
-    // Run `docker -v` on the user's shell
-    const docker = spawn('docker', ['-v']);
-
-    // A version number was returned, docker is installed
-    docker.stdout.on('data', (version) => {
-      resolve(version.toString('utf8'));
-    });
-
-    // Threw error, no Docker
-    docker.on('error', (error) => {
-      reject(error.toString('utf8'));
-    });
-  });
 
 const getTaps = () =>
   new Promise((resolve, reject) => {
@@ -484,7 +468,6 @@ const deleteKnot = (knot) =>
 module.exports = {
   getKnots,
   getTaps,
-  detectDocker,
   fetchTapFields,
   addConfig,
   readSchema,

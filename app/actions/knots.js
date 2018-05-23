@@ -5,7 +5,7 @@ const baseUrl = 'http://localhost:4321';
 
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
-export const DOCKER_VERSION_ERROR = 'DOCKER_VERSION_ERROR';
+
 export const FETCHING_KNOTS = 'FETCHING_KNOTS';
 export const FETCHED_KNOTS = 'FETCHED_KNOTS';
 export const UPDATE_TAP_LOGS = 'UPDATE_TAP_LOGS';
@@ -27,20 +27,20 @@ export function detectDocker() {
     });
 
     axios
-      .get(`${baseUrl}/docker/`)
+      .get(`${baseUrl}/knots/docker/`)
       .then((response) =>
         dispatch({
           type: UPDATE_DOCKER_VERSION,
-          version: response.data.version,
-          error: response.data.version
+          version: response.data.version
         })
       )
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
-          type: DOCKER_VERSION_ERROR,
-          error: JSON.stringify(error)
-        })
-      );
+          type: UPDATE_DOCKER_VERSION,
+          version: '',
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

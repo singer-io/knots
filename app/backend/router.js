@@ -5,7 +5,6 @@ const router = express.Router();
 const {
   getKnots,
   getTaps,
-  detectDocker,
   fetchTapFields,
   addConfig,
   readSchema,
@@ -20,16 +19,6 @@ const {
   deleteKnot,
   partialSync
 } = require('./util');
-
-router.get('/docker', (req, res) => {
-  detectDocker()
-    .then((version) => {
-      res.json({ version });
-    })
-    .catch((error) => {
-      res.json({ version: '', error });
-    });
-});
 
 router.get('/knots', (req, res) => {
   getKnots()
