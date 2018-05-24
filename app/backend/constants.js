@@ -92,6 +92,15 @@ const tapRedshiftFields = [
     placeholder: '',
     type: 'password',
     options: []
+  },
+  {
+    key: 'start_date',
+    label: 'Start date',
+    required: false,
+    validationText: '',
+    placeholder: '',
+    type: 'date',
+    options: []
   }
 ];
 
@@ -126,7 +135,7 @@ const tapSalesforceFields = [
   {
     key: 'start_date',
     label: 'Start date',
-    required: false,
+    required: true,
     validationText: '',
     placeholder: '',
     type: 'date',

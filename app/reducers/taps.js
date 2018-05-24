@@ -110,6 +110,7 @@ export default function taps(state = defaultState, action) {
               }
             });
 
+            // Select a stream when a user chooses its replication key
             if (action.value === '') {
               delete schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
