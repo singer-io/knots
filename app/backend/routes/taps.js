@@ -1,11 +1,6 @@
 const router = require('express').Router();
 
-const {
-  getTaps,
-  fetchTapFields,
-  addConfig,
-  writeSchema
-} = require('../controllers/taps');
+const { getTaps, fetchTapFields, addConfig, writeSchema } = require('../taps');
 
 router.get('/', (req, res) => {
   getTaps()

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const { app } = require('electron');
 
-const { readFile } = require('../util');
+const { readFile } = require('./util');
 
 let knotsFolder;
 if (process.env.NODE_ENV === 'production') {
@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
   knotsFolder = path.resolve(app.getPath('home'), 'knot', 'knots');
 } else {
   // Use the repo during development
-  knotsFolder = path.resolve(__dirname, '../../..', 'knots');
+  knotsFolder = path.resolve(__dirname, '../..', 'knots');
 }
 
 const getKnots = () =>

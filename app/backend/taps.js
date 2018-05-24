@@ -3,20 +3,20 @@ const { exec } = require('child_process');
 const shell = require('shelljs');
 const { app } = require('electron');
 
-const { writeFile, readFile } = require('../util');
+const { writeFile, readFile } = require('./util');
 
 const {
   taps,
   tapRedshiftFields,
   tapSalesforceFields,
   commands
-} = require('../constants');
+} = require('./constants');
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
   applicationFolder = path.resolve(app.getPath('home'), 'knot');
 } else {
-  applicationFolder = path.resolve(__dirname, '../../..');
+  applicationFolder = path.resolve(__dirname, '../../');
 }
 
 const createKnot = (tapName, tapImage) =>

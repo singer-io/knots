@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { detectDocker, getKnots } = require('../controllers/knots');
+const { detectDocker, getKnots } = require('../knots');
 
 router.get('/', (req, res) => {
   getKnots()
