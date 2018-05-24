@@ -176,7 +176,8 @@ const commands = {
       target.name
     }/data --interactive ${target.image} ${target.name} -c ${
       target.name
-    }/data/config.json 2> tap.log > ${folderPath}/tap/state.json`
+    }/data/config.json 2> tap.log > ${folderPath}/tap/latest-state.json;
+    \\tail -1 ${folderPath}/tap/latest-state.json > ${folderPath}/tap/state.json`
 };
 
 module.exports = {
