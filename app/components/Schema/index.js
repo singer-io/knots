@@ -139,36 +139,6 @@ export default class Schema extends Component<Props, State> {
           <KnotProgress />
           <h2 className="mb-1 pt-4">Replication Options</h2>
 
-          <Alert
-            isOpen={!!error}
-            color="danger"
-            className="d-flex justify-content-between"
-          >
-            <span className="align-self-center">
-              <span>Unable to execute tap in discovery mode. </span>
-              <button
-                onClick={() => this.openLink('https://help.data.world')}
-                className={classNames('alert-link', styles.link)}
-              >
-                Contact Support
-              </button>
-            </span>
-            <span>
-              <Link to="/">
-                <Button
-                  className={classNames(
-                    'btn btn-outline-secondary',
-                    styles.abort
-                  )}
-                >
-                  Abort
-                </Button>
-              </Link>
-              <Link to="/taps">
-                <Button className="btn btn-outline-primary">Reconfigure</Button>
-              </Link>
-            </span>
-          </Alert>
           <div>
             {!showSchema && (
               <div>
@@ -194,6 +164,41 @@ export default class Schema extends Component<Props, State> {
                     </StayScrolled>
                   </CardBody>
                 </Card>
+                <Alert
+                  isOpen={!!error}
+                  color="danger"
+                  className={classNames(
+                    'd-flex justify-content-between',
+                    styles.errorAlert
+                  )}
+                >
+                  <span className="align-self-center">
+                    <span>Unable to execute tap in discovery mode. </span>
+                    <button
+                      onClick={() => this.openLink('https://help.data.world')}
+                      className={classNames('alert-link', styles.link)}
+                    >
+                      Contact Support
+                    </button>
+                  </span>
+                  <span>
+                    <Link to="/">
+                      <Button
+                        className={classNames(
+                          'btn btn-outline-secondary',
+                          styles.abort
+                        )}
+                      >
+                        Abort
+                      </Button>
+                    </Link>
+                    <Link to="/taps">
+                      <Button className="btn btn-outline-primary">
+                        Reconfigure
+                      </Button>
+                    </Link>
+                  </span>
+                </Alert>
                 <Button
                   color="primary"
                   className="float-right my-3"

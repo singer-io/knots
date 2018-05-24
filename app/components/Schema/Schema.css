@@ -5,6 +5,10 @@
   cursor: pointer;
 }
 
+.errorAlert {
+  margin-top: 10px;
+}
+
 .abort {
   margin-right: 10px;
 }
