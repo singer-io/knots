@@ -19,6 +19,10 @@ export default class Checkbox extends Component<Props, State> {
     this.state = { checked: props.checked };
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    this.setState({ checked: nextProps.checked });
+  }
+
   toggle = () => {
     const checked = !this.state.checked;
     this.props.handleChange('selected', this.props.index, checked);

@@ -45,7 +45,6 @@ type Props = {
     value: boolean | string
   ) => void,
   submitSchema: (schema: Array<Stream>) => void,
-  history: { goBack: () => void },
   updateSchemaLogs: (log: string) => void
 };
 
@@ -85,15 +84,6 @@ export default class Schema extends Component<Props, State> {
     this.props.submitSchema(this.props.tapsStore.schema);
   };
 
-  toggle = () => {
-    this.props.toggle();
-  };
-
-  reconfigure = () => {
-    this.props.history.goBack();
-    this.props.toggle();
-  };
-
   validReplicationKeys = (stream: Stream) => {
     let indexToUpdate;
     stream.metadata.forEach((meta, index) => {
@@ -108,6 +98,21 @@ export default class Schema extends Component<Props, State> {
     }
 
     return [];
+  };
+
+  fieldSelected = (stream: Stream) => {
+    let indexToUpdate;
+    stream.metadata.forEach((meta, index) => {
+      if (meta.breadcrumb.length === 0) {
+        indexToUpdate = index;
+      }
+    });
+
+    if (indexToUpdate !== undefined) {
+      return !!stream.metadata[indexToUpdate].metadata.selected;
+    }
+
+    return false;
   };
 
   showSchema = () => {
@@ -188,7 +193,7 @@ export default class Schema extends Component<Props, State> {
                       <tr key={stream.tap_stream_id}>
                         <td className="text-center">
                           <Checkbox
-                            checked={!!stream.metadata[0].metadata.selected}
+                            checked={this.fieldSelected(stream)}
                             index={index.toString()}
                             handleChange={this.handleChange}
                           />

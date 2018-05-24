@@ -8,8 +8,6 @@ import {
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
   SELECT_TAP,
-  TAP_ERROR,
-  TOGGLE_MODAL,
   UPDATE_SCHEMA_LOGS
 } from '../actions/taps';
 
@@ -80,18 +78,6 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         schemaLogs: [...state.schemaLogs, action.newLog]
       });
-    case TAP_ERROR:
-      return Object.assign({}, state, {
-        showModal: true,
-        error: action.error,
-        dockerConfigError: action.error.indexOf('Mounts denied') !== -1,
-        tapError: action.error.indexOf('CRITICAL') !== -1,
-        invalidSchemaError: action.error.indexOf('SyntaxError') !== -1
-      });
-    case TOGGLE_MODAL:
-      return Object.assign({}, state, {
-        showModal: false
-      });
     case SCHEMA_RECEIVED:
       return Object.assign({}, state, {
         schemaLoading: false,
@@ -104,6 +90,7 @@ export default function taps(state = defaultState, action) {
         let indexToUpdate;
         switch (action.field) {
           case 'selected':
+            // Find the metadata with an empty breadcrumb and update its metadata
             schema[action.index].metadata.forEach((metadata, index) => {
               if (metadata.breadcrumb.length === 0) {
                 indexToUpdate = index;
@@ -113,9 +100,33 @@ export default function taps(state = defaultState, action) {
               action.field
             ] =
               action.value;
-            return Object.assign({}, state, { tapSchema: schema });
-          case 'replication_key':
-            schema[action.index].replication_key = action.value;
+            return Object.assign({}, state, {
+              tapSchema: schema
+            });
+          case 'replication-key':
+            schema[action.index].metadata.forEach((metadata, index) => {
+              if (metadata.breadcrumb.length === 0) {
+                indexToUpdate = index;
+              }
+            });
+
+            if (action.value === '') {
+              delete schema[action.index].metadata[indexToUpdate].metadata[
+                'replication-key'
+              ];
+
+              delete schema[action.index].metadata[indexToUpdate].metadata
+                .selected;
+            } else {
+              schema[action.index].metadata[indexToUpdate].metadata[
+                'replication-key'
+              ] =
+                action.value;
+
+              schema[action.index].metadata[
+                indexToUpdate
+              ].metadata.selected = true;
+            }
 
             return Object.assign({}, state, {
               tapSchema: schema
