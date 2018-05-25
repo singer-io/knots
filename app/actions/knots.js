@@ -98,12 +98,12 @@ export function save(
           type: KNOT_SYNCED
         })
       )
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
           type: KNOT_SYNCED,
-          error: error.toString()
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 
@@ -123,11 +123,12 @@ export function sync(knotName: string) {
           type: KNOT_SYNCED
         })
       )
-      .catch(() =>
+      .catch((error) => {
         dispatch({
-          type: KNOT_SYNCED
-        })
-      );
+          type: KNOT_SYNCED,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

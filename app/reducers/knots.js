@@ -22,7 +22,8 @@ export type knotsStateType = {
   +targetLogs: Array<string>,
   +knotName: string,
   +syncing: boolean,
-  +knotDeleted: boolean
+  +knotDeleted: boolean,
+  +knotError: string
 };
 
 const defaultState = {
@@ -37,7 +38,8 @@ const defaultState = {
   knotName: '',
   knotSyncing: false,
   knotSynced: false,
-  knotDeleted: false
+  knotDeleted: false,
+  knotError: ''
 };
 
 export default function knots(state = defaultState, action) {
@@ -82,7 +84,8 @@ export default function knots(state = defaultState, action) {
     case KNOT_SYNCED:
       return Object.assign({}, state, {
         knotSyncing: false,
-        knotSynced: true
+        knotSynced: true,
+        knotError: action.error || ''
       });
     case KNOT_DELETED:
       return Object.assign({}, state, {

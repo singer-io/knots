@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { getKnots, saveKnot } = require('../knots');
+const { getKnots, saveKnot, sync } = require('../knots');
 
 router.get('/', (req, res) => {
   getKnots()
@@ -14,14 +14,13 @@ router.post('/save/', (req, res) => {
   const { knotName } = req.body;
   saveKnot(knotName)
     .then(() => {
-      res.json({});
-      // sync(req)
-      //   .then(() => {
-      //     res.json({ status: 200 });
-      //   })
-      //   .catch((error) => {
-      //     res.json({ status: 500, error });
-      //   });
+      sync(req)
+        .then(() => {
+          res.json({});
+        })
+        .catch((error) => {
+          res.status(500).json({ message: error.message });
+        });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });

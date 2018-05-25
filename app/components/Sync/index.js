@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import {
   Container,
@@ -13,7 +14,8 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader
+  CardHeader,
+  Alert
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import classNames from 'classnames';
@@ -35,7 +37,8 @@ type Props = {
     knotSyncing: boolean,
     knotSynced: boolean,
     tapLogs: Array<string>,
-    targetLogs: Array<string>
+    targetLogs: Array<string>,
+    knotError: string
   },
   tapStore: {
     selectedTap: { name: string, image: string }
@@ -97,7 +100,8 @@ export default class Sync extends Component<Props> {
       knotSynced,
       knotName,
       tapLogs,
-      targetLogs
+      targetLogs,
+      knotError
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
@@ -108,9 +112,17 @@ export default class Sync extends Component<Props> {
         <Container>
           <KnotProgress />
           <h2 className="mb-1 pt-4">Save & Run</h2>
+          <Alert
+            isOpen={!!knotError}
+            color="danger"
+            className="d-flex justify-content-between"
+          >
+            <span className="align-self-center">{knotError}</span>
+          </Alert>
           <Row>
             {!knotSyncing &&
-              !knotSynced && (
+              !knotSynced &&
+              !knotError && (
                 <Col xs="12">
                   <Form className={styles.form}>
                     <InputGroup>
@@ -153,13 +165,17 @@ export default class Sync extends Component<Props> {
               </Col>
             )}
 
-            {knotSynced && (
-              <Col xs="12">
-                <div className="alert alert-success" style={{ width: '100%' }}>
-                  <strong>{`${knotName} has been run successfully`}</strong>
-                </div>
-              </Col>
-            )}
+            {knotSynced &&
+              !knotError && (
+                <Col xs="12">
+                  <div
+                    className="alert alert-success"
+                    style={{ width: '100%' }}
+                  >
+                    <strong>{`${knotName} has been run successfully`}</strong>
+                  </div>
+                </Col>
+              )}
           </Row>
           <Row>
             <Col sm="6">
@@ -199,6 +215,18 @@ export default class Sync extends Component<Props> {
               </Card>
             </Col>
           </Row>
+          {knotSynced &&
+            !knotError && (
+              <Link to="/">
+                <Button
+                  color="primary"
+                  className="float-right my-3"
+                  onClick={this.submit}
+                >
+                  Done
+                </Button>
+              </Link>
+            )}
         </Container>
       </div>
     );

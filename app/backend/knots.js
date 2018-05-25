@@ -7,7 +7,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
-const { commands } = require('constants');
+const { commands } = require('./constants');
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {

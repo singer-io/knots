@@ -169,7 +169,7 @@ export default class Schema extends Component<Props, State> {
               {!showSchema && (
                 <div>
                   {schemaLoading && (
-                    <Progress value="100" striped animated>
+                    <Progress value="100" striped animated className="mt-3">
                       Retrieving schema information...
                     </Progress>
                   )}
