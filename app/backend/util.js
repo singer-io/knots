@@ -7,7 +7,6 @@ const { app } = require('electron');
 const { commands } = require('./constants');
 
 let tempFolder;
-
 if (process.env.NODE_ENV === 'production') {
   tempFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
@@ -120,22 +119,8 @@ const partialSync = (req) =>
       });
   });
 
-const getToken = (knot) =>
-  new Promise((resolve, reject) => {
-    if (knot) {
-      readFile(path.resolve(tempFolder, 'knots', knot, 'target', 'config.json'))
-        .then((configObject) => resolve(configObject.api_token))
-        .catch((err) => {
-          reject(err);
-        });
-    } else {
-      reject();
-    }
-  });
-
 module.exports = {
   partialSync,
-  getToken,
   readFile,
   writeFile,
   addKnotAttribute

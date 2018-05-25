@@ -60,4 +60,14 @@ router.get('/download/', (req, res) => {
   downloadKnot(req, res);
 });
 
+router.post('/full-sync/', (req, res) => {
+  sync(req)
+    .then(() => {
+      res.json({});
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
 module.exports = router;

@@ -37,7 +37,6 @@ class Knots extends Component<Props, State> {
 
   fullSync = () => {
     const { name } = this.props.knot;
-    console.log('Full sync called', name, this.props);
 
     this.props.history.push(`/sync?knot=${name}&mode=full`);
   };

@@ -118,7 +118,7 @@ export function sync(knotName: string) {
     });
 
     axios
-      .post(`${baseUrl}/sync`, { knotName })
+      .post(`${baseUrl}/knots/full-sync`, { knotName })
       .then(() =>
         dispatch({
           type: KNOT_SYNCED
