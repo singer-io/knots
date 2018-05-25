@@ -177,13 +177,18 @@ export function updateTargetLogs(newLog: string) {
 export function deleteKnot(knot: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
-      .post(`${baseUrl}/delete`, { knot })
-      .then(() =>
+      .post(`${baseUrl}/knots/delete`, { knot })
+      .then(() => {
         dispatch({
           type: KNOT_DELETED
-        })
-      )
-      .catch();
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: KNOT_DELETED,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

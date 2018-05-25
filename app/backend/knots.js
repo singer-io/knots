@@ -204,4 +204,10 @@ const saveKnot = (name) =>
       });
   });
 
-module.exports = { getKnots, saveKnot, sync };
+const deleteKnot = (knot) =>
+  new Promise((resolve) => {
+    shell.rm('-rf', path.resolve(applicationFolder, 'knots', knot));
+    resolve();
+  });
+
+module.exports = { getKnots, saveKnot, sync, deleteKnot };

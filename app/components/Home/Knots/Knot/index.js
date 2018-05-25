@@ -1,5 +1,6 @@
 // @flow
 import React, { Component } from 'react';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import moment from 'moment';
 import classNames from 'classnames';
 import { withRouter } from 'react-router-dom';
@@ -13,9 +14,21 @@ type Props = {
   history: { push: (path: string) => void }
 };
 
-class Knots extends Component<Props> {
-  delete = () => {
-    this.props.delete(this.props.knot);
+type State = {
+  showDelete: boolean
+};
+
+class Knots extends Component<Props, State> {
+  state = {
+    showDelete: false
+  };
+
+  toggleDelete = () => {
+    // this.props.delete(this.props.knot);
+
+    this.setState({
+      showDelete: !this.state.showDelete
+    });
   };
 
   download = () => {
@@ -103,13 +116,35 @@ class Knots extends Component<Props> {
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"
-              onClick={this.delete}
+              onClick={this.toggleDelete}
               title="Delete"
             >
               <span className="oi oi-trash" />
             </button>
           </div>
         </td>
+        <Modal isOpen={this.state.showDelete} toggle={this.toggleDelete}>
+          <ModalHeader toggle={this.toggleDelete}>
+            Delete <strong>{knot.name}</strong>?
+          </ModalHeader>
+          <ModalBody>
+            Are you sure you want to delete <strong>{knot.name}</strong>? Once
+            you delete a Knot, there is no going back.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" outline onClick={this.toggleDelete}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                this.props.delete(this.props.knot);
+              }}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
       </tr>
     );
   }

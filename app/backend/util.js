@@ -2,7 +2,6 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const path = require('path');
 const { set } = require('lodash');
-const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
@@ -144,17 +143,10 @@ const getToken = (knot) =>
     }
   });
 
-const deleteKnot = (knot) =>
-  new Promise((resolve) => {
-    shell.rm('-rf', path.resolve(tempFolder, 'knots', knot));
-    resolve();
-  });
-
 module.exports = {
   partialSync,
   downloadKnot,
   getToken,
-  deleteKnot,
   readFile,
   writeFile,
   addKnotAttribute

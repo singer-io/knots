@@ -6,7 +6,6 @@ const {
   saveKnot,
   downloadKnot,
   getToken,
-  deleteKnot,
   partialSync
 } = require('./util');
 
@@ -22,17 +21,6 @@ router.post('/sync/', (req, res) => {
 
 router.post('/sync/partial/', (req, res) => {
   partialSync(req)
-    .then(() => {
-      res.json({ status: 200 });
-    })
-    .catch(() => {
-      res.json({ status: 500 });
-    });
-});
-
-router.post('/delete/', (req, res) => {
-  const { knot } = req.body;
-  deleteKnot(knot)
     .then(() => {
       res.json({ status: 200 });
     })
