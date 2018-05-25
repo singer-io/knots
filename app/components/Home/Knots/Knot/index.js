@@ -32,7 +32,6 @@ class Knots extends Component<Props, State> {
   };
 
   download = () => {
-    console.log('Download called');
     this.props.download(this.props.knot);
   };
 

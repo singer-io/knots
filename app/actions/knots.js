@@ -1,5 +1,6 @@
 // @flow
 import axios from 'axios';
+import { shell } from 'electron';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -195,23 +196,9 @@ export function deleteKnot(knot: string) {
 export function downloadKnot(knot: string) {
   return () => {
     axios
-      .post(`${baseUrl}/download/`, { knot })
+      .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
-        axios({
-          url: `http://localhost:4321/download?knot=${knot}`,
-          method: 'GET',
-          responseType: 'blob' // important
-        })
-          .then((response) => {
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${knot}.zip`);
-            // $FlowFixMe
-            document.body.appendChild(link);
-            link.click();
-          })
-          .catch();
+        shell.openExternal(`http://localhost:4321/knots/download?knot=${knot}`);
       })
       .catch();
   };

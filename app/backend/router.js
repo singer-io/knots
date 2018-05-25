@@ -1,13 +1,7 @@
 const express = require('express');
 
 const router = express.Router();
-const {
-  sync,
-  saveKnot,
-  downloadKnot,
-  getToken,
-  partialSync
-} = require('./util');
+const { sync, saveKnot, getToken, partialSync } = require('./util');
 
 router.post('/sync/', (req, res) => {
   sync(req)
@@ -38,13 +32,6 @@ router.post('/save-knot/', (req, res) => {
     });
 });
 
-router.post('/download/', (req, res) => {
-  const { knot } = req.body;
-  downloadKnot(knot)
-    .then(() => res.json({}))
-    .catch();
-});
-
 router.post('/token/', (req, res) => {
   const { knot } = req.body;
 
@@ -53,18 +40,6 @@ router.post('/token/', (req, res) => {
       res.json({ token });
     })
     .catch((error) => res.json({ error }));
-});
-
-router.post('/download/', (req, res) => {
-  const { knot } = req.body;
-  downloadKnot(knot)
-    .then(() => res.json({}))
-    .catch();
-});
-
-router.get('/download/', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download(`${req.query.knot}.zip`);
 });
 
 module.exports = router;

@@ -4,6 +4,7 @@ const path = require('path');
 const { exec } = require('child_process');
 const { EOL } = require('os');
 const shell = require('shelljs');
+const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
@@ -210,4 +211,25 @@ const deleteKnot = (knot) =>
     resolve();
   });
 
-module.exports = { getKnots, saveKnot, sync, deleteKnot };
+const packageKnot = (knotName) =>
+  new Promise((resolve) => {
+    const zip = new EasyZip();
+    zip.zipFolder(path.resolve(applicationFolder, 'knots', knotName), () => {
+      zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+      resolve();
+    });
+  });
+
+const downloadKnot = (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.download(`${applicationFolder}/${req.query.knot}.zip`);
+};
+
+module.exports = {
+  getKnots,
+  saveKnot,
+  sync,
+  deleteKnot,
+  packageKnot,
+  downloadKnot
+};

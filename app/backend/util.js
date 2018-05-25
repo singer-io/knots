@@ -3,7 +3,6 @@ const { exec } = require('child_process');
 const path = require('path');
 const { set } = require('lodash');
 const { app } = require('electron');
-const { EasyZip } = require('easy-zip');
 
 const { commands } = require('./constants');
 
@@ -121,15 +120,6 @@ const partialSync = (req) =>
       });
   });
 
-const downloadKnot = (knotName) =>
-  new Promise((resolve) => {
-    const zip = new EasyZip();
-    zip.zipFolder(path.resolve(tempFolder, 'knots', knotName), () => {
-      zip.writeToFile(`${knotName}.zip`);
-      resolve();
-    });
-  });
-
 const getToken = (knot) =>
   new Promise((resolve, reject) => {
     if (knot) {
@@ -145,7 +135,6 @@ const getToken = (knot) =>
 
 module.exports = {
   partialSync,
-  downloadKnot,
   getToken,
   readFile,
   writeFile,
