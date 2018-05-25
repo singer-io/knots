@@ -1,6 +1,6 @@
 const router = require('express').Router();
 
-const { detectDocker, getKnots } = require('../knots');
+const { getKnots, saveKnot } = require('../knots');
 
 router.get('/', (req, res) => {
   getKnots()
@@ -10,10 +10,18 @@ router.get('/', (req, res) => {
     });
 });
 
-router.get('/docker', (req, res) => {
-  detectDocker()
-    .then((version) => {
-      res.json({ version });
+router.post('/save/', (req, res) => {
+  const { knotName } = req.body;
+  saveKnot(knotName)
+    .then(() => {
+      res.json({});
+      // sync(req)
+      //   .then(() => {
+      //     res.json({ status: 200 });
+      //   })
+      //   .catch((error) => {
+      //     res.json({ status: 500, error });
+      //   });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });

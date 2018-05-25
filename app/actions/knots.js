@@ -88,7 +88,7 @@ export function save(
     });
 
     axios
-      .post(`${baseUrl}/save`, {
+      .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
         target: selectedTarget

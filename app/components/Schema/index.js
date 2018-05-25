@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import {
   Container,
+  Col,
   Alert,
   Table,
   Button,
@@ -161,124 +162,126 @@ export default class Schema extends Component<Props, State> {
         <Header />
         <Container>
           <KnotProgress />
-          <h2 className="mb-1 pt-4">Replication Options</h2>
+          <Col xs="12">
+            <h2 className="mb-1 pt-4">Replication Options</h2>
 
-          <div>
-            {!showSchema && (
-              <div>
-                {schemaLoading && (
-                  <Progress value="100" striped animated className="mt-5">
-                    Retrieving schema information...
-                  </Progress>
-                )}
+            <div>
+              {!showSchema && (
+                <div>
+                  {schemaLoading && (
+                    <Progress value="100" striped animated>
+                      Retrieving schema information...
+                    </Progress>
+                  )}
 
-                <Card className="bg-light mt-3">
-                  <CardBody>
-                    <StayScrolled
-                      component="div"
-                      style={{
-                        height: '250px',
-                        overflow: 'auto'
-                      }}
-                    >
-                      {schemaLogs.map((log, index) => (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <Log key={index} log={log} />
-                      ))}
-                    </StayScrolled>
-                  </CardBody>
-                </Card>
-                <Button
-                  color="primary"
-                  className="float-right my-3"
-                  onClick={this.showSchema}
-                  disabled={!schemaLoaded}
-                >
-                  Continue
-                </Button>
-              </div>
-            )}
-            {showSchema && (
-              <div>
-                <Table className="mt-5">
-                  <thead className="thead-light">
-                    <tr>
-                      <th className="text-center">Include</th>
-                      <th>Table/Stream</th>
-                      <th>Replication Key</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {this.props.tapsStore.schema.map((stream, index) => (
-                      <tr key={stream.tap_stream_id}>
-                        <td className="text-center">
-                          <Checkbox
-                            checked={this.fieldSelected(stream)}
-                            index={index.toString()}
-                            handleChange={this.handleChange}
-                          />
-                        </td>
-                        <td>{stream.stream}</td>
-                        <td>
-                          <Dropdown
-                            columns={this.validReplicationKeys(stream)}
-                            index={index.toString()}
-                            handleChange={this.handleChange}
-                          />
-                        </td>
+                  <Card className="bg-light mt-3">
+                    <CardBody>
+                      <StayScrolled
+                        component="div"
+                        style={{
+                          height: '250px',
+                          overflow: 'auto'
+                        }}
+                      >
+                        {schemaLogs.map((log, index) => (
+                          // eslint-disable-next-line react/no-array-index-key
+                          <Log key={index} log={log} />
+                        ))}
+                      </StayScrolled>
+                    </CardBody>
+                  </Card>
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.showSchema}
+                    disabled={!schemaLoaded}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              )}
+              {showSchema && (
+                <div>
+                  <Table className="mt-5">
+                    <thead className="thead-light">
+                      <tr>
+                        <th className="text-center">Include</th>
+                        <th>Table/Stream</th>
+                        <th>Replication Key</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-                <Alert color="warning" style={{ opacity: 1 }}>
-                  Start date will be ignored unless replication keys are
-                  selected
-                </Alert>
-                <Alert color="danger" style={{ opacity: 1 }}>
-                  A minimum of one table/stream must be selected
-                </Alert>
-                <Button
-                  color="primary"
-                  className="float-right my-3"
-                  disabled={!this.validSchema()}
-                  onClick={this.submit}
+                    </thead>
+                    <tbody>
+                      {this.props.tapsStore.schema.map((stream, index) => (
+                        <tr key={stream.tap_stream_id}>
+                          <td className="text-center">
+                            <Checkbox
+                              checked={this.fieldSelected(stream)}
+                              index={index.toString()}
+                              handleChange={this.handleChange}
+                            />
+                          </td>
+                          <td>{stream.stream}</td>
+                          <td>
+                            <Dropdown
+                              columns={this.validReplicationKeys(stream)}
+                              index={index.toString()}
+                              handleChange={this.handleChange}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                  <Alert color="warning" style={{ opacity: 1 }}>
+                    Start date will be ignored unless replication keys are
+                    selected
+                  </Alert>
+                  <Alert color="danger" style={{ opacity: 1 }}>
+                    A minimum of one table/stream must be selected
+                  </Alert>
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    disabled={!this.validSchema()}
+                    onClick={this.submit}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              )}
+            </div>
+            <Modal isOpen={!!error}>
+              <ModalHeader className="text-danger">
+                <span className="oi oi-warning" /> Tap error
+              </ModalHeader>
+              <ModalBody>
+                Unable to execute tap in discovery mode.
+                <pre
+                  className="bg-light border border-light p-1 rounded"
+                  style={{ whiteSpace: 'pre-wrap' }}
                 >
-                  Continue
-                </Button>
-              </div>
-            )}
-          </div>
-          <Modal isOpen={!!error}>
-            <ModalHeader className="text-danger">
-              <span className="oi oi-warning" /> Tap error
-            </ModalHeader>
-            <ModalBody>
-              Unable to execute tap in discovery mode.
-              <pre
-                className="bg-light border border-light p-1 rounded"
-                style={{ whiteSpace: 'pre-wrap' }}
-              >
-                Error details:<br />
-                {error ? error.toString() : ''}
-              </pre>
-            </ModalBody>
-            <ModalFooter>
-              <button
-                onClick={() => this.openLink('https://help.data.world')}
-                className={classNames('mr-auto text-secondary', styles.link)}
-              >
-                <small>Contact Support</small>
-              </button>
-              <Link to="/">
-                <Button outline color="secondary">
-                  Abort
-                </Button>
-              </Link>
-              <Link to="/taps">
-                <Button color="primary">Reconfigure</Button>
-              </Link>
-            </ModalFooter>
-          </Modal>
+                  Error details:<br />
+                  {error ? error.toString() : ''}
+                </pre>
+              </ModalBody>
+              <ModalFooter>
+                <button
+                  onClick={() => this.openLink('https://help.data.world')}
+                  className={classNames('mr-auto text-secondary', styles.link)}
+                >
+                  <small>Contact Support</small>
+                </button>
+                <Link to="/">
+                  <Button outline color="secondary">
+                    Abort
+                  </Button>
+                </Link>
+                <Link to="/taps">
+                  <Button color="primary">Reconfigure</Button>
+                </Link>
+              </ModalFooter>
+            </Modal>
+          </Col>
         </Container>
       </div>
     );

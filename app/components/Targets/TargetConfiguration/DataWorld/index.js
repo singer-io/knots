@@ -80,7 +80,7 @@ export default class DataWorld extends Component<Props> {
 
   getDataset = (id?: string, owner?: string) => {
     if (id && owner) {
-      return `${id}/${owner}`;
+      return `${owner}/${id}`;
     }
 
     return '';
