@@ -11,7 +11,7 @@ type Props = {
 export default class Dropdown extends Component<Props> {
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = e.currentTarget;
-    this.props.handleChange('replication_key', this.props.index, value);
+    this.props.handleChange('replication-key', this.props.index, value);
   };
 
   render() {

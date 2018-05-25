@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const socketIo = require('socket.io');
 const http = require('http');
 const router = require('./router');
+const routes = require('./routes');
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +17,8 @@ app.use((req, res, next) => {
 });
 
 app.use('/', router);
+routes(app);
+
 const PORT = 4321; // Random number that's unikely to clash with other apps
 
 server.listen(PORT, () => console.log(`Knot server running on port ${PORT}`));

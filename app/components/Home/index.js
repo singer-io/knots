@@ -15,9 +15,9 @@ type Props = {
   getKnots: () => void,
   knotsStore: {
     detectingDocker: boolean,
-    fetchingKnots: boolean,
     dockerVersionDetected: boolean,
     dockerVersion: string,
+    fetchingKnots: boolean,
     knots: Array<{}>
   }
 };

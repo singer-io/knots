@@ -80,7 +80,7 @@ export default class DataWorld extends Component<Props> {
 
   getDataset = (id?: string, owner?: string) => {
     if (id && owner) {
-      return `${id}/${owner}`;
+      return `${owner}/${id}`;
     }
 
     return '';
@@ -99,7 +99,7 @@ export default class DataWorld extends Component<Props> {
             <Input
               readOnly
               type="password"
-              value={api_token}
+              value={api_token || ''}
               invalid={!api_token}
             />
             <InputGroupAddon addonType="append">

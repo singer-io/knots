@@ -20,7 +20,9 @@ export type targetsStateType = {
 
 const defaultState = {
   targetConfigured: false,
-  'target-datadotworld': { token: '', fieldValues: { dataset: '', owner: '' } },
+  'target-datadotworld': {
+    fieldValues: { dataset_id: '', dataset_owner: '', api_token: '' }
+  },
   'target-stitch': { fieldValues: { client_id: '', token: '' } }
 };
 

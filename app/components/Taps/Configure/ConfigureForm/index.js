@@ -77,7 +77,7 @@ export default class ConnectForm extends Component<Props> {
                   readOnly={field.key === 'refresh_token'}
                   type={field.type}
                   name={field.key}
-                  value={this.props.fieldValues[field.key]}
+                  value={this.props.fieldValues[field.key] || ''}
                   id={field.label}
                   onChange={this.props.handleChange}
                   invalid={!valid(field, this.props.fieldValues)}
@@ -100,7 +100,7 @@ export default class ConnectForm extends Component<Props> {
                   }
                   type={field.type}
                   name={field.key}
-                  value={this.props.fieldValues[field.key]}
+                  value={this.props.fieldValues[field.key] || ''}
                   id={field.label}
                   onChange={this.props.handleChange}
                   invalid={!valid(field, this.props.fieldValues)}

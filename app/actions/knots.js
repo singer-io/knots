@@ -5,9 +5,9 @@ const baseUrl = 'http://localhost:4321';
 
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
-export const DOCKER_VERSION_ERROR = 'DOCKER_VERSION_ERROR';
 export const FETCHING_KNOTS = 'FETCHING_KNOTS';
 export const FETCHED_KNOTS = 'FETCHED_KNOTS';
+
 export const UPDATE_TAP_LOGS = 'UPDATE_TAP_LOGS';
 export const UPDATE_TARGET_LOGS = 'UPDATE_TARGET_LOGS';
 export const UPDATE_NAME = 'UPDATE_NAME';
@@ -31,16 +31,16 @@ export function detectDocker() {
       .then((response) =>
         dispatch({
           type: UPDATE_DOCKER_VERSION,
-          version: response.data.version,
-          error: response.data.version
+          version: response.data.version
         })
       )
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
-          type: DOCKER_VERSION_ERROR,
-          error: JSON.stringify(error)
-        })
-      );
+          type: UPDATE_DOCKER_VERSION,
+          version: '',
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 
@@ -52,20 +52,19 @@ export function getKnots() {
 
     axios
       .get(`${baseUrl}/knots/`)
-      .then((response) =>
+      .then((response) => {
         dispatch({
           type: FETCHED_KNOTS,
-          knots: response.data.knots,
-          error: response.data.error
-        })
-      )
-      .catch((error) =>
+          knots: response.data.knots
+        });
+      })
+      .catch((error) => {
         dispatch({
           type: FETCHED_KNOTS,
           knots: [],
-          error: error.toString()
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 
@@ -89,7 +88,7 @@ export function save(
     });
 
     axios
-      .post(`${baseUrl}/save`, {
+      .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
         target: selectedTarget
@@ -99,12 +98,12 @@ export function save(
           type: KNOT_SYNCED
         })
       )
-      .catch((error) =>
+      .catch((error) => {
         dispatch({
           type: KNOT_SYNCED,
-          error: error.toString()
-        })
-      );
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 
@@ -124,11 +123,12 @@ export function sync(knotName: string) {
           type: KNOT_SYNCED
         })
       )
-      .catch(() =>
+      .catch((error) => {
         dispatch({
-          type: KNOT_SYNCED
-        })
-      );
+          type: KNOT_SYNCED,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

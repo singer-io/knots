@@ -1,5 +1,7 @@
 // @flow
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from 'reactstrap';
 
 import Knot from './Knot';
 
@@ -32,7 +34,14 @@ export default class Knots extends Component<Props> {
     const { knots } = this.props.knotsStore;
     return (
       <div className="container mt-5">
-        <p className="display-4">My Knots</p>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <p className="display-4">My Knots</p>
+          <Link to="/taps">
+            <Button color="secondary" outline style={{ height: '50px' }}>
+              New Knot
+            </Button>
+          </Link>
+        </div>
         <table className="table">
           <thead className="thead-light">
             <th className="text-center pr-0" style={{ width: '6em' }}>
