@@ -10,6 +10,7 @@ const { readFile, addKnotAttribute, writeFile } = require('./util');
 const { commands } = require('./constants');
 
 let applicationFolder;
+let runningProcess;
 if (process.env.NODE_ENV === 'production') {
   // Knots stored on user's home path on packaged app
   applicationFolder = path.resolve(app.getPath('home'), 'knots');
@@ -122,6 +123,8 @@ const sync = (req) =>
             )
           );
 
+          runningProcess = syncData;
+
           fs.watchFile(tapLogPath, () => {
             exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
@@ -204,4 +207,15 @@ const saveKnot = (name) =>
       });
   });
 
-module.exports = { getKnots, saveKnot, sync };
+const terminateSync = () => {
+  if (runningProcess) {
+    return runningProcess.pid;
+  }
+};
+
+module.exports = {
+  getKnots,
+  saveKnot,
+  sync,
+  terminateSync
+};

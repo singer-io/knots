@@ -12,6 +12,7 @@ const {
 } = require('./constants');
 
 let applicationFolder;
+let runningProcess;
 if (process.env.NODE_ENV === 'production') {
   applicationFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
@@ -64,8 +65,10 @@ const getSchema = (req) =>
         applicationFolder,
         req.body.tap.name,
         req.body.tap.image
-      )
+      ),
+      { detached: true }
     );
+    runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
       req.io.emit('schemaLog', data.toString());
@@ -176,4 +179,17 @@ const writeSchema = (schemaObject) =>
       .catch(reject);
   });
 
-module.exports = { getTaps, fetchTapFields, addConfig, writeSchema };
+const terminateDiscovery = () => {
+  if (runningProcess) {
+    return runningProcess.pid;
+  }
+};
+
+module.exports = {
+  getTaps,
+  fetchTapFields,
+  addConfig,
+  writeSchema,
+  runningProcess,
+  terminateDiscovery
+};

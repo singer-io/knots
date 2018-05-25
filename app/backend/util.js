@@ -9,6 +9,7 @@ const { EasyZip } = require('easy-zip');
 const { commands } = require('./constants');
 
 let tempFolder;
+let runningProcess;
 
 if (process.env.NODE_ENV === 'production') {
   tempFolder = path.resolve(app.getPath('home'), 'knots');
@@ -86,8 +87,11 @@ const partialSync = (req) =>
             `${tempFolder}/knots/${req.body.knotName}`,
             knotObject.tap,
             knotObject.target
-          )
+          ),
+          { detached: true }
         );
+
+        runningProcess = syncData;
 
         fs.watchFile('tap.log', () => {
           exec('tail -n 1 tap.log', (error, stdout) => {
@@ -150,6 +154,12 @@ const deleteKnot = (knot) =>
     resolve();
   });
 
+const terminatePartialSync = () => {
+  if (runningProcess) {
+    return runningProcess.pid;
+  }
+};
+
 module.exports = {
   partialSync,
   downloadKnot,
@@ -157,5 +167,6 @@ module.exports = {
   deleteKnot,
   readFile,
   writeFile,
-  addKnotAttribute
+  addKnotAttribute,
+  terminatePartialSync
 };
