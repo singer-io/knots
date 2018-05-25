@@ -231,30 +231,24 @@ export default class Schema extends Component<Props, State> {
                         </Link>
                       </span>
                     </Alert>
-                    {schemaLoaded &&
-                      !error && (
-                        <Button
-                          color="primary"
-                          className="float-right my-3"
-                          onClick={this.showSchema}
-                          disabled={!schemaLoaded || !!error}
-                        >
-                          Continue
-                        </Button>
+                    <Button
+                      color="primary"
+                      className="float-right my-3"
+                      onClick={this.showSchema}
+                      disabled={!schemaLoaded || !!error}
+                    >
+                      Continue
+                    </Button>
+                    <Button
+                      onClick={this.terminateProcess}
+                      disabled={schemaLoaded || !schemaLoading}
+                      className={classNames(
+                        'btn btn-outline-danger float-right my-3',
+                        styles.cancelProcess
                       )}
-                    {schemaLoading &&
-                      !schemaLoaded && (
-                        <Button
-                          onClick={this.terminateProcess}
-                          disabled={schemaLoaded}
-                          className={classNames(
-                            'btn btn-outline-danger float-right my-3',
-                            styles.cancelProcess
-                          )}
-                        >
-                          Cancel
-                        </Button>
-                      )}
+                    >
+                      Cancel
+                    </Button>
                   </div>
                 )}
               {(showSchema || schema.length > 0) && (
