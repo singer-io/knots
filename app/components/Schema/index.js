@@ -244,7 +244,7 @@ export default class Schema extends Component<Props, State> {
                       disabled={schemaLoaded || !schemaLoading}
                       className={classNames(
                         'btn btn-outline-danger float-right my-3',
-                        styles.cancelProcess
+                        styles.cancel
                       )}
                     >
                       Cancel
