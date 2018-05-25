@@ -27,9 +27,10 @@ type Props = {
     'target-stitch': { fieldValues: {} },
     'target-datadotworld': { fieldValues: {} }
   },
+  knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: ({}) => void
+  submitFields: (fielsValues: {}, knotName: string) => void
 };
 
 type State = {
@@ -79,8 +80,10 @@ export default class Targets extends Component<Props, State> {
   submit = () => {
     const { name } = this.props.targetsStore.selectedTarget;
     const { fieldValues } = this.props.userStore[name];
+    const { knotName } = this.props.knotsStore;
+    console.log('The knot', knotName);
 
-    this.props.submitFields(fieldValues);
+    this.props.submitFields(fieldValues, knotName);
 
     this.props.history.push('/sync');
   };
@@ -88,6 +91,7 @@ export default class Targets extends Component<Props, State> {
   render() {
     const { showTargets } = this.state;
     const { targets, selectedTarget } = this.props.targetsStore;
+    const { knotName } = this.props.knotsStore;
 
     return (
       <div>
@@ -119,6 +123,7 @@ export default class Targets extends Component<Props, State> {
                       key={target.targetKey}
                       selectTarget={this.props.selectTarget}
                       selected={selectedTarget.name}
+                      knotName={knotName}
                     />
                   ))}
                 </Row>

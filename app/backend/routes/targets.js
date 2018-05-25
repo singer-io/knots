@@ -11,7 +11,7 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  addTargetConfig(req.body)
+  addTargetConfig(req.body.fieldValues, req.body.knot)
     .then(() => res.json({}))
     .catch((error) => {
       res.status(500).json({ message: error.message });
@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  addTarget(req.body)
+  addTarget(req.body.target, req.body.knot)
     .then(() => {
       res.json({});
     })

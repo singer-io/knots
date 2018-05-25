@@ -24,12 +24,12 @@ const readFile = (filePath) =>
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
     // Write the content specified to the specified file
-    fs.writeFile(filePath, content, (err) => {
-      if (!err) {
+    fs.writeFile(filePath, content, (error) => {
+      if (!error) {
         resolve();
       }
 
-      reject();
+      reject(error);
     });
   });
 

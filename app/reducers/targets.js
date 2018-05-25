@@ -3,6 +3,7 @@ import {
   TARGETS_LOADING,
   TARGET_SELECTED
 } from '../actions/targets';
+import { LOADED_KNOT } from '../actions/knots';
 
 export type targetsStateType = {
   +targets: Array<{}>,
@@ -33,6 +34,10 @@ export default function targets(state = defaultState, action) {
     case TARGET_SELECTED:
       return Object.assign({}, state, {
         targetSelected: true,
+        selectedTarget: action.target
+      });
+    case LOADED_KNOT:
+      return Object.assign({}, state, {
         selectedTarget: action.target
       });
     default:

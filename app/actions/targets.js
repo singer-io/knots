@@ -38,7 +38,10 @@ export function getTargets() {
   };
 }
 
-export function selectTarget(target: { name: string, image: string }) {
+export function selectTarget(
+  target: { name: string, image: string },
+  knot: string
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TARGET_SELECTED,
@@ -46,7 +49,7 @@ export function selectTarget(target: { name: string, image: string }) {
     });
 
     axios
-      .post(`${baseUrl}/targets/select`, target)
+      .post(`${baseUrl}/targets/select`, { target, knot })
       .then(() => {
         dispatch({
           type: TARGET_INSTALLED
@@ -61,14 +64,14 @@ export function selectTarget(target: { name: string, image: string }) {
   };
 }
 
-export function submitFields(fieldValues: {}) {
+export function submitFields(fieldValues: {}, knot: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TARGET_CONFIGURING
     });
 
     axios
-      .post(`${baseUrl}/targets/`, fieldValues)
+      .post(`${baseUrl}/targets/`, { fieldValues, knot })
       .then(() => {
         dispatch({
           type: TARGET_CONFIGURED

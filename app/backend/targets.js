@@ -21,27 +21,37 @@ const getTargets = () =>
     }
   });
 
-const addTarget = (target) =>
+const addTarget = (target, knot) =>
   new Promise((resolve, reject) => {
-    addKnotAttribute({ field: ['target'], value: target })
+    const knotPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      : '';
+    addKnotAttribute({ field: ['target'], value: target }, knotPath)
       .then(resolve)
       .catch(reject);
   });
 
-const addTargetConfig = (config) =>
+const addTargetConfig = (config, knot) =>
   new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(applicationFolder, 'config.json'),
-      JSON.stringify(config)
-    )
+    const configPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'target', 'config.json')
+      : path.resolve(applicationFolder, 'config.json');
+    writeFile(configPath, JSON.stringify(config))
       .then(() => {
-        shell.rm('-fr', path.resolve(applicationFolder, 'configs', 'target'));
-        shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'target'));
-        shell.mv(
-          path.resolve(applicationFolder, 'config.json'),
-          path.resolve(applicationFolder, 'configs', 'target')
-        );
-        resolve();
+        if (knot) {
+          resolve();
+        } else {
+          shell.rm('-fr', path.resolve(applicationFolder, 'configs', 'target'));
+          shell.mkdir(
+            '-p',
+            path.resolve(applicationFolder, 'configs', 'target')
+          );
+          shell.mv(
+            path.resolve(applicationFolder, 'config.json'),
+            path.resolve(applicationFolder, 'configs', 'target')
+          );
+          resolve();
+        }
       })
       .catch(reject);
   });
