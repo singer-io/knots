@@ -6,7 +6,8 @@ import Schema from '../components/Schema';
 
 function mapStateToProps(state) {
   return {
-    tapsStore: state.taps
+    tapsStore: state.taps,
+    knotsStore: state.knots
   };
 }
 

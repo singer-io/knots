@@ -36,12 +36,13 @@ type Props = {
     schemaUpdated: boolean,
     error?: string
   },
+  knotsStore: { knotName: string },
   editSchemaField: (
     field: string,
     index: string,
     value: boolean | string
   ) => void,
-  submitSchema: (schema: Array<Stream>) => void,
+  submitSchema: (schema: Array<Stream>, knotName: string) => void,
   updateSchemaLogs: (log: string) => void
 };
 
@@ -78,7 +79,8 @@ export default class Schema extends Component<Props, State> {
   };
 
   submit = () => {
-    this.props.submitSchema(this.props.tapsStore.schema);
+    const { knotName } = this.props.knotsStore;
+    this.props.submitSchema(this.props.tapsStore.schema, knotName);
   };
 
   validReplicationKeys = (stream: Stream) => {
@@ -148,7 +150,8 @@ export default class Schema extends Component<Props, State> {
       schemaLoading,
       schemaLoaded,
       schemaLogs,
-      error
+      error,
+      schema
     } = this.props.tapsStore;
 
     const { showSchema } = this.state;
@@ -162,76 +165,79 @@ export default class Schema extends Component<Props, State> {
             <h2 className="mb-1 pt-4">Replication Options</h2>
 
             <div>
-              {!showSchema && (
-                <div>
-                  {schemaLoading && (
-                    <Progress value="100" striped animated className="mt-3">
-                      Retrieving schema information...
-                    </Progress>
-                  )}
-
-                  <Card className="bg-light mt-3">
-                    <CardBody>
-                      <StayScrolled
-                        component="div"
-                        style={{
-                          height: '250px',
-                          overflow: 'auto'
-                        }}
-                      >
-                        {schemaLogs.map((log, index) => (
-                          // eslint-disable-next-line react/no-array-index-key
-                          <Log key={index} log={log} />
-                        ))}
-                      </StayScrolled>
-                    </CardBody>
-                  </Card>
-                  <Alert
-                    isOpen={!!error}
-                    color="danger"
-                    className={classNames(
-                      'd-flex justify-content-between',
-                      styles.errorAlert
+              {!showSchema &&
+                schema.length === 0 && (
+                  <div>
+                    {schemaLoading && (
+                      <Progress value="100" striped animated className="mt-3">
+                        Retrieving schema information...
+                      </Progress>
                     )}
-                  >
-                    <span className="align-self-center">
-                      <span>Unable to execute tap in discovery mode. </span>
-                      <button
-                        onClick={() => this.openLink('https://help.data.world')}
-                        className={classNames('alert-link', styles.link)}
-                      >
-                        Contact Support
-                      </button>
-                    </span>
-                    <span>
-                      <Link to="/">
-                        <Button
-                          className={classNames(
-                            'btn btn-outline-secondary',
-                            styles.abort
-                          )}
+
+                    <Card className="bg-light mt-3">
+                      <CardBody>
+                        <StayScrolled
+                          component="div"
+                          style={{
+                            height: '250px',
+                            overflow: 'auto'
+                          }}
                         >
-                          Abort
-                        </Button>
-                      </Link>
-                      <Link to="/taps">
-                        <Button className="btn btn-outline-primary">
-                          Reconfigure
-                        </Button>
-                      </Link>
-                    </span>
-                  </Alert>
-                  <Button
-                    color="primary"
-                    className="float-right my-3"
-                    onClick={this.showSchema}
-                    disabled={!schemaLoaded || !!error}
-                  >
-                    Continue
-                  </Button>
-                </div>
-              )}
-              {showSchema && (
+                          {schemaLogs.map((log, index) => (
+                            // eslint-disable-next-line react/no-array-index-key
+                            <Log key={index} log={log} />
+                          ))}
+                        </StayScrolled>
+                      </CardBody>
+                    </Card>
+                    <Alert
+                      isOpen={!!error}
+                      color="danger"
+                      className={classNames(
+                        'd-flex justify-content-between',
+                        styles.errorAlert
+                      )}
+                    >
+                      <span className="align-self-center">
+                        <span>Unable to execute tap in discovery mode. </span>
+                        <button
+                          onClick={() =>
+                            this.openLink('https://help.data.world')
+                          }
+                          className={classNames('alert-link', styles.link)}
+                        >
+                          Contact Support
+                        </button>
+                      </span>
+                      <span>
+                        <Link to="/">
+                          <Button
+                            className={classNames(
+                              'btn btn-outline-secondary',
+                              styles.abort
+                            )}
+                          >
+                            Abort
+                          </Button>
+                        </Link>
+                        <Link to="/taps">
+                          <Button className="btn btn-outline-primary">
+                            Reconfigure
+                          </Button>
+                        </Link>
+                      </span>
+                    </Alert>
+                    <Button
+                      color="primary"
+                      className="float-right my-3"
+                      onClick={this.showSchema}
+                      disabled={!schemaLoaded || !!error}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                )}
+              {(showSchema || schema.length > 0) && (
                 <div>
                   <Table className="mt-5">
                     <thead className="thead-light">
@@ -242,7 +248,7 @@ export default class Schema extends Component<Props, State> {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.props.tapsStore.schema.map((stream, index) => (
+                      {schema.map((stream, index) => (
                         <tr key={stream.tap_stream_id}>
                           <td className="text-center">
                             <Checkbox

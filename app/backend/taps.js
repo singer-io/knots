@@ -20,10 +20,8 @@ const createKnot = (tapName, tapImage, knotPath) =>
         {
           field: ['tap'],
           value: {
-            tap: {
-              name: tapName,
-              image: tapImage
-            }
+            name: tapName,
+            image: tapImage
           }
         },
         knotPath
@@ -189,22 +187,26 @@ const fetchTapFields = (tap, image, knot) =>
       .catch(reject);
   });
 
-const writeSchema = (schemaObject) =>
+const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(applicationFolder, 'catalog.json'),
-      JSON.stringify(schemaObject)
-    )
+    const catalogPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'tap', 'catalog.json')
+      : path.resolve(applicationFolder, 'catalog.json');
+    writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
-        shell.rm(
-          '-f',
-          path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
-        );
-        shell.mv(
-          path.resolve(applicationFolder, 'catalog.json'),
-          path.resolve(applicationFolder, 'configs', 'tap')
-        );
-        resolve();
+        if (knot) {
+          resolve();
+        } else {
+          shell.rm(
+            '-f',
+            path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
+          );
+          shell.mv(
+            path.resolve(applicationFolder, 'catalog.json'),
+            path.resolve(applicationFolder, 'configs', 'tap')
+          );
+          resolve();
+        }
       })
       .catch(reject);
   });

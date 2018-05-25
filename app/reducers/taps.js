@@ -83,7 +83,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         schemaLoading: false,
         schemaLoaded: true,
-        schema: action.schema,
+        schema: state.schema ? state.schema : action.schema,
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD:

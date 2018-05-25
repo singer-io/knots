@@ -25,14 +25,20 @@ router.post('/select', (req, res) => {
 
 router.post('/config/', (req, res) => {
   addConfig(req)
-    .then((schema) => res.json({ schema: schema.streams }))
+    .then((schema) => {
+      if (req.body.knot) {
+        res.json({});
+      } else {
+        res.json({ schema: schema.streams });
+      }
+    })
     .catch((error) => {
       res.status(500).json({ message: error.message });
     });
 });
 
 router.put('/schema/', (req, res) => {
-  writeSchema(req.body)
+  writeSchema(req.body.schema, req.body.knot)
     .then(() => {
       res.json({});
     })
