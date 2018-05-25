@@ -47,7 +47,10 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: { name: string, image: string }) {
+export function selectTap(
+  tap: { name: string, image: string },
+  knotName: string
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SELECT_TAP,
@@ -56,7 +59,8 @@ export function selectTap(tap: { name: string, image: string }) {
 
     axios
       .post(`${baseUrl}/taps/select/`, {
-        tap
+        tap,
+        knot: knotName
       })
       .then((response) => {
         dispatch({

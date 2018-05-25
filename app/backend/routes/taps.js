@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  const { tap } = req.body;
-  fetchTapFields(tap.name, tap.image)
+  const { tap, knot } = req.body;
+  fetchTapFields(tap.name, tap.image, knot)
     .then((config) => {
       res.json({
         config

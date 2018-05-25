@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const shell = require('shelljs');
 const { app } = require('electron');
 
-const { writeFile, readFile } = require('./util');
+const { writeFile, readFile, addKnotAttribute } = require('./util');
 const { taps, getTapFields, commands } = require('./constants');
 
 let applicationFolder;
@@ -13,24 +13,43 @@ if (process.env.NODE_ENV === 'production') {
   applicationFolder = path.resolve(__dirname, '../../');
 }
 
-const createKnot = (tapName, tapImage) =>
+const createKnot = (tapName, tapImage, knotPath) =>
   new Promise((resolve, reject) => {
-    // Create knots folder if it doesn't exist
-    shell.mkdir('-p', applicationFolder);
+    if (knotPath) {
+      addKnotAttribute(
+        {
+          field: ['tap'],
+          value: {
+            tap: {
+              name: tapName,
+              image: tapImage
+            }
+          }
+        },
+        knotPath
+      )
+        .then(() => {
+          resolve();
+        })
+        .catch(reject);
+    } else {
+      // Create knots folder if it doesn't exist
+      shell.mkdir('-p', applicationFolder);
 
-    writeFile(
-      path.resolve(applicationFolder, 'knot.json'),
-      JSON.stringify({
-        tap: {
-          name: tapName,
-          image: tapImage
-        }
-      })
-    )
-      .then(() => {
-        resolve();
-      })
-      .catch(reject);
+      writeFile(
+        path.resolve(applicationFolder, 'knot.json'),
+        JSON.stringify({
+          tap: {
+            name: tapName,
+            image: tapImage
+          }
+        })
+      )
+        .then(() => {
+          resolve();
+        })
+        .catch(reject);
+    }
   });
 
 const writeConfig = (config, configPath, knot) =>
@@ -152,9 +171,12 @@ const getTaps = () =>
     }
   });
 
-const fetchTapFields = (tap, image) =>
+const fetchTapFields = (tap, image, knot) =>
   new Promise((resolve, reject) => {
-    createKnot(tap, image)
+    const knotPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      : '';
+    createKnot(tap, image, knotPath)
       .then(() => {
         const fields = getTapFields(tap);
 

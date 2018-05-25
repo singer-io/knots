@@ -118,6 +118,7 @@ export default class Taps extends Component<Props, State> {
       sfToken,
       selectedTap
     } = this.props.tapsStore;
+    const { knotName } = this.props.knotsStore;
     const { showTaps } = this.state;
 
     return (
@@ -149,6 +150,7 @@ export default class Taps extends Component<Props, State> {
                       {...tap}
                       selectTap={this.props.selectTap}
                       selected={selectedTap.name}
+                      knotName={knotName}
                     />
                   ))}
                 </Row>
