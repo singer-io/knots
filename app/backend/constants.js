@@ -163,6 +163,17 @@ const tapSalesforceFields = [
   }
 ];
 
+const getTapFields = (tap) => {
+  switch (tap) {
+    case 'tap-redshift':
+      return tapRedshiftFields;
+    case 'tap-salesforce':
+      return tapSalesforceFields;
+    default:
+      return [];
+  }
+};
+
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
     `docker run -v ${folderPath}/configs/tap:/app/${tap}/data ${image} ${tap} -c ${tap}/data/config.json -d > ${folderPath}/configs/tap/catalog.json`,
@@ -205,6 +216,5 @@ module.exports = {
   taps,
   commands,
   targets,
-  tapRedshiftFields,
-  tapSalesforceFields
+  getTapFields
 };

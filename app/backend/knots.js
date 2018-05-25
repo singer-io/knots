@@ -8,7 +8,7 @@ const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
-const { commands } = require('./constants');
+const { commands, getTapFields } = require('./constants');
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
@@ -291,6 +291,49 @@ const partialSync = (req) =>
       .catch(reject);
   });
 
+const loadValues = (knot) =>
+  new Promise((resolve, reject) => {
+    const knotPath = path.resolve(applicationFolder, 'knots', knot);
+
+    const promises = [
+      readFile(`${knotPath}/knot.json`),
+      readFile(`${knotPath}/tap/config.json`),
+      readFile(`${knotPath}/tap/catalog.json`),
+      readFile(`${knotPath}/target/config.json`)
+    ];
+
+    Promise.all(promises)
+      .then((valueStrings) => {
+        const values = valueStrings.map((valueString) => {
+          try {
+            const value = JSON.parse(valueString);
+
+            return value;
+          } catch (error) {
+            reject(error);
+          }
+
+          return {};
+        });
+
+        const knotJson = values[0];
+        const tapConfig = values[1];
+        const schema = values[2];
+        const targetConfig = values[3];
+        const tapFields = getTapFields(knotJson.tap.name);
+
+        resolve({
+          tap: knotJson.tap,
+          target: knotJson.target,
+          tapFields,
+          tapConfig,
+          targetConfig,
+          schema
+        });
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   saveKnot,
@@ -298,5 +341,6 @@ module.exports = {
   deleteKnot,
   packageKnot,
   downloadKnot,
-  partialSync
+  partialSync,
+  loadValues
 };

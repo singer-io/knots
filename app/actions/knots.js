@@ -16,6 +16,8 @@ export const KNOT_SYNCING = 'KNOT_SYNCING';
 export const KNOT_SYNCED = 'KNOT_SYNCED';
 export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
+export const LOADING_KNOT = 'LOADING_KNOT';
+export const LOADED_KNOT = 'LOADED_KNOT';
 
 type actionType = {
   +type: string
@@ -202,5 +204,33 @@ export function downloadKnot(knot: string) {
         shell.openExternal(`http://localhost:4321/knots/download?knot=${knot}`);
       })
       .catch();
+  };
+}
+
+export function loadValues(knot: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: LOADING_KNOT
+    });
+    axios
+      .post(`${baseUrl}/knots/load`, { knot })
+      .then((response) => {
+        console.log('This is the response', response.data);
+        dispatch({
+          type: LOADED_KNOT,
+          tap: response.data.tap,
+          target: response.data.target,
+          tapFields: response.data.tapFields,
+          tapConfig: response.data.tapConfig,
+          targetConfig: response.data.targetConfig,
+          schema: response.data.schema
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: LOADED_KNOT,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }

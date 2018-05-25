@@ -4,12 +4,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 
 const { writeFile, readFile } = require('./util');
-const {
-  taps,
-  tapRedshiftFields,
-  tapSalesforceFields,
-  commands
-} = require('./constants');
+const { taps, getTapFields, commands } = require('./constants');
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
@@ -142,15 +137,12 @@ const fetchTapFields = (tap, image) =>
   new Promise((resolve, reject) => {
     createKnot(tap, image)
       .then(() => {
-        switch (tap) {
-          case 'tap-redshift':
-            resolve(tapRedshiftFields);
-            break;
-          case 'tap-salesforce':
-            resolve(tapSalesforceFields);
-            break;
-          default:
-            reject(new Error('Unknown tap'));
+        const fields = getTapFields(tap);
+
+        if (fields.length === 0) {
+          reject(new Error('Unknown tap'));
+        } else {
+          resolve(fields);
         }
       })
       .catch(reject);

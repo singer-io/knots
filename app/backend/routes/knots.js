@@ -7,7 +7,8 @@ const {
   deleteKnot,
   packageKnot,
   downloadKnot,
-  partialSync
+  partialSync,
+  loadValues
 } = require('../knots');
 
 router.get('/', (req, res) => {
@@ -75,6 +76,17 @@ router.post('/partial-sync/', (req, res) => {
   partialSync(req)
     .then(() => {
       res.json({});
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.post('/load/', (req, res) => {
+  const { knot } = req.body;
+  loadValues(knot)
+    .then((result) => {
+      res.json(result);
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });

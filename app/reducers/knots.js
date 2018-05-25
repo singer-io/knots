@@ -8,7 +8,8 @@ import {
   DETECTING_DOCKER,
   FETCHING_KNOTS,
   FETCHED_KNOTS,
-  KNOT_DELETED
+  KNOT_DELETED,
+  LOADED_KNOT
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -90,6 +91,11 @@ export default function knots(state = defaultState, action) {
     case KNOT_DELETED:
       return Object.assign({}, state, {
         knotDeleted: true
+      });
+    case LOADED_KNOT:
+      return Object.assign({}, state, {
+        knotName: action.knotName,
+        knotError: action.error || ''
       });
     default:
       return state;

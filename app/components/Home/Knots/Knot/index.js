@@ -11,7 +11,8 @@ type Props = {
   knot: { name: string, lastRun: string },
   delete: ({ name: string }) => void,
   download: ({ name: string }) => void,
-  history: { push: (path: string) => void }
+  history: { push: (path: string) => void },
+  loadValues: (name: string) => void
 };
 
 type State = {
@@ -45,6 +46,13 @@ class Knots extends Component<Props, State> {
     const { name } = this.props.knot;
 
     this.props.history.push(`/sync?knot=${name}&mode=partial`);
+  };
+
+  edit = () => {
+    const { name } = this.props.knot;
+    this.props.loadValues(name);
+
+    // this.props.history.push('/taps');
   };
 
   render() {
@@ -93,6 +101,7 @@ class Knots extends Component<Props, State> {
               data-toggle="tooltip"
               data-placement="top"
               title="Edit"
+              onClick={this.edit}
             >
               <span className="oi oi-pencil" />
             </button>
