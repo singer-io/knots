@@ -104,6 +104,14 @@ const sync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
+          const tapLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'tap.log'
+          );
+          const targetLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'target.log'
+          );
 
           // Get tap and target from the knot object
           const syncData = exec(
@@ -114,14 +122,14 @@ const sync = (req) =>
             )
           );
 
-          fs.watchFile('tap.log', () => {
-            exec('tail -n 1 tap.log', (error, stdout) => {
+          fs.watchFile(tapLogPath, () => {
+            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
-          fs.watchFile('target.log', () => {
-            exec('tail -n 1 target.log', (error, stdout) => {
+          fs.watchFile(targetLogPath, () => {
+            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
