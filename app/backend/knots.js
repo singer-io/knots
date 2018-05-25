@@ -11,6 +11,7 @@ const { readFile, addKnotAttribute, writeFile } = require('./util');
 const { commands, getTapFields } = require('./constants');
 
 let applicationFolder;
+let runningProcess;
 if (process.env.NODE_ENV === 'production') {
   // Knots stored on user's home path on packaged app
   applicationFolder = path.resolve(app.getPath('home'), 'knots');
@@ -120,8 +121,11 @@ const sync = (req) =>
               `${applicationFolder}/knots/${req.body.knotName}`,
               knotObject.tap,
               knotObject.target
-            )
+            ),
+            { detached: true }
           );
+
+          runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
             exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
@@ -251,8 +255,11 @@ const partialSync = (req) =>
               `${applicationFolder}/knots/${req.body.knotName}`,
               knotObject.tap,
               knotObject.target
-            )
+            ),
+            { detached: true }
           );
+
+          runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
             exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
@@ -335,6 +342,12 @@ const loadValues = (knot) =>
       .catch(reject);
   });
 
+const terminateSync = () => {
+  if (runningProcess) {
+    return runningProcess.pid;
+  }
+};
+
 module.exports = {
   getKnots,
   saveKnot,
@@ -343,5 +356,6 @@ module.exports = {
   packageKnot,
   downloadKnot,
   partialSync,
-  loadValues
+  loadValues,
+  terminateSync
 };

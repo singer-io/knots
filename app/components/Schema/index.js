@@ -142,6 +142,10 @@ export default class Schema extends Component<Props, State> {
     return valid;
   };
 
+  terminateProcess = () => {
+    socket.emit('terminate', 'discovery');
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
@@ -234,6 +238,16 @@ export default class Schema extends Component<Props, State> {
                       disabled={!schemaLoaded || !!error}
                     >
                       Continue
+                    </Button>
+                    <Button
+                      onClick={this.terminateProcess}
+                      disabled={schemaLoaded || !schemaLoading}
+                      className={classNames(
+                        'btn btn-outline-danger float-right my-3',
+                        styles.cancel
+                      )}
+                    >
+                      Cancel
                     </Button>
                   </div>
                 )}

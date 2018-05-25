@@ -94,6 +94,10 @@ export default class Sync extends Component<Props> {
     this.props.save(knotName, selectedTap, selectedTarget);
   };
 
+  terminateProcess = () => {
+    socket.emit('terminate', 'sync');
+  };
+
   render() {
     const {
       knotSyncing,
@@ -215,17 +219,31 @@ export default class Sync extends Component<Props> {
               </Card>
             </Col>
           </Row>
-
-          <Link to="/">
-            <Button
-              color="primary"
-              className="float-right my-3"
-              onClick={this.submit}
-              disabled={!(knotSynced && !knotError)}
-            >
-              Done
-            </Button>
-          </Link>
+          {!knotSynced &&
+            !knotError && (
+              <Button
+                onClick={this.terminateProcess}
+                className={classNames(
+                  'btn btn-outline-danger float-right my-3',
+                  styles.cancelProcess
+                )}
+              >
+                Cancel
+              </Button>
+            )}
+          {knotSynced &&
+            !knotError && (
+              <Link to="/">
+                <Button
+                  color="primary"
+                  className="float-right my-3"
+                  onClick={this.submit}
+                  disabled={!(knotSynced && !knotError)}
+                >
+                  Done
+                </Button>
+              </Link>
+            )}
         </Container>
       </div>
     );
