@@ -7,7 +7,7 @@ const { addKnotAttribute, writeFile } = require('./util');
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), 'knot');
+  applicationFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
   applicationFolder = path.resolve(__dirname, '../../');
 }

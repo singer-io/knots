@@ -10,16 +10,15 @@ const { commands } = require('./constants');
 
 let tempFolder;
 
-// app is only defined in the packaged app, use app root directory during development
 if (process.env.NODE_ENV === 'production') {
-  tempFolder = app.getPath('home');
+  tempFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
   tempFolder = path.resolve(__dirname, '..', '..');
 }
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), 'knot');
+  applicationFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
   applicationFolder = path.resolve(__dirname, '../../');
 }

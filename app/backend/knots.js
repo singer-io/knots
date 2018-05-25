@@ -12,7 +12,7 @@ const { commands } = require('./constants');
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
   // Knots stored on user's home path on packaged app
-  applicationFolder = path.resolve(app.getPath('home'), 'knot');
+  applicationFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
   // Use the repo during development
   applicationFolder = path.resolve(__dirname, '../..');
@@ -68,7 +68,7 @@ const createMakeFile = (knot, name) =>
       knot.target.image
     }${EOL}fullSync:${EOL}\t-\tdocker run -v ${'${CURDIR}'}/tap:/app/tap/data --interactive ${
       knot.tap.image
-    }${
+    } ${
       knot.tap.name
     } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v ${'${CURDIR}'}/target:/app/target/data --interactive ${
       knot.target.image
