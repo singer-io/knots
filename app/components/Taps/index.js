@@ -41,12 +41,14 @@ type Props = {
       select_fields_by_default?: boolean
     }
   },
+  knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string }) => void,
   updateTapField: (key: string, value: string) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
-    fieldValues: {}
+    fieldValues: {},
+    knotName: string
   ) => void
 };
 
@@ -98,7 +100,9 @@ export default class Taps extends Component<Props, State> {
 
   submit = () => {
     const { selectedTap, fieldValues } = this.props.tapsStore;
-    this.props.submitConfig(selectedTap, fieldValues);
+    const { knotName } = this.props.knotsStore;
+
+    this.props.submitConfig(selectedTap, fieldValues, knotName);
     this.props.history.push('/schema');
   };
 

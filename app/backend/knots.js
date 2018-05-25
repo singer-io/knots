@@ -318,11 +318,12 @@ const loadValues = (knot) =>
 
         const knotJson = values[0];
         const tapConfig = values[1];
-        const schema = values[2];
+        const schema = values[2].streams;
         const targetConfig = values[3];
         const tapFields = getTapFields(knotJson.tap.name);
 
         resolve({
+          name: knotJson.name,
           tap: knotJson.tap,
           target: knotJson.target,
           tapFields,

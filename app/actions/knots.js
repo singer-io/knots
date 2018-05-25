@@ -222,6 +222,7 @@ export function loadValues(knot: string) {
           tapFields: response.data.tapFields,
           tapConfig: response.data.tapConfig,
           targetConfig: response.data.targetConfig,
+          knotName: response.data.name,
           schema: response.data.schema
         });
       })

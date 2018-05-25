@@ -97,7 +97,8 @@ function ISODateString(d) {
 
 export function submitConfig(
   tap: { name: string, image: string },
-  config: { start_date?: string }
+  config: { start_date?: string },
+  knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -109,11 +110,14 @@ export function submitConfig(
       tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
     }
 
+    const payload = {
+      tap,
+      tapConfig,
+      knot: knotName
+    };
+
     axios
-      .post(`${baseUrl}/taps/config/`, {
-        tap,
-        tapConfig
-      })
+      .post(`${baseUrl}/taps/config/`, payload)
       .then((response) => {
         dispatch({
           type: SCHEMA_RECEIVED,

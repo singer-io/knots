@@ -6,7 +6,8 @@ import Taps from '../components/Taps';
 
 function mapStateToProps(state) {
   return {
-    tapsStore: state.taps
+    tapsStore: state.taps,
+    knotsStore: state.knots
   };
 }
 

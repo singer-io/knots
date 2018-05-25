@@ -33,21 +33,22 @@ const createKnot = (tapName, tapImage) =>
       .catch(reject);
   });
 
-const writeConfig = (config) =>
+const writeConfig = (config, configPath, knot) =>
   new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(applicationFolder, 'config.json'),
-      JSON.stringify(config)
-    )
+    writeFile(configPath, JSON.stringify(config))
       .then(() => {
-        // Remove any previously saved temp config
-        shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
-        shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
-        shell.mv(
-          path.resolve(applicationFolder, 'config.json'),
-          path.resolve(applicationFolder, 'configs', 'tap')
-        );
-        resolve();
+        if (knot) {
+          resolve();
+        } else {
+          // Remove any previously saved temp config
+          shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
+          shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+          shell.mv(
+            path.resolve(applicationFolder, 'config.json'),
+            path.resolve(applicationFolder, 'configs', 'tap')
+          );
+          resolve();
+        }
       })
       .catch(reject);
   });
@@ -108,18 +109,36 @@ const readSchema = () =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
+    const { knot } = req.body;
+    let configPath;
+    if (req.body.knot) {
+      configPath = path.resolve(
+        applicationFolder,
+        'knots',
+        knot,
+        'tap',
+        'config.json'
+      );
+    } else {
+      configPath = path.resolve(applicationFolder, 'config.json');
+    }
+
     // Write the config to configs/tap/
-    writeConfig(req.body.tapConfig)
+    writeConfig(req.body.tapConfig, configPath, knot)
       .then(() => {
-        // Get tap schema by running discovery mode
-        getSchema(req)
-          .then(() => {
-            // Schema now on file, read it and return the result
-            readSchema()
-              .then(resolve)
-              .catch(reject);
-          })
-          .catch(reject);
+        if (knot) {
+          resolve();
+        } else {
+          // Get tap schema by running discovery mode
+          getSchema(req)
+            .then(() => {
+              // Schema now on file, read it and return the result
+              readSchema()
+                .then(resolve)
+                .catch(reject);
+            })
+            .catch(reject);
+        }
       })
       .catch(reject);
   });
