@@ -4,7 +4,6 @@ const shell = require('shelljs');
 const { app } = require('electron');
 
 const { writeFile, readFile } = require('./util');
-
 const {
   taps,
   tapRedshiftFields,

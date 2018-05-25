@@ -4,9 +4,7 @@ import axios from 'axios';
 const baseUrl = 'http://localhost:4321';
 
 export const TARGETS_LOADING = 'TARGETS_LOADING';
-
 export const TARGET_SELECTED = 'TARGET_SELECTED';
-
 export const UPDATE_TARGETS = 'UPDATE_TARGETS';
 export const TARGET_INSTALLED = 'TARGET_INSTALLED';
 export const TARGET_CONFIGURING = 'TARGET_CONFIGURING';
@@ -70,14 +68,17 @@ export function submitFields(fieldValues: {}) {
     });
 
     axios
-      .post(`${baseUrl}/target/`, fieldValues)
+      .post(`${baseUrl}/targets/`, fieldValues)
       .then(() => {
         dispatch({
           type: TARGET_CONFIGURED
         });
       })
-      .catch(() => {
-        console.log('Final post failed');
+      .catch((error) => {
+        dispatch({
+          type: TARGET_CONFIGURED,
+          error: error.response ? error.response.data.message : error.message
+        });
       });
   };
 }
