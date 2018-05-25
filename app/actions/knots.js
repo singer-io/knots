@@ -215,7 +215,6 @@ export function loadValues(knot: string) {
     axios
       .post(`${baseUrl}/knots/load`, { knot })
       .then((response) => {
-        console.log('This is the response', response.data);
         dispatch({
           type: LOADED_KNOT,
           tap: response.data.tap,

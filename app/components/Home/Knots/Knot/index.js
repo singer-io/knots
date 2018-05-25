@@ -1,9 +1,9 @@
 // @flow
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import moment from 'moment';
 import classNames from 'classnames';
-import { withRouter } from 'react-router-dom';
 
 import styles from './Knot.css';
 
@@ -19,14 +19,12 @@ type State = {
   showDelete: boolean
 };
 
-class Knots extends Component<Props, State> {
+class Knot extends Component<Props, State> {
   state = {
     showDelete: false
   };
 
   toggleDelete = () => {
-    // this.props.delete(this.props.knot);
-
     this.setState({
       showDelete: !this.state.showDelete
     });
@@ -51,8 +49,6 @@ class Knots extends Component<Props, State> {
   edit = () => {
     const { name } = this.props.knot;
     this.props.loadValues(name);
-
-    // this.props.history.push('/taps');
   };
 
   render() {
@@ -157,4 +153,4 @@ class Knots extends Component<Props, State> {
 }
 
 // $FlowFixMe
-export default withRouter(Knots);
+export default withRouter(Knot);

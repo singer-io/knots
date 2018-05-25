@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Alert, Button } from 'reactstrap';
 
 import Knot from './Knot';
@@ -9,15 +9,17 @@ type Props = {
   knotsStore: {
     knots: Array<{ name: string, lastRun: string }>,
     knotDeleted: boolean,
-    knotError: string
+    knotError: string,
+    knotLoaded: boolean
   },
   deleteKnot: (knot: string) => void,
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
-  loadValues: (knot: string) => void
+  loadValues: (knot: string) => void,
+  history: { push: (path: string) => void }
 };
 
-export default class Knots extends Component<Props> {
+class Knots extends Component<Props> {
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.knotsStore.knotDeleted) {
       this.props.getKnots();
@@ -37,7 +39,11 @@ export default class Knots extends Component<Props> {
   };
 
   render() {
-    const { knots, knotError } = this.props.knotsStore;
+    const { knots, knotError, knotLoaded } = this.props.knotsStore;
+    if (knotLoaded && !knotError) {
+      console.log('Called from here');
+      this.props.history.push('/taps');
+    }
     return (
       <div className="container mt-5">
         <div className="d-flex justify-content-between align-items-center mb-3">
@@ -82,3 +88,6 @@ export default class Knots extends Component<Props> {
     );
   }
 }
+
+// $FlowFixMe
+export default withRouter(Knots);
