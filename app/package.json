@@ -1,11 +1,13 @@
 {
-  "name": "knot",
-  "productName": "knot",
+  "name": "knots",
+  "productName": "Knots",
   "version": "0.0.1",
-  "description": "This app, allows you to configure and download an executable Singer pipeline",
+  "description":
+    "This app, allows you to configure and download an executable Singer pipeline",
   "main": "./main.prod.js",
   "scripts": {
-    "electron-rebuild": "node -r babel-register ../internals/scripts/ElectronRebuild.js",
+    "electron-rebuild":
+      "node -r babel-register ../internals/scripts/ElectronRebuild.js",
     "postinstall": "npm run electron-rebuild"
   },
   "license": "MIT",

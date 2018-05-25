@@ -13,13 +13,16 @@ const {
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), 'knot');
+  applicationFolder = path.resolve(app.getPath('home'), 'knots');
 } else {
   applicationFolder = path.resolve(__dirname, '../../');
 }
 
 const createKnot = (tapName, tapImage) =>
   new Promise((resolve, reject) => {
+    // Create knots folder if it doesn't exist
+    shell.mkdir('-p', applicationFolder);
+
     writeFile(
       path.resolve(applicationFolder, 'knot.json'),
       JSON.stringify({
