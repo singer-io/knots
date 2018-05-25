@@ -225,11 +225,78 @@ const downloadKnot = (req, res) => {
   res.download(`${applicationFolder}/${req.query.knot}.zip`);
 };
 
+const partialSync = (req) =>
+  new Promise((resolve, reject) => {
+    const { knotName } = req.body;
+
+    // Get the stored knot object
+    readFile(
+      path.resolve(`${applicationFolder}/knots/${knotName}`, 'knot.json')
+    )
+      .then((knotObjectString) => {
+        try {
+          const knotObject = JSON.parse(knotObjectString);
+          const tapLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'tap.log'
+          );
+          const targetLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'target.log'
+          );
+
+          // Get tap and target from the knot object
+          const syncData = exec(
+            commands.runPartialSync(
+              `${applicationFolder}/knots/${req.body.knotName}`,
+              knotObject.tap,
+              knotObject.target
+            )
+          );
+
+          fs.watchFile(tapLogPath, () => {
+            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+              req.io.emit('tapLog', stdout.toString());
+            });
+          });
+
+          fs.watchFile(targetLogPath, () => {
+            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+              req.io.emit('targetLog', stdout.toString());
+            });
+          });
+
+          syncData.on('exit', () => {
+            addKnotAttribute(
+              {
+                field: ['lastRun'],
+                value: new Date().toISOString()
+              },
+              path.resolve(
+                `${applicationFolder}/knots/${knotName}`,
+                'knot.json'
+              )
+            )
+              .then(() => {
+                resolve();
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          });
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   saveKnot,
   sync,
   deleteKnot,
   packageKnot,
-  downloadKnot
+  downloadKnot,
+  partialSync
 };

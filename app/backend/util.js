@@ -1,17 +1,7 @@
 const fs = require('fs');
-const { exec } = require('child_process');
 const path = require('path');
 const { set } = require('lodash');
 const { app } = require('electron');
-
-const { commands } = require('./constants');
-
-let tempFolder;
-if (process.env.NODE_ENV === 'production') {
-  tempFolder = path.resolve(app.getPath('home'), 'knots');
-} else {
-  tempFolder = path.resolve(__dirname, '..', '..');
-}
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
@@ -70,57 +60,7 @@ const addKnotAttribute = (content, passedPath) =>
       .catch(reject);
   });
 
-const partialSync = (req) =>
-  new Promise((resolve, reject) => {
-    const { knotName } = req.body;
-
-    // Get the stored knot object
-    readFile(path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json'))
-      .then((knotObject) => {
-        // Get tap and target from the knot object
-        const syncData = exec(
-          commands.runPartialSync(
-            `${tempFolder}/knots/${req.body.knotName}`,
-            knotObject.tap,
-            knotObject.target
-          )
-        );
-
-        fs.watchFile('tap.log', () => {
-          exec('tail -n 1 tap.log', (error, stdout) => {
-            req.io.emit('tapLog', stdout.toString());
-          });
-        });
-
-        fs.watchFile('target.log', () => {
-          exec('tail -n 1 target.log', (error, stdout) => {
-            req.io.emit('targetLog', stdout.toString());
-          });
-        });
-
-        syncData.on('exit', () => {
-          addKnotAttribute(
-            {
-              field: ['lastRun'],
-              value: new Date().toISOString()
-            },
-            path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json')
-          )
-            .then(() => {
-              resolve();
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
-      })
-      .catch((err) => {
-        console.log('Bane', err);
-      });
-  });
-
 module.exports = {
-  partialSync,
   readFile,
   writeFile,
   addKnotAttribute

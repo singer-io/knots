@@ -215,18 +215,17 @@ export default class Sync extends Component<Props> {
               </Card>
             </Col>
           </Row>
-          {knotSynced &&
-            !knotError && (
-              <Link to="/">
-                <Button
-                  color="primary"
-                  className="float-right my-3"
-                  onClick={this.submit}
-                >
-                  Done
-                </Button>
-              </Link>
-            )}
+
+          <Link to="/">
+            <Button
+              color="primary"
+              className="float-right my-3"
+              onClick={this.submit}
+              disabled={!(knotSynced && !knotError)}
+            >
+              Done
+            </Button>
+          </Link>
         </Container>
       </div>
     );

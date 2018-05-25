@@ -143,17 +143,18 @@ export function partialSync(knotName: string) {
     });
 
     axios
-      .post(`${baseUrl}/sync/partial`, { knotName })
+      .post(`${baseUrl}/knots/partial-sync`, { knotName })
       .then(() =>
         dispatch({
           type: KNOT_SYNCED
         })
       )
-      .catch(() =>
+      .catch((error) => {
         dispatch({
-          type: KNOT_SYNCED
-        })
-      );
+          type: KNOT_SYNCED,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 

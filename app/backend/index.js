@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const socketIo = require('socket.io');
 const http = require('http');
-const router = require('./router');
 const routes = require('./routes');
 require('dotenv').config();
 
@@ -16,7 +15,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/', router);
 routes(app);
 
 const PORT = 4321; // Random number that's unikely to clash with other apps

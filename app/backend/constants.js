@@ -187,13 +187,17 @@ const commands = {
       tap.image
     } tap-redshift -c ${tap.name}/data/config.json --properties ${
       tap.name
-    }/data/catalog.json --state ${
-      tap.name
-    }/data/state.json 2> tap.log | docker run -v ${folderPath}/target:/app/${
+    }/data/catalog.json --state ${tap.name}/data/state.json 2> ${path.resolve(
+      folderPath,
+      'tap.log'
+    )} | docker run -v ${folderPath}/target:/app/${
       target.name
     }/data --interactive ${target.image} ${target.name} -c ${
       target.name
-    }/data/config.json 2> tap.log > ${folderPath}/tap/latest-state.json;
+    }/data/config.json 2> ${path.resolve(
+      folderPath,
+      'target.log'
+    )} > ${folderPath}/tap/latest-state.json;
     \\tail -1 ${folderPath}/tap/latest-state.json > ${folderPath}/tap/state.json`
 };
 

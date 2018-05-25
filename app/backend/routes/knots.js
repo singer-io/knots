@@ -6,7 +6,8 @@ const {
   sync,
   deleteKnot,
   packageKnot,
-  downloadKnot
+  downloadKnot,
+  partialSync
 } = require('../knots');
 
 router.get('/', (req, res) => {
@@ -62,6 +63,16 @@ router.get('/download/', (req, res) => {
 
 router.post('/full-sync/', (req, res) => {
   sync(req)
+    .then(() => {
+      res.json({});
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.post('/partial-sync/', (req, res) => {
+  partialSync(req)
     .then(() => {
       res.json({});
     })

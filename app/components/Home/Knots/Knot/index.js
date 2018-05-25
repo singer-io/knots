@@ -43,7 +43,6 @@ class Knots extends Component<Props, State> {
 
   partialSync = () => {
     const { name } = this.props.knot;
-    console.log('Partial sync called', name, this.props);
 
     this.props.history.push(`/sync?knot=${name}&mode=partial`);
   };
