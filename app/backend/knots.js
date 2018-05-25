@@ -1,4 +1,3 @@
-const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const { app } = require('electron');
@@ -37,20 +36,4 @@ const getKnots = () =>
     }
   });
 
-const detectDocker = () =>
-  new Promise((resolve, reject) => {
-    // Run `docker -v` on the user's shell
-    const docker = spawn('docker', ['-v']);
-
-    // A version number was returned, docker is installed
-    docker.stdout.on('data', (version) => {
-      resolve(version.toString('utf8'));
-    });
-
-    // Threw error, no Docker
-    docker.on('error', (error) => {
-      reject(error);
-    });
-  });
-
-module.exports = { detectDocker, getKnots };
+module.exports = { getKnots };

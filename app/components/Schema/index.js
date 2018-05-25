@@ -123,6 +123,26 @@ export default class Schema extends Component<Props, State> {
     shell.openExternal(repo);
   };
 
+  validSchema = () => {
+    const { schema } = this.props.tapsStore;
+
+    let valid = false;
+    // Valid if a stream has been selected
+    schema.forEach((stream) => {
+      const { metadata } = stream;
+
+      metadata.forEach((meta) => {
+        const subMeta = meta.metadata;
+
+        if (subMeta.selected) {
+          valid = true;
+        }
+      });
+    });
+
+    return valid;
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
@@ -220,6 +240,7 @@ export default class Schema extends Component<Props, State> {
                 <Button
                   color="primary"
                   className="float-right my-3"
+                  disabled={!this.validSchema()}
                   onClick={this.submit}
                 >
                   Continue

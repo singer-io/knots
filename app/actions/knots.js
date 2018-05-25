@@ -27,7 +27,7 @@ export function detectDocker() {
     });
 
     axios
-      .get(`${baseUrl}/knots/docker/`)
+      .get(`${baseUrl}/docker/`)
       .then((response) =>
         dispatch({
           type: UPDATE_DOCKER_VERSION,
