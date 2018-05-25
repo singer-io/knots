@@ -6,7 +6,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 const { EasyZip } = require('easy-zip');
 
-const { commands, targets } = require('./constants');
+const { commands } = require('./constants');
 
 let tempFolder;
 
@@ -15,6 +15,13 @@ if (process.env.NODE_ENV === 'production') {
   tempFolder = app.getPath('home');
 } else {
   tempFolder = path.resolve(__dirname, '..', '..');
+}
+
+let applicationFolder;
+if (process.env.NODE_ENV === 'production') {
+  applicationFolder = path.resolve(app.getPath('home'), 'knot');
+} else {
+  applicationFolder = path.resolve(__dirname, '../../');
 }
 
 const readFile = (filePath) =>
@@ -42,37 +49,28 @@ const writeFile = (filePath, content) =>
 
 const addKnotAttribute = (content, passedPath) =>
   new Promise((resolve, reject) => {
-    const pathToKnot = passedPath || path.resolve(tempFolder, 'knot.json');
+    const pathToKnot =
+      passedPath || path.resolve(applicationFolder, 'knot.json');
     readFile(pathToKnot)
-      .then((knotObject) => {
-        const newKnot = set(knotObject, content.field, content.value);
+      .then((knotObjectString) => {
+        try {
+          // Try to turn to object to validate it's a valid object
+          const knotObject = JSON.parse(knotObjectString);
 
-        writeFile(pathToKnot, JSON.stringify(newKnot))
-          .then(() => {
-            resolve();
-          })
-          .catch((error) => {
-            reject(error);
-          });
+          const newKnot = set(knotObject, content.field, content.value);
+
+          writeFile(pathToKnot, JSON.stringify(newKnot))
+            .then(() => {
+              resolve();
+            })
+            .catch((error) => {
+              reject(error);
+            });
+        } catch (error) {
+          // Not a valid object, pass on the error
+          reject(error);
+        }
       })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-
-const getTargets = () =>
-  new Promise((resolve, reject) => {
-    if (targets) {
-      resolve(targets);
-    } else {
-      reject();
-    }
-  });
-
-const addTarget = (target) =>
-  new Promise((resolve, reject) => {
-    addKnotAttribute({ field: ['target'], value: target })
-      .then(resolve)
       .catch(reject);
   });
 
@@ -295,8 +293,6 @@ const deleteKnot = (knot) =>
   });
 
 module.exports = {
-  getTargets,
-  addTarget,
   addTargetConfig,
   sync,
   partialSync,
@@ -305,5 +301,6 @@ module.exports = {
   getToken,
   deleteKnot,
   readFile,
-  writeFile
+  writeFile,
+  addKnotAttribute
 };

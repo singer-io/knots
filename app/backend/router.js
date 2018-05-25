@@ -4,10 +4,8 @@ const axios = require('axios');
 const router = express.Router();
 const {
   readSchema,
-  getTargets,
   addTargetConfig,
   sync,
-  addTarget,
   saveKnot,
   downloadKnot,
   getToken,
@@ -22,24 +20,6 @@ router.post('/schema/', (req, res) => {
       res.json(schema.streams);
     })
     .catch();
-});
-
-router.get('/targets/', (req, res) => {
-  getTargets()
-    .then((targets) => res.json(targets))
-    .catch(() => {
-      res.json([]);
-    });
-});
-
-router.post('/target/install', (req, res) => {
-  addTarget(req.body)
-    .then(() => {
-      res.json({ status: 200 });
-    })
-    .catch(() => {
-      res.json([]);
-    });
 });
 
 router.get('/token/', (req, res) => {

@@ -3,8 +3,10 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
 
-export const TARGET_SELECTED = 'TARGET_SELECTED';
 export const TARGETS_LOADING = 'TARGETS_LOADING';
+
+export const TARGET_SELECTED = 'TARGET_SELECTED';
+
 export const UPDATE_TARGETS = 'UPDATE_TARGETS';
 export const TARGET_INSTALLED = 'TARGET_INSTALLED';
 export const TARGET_CONFIGURING = 'TARGET_CONFIGURING';
@@ -22,18 +24,19 @@ export function getTargets() {
 
     axios
       .get(`${baseUrl}/targets/`)
-      .then((response) =>
+      .then((response) => {
         dispatch({
           type: UPDATE_TARGETS,
-          targets: response.data
-        })
-      )
-      .catch(() =>
+          targets: response.data.targets
+        });
+      })
+      .catch((error) => {
         dispatch({
-          type: TARGETS_LOADING,
-          taps: []
-        })
-      );
+          type: UPDATE_TARGETS,
+          targets: [],
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }
 
@@ -45,7 +48,7 @@ export function selectTarget(target: { name: string, image: string }) {
     });
 
     axios
-      .post(`${baseUrl}/target/install`, target)
+      .post(`${baseUrl}/targets/select`, target)
       .then(() => {
         dispatch({
           type: TARGET_INSTALLED
@@ -54,7 +57,7 @@ export function selectTarget(target: { name: string, image: string }) {
       .catch((error) => {
         dispatch({
           type: TARGET_INSTALLED,
-          error
+          error: error.response ? error.response.data.message : error.message
         });
       });
   };
