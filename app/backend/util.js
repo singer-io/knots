@@ -1,21 +1,7 @@
 const fs = require('fs');
-const { exec } = require('child_process');
 const path = require('path');
 const { set } = require('lodash');
-const shell = require('shelljs');
 const { app } = require('electron');
-const { EasyZip } = require('easy-zip');
-
-const { commands } = require('./constants');
-
-let tempFolder;
-let runningProcess;
-
-if (process.env.NODE_ENV === 'production') {
-  tempFolder = path.resolve(app.getPath('home'), 'knots');
-} else {
-  tempFolder = path.resolve(__dirname, '..', '..');
-}
 
 let applicationFolder;
 if (process.env.NODE_ENV === 'production') {
@@ -38,12 +24,12 @@ const readFile = (filePath) =>
 const writeFile = (filePath, content) =>
   new Promise((resolve, reject) => {
     // Write the content specified to the specified file
-    fs.writeFile(filePath, content, (err) => {
-      if (!err) {
+    fs.writeFile(filePath, content, (error) => {
+      if (!error) {
         resolve();
       }
 
-      reject();
+      reject(error);
     });
   });
 
@@ -74,99 +60,8 @@ const addKnotAttribute = (content, passedPath) =>
       .catch(reject);
   });
 
-const partialSync = (req) =>
-  new Promise((resolve, reject) => {
-    const { knotName } = req.body;
-
-    // Get the stored knot object
-    readFile(path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json'))
-      .then((knotObject) => {
-        // Get tap and target from the knot object
-        const syncData = exec(
-          commands.runPartialSync(
-            `${tempFolder}/knots/${req.body.knotName}`,
-            knotObject.tap,
-            knotObject.target
-          ),
-          { detached: true }
-        );
-
-        runningProcess = syncData;
-
-        fs.watchFile('tap.log', () => {
-          exec('tail -n 1 tap.log', (error, stdout) => {
-            req.io.emit('tapLog', stdout.toString());
-          });
-        });
-
-        fs.watchFile('target.log', () => {
-          exec('tail -n 1 target.log', (error, stdout) => {
-            req.io.emit('targetLog', stdout.toString());
-          });
-        });
-
-        syncData.on('exit', () => {
-          addKnotAttribute(
-            {
-              field: ['lastRun'],
-              value: new Date().toISOString()
-            },
-            path.resolve(`${tempFolder}/knots/${knotName}`, 'knot.json')
-          )
-            .then(() => {
-              resolve();
-            })
-            .catch((error) => {
-              reject(error);
-            });
-        });
-      })
-      .catch((err) => {
-        console.log('Bane', err);
-      });
-  });
-
-const downloadKnot = (knotName) =>
-  new Promise((resolve) => {
-    const zip = new EasyZip();
-    zip.zipFolder(path.resolve(tempFolder, 'knots', knotName), () => {
-      zip.writeToFile(`${knotName}.zip`);
-      resolve();
-    });
-  });
-
-const getToken = (knot) =>
-  new Promise((resolve, reject) => {
-    if (knot) {
-      readFile(path.resolve(tempFolder, 'knots', knot, 'target', 'config.json'))
-        .then((configObject) => resolve(configObject.api_token))
-        .catch((err) => {
-          reject(err);
-        });
-    } else {
-      reject();
-    }
-  });
-
-const deleteKnot = (knot) =>
-  new Promise((resolve) => {
-    shell.rm('-rf', path.resolve(tempFolder, 'knots', knot));
-    resolve();
-  });
-
-const terminatePartialSync = () => {
-  if (runningProcess) {
-    return runningProcess.pid;
-  }
-};
-
 module.exports = {
-  partialSync,
-  downloadKnot,
-  getToken,
-  deleteKnot,
   readFile,
   writeFile,
-  addKnotAttribute,
-  terminatePartialSync
+  addKnotAttribute
 };

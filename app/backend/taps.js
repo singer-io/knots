@@ -3,13 +3,8 @@ const { exec } = require('child_process');
 const shell = require('shelljs');
 const { app } = require('electron');
 
-const { writeFile, readFile } = require('./util');
-const {
-  taps,
-  tapRedshiftFields,
-  tapSalesforceFields,
-  commands
-} = require('./constants');
+const { writeFile, readFile, addKnotAttribute } = require('./util');
+const { taps, getTapFields, commands } = require('./constants');
 
 let applicationFolder;
 let runningProcess;
@@ -19,41 +14,59 @@ if (process.env.NODE_ENV === 'production') {
   applicationFolder = path.resolve(__dirname, '../../');
 }
 
-const createKnot = (tapName, tapImage) =>
+const createKnot = (tapName, tapImage, knotPath) =>
   new Promise((resolve, reject) => {
-    // Create knots folder if it doesn't exist
-    shell.mkdir('-p', applicationFolder);
+    if (knotPath) {
+      addKnotAttribute(
+        {
+          field: ['tap'],
+          value: {
+            name: tapName,
+            image: tapImage
+          }
+        },
+        knotPath
+      )
+        .then(() => {
+          resolve();
+        })
+        .catch(reject);
+    } else {
+      // Create knots folder if it doesn't exist
+      shell.mkdir('-p', applicationFolder);
 
-    writeFile(
-      path.resolve(applicationFolder, 'knot.json'),
-      JSON.stringify({
-        tap: {
-          name: tapName,
-          image: tapImage
-        }
-      })
-    )
-      .then(() => {
-        resolve();
-      })
-      .catch(reject);
+      writeFile(
+        path.resolve(applicationFolder, 'knot.json'),
+        JSON.stringify({
+          tap: {
+            name: tapName,
+            image: tapImage
+          }
+        })
+      )
+        .then(() => {
+          resolve();
+        })
+        .catch(reject);
+    }
   });
 
-const writeConfig = (config) =>
+const writeConfig = (config, configPath, knot) =>
   new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(applicationFolder, 'config.json'),
-      JSON.stringify(config)
-    )
+    writeFile(configPath, JSON.stringify(config))
       .then(() => {
-        // Remove any previously saved temp config
-        shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
-        shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
-        shell.mv(
-          path.resolve(applicationFolder, 'config.json'),
-          path.resolve(applicationFolder, 'configs', 'tap')
-        );
-        resolve();
+        if (knot) {
+          resolve();
+        } else {
+          // Remove any previously saved temp config
+          shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
+          shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+          shell.mv(
+            path.resolve(applicationFolder, 'config.json'),
+            path.resolve(applicationFolder, 'configs', 'tap')
+          );
+          resolve();
+        }
       })
       .catch(reject);
   });
@@ -116,18 +129,36 @@ const readSchema = () =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
+    const { knot } = req.body;
+    let configPath;
+    if (req.body.knot) {
+      configPath = path.resolve(
+        applicationFolder,
+        'knots',
+        knot,
+        'tap',
+        'config.json'
+      );
+    } else {
+      configPath = path.resolve(applicationFolder, 'config.json');
+    }
+
     // Write the config to configs/tap/
-    writeConfig(req.body.tapConfig)
+    writeConfig(req.body.tapConfig, configPath, knot)
       .then(() => {
-        // Get tap schema by running discovery mode
-        getSchema(req)
-          .then(() => {
-            // Schema now on file, read it and return the result
-            readSchema()
-              .then(resolve)
-              .catch(reject);
-          })
-          .catch(reject);
+        if (knot) {
+          resolve();
+        } else {
+          // Get tap schema by running discovery mode
+          getSchema(req)
+            .then(() => {
+              // Schema now on file, read it and return the result
+              readSchema()
+                .then(resolve)
+                .catch(reject);
+            })
+            .catch(reject);
+        }
       })
       .catch(reject);
   });
@@ -141,40 +172,44 @@ const getTaps = () =>
     }
   });
 
-const fetchTapFields = (tap, image) =>
+const fetchTapFields = (tap, image, knot) =>
   new Promise((resolve, reject) => {
-    createKnot(tap, image)
+    const knotPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      : '';
+    createKnot(tap, image, knotPath)
       .then(() => {
-        switch (tap) {
-          case 'tap-redshift':
-            resolve(tapRedshiftFields);
-            break;
-          case 'tap-salesforce':
-            resolve(tapSalesforceFields);
-            break;
-          default:
-            reject(new Error('Unknown tap'));
+        const fields = getTapFields(tap);
+
+        if (fields.length === 0) {
+          reject(new Error('Unknown tap'));
+        } else {
+          resolve(fields);
         }
       })
       .catch(reject);
   });
 
-const writeSchema = (schemaObject) =>
+const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
-    writeFile(
-      path.resolve(applicationFolder, 'catalog.json'),
-      JSON.stringify(schemaObject)
-    )
+    const catalogPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'tap', 'catalog.json')
+      : path.resolve(applicationFolder, 'catalog.json');
+    writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
-        shell.rm(
-          '-f',
-          path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
-        );
-        shell.mv(
-          path.resolve(applicationFolder, 'catalog.json'),
-          path.resolve(applicationFolder, 'configs', 'tap')
-        );
-        resolve();
+        if (knot) {
+          resolve();
+        } else {
+          shell.rm(
+            '-f',
+            path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
+          );
+          shell.mv(
+            path.resolve(applicationFolder, 'catalog.json'),
+            path.resolve(applicationFolder, 'configs', 'tap')
+          );
+          resolve();
+        }
       })
       .catch(reject);
   });

@@ -8,7 +8,9 @@ import {
   DETECTING_DOCKER,
   FETCHING_KNOTS,
   FETCHED_KNOTS,
-  KNOT_DELETED
+  KNOT_DELETED,
+  LOADED_KNOT,
+  LOADING_KNOT
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -23,7 +25,9 @@ export type knotsStateType = {
   +knotName: string,
   +syncing: boolean,
   +knotDeleted: boolean,
-  +knotError: string
+  +knotError: string,
+  +knotLoading: boolean,
+  +knotLoaded: boolean
 };
 
 const defaultState = {
@@ -39,7 +43,9 @@ const defaultState = {
   knotSyncing: false,
   knotSynced: false,
   knotDeleted: false,
-  knotError: ''
+  knotError: '',
+  knotLoading: false,
+  knotLoaded: false
 };
 
 export default function knots(state = defaultState, action) {
@@ -90,6 +96,17 @@ export default function knots(state = defaultState, action) {
     case KNOT_DELETED:
       return Object.assign({}, state, {
         knotDeleted: true
+      });
+    case LOADING_KNOT:
+      return Object.assign({}, state, {
+        knotLoading: true
+      });
+    case LOADED_KNOT:
+      return Object.assign({}, state, {
+        knotLoading: false,
+        knotLoaded: true,
+        knotName: action.knotName,
+        knotError: action.error || ''
       });
     default:
       return state;

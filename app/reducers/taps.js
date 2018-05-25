@@ -10,6 +10,7 @@ import {
   SELECT_TAP,
   UPDATE_SCHEMA_LOGS
 } from '../actions/taps';
+import { LOADED_KNOT } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -82,7 +83,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         schemaLoading: false,
         schemaLoaded: true,
-        schema: action.schema,
+        schema: state.schema ? state.schema : action.schema,
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD:
@@ -142,6 +143,13 @@ export default function taps(state = defaultState, action) {
         tapsLoading: false,
         schemaUpdated: true,
         error: action.error
+      });
+    case LOADED_KNOT:
+      return Object.assign({}, state, {
+        selectedTap: action.tap,
+        fieldValues: action.tapConfig,
+        tapFields: action.tapFields,
+        schema: action.schema
       });
     default:
       return state;

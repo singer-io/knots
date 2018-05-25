@@ -4,10 +4,11 @@ const path = require('path');
 const { exec } = require('child_process');
 const { EOL } = require('os');
 const shell = require('shelljs');
+const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
-const { commands } = require('./constants');
+const { commands, getTapFields } = require('./constants');
 
 let applicationFolder;
 let runningProcess;
@@ -120,7 +121,8 @@ const sync = (req) =>
               `${applicationFolder}/knots/${req.body.knotName}`,
               knotObject.tap,
               knotObject.target
-            )
+            ),
+            { detached: true }
           );
 
           runningProcess = syncData;
@@ -207,6 +209,139 @@ const saveKnot = (name) =>
       });
   });
 
+const deleteKnot = (knot) =>
+  new Promise((resolve) => {
+    shell.rm('-rf', path.resolve(applicationFolder, 'knots', knot));
+    resolve();
+  });
+
+const packageKnot = (knotName) =>
+  new Promise((resolve) => {
+    const zip = new EasyZip();
+    zip.zipFolder(path.resolve(applicationFolder, 'knots', knotName), () => {
+      zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+      resolve();
+    });
+  });
+
+const downloadKnot = (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.download(`${applicationFolder}/${req.query.knot}.zip`);
+};
+
+const partialSync = (req) =>
+  new Promise((resolve, reject) => {
+    const { knotName } = req.body;
+
+    // Get the stored knot object
+    readFile(
+      path.resolve(`${applicationFolder}/knots/${knotName}`, 'knot.json')
+    )
+      .then((knotObjectString) => {
+        try {
+          const knotObject = JSON.parse(knotObjectString);
+          const tapLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'tap.log'
+          );
+          const targetLogPath = path.resolve(
+            `${applicationFolder}/knots/${req.body.knotName}`,
+            'target.log'
+          );
+
+          // Get tap and target from the knot object
+          const syncData = exec(
+            commands.runPartialSync(
+              `${applicationFolder}/knots/${req.body.knotName}`,
+              knotObject.tap,
+              knotObject.target
+            ),
+            { detached: true }
+          );
+
+          runningProcess = syncData;
+
+          fs.watchFile(tapLogPath, () => {
+            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+              req.io.emit('tapLog', stdout.toString());
+            });
+          });
+
+          fs.watchFile(targetLogPath, () => {
+            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+              req.io.emit('targetLog', stdout.toString());
+            });
+          });
+
+          syncData.on('exit', () => {
+            addKnotAttribute(
+              {
+                field: ['lastRun'],
+                value: new Date().toISOString()
+              },
+              path.resolve(
+                `${applicationFolder}/knots/${knotName}`,
+                'knot.json'
+              )
+            )
+              .then(() => {
+                resolve();
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          });
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .catch(reject);
+  });
+
+const loadValues = (knot) =>
+  new Promise((resolve, reject) => {
+    const knotPath = path.resolve(applicationFolder, 'knots', knot);
+
+    const promises = [
+      readFile(`${knotPath}/knot.json`),
+      readFile(`${knotPath}/tap/config.json`),
+      readFile(`${knotPath}/tap/catalog.json`),
+      readFile(`${knotPath}/target/config.json`)
+    ];
+
+    Promise.all(promises)
+      .then((valueStrings) => {
+        const values = valueStrings.map((valueString) => {
+          try {
+            const value = JSON.parse(valueString);
+
+            return value;
+          } catch (error) {
+            reject(error);
+          }
+
+          return {};
+        });
+
+        const knotJson = values[0];
+        const tapConfig = values[1];
+        const schema = values[2].streams;
+        const targetConfig = values[3];
+        const tapFields = getTapFields(knotJson.tap.name);
+
+        resolve({
+          name: knotJson.name,
+          tap: knotJson.tap,
+          target: knotJson.target,
+          tapFields,
+          tapConfig,
+          targetConfig,
+          schema
+        });
+      })
+      .catch(reject);
+  });
+
 const terminateSync = () => {
   if (runningProcess) {
     return runningProcess.pid;
@@ -217,5 +352,10 @@ module.exports = {
   getKnots,
   saveKnot,
   sync,
+  deleteKnot,
+  packageKnot,
+  downloadKnot,
+  partialSync,
+  loadValues,
   terminateSync
 };

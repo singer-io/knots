@@ -5,6 +5,7 @@ import {
   TARGET_CONFIGURED,
   UPDATE_TARGET_FIELD
 } from '../actions/user';
+import { LOADED_KNOT } from '../actions/knots';
 
 export type targetsStateType = {
   +targetConfigured: boolean,
@@ -46,6 +47,12 @@ export default function targets(state = defaultState, action) {
 
       return Object.assign({}, state, {
         [action.target]: target
+      });
+    case LOADED_KNOT:
+      const newTarget = state[action.target.name];
+      newTarget.fieldValues = action.targetConfig;
+      return Object.assign({}, state, {
+        [action.target.name]: newTarget
       });
     default:
       return state;

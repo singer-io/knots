@@ -12,7 +12,11 @@ type Props = {
   targetKey: string,
   targetImage: string,
   selected: string,
-  selectTarget: (tap: { name: string, image: string }) => void
+  selectTarget: (
+    tap: { name: string, image: string },
+    knotName: string
+  ) => void,
+  knotName: string
 };
 
 type State = {
@@ -42,7 +46,7 @@ export default class Target extends Component<Props, State> {
   };
 
   render() {
-    const { targetKey, repo } = this.props;
+    const { targetKey, repo, knotName } = this.props;
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card
@@ -51,10 +55,13 @@ export default class Target extends Component<Props, State> {
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
           onClick={() => {
-            this.props.selectTarget({
-              name: targetKey,
-              image: this.props.targetImage
-            });
+            this.props.selectTarget(
+              {
+                name: targetKey,
+                image: this.props.targetImage
+              },
+              knotName
+            );
           }}
         >
           <CardBody>

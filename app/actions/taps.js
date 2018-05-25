@@ -47,7 +47,10 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: { name: string, image: string }) {
+export function selectTap(
+  tap: { name: string, image: string },
+  knotName: string
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: SELECT_TAP,
@@ -56,7 +59,8 @@ export function selectTap(tap: { name: string, image: string }) {
 
     axios
       .post(`${baseUrl}/taps/select/`, {
-        tap
+        tap,
+        knot: knotName
       })
       .then((response) => {
         dispatch({
@@ -97,7 +101,8 @@ function ISODateString(d) {
 
 export function submitConfig(
   tap: { name: string, image: string },
-  config: { start_date?: string }
+  config: { start_date?: string },
+  knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -109,11 +114,14 @@ export function submitConfig(
       tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
     }
 
+    const payload = {
+      tap,
+      tapConfig,
+      knot: knotName
+    };
+
     axios
-      .post(`${baseUrl}/taps/config/`, {
-        tap,
-        tapConfig
-      })
+      .post(`${baseUrl}/taps/config/`, payload)
       .then((response) => {
         dispatch({
           type: SCHEMA_RECEIVED,
@@ -145,11 +153,12 @@ export function editSchemaField(
   };
 }
 
-export function submitSchema(schema: {}) {
+export function submitSchema(schema: {}, knot: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
       .put(`${baseUrl}/taps/schema/`, {
-        streams: schema
+        schema: { streams: schema },
+        knot
       })
       .then(() => {
         dispatch({

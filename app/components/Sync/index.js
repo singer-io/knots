@@ -238,6 +238,7 @@ export default class Sync extends Component<Props> {
                   color="primary"
                   className="float-right my-3"
                   onClick={this.submit}
+                  disabled={!(knotSynced && !knotError)}
                 >
                   Done
                 </Button>

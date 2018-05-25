@@ -1,8 +1,9 @@
 // @flow
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import moment from 'moment';
 import classNames from 'classnames';
-import { withRouter } from 'react-router-dom';
 
 import styles from './Knot.css';
 
@@ -10,31 +11,44 @@ type Props = {
   knot: { name: string, lastRun: string },
   delete: ({ name: string }) => void,
   download: ({ name: string }) => void,
-  history: { push: (path: string) => void }
+  history: { push: (path: string) => void },
+  loadValues: (name: string) => void
 };
 
-class Knots extends Component<Props> {
-  delete = () => {
-    this.props.delete(this.props.knot);
+type State = {
+  showDelete: boolean
+};
+
+class Knot extends Component<Props, State> {
+  state = {
+    showDelete: false
+  };
+
+  toggleDelete = () => {
+    this.setState({
+      showDelete: !this.state.showDelete
+    });
   };
 
   download = () => {
-    console.log('Download called');
     this.props.download(this.props.knot);
   };
 
   fullSync = () => {
     const { name } = this.props.knot;
-    console.log('Full sync called', name, this.props);
 
     this.props.history.push(`/sync?knot=${name}&mode=full`);
   };
 
   partialSync = () => {
     const { name } = this.props.knot;
-    console.log('Partial sync called', name, this.props);
 
     this.props.history.push(`/sync?knot=${name}&mode=partial`);
+  };
+
+  edit = () => {
+    const { name } = this.props.knot;
+    this.props.loadValues(name);
   };
 
   render() {
@@ -83,6 +97,7 @@ class Knots extends Component<Props> {
               data-toggle="tooltip"
               data-placement="top"
               title="Edit"
+              onClick={this.edit}
             >
               <span className="oi oi-pencil" />
             </button>
@@ -103,17 +118,39 @@ class Knots extends Component<Props> {
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"
-              onClick={this.delete}
+              onClick={this.toggleDelete}
               title="Delete"
             >
               <span className="oi oi-trash" />
             </button>
           </div>
         </td>
+        <Modal isOpen={this.state.showDelete} toggle={this.toggleDelete}>
+          <ModalHeader toggle={this.toggleDelete}>
+            Delete <strong>{knot.name}</strong>?
+          </ModalHeader>
+          <ModalBody>
+            Are you sure you want to delete <strong>{knot.name}</strong>? Once
+            you delete a Knot, there is no going back.
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" outline onClick={this.toggleDelete}>
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                this.props.delete(this.props.knot);
+              }}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
       </tr>
     );
   }
 }
 
 // $FlowFixMe
-export default withRouter(Knots);
+export default withRouter(Knot);

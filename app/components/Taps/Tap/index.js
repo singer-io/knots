@@ -12,7 +12,8 @@ type Props = {
   tapKey: string,
   tapImage: string,
   selected: string,
-  selectTap: (tap: { name: string, image: string }) => void
+  selectTap: (tap: { name: string, image: string }, knotName: string) => void,
+  knotName: string
 };
 
 type State = {
@@ -42,7 +43,7 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-    const { tapKey, repo } = this.props;
+    const { tapKey, repo, knotName } = this.props;
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card
@@ -51,10 +52,13 @@ export default class Tap extends Component<Props, State> {
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
           onClick={() => {
-            this.props.selectTap({
-              name: tapKey,
-              image: this.props.tapImage
-            });
+            this.props.selectTap(
+              {
+                name: tapKey,
+                image: this.props.tapImage
+              },
+              knotName
+            );
           }}
         >
           <CardBody>
