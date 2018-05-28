@@ -36,12 +36,18 @@ Build the image;
 $ docker build -t dataworld/tap-redshift:1.0 .
 ```
 
-Create a `.env` file in the root folder and add the newly created docker image.
+Add the newly built tap image in `./app/backend/constants.js` under the `taps` list. The `taps` section should look like;
 
-Sample of the `.env` file should look like;
-
-```sh
-TAP_REDSHIFT="dataworld/tap-redshift:1.0"
+```
+const taps = [
+  {
+    name: 'Redshift',
+    tapKey: 'tap-redshift',
+    tapImage: 'gbolahan/tap-redshift:1.0.0b5',
+    repo: 'https://github.com/datadotworld/tap-redshift',
+    options: [],
+    logo: 'https://link-to-image'
+  },
 ```
 
 #### Updating docker images
@@ -52,11 +58,13 @@ Make changes to the Dockerfile of the image to update then build and tag the ima
 $ docker build -t dataworld/{IMAGE_NAME}:{NEW_VERSION} .
 ```
 
-For example, once updates are made to the `tap-redshift` image, make a new build, update `.env` file with the new version and test;
+For example, once updates are made to the `tap-redshift` image, make a new build;
 
 ```sh
 $ docker build -t dataworld/tap-redshift:2.0 .
 ```
+
+Update the tap image in `./app/backend/constants.js` to the updated version of the image and test.
 
 #### Releasing created and updated images
 

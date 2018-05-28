@@ -24,7 +24,7 @@ const taps = [
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
-    tapImage: 'gbolahan/tap-redshift:b4',
+    tapImage: 'gbolahan/tap-redshift:1.0.0b5',
     repo: 'https://github.com/datadotworld/tap-redshift',
     options: [],
     logo:
@@ -118,7 +118,7 @@ const tapRedshiftFields = [
   {
     key: 'start_date',
     label: 'Start date',
-    required: false,
+    required: true,
     validationText: '',
     placeholder: '',
     type: 'date',
