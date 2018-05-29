@@ -121,6 +121,7 @@ export default class DataWorld extends Component<Props> {
               type="password"
               value={api_token || ''}
               invalid={!api_token}
+              valid={!!api_token}
             />
             <InputGroupAddon addonType="append">
               <Button outline color="secondary" onClick={this.authorize}>
@@ -142,6 +143,7 @@ export default class DataWorld extends Component<Props> {
               value={this.getDataset(dataset_id, dataset_owner)}
               onChange={this.handleChange}
               invalid={!this.validDataset(dataset_id, dataset_owner)}
+              valid={!!this.validDataset(dataset_id, dataset_owner)}
               disabled
             />
             <InputGroupAddon addonType="append">

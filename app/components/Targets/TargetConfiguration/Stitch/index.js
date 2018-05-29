@@ -55,6 +55,7 @@ export default class Stitch extends Component<Props> {
               onChange={this.handleChange}
               value={client_id}
               invalid={!client_id}
+              valid={!!client_id}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>
@@ -68,6 +69,7 @@ export default class Stitch extends Component<Props> {
               onChange={this.handleChange}
               value={token}
               invalid={!token}
+              valid={!!token}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>

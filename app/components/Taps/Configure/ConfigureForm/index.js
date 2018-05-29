@@ -64,7 +64,7 @@ const valid = (field, fieldValues) => {
   return true;
 };
 
-export default class ConnectForm extends Component<Props> {
+export default class ConfigureForm extends Component<Props> {
   constructor() {
     super();
 

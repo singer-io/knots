@@ -21,7 +21,7 @@
 
 import React, { Component } from 'react';
 
-import ConnectForm from './ConfigureForm';
+import ConfigureForm from './ConfigureForm';
 
 type Props = {
   fields: Array<{
@@ -52,7 +52,7 @@ export default class Configure extends Component<Props> {
   render() {
     return (
       <div>
-        <ConnectForm
+        <ConfigureForm
           fields={this.props.fields}
           fieldValues={this.props.fieldValues}
           handleChange={this.props.handleChange}
