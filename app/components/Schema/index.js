@@ -189,137 +189,135 @@ export default class Schema extends Component<Props, State> {
             <h2 className="mb-1 pt-4">Replication Options</h2>
 
             <div>
-              {!showSchema &&
-                schema.length === 0 && (
-                  <div>
-                    {schemaLoading && (
-                      <Progress value="100" striped animated className="mt-3">
-                        Retrieving schema information...
-                      </Progress>
-                    )}
-
-                    <Card className="bg-light mt-3">
-                      <CardBody>
-                        <StayScrolled
-                          component="div"
-                          style={{
-                            height: '250px',
-                            overflow: 'auto'
-                          }}
-                        >
-                          {schemaLogs.map((log, index) => (
-                            // eslint-disable-next-line react/no-array-index-key
-                            <Log key={index} log={log} />
-                          ))}
-                        </StayScrolled>
-                      </CardBody>
-                    </Card>
-                    <Alert
-                      isOpen={!!error}
-                      color="danger"
-                      className={classNames(
-                        'd-flex justify-content-between',
-                        styles.errorAlert
-                      )}
-                    >
-                      <span className="align-self-center">
-                        <span>Unable to execute tap in discovery mode. </span>
-                        <button
-                          onClick={() =>
-                            this.openLink('https://help.data.world')
-                          }
-                          className={classNames('alert-link', styles.link)}
-                        >
-                          Contact Support
-                        </button>
-                      </span>
-                      <span>
-                        <Link to="/">
-                          <Button
-                            className={classNames(
-                              'btn btn-outline-secondary',
-                              styles.abort
-                            )}
-                          >
-                            Abort
-                          </Button>
-                        </Link>
-                        <Link to="/taps">
-                          <Button className="btn btn-outline-primary">
-                            Reconfigure
-                          </Button>
-                        </Link>
-                      </span>
-                    </Alert>
-                    <Button
-                      color="primary"
-                      className="float-right my-3"
-                      onClick={this.showSchema}
-                      disabled={!schemaLoaded || !!error}
-                    >
-                      Continue
-                    </Button>
-                    <Button
-                      onClick={this.terminateProcess}
-                      disabled={schemaLoaded || !schemaLoading}
-                      className={classNames(
-                        'btn btn-outline-danger float-right my-3',
-                        styles.cancel
-                      )}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
-              {(showSchema || schema.length > 0) && (
+              {!showSchema && (
                 <div>
-                  <Table className="mt-5">
-                    <thead className="thead-light">
-                      <tr>
-                        <th className="text-center">Include</th>
-                        <th>Table/Stream</th>
-                        <th>Replication Key</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {schema.map((stream, index) => (
-                        <tr key={stream.tap_stream_id}>
-                          <td className="text-center">
-                            <Checkbox
-                              checked={this.fieldSelected(stream)}
-                              index={index.toString()}
-                              handleChange={this.handleChange}
-                            />
-                          </td>
-                          <td>{stream.stream}</td>
-                          <td>
-                            <Dropdown
-                              columns={this.validReplicationKeys(stream)}
-                              index={index.toString()}
-                              handleChange={this.handleChange}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </Table>
-                  <Alert color="warning" style={{ opacity: 1 }}>
-                    Start date will be ignored unless replication keys are
-                    selected
-                  </Alert>
-                  <Alert color="danger" style={{ opacity: 1 }}>
-                    A minimum of one table/stream must be selected
+                  {schemaLoading && (
+                    <Progress value="100" striped animated className="mt-3">
+                      Retrieving schema information...
+                    </Progress>
+                  )}
+
+                  <Card className="bg-light mt-3">
+                    <CardBody>
+                      <StayScrolled
+                        component="div"
+                        style={{
+                          height: '250px',
+                          overflow: 'auto'
+                        }}
+                      >
+                        {schemaLogs.map((log, index) => (
+                          // eslint-disable-next-line react/no-array-index-key
+                          <Log key={index} log={log} />
+                        ))}
+                      </StayScrolled>
+                    </CardBody>
+                  </Card>
+                  <Alert
+                    isOpen={!!error}
+                    color="danger"
+                    className={classNames(
+                      'd-flex justify-content-between',
+                      styles.errorAlert
+                    )}
+                  >
+                    <span className="align-self-center">
+                      <span>Unable to execute tap in discovery mode. </span>
+                      <button
+                        onClick={() => this.openLink('https://help.data.world')}
+                        className={classNames('alert-link', styles.link)}
+                      >
+                        Contact Support
+                      </button>
+                    </span>
+                    <span>
+                      <Link to="/">
+                        <Button
+                          className={classNames(
+                            'btn btn-outline-secondary',
+                            styles.abort
+                          )}
+                        >
+                          Abort
+                        </Button>
+                      </Link>
+                      <Link to="/taps">
+                        <Button className="btn btn-outline-primary">
+                          Reconfigure
+                        </Button>
+                      </Link>
+                    </span>
                   </Alert>
                   <Button
                     color="primary"
                     className="float-right my-3"
-                    disabled={!this.validSchema()}
-                    onClick={this.submit}
+                    onClick={this.showSchema}
+                    disabled={!schemaLoaded || !!error}
                   >
                     Continue
                   </Button>
+                  <Button
+                    onClick={this.terminateProcess}
+                    disabled={schemaLoaded || !schemaLoading}
+                    className={classNames(
+                      'btn btn-outline-danger float-right my-3',
+                      styles.cancel
+                    )}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               )}
+              {showSchema &&
+                schema.length > 0 && (
+                  <div>
+                    <Table className="mt-5">
+                      <thead className="thead-light">
+                        <tr>
+                          <th className="text-center">Include</th>
+                          <th>Table/Stream</th>
+                          <th>Replication Key</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {schema.map((stream, index) => (
+                          <tr key={stream.tap_stream_id}>
+                            <td className="text-center">
+                              <Checkbox
+                                checked={this.fieldSelected(stream)}
+                                index={index.toString()}
+                                handleChange={this.handleChange}
+                              />
+                            </td>
+                            <td>{stream.stream}</td>
+                            <td>
+                              <Dropdown
+                                columns={this.validReplicationKeys(stream)}
+                                index={index.toString()}
+                                handleChange={this.handleChange}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                    <Alert color="warning" style={{ opacity: 1 }}>
+                      Start date will be ignored unless replication keys are
+                      selected
+                    </Alert>
+                    <Alert color="danger" style={{ opacity: 1 }}>
+                      A minimum of one table/stream must be selected
+                    </Alert>
+                    <Button
+                      color="primary"
+                      className="float-right my-3"
+                      disabled={!this.validSchema()}
+                      onClick={this.submit}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                )}
             </div>
           </Col>
         </Container>
