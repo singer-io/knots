@@ -25,10 +25,16 @@ import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import moment from 'moment';
 import classNames from 'classnames';
 
+import getLogo from '../../../../logos';
 import styles from './Knot.css';
 
 type Props = {
-  knot: { name: string, lastRun: string },
+  knot: {
+    name: string,
+    lastRun: string,
+    tap: { name: string },
+    target: { name: string }
+  },
   delete: ({ name: string }) => void,
   download: ({ name: string }) => void,
   history: { push: (path: string) => void },
@@ -75,18 +81,28 @@ class Knot extends Component<Props, State> {
     const { knot } = this.props;
     return (
       <tr key={knot.name}>
-        <td className="align-middle pr-0">
-          <div className={classNames(styles.tapRedshift, 'mx-auto')} />
+        <td className="align-middle text-center pr-0">
+          <img
+            alt={`${knot.tap.name} logo`}
+            className={styles.logo}
+            src={getLogo(knot.tap.name)}
+          />
+          {/* <div className={classNames(styles.tapRedshift, 'mx-auto')} /> */}
         </td>
         <td className="align-middle px-0 text-muted text-center">
           <span className="oi oi-chevron-right" />
         </td>
-        <td className="align-middle pl-0">
-          <div className={classNames(styles.datadotworld, 'mx-auto')} />
+        <td className="align-middle text-center pr-0">
+          <img
+            alt={`${knot.target.name} logo`}
+            className={styles.logo}
+            src={getLogo(knot.target.name)}
+          />
+          {/* <div className={classNames(styles.tapRedshift, 'mx-auto')} /> */}
         </td>
-        <th>{knot.name}</th>
-        <td>{moment(knot.lastRun).fromNow()}</td>
-        <td className="fit">
+        <th className="align-middle">{knot.name}</th>
+        <td className="align-middle">{moment(knot.lastRun).fromNow()}</td>
+        <td className="fit align-middle">
           <div className="btn-group" role="group" aria-label="Basic example">
             <button
               style={{ background: 'white' }}
