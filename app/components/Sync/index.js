@@ -247,6 +247,7 @@ export default class Sync extends Component<Props> {
                   'btn btn-outline-danger float-right my-3',
                   styles.cancelProcess
                 )}
+                disabled={!knotSyncing}
               >
                 Cancel
               </Button>
