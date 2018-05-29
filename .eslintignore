@@ -48,13 +48,6 @@ dll
 main.js
 main.js.map
 
-.env
 .idea
 npm-debug.log.*
-
-# Knot temp files
-knot.json
-docker/tap
-docker/target
-./knots
-configs
+__snapshots__
