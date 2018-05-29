@@ -105,7 +105,10 @@ export default function knots(state = defaultState, action) {
       });
     case KNOT_SYNCING:
       return Object.assign({}, state, {
-        knotSyncing: true
+        knotSyncing: true,
+        knotSynced: false,
+        tapLogs: [],
+        targetLogs: []
       });
     case KNOT_SYNCED:
       return Object.assign({}, state, {
