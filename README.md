@@ -4,7 +4,7 @@ This app allows you to configure and download executable Singer pipelines.
 
 ### Getting Started
 
-Download and install the dmg from [link]
+Download and install the dmg from [link](https://github.com/datadotworld/knot/releases)
 
 ### Prerequisites
 
@@ -18,8 +18,8 @@ NOTE: Check Docker [file sharing preferences](https://docs.docker.com/docker-for
 2.  Provide the configurations needed for the tap.
 3.  Click on `Continue` to run the tap in discovery mode.
 4.  Make selections of tables to sync.
-5.  Select a target and provide config for target
-6.  Enter a name to save the new knot with, then save and run the knot.
+5.  Select a target and provide the target's config.
+6.  Enter a name to save the new knot with, save and run the knot.
 
 You should see a list of your saved knots and different actions (Re-run in both full and partial sync, Re-configure, download and delete) that can be taken on them.
 
