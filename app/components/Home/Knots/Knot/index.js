@@ -23,7 +23,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
 import moment from 'moment';
-import classNames from 'classnames';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
@@ -38,7 +37,8 @@ type Props = {
   delete: ({ name: string }) => void,
   download: ({ name: string }) => void,
   history: { push: (path: string) => void },
-  loadValues: (name: string) => void
+  loadValues: (name: string) => void,
+  loadKnot: (knot: {}) => void
 };
 
 type State = {
@@ -61,15 +61,17 @@ class Knot extends Component<Props, State> {
   };
 
   fullSync = () => {
-    const { name } = this.props.knot;
+    const { knot } = this.props;
+    this.props.loadKnot(knot);
 
-    this.props.history.push(`/sync?knot=${name}&mode=full`);
+    this.props.history.push(`/sync?knot=${knot.name}&mode=full`);
   };
 
   partialSync = () => {
-    const { name } = this.props.knot;
+    const { knot } = this.props;
+    this.props.loadKnot(knot);
 
-    this.props.history.push(`/sync?knot=${name}&mode=partial`);
+    this.props.history.push(`/sync?knot=${knot.name}&mode=partial`);
   };
 
   edit = () => {
@@ -87,7 +89,6 @@ class Knot extends Component<Props, State> {
             className={styles.logo}
             src={getLogo(knot.tap.name)}
           />
-          {/* <div className={classNames(styles.tapRedshift, 'mx-auto')} /> */}
         </td>
         <td className="align-middle px-0 text-muted text-center">
           <span className="oi oi-chevron-right" />
@@ -98,7 +99,6 @@ class Knot extends Component<Props, State> {
             className={styles.logo}
             src={getLogo(knot.target.name)}
           />
-          {/* <div className={classNames(styles.tapRedshift, 'mx-auto')} /> */}
         </td>
         <th className="align-middle">{knot.name}</th>
         <td className="align-middle">{moment(knot.lastRun).fromNow()}</td>

@@ -27,7 +27,12 @@ import Knot from './Knot';
 
 type Props = {
   knotsStore: {
-    knots: Array<{ name: string, lastRun: string }>,
+    knots: Array<{
+      name: string,
+      lastRun: string,
+      tap: { name: string },
+      target: { name: string }
+    }>,
     knotDeleted: boolean,
     knotError: string,
     knotLoaded: boolean
@@ -36,7 +41,8 @@ type Props = {
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
   loadValues: (knot: string) => void,
-  history: { push: (path: string) => void }
+  history: { push: (path: string) => void },
+  loadKnot: (knot: {}) => void
 };
 
 class Knots extends Component<Props> {
@@ -58,10 +64,13 @@ class Knots extends Component<Props> {
     this.props.loadValues(knot);
   };
 
+  loadKnot = (knot: {}) => {
+    this.props.loadKnot(knot);
+  };
+
   render() {
     const { knots, knotError, knotLoaded } = this.props.knotsStore;
     if (knotLoaded && !knotError) {
-      console.log('Called from here');
       this.props.history.push('/taps');
     }
     return (
@@ -101,6 +110,7 @@ class Knots extends Component<Props> {
               delete={this.delete}
               download={this.download}
               loadValues={this.loadValues}
+              loadKnot={this.loadKnot}
             />
           ))}
         </table>

@@ -30,7 +30,7 @@ import {
   SELECT_TAP,
   UPDATE_SCHEMA_LOGS
 } from '../actions/taps';
-import { LOADED_KNOT } from '../actions/knots';
+import { LOADED_KNOT, LOAD_KNOT } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -170,6 +170,10 @@ export default function taps(state = defaultState, action) {
         fieldValues: action.tapConfig,
         tapFields: action.tapFields,
         schema: action.schema
+      });
+    case LOAD_KNOT:
+      return Object.assign({}, state, {
+        selectedTap: action.knot.tap
       });
     default:
       return state;

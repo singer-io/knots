@@ -28,7 +28,7 @@ import styles from './Stitch.css';
 type Props = {
   userStore: {
     'target-stitch': {
-      fieldValues: { client_id: number, token: string }
+      fieldValues: { client_id: number | string, token: string }
     }
   },
   updateField: (target: string, name: string, value: string) => void
