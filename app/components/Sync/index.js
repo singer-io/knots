@@ -213,57 +213,59 @@ export default class Sync extends Component<Props> {
                 </Col>
               )}
           </Row>
-          <Row>
-            <Col sm="6">
-              <Card className="bg-light mt-3">
-                <CardHeader className="d-flex align-items-center">
-                  <img
-                    alt={`${selectedTarget.name} logo`}
-                    className={styles.logo}
-                    src={getLogo(selectedTap.name)}
-                  />
-                  <h3 className="pl-3 m-0">{selectedTap.name}</h3>
-                </CardHeader>
-                <CardBody>
-                  <StayScrolled
-                    component="div"
-                    style={{
-                      height: '250px',
-                      overflow: 'auto'
-                    }}
-                  >
-                    {tapLogs.map((log) => <Log key={log} log={log} />)}
-                  </StayScrolled>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col sm="6">
-              <Card className="bg-light mt-3">
-                <CardHeader className="d-flex align-items-center">
-                  <img
-                    alt={`${selectedTarget.name} logo`}
-                    className={styles.logo}
-                    src={getLogo(selectedTarget.name)}
-                  />
-                  <h3 className={classNames('pl-3 m-0')}>
-                    {selectedTarget.name}
-                  </h3>
-                </CardHeader>
-                <CardBody>
-                  <StayScrolled
-                    component="div"
-                    style={{
-                      height: '250px',
-                      overflow: 'auto'
-                    }}
-                  >
-                    {targetLogs.map((log) => <Log key={log} log={log} />)}
-                  </StayScrolled>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
-          {!knotSynced &&
+          {(knotSyncing || knotSynced) && (
+            <Row>
+              <Col sm="6">
+                <Card className="bg-light mt-3">
+                  <CardHeader className="d-flex align-items-center">
+                    <img
+                      alt={`${selectedTarget.name} logo`}
+                      className={styles.logo}
+                      src={getLogo(selectedTap.name)}
+                    />
+                    <h3 className="pl-3 m-0">{selectedTap.name}</h3>
+                  </CardHeader>
+                  <CardBody>
+                    <StayScrolled
+                      component="div"
+                      style={{
+                        height: '250px',
+                        overflow: 'auto'
+                      }}
+                    >
+                      {tapLogs.map((log) => <Log key={log} log={log} />)}
+                    </StayScrolled>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col sm="6">
+                <Card className="bg-light mt-3">
+                  <CardHeader className="d-flex align-items-center">
+                    <img
+                      alt={`${selectedTarget.name} logo`}
+                      className={styles.logo}
+                      src={getLogo(selectedTarget.name)}
+                    />
+                    <h3 className={classNames('pl-3 m-0')}>
+                      {selectedTarget.name}
+                    </h3>
+                  </CardHeader>
+                  <CardBody>
+                    <StayScrolled
+                      component="div"
+                      style={{
+                        height: '250px',
+                        overflow: 'auto'
+                      }}
+                    >
+                      {targetLogs.map((log) => <Log key={log} log={log} />)}
+                    </StayScrolled>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          )}
+          {knotSyncing &&
             !knotError && (
               <Button
                 onClick={this.terminateProcess}
