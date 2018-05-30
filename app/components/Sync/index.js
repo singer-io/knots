@@ -35,7 +35,8 @@ import {
   Card,
   CardBody,
   CardHeader,
-  Alert
+  Alert,
+  Progress
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import classNames from 'classnames';
@@ -130,6 +131,7 @@ export default class Sync extends Component<Props> {
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
+    const { mode } = queryString.parse(this.props.location.search);
 
     return (
       <div>
@@ -187,6 +189,15 @@ export default class Sync extends Component<Props> {
                 <div className="alert alert-success" style={{ width: '100%' }}>
                   <strong className="">{`${knotName} has been saved! Running your knot could take a while...`}</strong>
                 </div>
+              </Col>
+            )}
+
+            {knotSyncing && (
+              <Col xs="12">
+                <Progress value="100" striped animated className="mt-3">
+                  Running {mode === 'partial' ? 'incremental' : 'full'} sync.
+                  This may take a while…
+                </Progress>
               </Col>
             )}
 
