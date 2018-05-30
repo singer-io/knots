@@ -186,9 +186,9 @@ export default class Sync extends Component<Props> {
               )}
             {knotSyncing && (
               <Col xs="12">
-                <div className="alert alert-success" style={{ width: '100%' }}>
-                  <strong className="">{`${knotName} has been saved! Running your knot could take a while...`}</strong>
-                </div>
+                <Alert color="success" className={styles.syncPageAlert}>
+                  <strong className="">{`${knotName} has been saved!`}</strong>
+                </Alert>
               </Col>
             )}
 
@@ -204,12 +204,9 @@ export default class Sync extends Component<Props> {
             {knotSynced &&
               !knotError && (
                 <Col xs="12">
-                  <div
-                    className="alert alert-success"
-                    style={{ width: '100%' }}
-                  >
+                  <Alert color="success" className={styles.syncPageAlert}>
                     <strong>{`${knotName} has been run successfully`}</strong>
-                  </div>
+                  </Alert>
                 </Col>
               )}
           </Row>
