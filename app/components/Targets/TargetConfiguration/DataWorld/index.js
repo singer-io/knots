@@ -47,6 +47,10 @@ export default class DataWorld extends Component<Props> {
     ipcRenderer.on('dataworld-oauth-reply', (event, token) => {
       this.setToken(token.access_token);
     });
+
+    this.state = {
+      formState: {}
+    };
   }
 
   authorize = () => {
@@ -106,6 +110,17 @@ export default class DataWorld extends Component<Props> {
     return '';
   };
 
+  handleBlur = (e, key) => {
+    const { formState } = this.state;
+    formState[key] = e.target.value !== '';
+    this.setState({ formState });
+  };
+
+  getValidState = (key) => {
+    const { formState } = this.state;
+    return formState[key] !== undefined ? formState[key] : true;
+  };
+
   render() {
     // $FlowFixMe
     const { dataset_id, dataset_owner, api_token } = this.props.userStore[
@@ -117,11 +132,12 @@ export default class DataWorld extends Component<Props> {
           <Label for="apiToken">API Token</Label>
           <InputGroup>
             <Input
+              onBlur={(e) => this.handleBlur(e, 'api_token')}
               readOnly
               type="password"
               value={api_token || ''}
-              invalid={!api_token}
-              valid={!!api_token}
+              invalid={!this.getValidState('api_token') && !api_token}
+              valid={this.getValidState('api_token') || !!api_token}
             />
             <InputGroupAddon addonType="append">
               <Button outline color="secondary" onClick={this.authorize}>
@@ -138,12 +154,19 @@ export default class DataWorld extends Component<Props> {
               <InputGroupText>https://data.world/</InputGroupText>
             </InputGroupAddon>
             <Input
+              onBlur={(e) => this.handleBlur(e, 'dataset_url')}
               name="dataset"
               placeholder="jonloyens/intro-to-dataworld-dataset"
               value={this.getDataset(dataset_id, dataset_owner)}
               onChange={this.handleChange}
-              invalid={!this.validDataset(dataset_id, dataset_owner)}
-              valid={!!this.validDataset(dataset_id, dataset_owner)}
+              invalid={
+                !this.getValidState('dataset_url') &&
+                !this.validDataset(dataset_id, dataset_owner)
+              }
+              valid={
+                this.getValidState('dataset_url') ||
+                !!this.validDataset(dataset_id, dataset_owner)
+              }
               disabled
             />
             <InputGroupAddon addonType="append">

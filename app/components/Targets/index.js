@@ -101,7 +101,6 @@ export default class Targets extends Component<Props, State> {
     const { name } = this.props.targetsStore.selectedTarget;
     const { fieldValues } = this.props.userStore[name];
     const { knotName } = this.props.knotsStore;
-    console.log('The knot', knotName);
 
     this.props.submitFields(fieldValues, knotName);
 
