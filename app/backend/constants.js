@@ -119,7 +119,7 @@ const tapRedshiftFields = [
     key: 'start_date',
     label: 'Start date',
     required: true,
-    validationText: '',
+    validationText: 'Required',
     placeholder: '',
     type: 'date',
     options: []

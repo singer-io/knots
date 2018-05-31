@@ -54,16 +54,6 @@ type Props = {
   setSfRefreshToken: (token: string) => void
 };
 
-const valid = (field, fieldValues) => {
-  if (field.required) {
-    if (!fieldValues[field.key]) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 export default class ConfigureForm extends Component<Props> {
   constructor() {
     super();
@@ -71,6 +61,10 @@ export default class ConfigureForm extends Component<Props> {
     ipcRenderer.on('sf-oauth-reply', (event, token) => {
       this.props.setSfRefreshToken(token.refresh_token);
     });
+
+    this.state = {
+      formState: {}
+    };
   }
 
   authorize = (clientId?: string, clientSecret?: string) => {
@@ -85,6 +79,19 @@ export default class ConfigureForm extends Component<Props> {
     this.authorize(clientId, clientSecret);
   };
 
+  handleChange = (e, config) => {
+    const { formState } = this.state;
+    const { key } = config;
+    formState[key] = e.target.value !== '';
+
+    this.setState({ formState }, this.props.handleChange(e));
+  };
+
+  getValidState = (key) => {
+    const { formState } = this.state;
+    return formState[key] !== undefined ? formState[key] : true;
+  };
+
   render() {
     return (
       <Form>
@@ -94,14 +101,15 @@ export default class ConfigureForm extends Component<Props> {
             <InputGroup>
               {field.type === 'select' ? (
                 <Input
+                  onBlur={(e) => this.handleChange(e, field)}
                   readOnly={field.key === 'refresh_token'}
                   type={field.type}
                   name={field.key}
                   value={this.props.fieldValues[field.key] || ''}
                   id={field.label}
-                  onChange={this.props.handleChange}
-                  invalid={!valid(field, this.props.fieldValues)}
-                  valid={valid(field, this.props.fieldValues)}
+                  onChange={(e) => this.handleChange(e, field)}
+                  invalid={!this.getValidState(field.key)}
+                  valid={this.getValidState(field.key)}
                   placeholder={field.required ? '' : field.placeholder}
                 >
                   <option value="" />
@@ -113,6 +121,7 @@ export default class ConfigureForm extends Component<Props> {
                 </Input>
               ) : (
                 <Input
+                  onBlur={(e) => this.handleChange(e, field)}
                   readOnly={
                     field.key === 'refresh_token' ||
                     field.key === 'api_type' ||
@@ -122,9 +131,9 @@ export default class ConfigureForm extends Component<Props> {
                   name={field.key}
                   value={this.props.fieldValues[field.key] || ''}
                   id={field.label}
-                  onChange={this.props.handleChange}
-                  invalid={!valid(field, this.props.fieldValues)}
-                  valid={valid(field, this.props.fieldValues)}
+                  onChange={(e) => this.handleChange(e, field)}
+                  invalid={!this.getValidState(field.key)}
+                  valid={this.getValidState(field.key)}
                   placeholder={field.required ? '' : field.placeholder}
                 />
               )}
