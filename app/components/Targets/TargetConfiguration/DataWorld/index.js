@@ -40,18 +40,21 @@ type Props = {
   updateField: (target: string, field: string, value: string) => void
 };
 
-export default class DataWorld extends Component<Props> {
+type State = {
+  formState: {}
+};
+
+export default class DataWorld extends Component<Props, State> {
   constructor() {
     super();
-
     ipcRenderer.on('dataworld-oauth-reply', (event, token) => {
       this.setToken(token.access_token);
     });
-
-    this.state = {
-      formState: {}
-    };
   }
+
+  state = {
+    formState: {}
+  };
 
   authorize = () => {
     ipcRenderer.send('dataworld-oauth', 'getToken');
