@@ -54,18 +54,22 @@ type Props = {
   setSfRefreshToken: (token: string) => void
 };
 
-export default class ConfigureForm extends Component<Props> {
+type State = {
+  formState: {}
+};
+
+export default class ConfigureForm extends Component<Props, State> {
   constructor() {
     super();
 
     ipcRenderer.on('sf-oauth-reply', (event, token) => {
       this.props.setSfRefreshToken(token.refresh_token);
     });
-
-    this.state = {
-      formState: {}
-    };
   }
+
+  state = {
+    formState: {}
+  };
 
   authorize = (clientId?: string, clientSecret?: string) => {
     const authorizationCredentials = { clientId, clientSecret };
