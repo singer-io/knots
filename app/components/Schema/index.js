@@ -96,13 +96,23 @@ export default class Schema extends Component<Props, State> {
     });
   }
 
-  handleChange = (field: string, index: string, value: boolean | string) => {
-    this.setState(
-      {
-        streamSelected: this.validSchema()
-      },
-      this.props.editSchemaField(field, index, value)
-    );
+  handleCheckBoxChange = (
+    field: string,
+    index: string,
+    value: boolean | string
+  ) => {
+    if (!this.validSchema()) {
+      this.setState({ streamSelected: this.validSchema() });
+    }
+    this.props.editSchemaField(field, index, value);
+  };
+
+  handleSelectChange = (
+    field: string,
+    index: string,
+    value: boolean | string
+  ) => {
+    this.props.editSchemaField(field, index, value);
   };
 
   submit = () => {
@@ -296,7 +306,7 @@ export default class Schema extends Component<Props, State> {
                               <Checkbox
                                 checked={this.fieldSelected(stream)}
                                 index={index.toString()}
-                                handleChange={this.handleChange}
+                                handleChange={this.handleCheckBoxChange}
                               />
                             </td>
                             <td>{stream.stream}</td>
@@ -304,7 +314,7 @@ export default class Schema extends Component<Props, State> {
                               <Dropdown
                                 columns={this.validReplicationKeys(stream)}
                                 index={index.toString()}
-                                handleChange={this.handleChange}
+                                handleChange={this.handleSelectChange}
                               />
                             </td>
                           </tr>

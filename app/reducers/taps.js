@@ -144,10 +144,6 @@ export default function taps(state = defaultState, action) {
                 'replication-key'
               ] =
                 action.value;
-
-              schema[action.index].metadata[
-                indexToUpdate
-              ].metadata.selected = true;
             }
 
             return Object.assign({}, state, {
