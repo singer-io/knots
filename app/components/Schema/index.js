@@ -67,7 +67,8 @@ type Props = {
 };
 
 type State = {
-  showSchema: boolean
+  showSchema: boolean,
+  streamSelected: boolean
 };
 
 type Stream = {
@@ -86,7 +87,8 @@ export default class Schema extends Component<Props, State> {
     super();
 
     this.state = {
-      showSchema: false
+      showSchema: false,
+      streamSelected: false
     };
 
     socket.on('schemaLog', (log) => {
@@ -95,12 +97,21 @@ export default class Schema extends Component<Props, State> {
   }
 
   handleChange = (field: string, index: string, value: boolean | string) => {
-    this.props.editSchemaField(field, index, value);
+    this.setState(
+      {
+        streamSelected: this.validSchema()
+      },
+      this.props.editSchemaField(field, index, value)
+    );
   };
 
   submit = () => {
     const { knotName } = this.props.knotsStore;
-    this.props.submitSchema(this.props.tapsStore.schema, knotName);
+    if (this.validSchema()) {
+      this.props.submitSchema(this.props.tapsStore.schema, knotName);
+    } else {
+      this.setState({ streamSelected: !this.validSchema() });
+    }
   };
 
   validReplicationKeys = (stream: Stream) => {
@@ -178,8 +189,7 @@ export default class Schema extends Component<Props, State> {
       schema
     } = this.props.tapsStore;
 
-    const { showSchema } = this.state;
-
+    const { showSchema, streamSelected } = this.state;
     return (
       <div>
         <Header />
@@ -305,13 +315,14 @@ export default class Schema extends Component<Props, State> {
                       Start date will be ignored unless replication keys are
                       selected
                     </Alert>
-                    <Alert color="danger" style={{ opacity: 1 }}>
-                      A minimum of one table/stream must be selected
-                    </Alert>
+                    {!!streamSelected && (
+                      <Alert color="danger" style={{ opacity: 1 }}>
+                        A minimum of one table/stream must be selected
+                      </Alert>
+                    )}
                     <Button
                       color="primary"
                       className="float-right my-3"
-                      disabled={!this.validSchema()}
                       onClick={this.submit}
                     >
                       Continue
