@@ -100,3 +100,7 @@ p {
   opacity: 1;
   top: calc(50% + 1px);
 }
+
+.cancelCta {
+  margin-right: 10px;
+}
