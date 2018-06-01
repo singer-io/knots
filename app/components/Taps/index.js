@@ -28,7 +28,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import Configure from './Configure';
 
-import './Taps.css';
+import styles from './Taps.css';
 
 type Props = {
   fetchTaps: () => void,
@@ -130,6 +130,10 @@ export default class Taps extends Component<Props, State> {
     this.props.updateTapField('refresh_token', token);
   };
 
+  redirectToHome = () => {
+    this.props.history.push('/');
+  };
+
   render() {
     const {
       taps,
@@ -201,11 +205,20 @@ export default class Taps extends Component<Props, State> {
           </div>
           <Button
             color="primary"
-            className="float-right my-3"
+            className={classNames('float-right my-3')}
             onClick={this.submit}
-            disabled={!this.formValid()}
+            disabled={!this.formValid() || showTaps}
           >
             Continue
+          </Button>
+          <Button
+            onClick={this.redirectToHome}
+            className={classNames(
+              'btn btn-outline-danger float-right my-3',
+              styles.cancelCta
+            )}
+          >
+            Cancel
           </Button>
         </Container>
       </div>

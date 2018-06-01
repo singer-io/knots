@@ -63,7 +63,8 @@ type Props = {
     value: boolean | string
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
-  updateSchemaLogs: (log: string) => void
+  updateSchemaLogs: (log: string) => void,
+  history: { push: (path: string) => void }
 };
 
 type State = {
@@ -187,6 +188,11 @@ export default class Schema extends Component<Props, State> {
     socket.emit('terminate', 'discovery');
   };
 
+  redirectToHome = () => {
+    this.terminateProcess();
+    this.props.history.push('/');
+  };
+
   render() {
     if (this.props.tapsStore.schemaUpdated) {
       return <Redirect push to="/targets" />;
@@ -277,8 +283,7 @@ export default class Schema extends Component<Props, State> {
                     Continue
                   </Button>
                   <Button
-                    onClick={this.terminateProcess}
-                    disabled={schemaLoaded || !schemaLoading}
+                    onClick={this.redirectToHome}
                     className={classNames(
                       'btn btn-outline-danger float-right my-3',
                       styles.cancel
@@ -336,6 +341,15 @@ export default class Schema extends Component<Props, State> {
                       onClick={this.submit}
                     >
                       Continue
+                    </Button>
+                    <Button
+                      onClick={this.redirectToHome}
+                      className={classNames(
+                        'btn btn-outline-danger float-right my-3',
+                        styles.cancel
+                      )}
+                    >
+                      Cancel
                     </Button>
                   </div>
                 )}
