@@ -97,7 +97,7 @@ export default class Taps extends Component<Props, State> {
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = event.currentTarget;
-    this.props.updateTapField(name, value);
+    this.setState(this.props.updateTapField(name, value));
   };
 
   formValid = () => {

@@ -34,10 +34,29 @@ type Props = {
   updateField: (target: string, name: string, value: string) => void
 };
 
-export default class Stitch extends Component<Props> {
+type State = {
+  formState: {}
+};
+
+export default class Stitch extends Component<Props, State> {
+  state = {
+    formState: {}
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
     this.props.updateField('target-stitch', name, value);
+  };
+
+  handleBlur = (e, key) => {
+    const { formState } = this.state;
+    formState[key] = e.target.value !== '';
+    this.setState({ formState });
+  };
+
+  getValidState = (key) => {
+    const { formState } = this.state;
+    return formState[key] !== undefined ? formState[key] : true;
   };
 
   render() {
@@ -51,11 +70,12 @@ export default class Stitch extends Component<Props> {
           <Label for="apiToken">Client ID</Label>
           <InputGroup>
             <Input
+              onBlur={(e) => this.handleBlur(e, 'client_id')}
               name="client_id"
               onChange={this.handleChange}
               value={client_id}
-              invalid={!client_id}
-              valid={!!client_id}
+              invalid={!this.getValidState('client_id') && !client_id}
+              valid={this.getValidState('client_id') || !!client_id}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>
@@ -64,12 +84,13 @@ export default class Stitch extends Component<Props> {
           <Label for="apiToken">Token</Label>
           <InputGroup>
             <Input
+              onBlur={(e) => this.handleBlur(e, 'token')}
               name="token"
               type="password"
               onChange={this.handleChange}
               value={token}
-              invalid={!token}
-              valid={!!token}
+              invalid={!this.getValidState('token') && !token}
+              valid={this.getValidState('token') || !!token}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>
