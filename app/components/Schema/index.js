@@ -317,6 +317,7 @@ export default class Schema extends Component<Props, State> {
                             <td>{stream.stream}</td>
                             <td>
                               <Dropdown
+                                isDisabled={!this.fieldSelected(stream)}
                                 columns={this.validReplicationKeys(stream)}
                                 index={index.toString()}
                                 handleChange={this.handleSelectChange}
