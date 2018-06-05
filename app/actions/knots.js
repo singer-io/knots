@@ -39,6 +39,7 @@ export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
 export const LOAD_KNOT = 'LOAD_KNOT';
+export const RESET_STORE = 'RESET_STORE';
 
 type actionType = {
   +type: string
@@ -257,11 +258,18 @@ export function loadValues(knot: string) {
 }
 
 export function loadKnot(knot: {}) {
-  console.log('Called');
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: LOAD_KNOT,
       knot
+    });
+  };
+}
+
+export function resetStore() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: RESET_STORE
     });
   };
 }

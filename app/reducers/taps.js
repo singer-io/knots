@@ -87,9 +87,8 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case UPDATE_TAP_FIELD:
-      fieldValues[action.key] = action.value;
       return Object.assign({}, state, {
-        fieldValues
+        fieldValues: action.values
       });
     case SCHEMA_LOADING:
       return Object.assign({}, state, {

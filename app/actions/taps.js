@@ -98,12 +98,11 @@ export function selectTap(
   };
 }
 
-export function updateTapField(key: string, value: string) {
+export function updateTapField(values: object) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TAP_FIELD,
-      key,
-      value
+      values
     });
   };
 }

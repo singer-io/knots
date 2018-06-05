@@ -27,7 +27,7 @@ import targets from './targets';
 import user from './user';
 import progress from './progress';
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   progress,
   knots,
   taps,
@@ -35,5 +35,12 @@ const rootReducer = combineReducers({
   user,
   router
 });
+
+const rootReducer = (state, action) => {
+  if (action.type === 'RESET_STORE') {
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
 
 export default rootReducer;

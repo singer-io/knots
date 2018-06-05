@@ -37,11 +37,12 @@ import { ipcRenderer } from 'electron';
 import styles from './DataWorld.css';
 
 type Props = {
-  updateField: (target: string, field: string, value: string) => void
+  updateField: (targetValues: object) => void
 };
 
 type State = {
-  formState: {}
+  formState: {},
+  targetValues: { fieldValues: {} }
 };
 
 export default class DataWorld extends Component<Props, State> {
@@ -53,7 +54,8 @@ export default class DataWorld extends Component<Props, State> {
   }
 
   state = {
-    formState: {}
+    formState: {},
+    targetValues: { 'target-datadotworld': { fieldValues: {} } }
   };
 
   authorize = () => {
@@ -61,12 +63,16 @@ export default class DataWorld extends Component<Props, State> {
   };
 
   setToken = (token: string) => {
-    this.props.updateField('target-datadotworld', 'api_token', token);
+    const { targetValues } = this.state;
+    targetValues['target-datadotworld'].fieldValues.api_token = token;
+    this.props.updateField(targetValues);
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    this.props.updateField('target-datadotworld', name, value);
+    const { targetValues } = this.state;
+    targetValues['target-datadotworld'].fieldValues[name] = value;
+    this.props.updateField(targetValues);
   };
 
   showDatasetSelector = () => {
@@ -80,18 +86,13 @@ export default class DataWorld extends Component<Props, State> {
 
     datasetSelector.success((datasets) => {
       const selectedDataset = datasets[0];
+      const { targetValues } = this.state;
+      targetValues['target-datadotworld'].fieldValues.dataset_id =
+        selectedDataset.id;
+      targetValues['target-datadotworld'].fieldValues.dataset_owner =
+        selectedDataset.owner;
 
-      this.props.updateField(
-        'target-datadotworld',
-        'dataset_id',
-        selectedDataset.id
-      );
-
-      this.props.updateField(
-        'target-datadotworld',
-        'dataset_owner',
-        selectedDataset.owner
-      );
+      this.props.updateField(targetValues);
     });
 
     datasetSelector.show();
