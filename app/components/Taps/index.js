@@ -64,7 +64,7 @@ type Props = {
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string }) => void,
-  updateTapField: (key: string, value: string) => void,
+  updateTapField: (value: object) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},

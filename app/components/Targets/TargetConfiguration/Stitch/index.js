@@ -35,17 +35,21 @@ type Props = {
 };
 
 type State = {
-  formState: {}
+  formState: {},
+  targetValues: { 'target-stitch': { fieldValues: {} } }
 };
 
 export default class Stitch extends Component<Props, State> {
   state = {
-    formState: {}
+    formState: {},
+    targetValues: { 'target-stitch': { fieldValues: {} } }
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    this.props.updateField('target-stitch', name, value);
+    const { targetValues } = this.state;
+    targetValues['target-stitch'].fieldValues[name] = value;
+    this.props.updateField(targetValues);
   };
 
   handleBlur = (e, key) => {
