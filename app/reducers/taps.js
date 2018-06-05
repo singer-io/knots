@@ -142,7 +142,11 @@ export default function taps(state = defaultState, action) {
         schema: state.schema.length > 0 ? state.schema : action.schema,
         error: action.error
       });
-    case UPDATE_SCHEMA_FIELD:
+    case UPDATE_SCHEMA_FIELD: {
+      const { tapName } = action;
+      const LEGACY_TAPS = ['tap-redshift'];
+      const isLegacyTap = LEGACY_TAPS.includes(tapName);
+
       if (schema[action.index]) {
         let indexToUpdate;
         switch (action.field) {
@@ -169,17 +173,26 @@ export default function taps(state = defaultState, action) {
 
             // Select a stream when a user chooses its replication key
             if (action.value === '') {
-              delete schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-key'
-              ];
-
-              delete schema[action.index].metadata[indexToUpdate].metadata
-                .selected;
+              if (isLegacyTap) {
+                delete schema[action.index].replication_key;
+                delete schema[action.index].metadata[indexToUpdate].metadata
+                  .selected;
+              } else {
+                delete schema[action.index].metadata[indexToUpdate].metadata[
+                  'replication-key'
+                ];
+                delete schema[action.index].metadata[indexToUpdate].metadata
+                  .selected;
+              }
+            } else if (isLegacyTap) {
+              schema[action.index].replication_key = action.value;
+              console.log(schema[action.index]);
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
               ] =
                 action.value;
+              console.log(schema[action.index]);
             }
 
             return Object.assign({}, state, {
@@ -190,6 +203,7 @@ export default function taps(state = defaultState, action) {
         }
       }
       return state;
+    }
     case SCHEMA_UPDATED:
       return Object.assign({}, state, {
         tapsLoading: false,

@@ -63,7 +63,8 @@ type Props = {
   editSchemaField: (
     field: string,
     index: string,
-    value: boolean | string
+    value: boolean | string,
+    tapName: string
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (
@@ -117,10 +118,11 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
+    const tapName = this.props.tapsStore.selectedTap.name;
     if (!this.validSchema()) {
       this.setState({ streamSelected: this.validSchema() });
     }
-    this.props.editSchemaField(field, index, value);
+    this.props.editSchemaField(field, index, value, tapName);
   };
 
   handleSelectChange = (
@@ -128,7 +130,8 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    this.props.editSchemaField(field, index, value);
+    const tapName = this.props.tapsStore.selectedTap.name;
+    this.props.editSchemaField(field, index, value, tapName);
   };
 
   submit = () => {

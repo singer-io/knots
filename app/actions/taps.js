@@ -165,14 +165,16 @@ export function submitConfig(
 export function editSchemaField(
   field: string,
   index: string,
-  value: boolean | string
+  value: boolean | string,
+  tapName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA_FIELD,
       field,
       index,
-      value
+      value,
+      tapName
     });
   };
 }
