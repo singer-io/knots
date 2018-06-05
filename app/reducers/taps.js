@@ -186,13 +186,11 @@ export default function taps(state = defaultState, action) {
               }
             } else if (isLegacyTap) {
               schema[action.index].replication_key = action.value;
-              console.log(schema[action.index]);
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
               ] =
                 action.value;
-              console.log(schema[action.index]);
             }
 
             return Object.assign({}, state, {
