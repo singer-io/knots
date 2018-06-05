@@ -39,7 +39,8 @@ type Props = {
     dockerVersion: string,
     fetchingKnots: boolean,
     knots: Array<{}>
-  }
+  },
+  resetStore: () => void
 };
 
 type State = {
@@ -52,6 +53,8 @@ export default class Home extends Component<Props, State> {
   };
 
   componentWillMount() {
+    // reset the store
+    this.props.resetStore();
     this.props.detectDocker();
     this.props.getKnots();
   }

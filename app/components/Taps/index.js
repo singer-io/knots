@@ -78,7 +78,11 @@ type State = {
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: true
+    showTaps: true,
+    fieldValues: {
+      api_type: 'BULK',
+      select_fields_by_default: true
+    }
   };
 
   componentWillMount() {
@@ -97,7 +101,9 @@ export default class Taps extends Component<Props, State> {
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = event.currentTarget;
-    this.setState(this.props.updateTapField(name, value));
+    const { fieldValues } = this.state;
+    fieldValues[name] = value;
+    this.props.updateTapField(fieldValues);
   };
 
   formValid = () => {
@@ -127,7 +133,9 @@ export default class Taps extends Component<Props, State> {
   };
 
   setSfRefreshToken = (token: string) => {
-    this.props.updateTapField('refresh_token', token);
+    const { fieldValues } = this.state;
+    fieldValues.refresh_token = token;
+    this.props.updateTapField(fieldValues);
   };
 
   redirectToHome = () => {
