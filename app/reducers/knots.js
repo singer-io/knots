@@ -30,16 +30,20 @@ import {
   FETCHED_KNOTS,
   KNOT_DELETED,
   LOADED_KNOT,
-  LOADING_KNOT
+  LOADING_KNOT,
+  DOCKER_RUNNING
 } from '../actions/knots';
 
 export type knotsStateType = {
   +detectingDocker: boolean,
+  +dockerVersion: string,
+  +dockerRunning: boolean,
+  +dockerError: string,
+  +dockerVerified: boolean,
+
   +fetchingKnots: boolean,
   +knots: Array<string>,
-  +dockerVersionDetected: boolean,
-  +dockerVersion: string,
-  +dockerVersionError: string,
+
   +tapLogs: Array<string>,
   +targetLogs: Array<string>,
   +knotName: string,
@@ -52,10 +56,12 @@ export type knotsStateType = {
 
 const defaultState = {
   detectingDocker: false,
-  fetchingKnots: false,
-  dockerVersionDetected: false,
   dockerVersion: '',
-  dockerVersionError: '',
+  dockerRunning: false,
+  dockerError: '',
+  dockerVerified: false,
+
+  fetchingKnots: false,
   knots: [],
   tapLogs: [],
   targetLogs: [],
@@ -76,10 +82,15 @@ export default function knots(state = defaultState, action) {
       });
     case UPDATE_DOCKER_VERSION:
       return Object.assign({}, state, {
-        detectingDocker: false,
-        dockerVersionDetected: true,
         dockerVersion: action.version,
-        dockerVersionError: action.error
+        dockerError: action.error,
+        dockerVerified: !!action.error
+      });
+    case DOCKER_RUNNING:
+      return Object.assign({}, state, {
+        dockerRunning: action.running,
+        dockerError: action.error,
+        dockerVerified: true
       });
     case FETCHING_KNOTS:
       return Object.assign({}, state, {

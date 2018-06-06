@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,16 +18,21 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardBody, Button } from 'reactstrap';
 
 type Props = {
-  dockerVersion: string
+  dockerInstalled: boolean,
+  dockerRunning: boolean
 };
 
 class Create extends Component<Props> {
   render() {
+    const { dockerInstalled, dockerRunning } = this.props;
+
     return (
       <Card className="card text-center">
         <CardBody className="py-5">
@@ -43,7 +47,7 @@ class Create extends Component<Props> {
             <Button
               outline
               color="secondary"
-              disabled={!this.props.dockerVersion}
+              disabled={!dockerInstalled || !dockerRunning}
               className="mt-3"
             >
               Get Started

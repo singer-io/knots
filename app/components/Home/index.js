@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import { Container, Alert, Progress } from 'reactstrap';
 import { shell } from 'electron';
@@ -31,12 +32,13 @@ import Create from './Create';
 import styles from './Home.css';
 
 type Props = {
-  detectDocker: () => void,
+  verifyDocker: () => void,
   getKnots: () => void,
   knotsStore: {
     detectingDocker: boolean,
-    dockerVersionDetected: boolean,
+    dockerVerified: boolean,
     dockerVersion: string,
+    dockerRunning: boolean,
     fetchingKnots: boolean,
     knots: Array<{}>
   },
@@ -44,49 +46,53 @@ type Props = {
 };
 
 type State = {
-  showError: boolean
+  dockerInstalled: boolean,
+  dockerRunning: boolean
 };
 
 export default class Home extends Component<Props, State> {
   state = {
-    showError: false
+    dockerInstalled: false,
+    dockerRunning: false
   };
 
   componentWillMount() {
     // reset the store
     this.props.resetStore();
-    this.props.detectDocker();
+    this.props.verifyDocker();
     this.props.getKnots();
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    this.setState({ showError: !nextProps.knotsStore.dockerVersion });
+    this.setState({
+      dockerInstalled: !!nextProps.knotsStore.dockerVersion,
+      dockerRunning: nextProps.knotsStore.dockerRunning
+    });
   }
 
   onDismiss = () => {
-    this.setState({ showError: false });
+    this.setState({ dockerInstalled: true, dockerRunning: true });
 
     // Alert will disappear then reappear after one second
     // if Docker hasn't been installed
     setTimeout(() => {
-      this.props.detectDocker();
+      this.props.verifyDocker();
     }, 1000);
   };
 
-  dockerDownload = () => {
-    shell.openExternal(
-      'https://store.docker.com/editions/community/docker-ce-desktop-mac'
-    );
+  openLink = (url: string) => {
+    shell.openExternal(url);
   };
 
   render() {
     const {
-      dockerVersionDetected,
-      dockerVersion,
       detectingDocker,
+      dockerVerified,
       fetchingKnots,
       knots
     } = this.props.knotsStore;
+
+    const { dockerInstalled, dockerRunning } = this.state;
 
     return (
       <div>
@@ -95,19 +101,22 @@ export default class Home extends Component<Props, State> {
           fetchingKnots && (
             <Progress value="100" striped animated className="mt-5" />
           )}
-
-        {!detectingDocker && (
-          <Container className="mt-5">
-            {dockerVersionDetected && (
+        <Container className="mt-5">
+          {dockerVerified && (
+            <div>
               <Alert
-                isOpen={this.state.showError}
+                isOpen={!dockerInstalled}
                 color="warning"
                 className="d-flex justify-content-between"
               >
                 <span className="align-self-center">
                   <span>Docker must be installed before you can proceed. </span>
                   <button
-                    onClick={this.dockerDownload}
+                    onClick={() => {
+                      this.openLink(
+                        'https://store.docker.com/editions/community/docker-ce-desktop-mac'
+                      );
+                    }}
                     className={classNames('alert-link', styles.download)}
                   >
                     Download Docker
@@ -122,13 +131,36 @@ export default class Home extends Component<Props, State> {
                   </button>
                 </span>
               </Alert>
-            )}
-
-            {knots.length > 0 && <Knots />}
-
-            {knots.length === 0 && <Create dockerVersion={dockerVersion} />}
-          </Container>
-        )}
+              <Alert
+                isOpen={dockerInstalled ? !dockerRunning : false}
+                color="warning"
+                className="d-flex justify-content-between"
+              >
+                <span className="align-self-center">
+                  <span>Cannot connect to Docker daemon. </span>
+                  <button
+                    onClick={() =>
+                      this.openLink('https://docs.docker.com/config/daemon/')
+                    }
+                    className={classNames('alert-link', styles.download)}
+                  >
+                    Is the Docker daemon running?
+                  </button>
+                </span>
+                <span>
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={this.onDismiss}
+                  >
+                    Continue
+                  </button>
+                </span>
+              </Alert>
+              {knots.length > 0 && <Knots />}
+              {knots.length === 0 && <Create {...this.state} />}
+            </div>
+          )}
+        </Container>
       </div>
     );
   }

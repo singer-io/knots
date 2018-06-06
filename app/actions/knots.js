@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import axios from 'axios';
 import { shell } from 'electron';
 
@@ -26,6 +27,7 @@ const baseUrl = 'http://localhost:4321';
 
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
+export const DOCKER_RUNNING = 'DOCKER_RUNNING';
 export const FETCHING_KNOTS = 'FETCHING_KNOTS';
 export const FETCHED_KNOTS = 'FETCHED_KNOTS';
 
@@ -45,20 +47,38 @@ type actionType = {
   +type: string
 };
 
-export function detectDocker() {
+export function verifyDocker() {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: DETECTING_DOCKER
     });
 
     axios
-      .get(`${baseUrl}/docker/`)
-      .then((response) =>
+      .get(`${baseUrl}/docker/installed`)
+      .then((installedResponse) => {
         dispatch({
           type: UPDATE_DOCKER_VERSION,
-          version: response.data.version
-        })
-      )
+          version: installedResponse.data.version
+        });
+
+        axios
+          .get(`${baseUrl}/docker/running`)
+          .then(() =>
+            dispatch({
+              type: DOCKER_RUNNING,
+              running: true
+            })
+          )
+          .catch((error) => {
+            dispatch({
+              type: DOCKER_RUNNING,
+              running: false,
+              error: error.response
+                ? error.response.data.message
+                : error.message
+            });
+          });
+      })
       .catch((error) => {
         dispatch({
           type: UPDATE_DOCKER_VERSION,
