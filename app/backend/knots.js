@@ -236,12 +236,32 @@ const deleteKnot = (knot) =>
   });
 
 const packageKnot = (knotName) =>
-  new Promise((resolve) => {
-    const zip = new EasyZip();
-    zip.zipFolder(path.resolve(applicationFolder, 'knots', knotName), () => {
-      zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
-      resolve();
-    });
+  new Promise((resolve, reject) => {
+    try {
+      const zip = new EasyZip();
+
+      // Make a clone of the knot to be downloaded
+      shell.cp(
+        '-R',
+        path.resolve(applicationFolder, 'knots', knotName),
+        path.resolve(applicationFolder)
+      );
+
+      // Remove log files
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'tap.log'));
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'target.log'));
+
+      // Create zip from clone
+      zip.zipFolder(path.resolve(applicationFolder, knotName), () => {
+        zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+
+        // Done, clean up
+        shell.rm('-rf', path.resolve(applicationFolder, knotName));
+        resolve();
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 
 const downloadKnot = (req, res) => {
