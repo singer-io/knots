@@ -71,14 +71,19 @@ export default class Tap extends Component<Props, State> {
           style={{ cursor: 'pointer' }}
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
-          onClick={() => {
-            this.props.selectTap(
-              {
-                name: tapKey,
-                image: this.props.tapImage
-              },
-              knotName
-            );
+          onClick={(e) => {
+            const text = e.target.textContent;
+
+            // Do not select tap when user clicks on 'Learn more'
+            if (text !== 'Learn more') {
+              this.props.selectTap(
+                {
+                  name: tapKey,
+                  image: this.props.tapImage
+                },
+                knotName
+              );
+            }
           }}
         >
           <CardBody>
