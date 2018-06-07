@@ -93,24 +93,15 @@ export function selectTap(
   };
 }
 
-export function updateTapField(values: {}) {
+export function updateTapField(tap: string, field: string, value: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TAP_FIELD,
-      values
+      tap,
+      field,
+      value
     });
   };
-}
-
-function ISODateString(d) {
-  function pad(n) {
-    return n < 10 ? `0${n}` : n;
-  }
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
-    d.getUTCDate()
-  )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
-    d.getUTCSeconds()
-  )}Z`;
 }
 
 export function submitConfig(
@@ -123,10 +114,6 @@ export function submitConfig(
       type: SCHEMA_LOADING
     });
     const tapConfig = config;
-
-    if (tapConfig.start_date) {
-      tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
-    }
 
     const payload = {
       tap,

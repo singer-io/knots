@@ -18,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+/* eslint-disable no-case-declarations */
+
 import {
   TAPS_LOADING,
   UPDATE_TAPS,
@@ -44,7 +46,17 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +liveLogs: string
+  +liveLogs: string,
+  +'tap-redshift': {
+    fieldValues: {
+      host: string,
+      port: string,
+      dbname: string,
+      schema: string,
+      user: string,
+      password: string
+    }
+  }
 };
 
 const defaultState = {
@@ -63,7 +75,17 @@ const defaultState = {
   schema: [],
   schemaUpdated: false,
   error: '',
-  liveLogs: ''
+  liveLogs: '',
+  'tap-redshift': {
+    fieldValues: {
+      host: '',
+      port: '',
+      dbname: '',
+      schema: 'public',
+      user: '',
+      password: ''
+    }
+  }
 };
 
 export default function taps(state = defaultState, action) {
@@ -84,8 +106,11 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case UPDATE_TAP_FIELD:
+      const tap = state[action.tap];
+      tap.fieldValues[action.field] = action.value;
+
       return Object.assign({}, state, {
-        fieldValues: action.values
+        [action.tap]: tap
       });
     case SCHEMA_LOADING:
       return Object.assign({}, state, {

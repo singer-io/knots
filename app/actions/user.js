@@ -59,7 +59,7 @@ export function fetchToken(knot: string) {
   };
 }
 
-export function updateField(targetValues: object) {
+export function updateField(targetValues: {}) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TARGET_FIELD,
