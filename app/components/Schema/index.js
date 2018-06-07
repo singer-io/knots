@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -18,6 +17,8 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
+
+// @flow
 
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
@@ -55,6 +56,7 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
+    selectedTap: { name: string, image: string },
     error?: string
   },
   knotsStore: { knotName: string },
@@ -64,6 +66,11 @@ type Props = {
     value: boolean | string
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
+  submitConfig: (
+    selectedTap: { name: string, image: string },
+    fieldValues: {},
+    knotName: string
+  ) => void,
   updateSchemaLogs: (log: string) => void,
   history: { push: (path: string) => void }
 };
@@ -201,6 +208,13 @@ export default class Schema extends Component<Props, State> {
       tooltipOpen: !this.state.tooltipOpen
     });
   };
+  retry() {
+    const { selectedTap } = this.props.tapsStore;
+    const { fieldValues } = this.props.tapsStore[selectedTap.name];
+    const { knotName } = this.props.knotsStore;
+
+    this.props.submitConfig(selectedTap, fieldValues, knotName);
+  }
 
   render() {
     if (this.props.tapsStore.schemaUpdated) {
@@ -266,16 +280,18 @@ export default class Schema extends Component<Props, State> {
                       </button>
                     </span>
                     <span>
-                      <Link to="/">
-                        <Button
-                          className={classNames(
-                            'btn btn-outline-secondary',
-                            styles.abort
-                          )}
-                        >
-                          Abort
-                        </Button>
-                      </Link>
+                      <Button
+                        className={classNames(
+                          'btn btn-outline-secondary',
+                          styles.abort
+                        )}
+                        onClick={() => {
+                          this.retry();
+                        }}
+                      >
+                        Retry
+                      </Button>
+
                       <Link to="/taps">
                         <Button className="btn btn-outline-primary">
                           Reconfigure

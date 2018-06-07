@@ -19,6 +19,8 @@
  */
 
 // @flow
+/* eslint-disable react/prop-types */
+/* eslint-disable camelcase */
 
 import React, { Component } from 'react';
 import {
@@ -34,6 +36,19 @@ import {
 import styles from './Redshift.css';
 
 type Props = {
+  tapsStore: {
+    'tap-redshift': {
+      fieldValues: {
+        host: string,
+        dbname: string,
+        port: number,
+        schema: string,
+        user: string,
+        password: string,
+        start_date: string
+      }
+    }
+  },
   updateTapField: (tap: string, field: string, value: string) => void
 };
 type State = {
@@ -66,26 +81,37 @@ export default class Redshift extends Component<Props, State> {
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
-    const toISODateString = (date) => {
-      const pad = (n) => (n < 10 ? `0${n}` : n);
-
-      return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-        date.getUTCDate()
-      )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-        date.getUTCSeconds()
-      )}Z`;
-    };
-
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = toISODateString(new Date(value));
+      value = new Date(value).toISOString();
     }
     this.props.updateTapField('tap-redshift', name, value);
   };
 
+  formatDate = (ISODate: string) => {
+    const date = new Date(ISODate);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${year}-${month < 10 ? `0${month}` : month}-${
+      day < 10 ? `0${day}` : day
+    }`;
+  };
+
   render() {
+    const {
+      host,
+      dbname,
+      port,
+      schema,
+      user,
+      password,
+      start_date
+    } = this.props.tapsStore['tap-redshift'].fieldValues;
+
     return (
       <Form className={styles.Redshift}>
         <Row>
@@ -96,6 +122,7 @@ export default class Redshift extends Component<Props, State> {
                 type="text"
                 name="host"
                 id="host"
+                value={host}
                 onFocus={() => {
                   this.setState({ host: {} });
                 }}
@@ -118,6 +145,7 @@ export default class Redshift extends Component<Props, State> {
                 type="number"
                 name="port"
                 id="port"
+                value={port}
                 onFocus={() => {
                   this.setState({ port: {} });
                 }}
@@ -139,6 +167,7 @@ export default class Redshift extends Component<Props, State> {
                 type="text"
                 name="dbname"
                 id="dbname"
+                value={dbname}
                 onFocus={() => {
                   this.setState({ dbname: {} });
                 }}
@@ -161,7 +190,7 @@ export default class Redshift extends Component<Props, State> {
                 type="text"
                 name="schema"
                 id="schema"
-                placeholder="PUBLIC"
+                value={schema}
                 onChange={this.handleChange}
                 {...this.state.schema}
               />
@@ -177,6 +206,7 @@ export default class Redshift extends Component<Props, State> {
                 type="text"
                 name="user"
                 id="user"
+                value={user}
                 onFocus={() => {
                   this.setState({ user: {} });
                 }}
@@ -197,6 +227,7 @@ export default class Redshift extends Component<Props, State> {
                 type="password"
                 name="password"
                 id="password"
+                value={password}
                 onFocus={() => {
                   this.setState({ password: {} });
                 }}
@@ -219,6 +250,7 @@ export default class Redshift extends Component<Props, State> {
                 type="date"
                 name="start_date"
                 id="start_date"
+                value={this.formatDate(start_date)}
                 onBlur={(event) => {
                   const { value } = event.currentTarget;
                   this.validate('start_date', value);

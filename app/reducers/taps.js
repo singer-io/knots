@@ -46,7 +46,6 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +liveLogs: string,
   +'tap-redshift': {
     fieldValues: {
       host: string,
@@ -75,7 +74,6 @@ const defaultState = {
   schema: [],
   schemaUpdated: false,
   error: '',
-  liveLogs: '',
   'tap-redshift': {
     fieldValues: {
       host: '',
@@ -84,7 +82,7 @@ const defaultState = {
       schema: 'public',
       user: '',
       password: '',
-      start_date: ''
+      start_date: new Date().toISOString()
     }
   }
 };
@@ -115,7 +113,8 @@ export default function taps(state = defaultState, action) {
       });
     case SCHEMA_LOADING:
       return Object.assign({}, state, {
-        schemaLoading: true
+        schemaLoading: true,
+        schemaLogs: []
       });
     case UPDATE_SCHEMA_LOGS:
       return Object.assign({}, state, {
