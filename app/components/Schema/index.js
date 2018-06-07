@@ -29,7 +29,8 @@ import {
   Button,
   Progress,
   Card,
-  CardBody
+  CardBody,
+  Tooltip
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
@@ -69,7 +70,8 @@ type Props = {
 
 type State = {
   showSchema: boolean,
-  streamSelected: boolean
+  streamSelected: boolean,
+  tooltipOpen: boolean
 };
 
 type Stream = {
@@ -89,7 +91,8 @@ export default class Schema extends Component<Props, State> {
 
     this.state = {
       showSchema: false,
-      streamSelected: false
+      streamSelected: false,
+      tooltipOpen: false
     };
 
     socket.on('schemaLog', (log) => {
@@ -191,6 +194,12 @@ export default class Schema extends Component<Props, State> {
   redirectToHome = () => {
     this.terminateProcess();
     this.props.history.push('/');
+  };
+
+  toggleTooltip = () => {
+    this.setState({
+      tooltipOpen: !this.state.tooltipOpen
+    });
   };
 
   render() {
@@ -296,12 +305,27 @@ export default class Schema extends Component<Props, State> {
               {showSchema &&
                 schema.length > 0 && (
                   <div>
-                    <Table className="mt-5">
+                    <p className="mb-4">
+                      Select the tables/streams that you would like to
+                      replicate. A minimum of 1 is required.
+                    </p>
+                    <Table className="mt-1">
                       <thead className="thead-light">
                         <tr>
                           <th className="text-center">Include</th>
                           <th>Table/Stream</th>
-                          <th>Replication Key</th>
+                          <th id="ReplicationInfo">Replication Key</th>
+                          <Tooltip
+                            placement="right"
+                            isOpen={this.state.tooltipOpen}
+                            target="ReplicationInfo"
+                            toggle={this.toggleTooltip}
+                            className={classNames(styles.repKeyToolTip)}
+                          >
+                            A sequence column or attribute that can be used to
+                            start replication from the last record transferred.
+                            Required to enable incremental sync.
+                          </Tooltip>
                         </tr>
                       </thead>
                       <tbody>
@@ -327,10 +351,6 @@ export default class Schema extends Component<Props, State> {
                         ))}
                       </tbody>
                     </Table>
-                    <Alert color="warning" style={{ opacity: 1 }}>
-                      Start date will be ignored unless replication keys are
-                      selected
-                    </Alert>
                     {!!streamSelected && (
                       <Alert color="danger" style={{ opacity: 1 }}>
                         A minimum of one table/stream must be selected
