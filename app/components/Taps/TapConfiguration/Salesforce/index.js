@@ -23,28 +23,24 @@
 import React, { Component } from 'react';
 import { Container, Row } from 'reactstrap';
 
-import DataWorld from '../../../containers/DataWorld';
-import Stitch from '../../../containers/Stitch';
-
 type Props = {
-  targetsStore: {
-    selectedTarget: { name: string, image: string }
+  tapsStore: {
+    selectedTap: { name: string, image: string }
   }
 };
 
 export default class Target extends Component<Props> {
   selectedTarget = () => {
-    const { selectedTarget } = this.props.targetsStore;
-    switch (selectedTarget.name) {
-      case 'target-datadotworld':
-        return <DataWorld />;
-      case 'target-stitch':
-        return <Stitch />;
+    const { selectedTap } = this.props.tapsStore;
+    switch (selectedTap.name) {
+      case 'tap-redshift':
+        return <div>Redshift</div>;
+      case 'tap-salesforce':
+        return <div>Salesforce</div>;
       default:
         return <div>Unknown Target</div>;
     }
   };
-
   render() {
     return (
       <div>

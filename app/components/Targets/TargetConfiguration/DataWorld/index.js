@@ -1,4 +1,3 @@
-// @flow
 /* eslint-disable camelcase */
 /* eslint-disable react/prop-types */
 /*
@@ -21,6 +20,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import {
   Label,
@@ -37,7 +38,7 @@ import { ipcRenderer } from 'electron';
 import styles from './DataWorld.css';
 
 type Props = {
-  updateField: (targetValues: object) => void
+  updateField: (targetValues: {}) => void
 };
 
 type State = {

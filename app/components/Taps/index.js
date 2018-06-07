@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
@@ -26,13 +27,14 @@ import classNames from 'classnames';
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
-import Configure from './Configure';
+import TapConfiguration from '../../containers/TapConfiguration';
 
 import styles from './Taps.css';
 
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
+    tapSelected: boolean,
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
     sfToken?: string,
@@ -64,7 +66,7 @@ type Props = {
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string }) => void,
-  updateTapField: (value: object) => void,
+  updateTapField: (value: {}) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},
@@ -73,7 +75,12 @@ type Props = {
 };
 
 type State = {
-  showTaps: boolean
+  showTaps: boolean,
+  fieldValues: {
+    api_type: string,
+    select_fields_by_default: string,
+    refresh_token: string
+  }
 };
 
 export default class Taps extends Component<Props, State> {
@@ -81,7 +88,8 @@ export default class Taps extends Component<Props, State> {
     showTaps: true,
     fieldValues: {
       api_type: 'BULK',
-      select_fields_by_default: true
+      select_fields_by_default: true,
+      refresh_token: ''
     }
   };
 
@@ -90,7 +98,7 @@ export default class Taps extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.tapsStore.tapFields.length > 0) {
+    if (nextProps.tapsStore.tapSelected) {
       this.setState({ showTaps: false });
     }
   }
@@ -143,13 +151,7 @@ export default class Taps extends Component<Props, State> {
   };
 
   render() {
-    const {
-      taps,
-      tapFields,
-      fieldValues,
-      sfToken,
-      selectedTap
-    } = this.props.tapsStore;
+    const { taps, selectedTap } = this.props.tapsStore;
     const { knotName } = this.props.knotsStore;
     const { showTaps } = this.state;
 
@@ -197,17 +199,10 @@ export default class Taps extends Component<Props, State> {
               </CardHeader>
               <CardBody
                 className={classNames('collapse', {
-                  show: !showTaps && tapFields.length > 0
+                  show: !showTaps && selectedTap
                 })}
               >
-                <Configure
-                  fields={tapFields}
-                  fieldValues={fieldValues}
-                  submit={this.submit}
-                  handleChange={this.handleChange}
-                  setSfRefreshToken={this.setSfRefreshToken}
-                  sfToken={sfToken}
-                />
+                <TapConfiguration />
               </CardBody>
             </Card>
           </div>

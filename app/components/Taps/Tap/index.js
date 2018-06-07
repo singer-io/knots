@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -18,6 +17,8 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
+
+// @flow
 
 import React, { Component } from 'react';
 import { Col, Card, CardBody } from 'reactstrap';

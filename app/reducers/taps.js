@@ -21,19 +21,19 @@
 import {
   TAPS_LOADING,
   UPDATE_TAPS,
-  UPDATE_TAP_FIELDS,
   UPDATE_TAP_FIELD,
   SCHEMA_RECEIVED,
   UPDATE_SCHEMA_FIELD,
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
-  SELECT_TAP,
-  UPDATE_SCHEMA_LOGS
+  UPDATE_SCHEMA_LOGS,
+  TAP_SELECTED
 } from '../actions/taps';
 import { LOADED_KNOT, LOAD_KNOT } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
+  +tapSelected: boolean,
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
@@ -49,6 +49,7 @@ export type tapsStateType = {
 
 const defaultState = {
   tapsLoading: false,
+  tapSelected: false,
   selectedTap: { name: '', image: '' },
   schemaLoading: false,
   schemaLoaded: false,
@@ -66,7 +67,7 @@ const defaultState = {
 };
 
 export default function taps(state = defaultState, action) {
-  const { fieldValues, schema } = state;
+  const { schema } = state;
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -76,14 +77,10 @@ export default function taps(state = defaultState, action) {
         taps: action.taps,
         error: action.error
       });
-    case SELECT_TAP:
+    case TAP_SELECTED:
       return Object.assign({}, state, {
-        selectedTap: action.tap
-      });
-    case UPDATE_TAP_FIELDS:
-      return Object.assign({}, state, {
-        tapsLoading: false,
-        tapFields: action.tapFields,
+        tapSelected: !action.error,
+        selectedTap: action.tap,
         error: action.error
       });
     case UPDATE_TAP_FIELD:
