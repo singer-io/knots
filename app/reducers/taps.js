@@ -83,7 +83,8 @@ const defaultState = {
       dbname: '',
       schema: 'public',
       user: '',
-      password: ''
+      password: '',
+      start_date: ''
     }
   }
 };

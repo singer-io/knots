@@ -75,22 +75,12 @@ type Props = {
 };
 
 type State = {
-  showTaps: boolean,
-  fieldValues: {
-    api_type: string,
-    select_fields_by_default: string,
-    refresh_token: string
-  }
+  showTaps: boolean
 };
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: true,
-    fieldValues: {
-      api_type: 'BULK',
-      select_fields_by_default: true,
-      refresh_token: ''
-    }
+    showTaps: true
   };
 
   componentWillMount() {
@@ -107,43 +97,31 @@ export default class Taps extends Component<Props, State> {
     this.setState({ showTaps: !this.state.showTaps });
   };
 
-  handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
-    const { name, value } = event.currentTarget;
-    const { fieldValues } = this.state;
-    fieldValues[name] = value;
-    this.props.updateTapField(fieldValues);
-  };
-
   formValid = () => {
-    const validState = this.props.tapsStore.tapFields.map((field) => {
-      if (field.required) {
-        if (!this.props.tapsStore.fieldValues[field.key]) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-
-    if (validState.indexOf(false) > -1) {
+    const { selectedTap } = this.props.tapsStore;
+    if (!selectedTap.name) {
       return false;
     }
 
-    return true;
+    const { fieldValues } = this.props.tapsStore[selectedTap.name];
+    let valid = true;
+
+    Object.keys(fieldValues).forEach((field) => {
+      if (!fieldValues[field]) {
+        valid = false;
+      }
+    });
+
+    return valid;
   };
 
   submit = () => {
-    const { selectedTap, fieldValues } = this.props.tapsStore;
+    const { selectedTap } = this.props.tapsStore;
+    const { fieldValues } = this.props.tapsStore[selectedTap.name];
     const { knotName } = this.props.knotsStore;
 
     this.props.submitConfig(selectedTap, fieldValues, knotName);
     this.props.history.push('/schema');
-  };
-
-  setSfRefreshToken = (token: string) => {
-    const { fieldValues } = this.state;
-    fieldValues.refresh_token = token;
-    this.props.updateTapField(fieldValues);
   };
 
   redirectToHome = () => {
@@ -208,7 +186,7 @@ export default class Taps extends Component<Props, State> {
           </div>
           <Button
             color="primary"
-            className={classNames('float-right my-3')}
+            className="float-right my-3"
             onClick={this.submit}
             disabled={!this.formValid() || showTaps}
           >

@@ -83,7 +83,6 @@ export default class Redshift extends Component<Props, State> {
       value = toISODateString(new Date(value));
     }
     this.props.updateTapField('tap-redshift', name, value);
-    console.log(name, value);
   };
 
   render() {
