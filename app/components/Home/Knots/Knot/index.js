@@ -64,14 +64,14 @@ class Knot extends Component<Props, State> {
     const { knot } = this.props;
     this.props.loadKnot(knot);
 
-    this.props.history.push(`/sync?knot=${knot.name}&mode=full`);
+    this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
   };
 
   partialSync = () => {
     const { knot } = this.props;
     this.props.loadKnot(knot);
 
-    this.props.history.push(`/sync?knot=${knot.name}&mode=partial`);
+    this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
   };
 
   edit = () => {

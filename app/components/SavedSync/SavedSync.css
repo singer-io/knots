@@ -18,16 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
-.navigation {
-  margin-top: 50px;
-  display: flex;
-  justify-content: space-between;
-}
-
-.fa-long-arrow-right {
-  margin-left: 10px;
-}
-
-.fa-long-arrow-left {
-  margin-right: 10px;
+.logo {
+  width: 40px;
+  height: 40px;
+  mix-blend-mode: multiply;
 }
