@@ -39,7 +39,7 @@ const targets = [
   {
     name: 'data.world',
     targetKey: 'target-datadotworld',
-    targetImage: 'gbolahan/target-datadotworld:1.0.0b3',
+    targetImage: 'datadotworld/target-datadotworld:1.0.1',
     repo: 'https://github.com/datadotworld/target-datadotworld'
   },
   {
