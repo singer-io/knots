@@ -63,8 +63,8 @@ class Knot extends Component<Props, State> {
 
   fullSync = () => {
     const { knot } = this.props;
-
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
+    this.props.loadValues(knot.name);
   };
 
   partialSync = () => {
