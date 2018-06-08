@@ -40,7 +40,6 @@ export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
-export const LOAD_KNOT = 'LOAD_KNOT';
 export const RESET_STORE = 'RESET_STORE';
 
 type actionType = {
@@ -157,9 +156,6 @@ export function sync(knotName: string) {
     dispatch({
       type: KNOT_SYNCING
     });
-    dispatch({
-      type: FINAL_STEP
-    });
 
     axios
       .post(`${baseUrl}/knots/full-sync`, { knotName })
@@ -181,9 +177,6 @@ export function partialSync(knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
-    });
-    dispatch({
-      type: FINAL_STEP
     });
 
     axios
@@ -261,7 +254,6 @@ export function loadValues(knot: string) {
           type: LOADED_KNOT,
           tap: response.data.tap,
           target: response.data.target,
-          tapFields: response.data.tapFields,
           tapConfig: response.data.tapConfig,
           targetConfig: response.data.targetConfig,
           knotName: response.data.name,
@@ -274,15 +266,6 @@ export function loadValues(knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
-}
-
-export function loadKnot(knot: {}) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: LOAD_KNOT,
-      knot
-    });
   };
 }
 

@@ -31,7 +31,7 @@ import {
   UPDATE_SCHEMA_LOGS,
   TAP_SELECTED
 } from '../actions/taps';
-import { LOADED_KNOT, LOAD_KNOT, RESET_STORE } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -197,16 +197,19 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case LOADED_KNOT:
-      return Object.assign({}, state, {
-        selectedTap: action.tap,
-        fieldValues: action.tapConfig,
-        tapFields: action.tapFields,
-        schema: action.schema
-      });
-    case LOAD_KNOT:
-      return Object.assign({}, state, {
-        selectedTap: action.knot.tap
-      });
+      const savedTap = state[action.tap.name];
+      savedTap.fieldValues = action.tapConfig;
+
+      return Object.assign(
+        {},
+        state,
+        {
+          selectedTap: action.tap,
+          schema: action.schema
+        },
+        { [action.tap.name]: savedTap }
+      );
+
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
       return {

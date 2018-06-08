@@ -28,7 +28,7 @@ const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
-const { commands, getTapFields } = require('./constants');
+const { commands } = require('./constants');
 
 let applicationFolder;
 let runningProcess;
@@ -345,7 +345,10 @@ const partialSync = (req) =>
 
 const loadValues = (knot) =>
   new Promise((resolve, reject) => {
-    const knotPath = path.resolve(applicationFolder, 'knots', knot);
+    const knotPath = path
+      .resolve(applicationFolder, 'knots', knot)
+      // eslint-disable-next-line
+      .replace(' ', `\ `);
 
     const promises = [
       readFile(`${knotPath}/knot.json`),
@@ -372,13 +375,11 @@ const loadValues = (knot) =>
         const tapConfig = values[1];
         const schema = values[2].streams;
         const targetConfig = values[3];
-        const tapFields = getTapFields(knotJson.tap.name);
 
         resolve({
           name: knotJson.name,
           tap: knotJson.tap,
           target: knotJson.target,
-          tapFields,
           tapConfig,
           targetConfig,
           schema

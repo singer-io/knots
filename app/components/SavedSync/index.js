@@ -21,6 +21,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Container,
   Alert,
@@ -34,6 +35,7 @@ import {
 } from 'reactstrap';
 import queryString from 'query-string';
 import StayScrolled from 'react-stay-scrolled';
+import socketIOClient from 'socket.io-client';
 
 import Header from '../Header';
 import Log from '../Log';
@@ -41,41 +43,131 @@ import getLogo from '../../logos';
 
 import styles from './SavedSync.css';
 
+const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
+
 type Props = {
-  location: { search: string }
+  knotsStore: {
+    knotName: string,
+    knotSyncing: boolean,
+    knotSynced: boolean,
+    tapLogs: Array<string>,
+    targetLogs: Array<string>,
+    knotError: string
+  },
+  tapStore: {
+    selectedTap: { name: string, image: string }
+  },
+  targetsStore: {
+    selectedTarget: { name: string, image: string }
+  },
+  location: { search: string },
+  updateTapLogs: (log: string) => void,
+  updateTargetLogs: (log: string) => void,
+  sync: (knot: string) => void,
+  partialSync: (knot: string) => void
 };
 
 export default class Sync extends Component<Props> {
+  constructor() {
+    super();
+
+    socket.on('tapLog', (log) => {
+      this.props.updateTapLogs(log);
+    });
+
+    socket.on('targetLog', (log) => {
+      this.props.updateTargetLogs(log);
+    });
+  }
+
+  componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
+    if (mode === 'full') {
+      this.props.sync(knot);
+    } else if (mode === 'partial') {
+      this.props.partialSync(knot);
+    }
+  }
+
+  terminateProcess = () => {
+    socket.emit('terminate', 'sync');
+  };
+
   render() {
-    const { knot } = queryString.parse(this.props.location.search);
-    const tapLogs = ['First log', 'Second log'];
-    const targetLogs = ['Another', 'Log'];
+    const { knot, mode } = queryString.parse(this.props.location.search);
+    const {
+      knotSyncing,
+      knotSynced,
+      tapLogs,
+      targetLogs,
+      knotError
+    } = this.props.knotsStore;
+    const { selectedTap } = this.props.tapStore;
+    const { selectedTarget } = this.props.targetsStore;
 
     return (
       <div>
         <Header />
         <Container>
-          <h2 className="mb-3 pt-4">Knot Name</h2>
+          <h2 className="mb-3 pt-4">{knot}</h2>
           <Alert
-            isOpen={true}
+            isOpen={!knotError}
+            color="success"
+            className="mt-3 d-flex align-items-center"
+          >
+            <div className="d-flex align-items-center border border-success rounded-circle p-2 mr-4 ml-2">
+              <div
+                style={{ opacity: '0.5', fontSize: '2rem' }}
+                className="oi oi-check my-0"
+              />
+            </div>
+            <div className="w-100">
+              <div className="d-flex align-items-center justify-content-between">
+                <span>
+                  {knotSyncing && <p>{`Runing ${mode} sync`}</p>}
+                  {knotSynced && <p>{`${mode} sync has successfully run`}</p>}
+                </span>
+                <Button
+                  size="sm"
+                  className="close"
+                  title="Cancel sync"
+                  style={{ display: knotSynced ? 'none' : '' }}
+                >
+                  <span className="align-text-top" aria-hidden="true">
+                    &times;
+                  </span>
+                </Button>
+              </div>
+              {knotSyncing && (
+                <Progress
+                  color="success"
+                  value="100"
+                  striped
+                  animated
+                  className="mt-2 mb-1"
+                />
+              )}
+            </div>
+          </Alert>
+          <Alert
+            isOpen={!!knotError}
             color="danger"
             className="d-flex justify-content-between"
           >
-            <span className="align-self-center">Hello I am an error</span>
+            <span className="align-self-center">{knotError}</span>
           </Alert>
-          <Progress value="100" striped animated className="mt-3">
-            Running partial sync. This may take a while…
-          </Progress>
+
           <Row>
             <Col sm="6">
               <Card className="bg-light mt-3">
                 <CardHeader className="d-flex align-items-center">
                   <img
-                    alt={` logo`}
+                    alt={selectedTap.name}
                     className={styles.logo}
-                    src={getLogo('tap-redshift')}
+                    src={getLogo(selectedTap.name)}
                   />
-                  <h3 className="pl-3 m-0">{'tap-redshift'}</h3>
+                  <h3 className="pl-3 m-0">{selectedTap.name}</h3>
                 </CardHeader>
                 <CardBody>
                   <StayScrolled
@@ -94,11 +186,11 @@ export default class Sync extends Component<Props> {
               <Card className="bg-light mt-3">
                 <CardHeader className="d-flex align-items-center">
                   <img
-                    alt={` logo`}
+                    alt={selectedTarget.name}
                     className={styles.logo}
-                    src={getLogo('target-stitch')}
+                    src={getLogo(selectedTarget.name)}
                   />
-                  <h3 className="pl-3 m-0">{'target-stitch'}</h3>
+                  <h3 className="pl-3 m-0">{selectedTarget.name}</h3>
                 </CardHeader>
                 <CardBody>
                   <StayScrolled
@@ -114,9 +206,29 @@ export default class Sync extends Component<Props> {
               </Card>
             </Col>
           </Row>
-          <Button className="btn btn-outline-danger float-right my-3">
-            Cancel
-          </Button>
+
+          {knotSyncing &&
+            !knotError && (
+              <Button
+                onClick={this.terminateProcess}
+                className="btn btn-outline-danger float-right my-3"
+                disabled={!knotSyncing}
+              >
+                Cancel
+              </Button>
+            )}
+          {knotSynced &&
+            !knotError && (
+              <Link to="/">
+                <Button
+                  color="primary"
+                  className="float-right my-3"
+                  disabled={!(knotSynced && !knotError)}
+                >
+                  Done
+                </Button>
+              </Link>
+            )}
         </Container>
       </div>
     );

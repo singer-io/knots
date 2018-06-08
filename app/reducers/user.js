@@ -70,11 +70,11 @@ export default function targets(state = defaultState, action) {
         [action.target]: target
       });
     case LOADED_KNOT:
-      const newTarget = state[action.target.name];
-      newTarget.fieldValues = action.targetConfig;
-      return Object.assign({}, state, {
-        [action.target.name]: newTarget
-      });
+      const savedTarget = state[action.target.name];
+      savedTarget.fieldValues = action.targetConfig;
+
+      return Object.assign({}, state, { [action.target.name]: savedTarget });
+
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
       return {

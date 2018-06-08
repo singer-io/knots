@@ -39,8 +39,7 @@ type Props = {
   dockerRunning: boolean,
   download: ({ name: string }) => void,
   history: { push: (path: string) => void },
-  loadValues: (name: string) => void,
-  loadKnot: (knot: {}) => void
+  loadValues: (name: string) => void
 };
 
 type State = {
@@ -64,16 +63,14 @@ class Knot extends Component<Props, State> {
 
   fullSync = () => {
     const { knot } = this.props;
-    this.props.loadKnot(knot);
 
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
   };
 
   partialSync = () => {
     const { knot } = this.props;
-    this.props.loadKnot(knot);
-
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
+    this.props.loadValues(knot.name);
   };
 
   edit = () => {

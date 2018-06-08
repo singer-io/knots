@@ -23,7 +23,7 @@ import {
   TARGETS_LOADING,
   TARGET_SELECTED
 } from '../actions/targets';
-import { LOADED_KNOT, LOAD_KNOT, RESET_STORE } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
 export type targetsStateType = {
   +targets: Array<{}>,
@@ -59,10 +59,6 @@ export default function targets(state = defaultState, action) {
     case LOADED_KNOT:
       return Object.assign({}, state, {
         selectedTarget: action.target
-      });
-    case LOAD_KNOT:
-      return Object.assign({}, state, {
-        selectedTarget: action.knot.target
       });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
