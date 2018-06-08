@@ -38,7 +38,6 @@ type Props = {
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
     taps: Array<{
-      logo: string,
       name: string,
       repo: string,
       tapKey: string,

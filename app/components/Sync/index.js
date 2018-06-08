@@ -131,7 +131,6 @@ export default class Sync extends Component<Props> {
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
-    const { mode } = queryString.parse(this.props.location.search);
 
     return (
       <div>
@@ -139,6 +138,56 @@ export default class Sync extends Component<Props> {
         <Container>
           <KnotProgress />
           <h2 className="mb-1 pt-4">Save & Run</h2>
+
+          <Alert
+            isOpen={!knotError && (knotSyncing || knotSynced)}
+            color="success"
+            className="mt-3 d-flex align-items-center"
+          >
+            <div className="d-flex align-items-center border border-success rounded-circle p-2 mr-4 ml-2">
+              <div
+                style={{ opacity: '0.5', fontSize: '2rem' }}
+                className="oi oi-check my-0"
+              />
+            </div>
+            <div className="w-100">
+              <div className="d-flex align-items-center justify-content-between">
+                <span>
+                  {knotSyncing && (
+                    <p>
+                      <strong>{knotName}</strong> has been saved! Running your
+                      Knot could take a while...
+                    </p>
+                  )}
+                  {knotSynced && (
+                    <p>
+                      <strong>{knotName}</strong> has been run successfully
+                    </p>
+                  )}
+                </span>
+                <Button
+                  size="sm"
+                  className="close"
+                  title="Cancel sync"
+                  style={{ display: knotSynced ? 'none' : '' }}
+                >
+                  <span className="align-text-top" aria-hidden="true">
+                    &times;
+                  </span>
+                </Button>
+              </div>
+              {knotSyncing && (
+                <Progress
+                  color="success"
+                  value="100"
+                  striped
+                  animated
+                  className="mt-2 mb-1"
+                />
+              )}
+            </div>
+          </Alert>
+
           <Alert
             isOpen={!!knotError}
             color="danger"
@@ -182,31 +231,6 @@ export default class Sync extends Component<Props> {
                       Save & Run
                     </Button>
                   </Form>
-                </Col>
-              )}
-            {knotSyncing && (
-              <Col xs="12">
-                <Alert color="success" className={styles.syncPageAlert}>
-                  <strong className="">{`${knotName} has been saved!`}</strong>
-                </Alert>
-              </Col>
-            )}
-
-            {knotSyncing && (
-              <Col xs="12">
-                <Progress value="100" striped animated className="mt-3">
-                  Running {mode === 'partial' ? 'incremental' : 'full'} sync.
-                  This may take a while…
-                </Progress>
-              </Col>
-            )}
-
-            {knotSynced &&
-              !knotError && (
-                <Col xs="12">
-                  <Alert color="success" className={styles.syncPageAlert}>
-                    <strong>{`${knotName} has been run successfully`}</strong>
-                  </Alert>
                 </Col>
               )}
           </Row>

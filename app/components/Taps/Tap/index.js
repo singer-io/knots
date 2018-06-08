@@ -24,10 +24,10 @@ import React, { Component } from 'react';
 import { Col, Card, CardBody } from 'reactstrap';
 import { shell } from 'electron';
 
+import getLogo from '../../../logos';
 import styles from './Tap.css';
 
 type Props = {
-  logo: string,
   name: string,
   repo: string,
   tapKey: string,
@@ -64,7 +64,8 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-    const { tapKey, repo, knotName } = this.props;
+    const { tapKey, repo, knotName, name } = this.props;
+
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card
@@ -90,13 +91,13 @@ export default class Tap extends Component<Props, State> {
           <CardBody>
             <div className="media">
               <img
-                src={this.props.logo}
-                alt={this.props.name}
+                src={getLogo(tapKey)}
+                alt={name}
                 className="mr-3"
                 style={{ maxWidth: '44px' }}
               />
               <div className="media-body">
-                <h6 className="card-title mb-0">{this.props.name}</h6>
+                <h6 className="card-title mb-0">{name}</h6>
                 <small>
                   <button
                     onClick={() => this.openLink(repo)}

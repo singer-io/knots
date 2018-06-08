@@ -35,7 +35,6 @@ type Props = {
     targetsLoading: boolean,
     targetSelected: boolean,
     targets: Array<{
-      logo: string,
       name: string,
       repo: string,
       targetKey: string,
