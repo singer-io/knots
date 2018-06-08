@@ -32,7 +32,7 @@ type Props = {
   }
 };
 
-export default class Target extends Component<Props> {
+export default class Tap extends Component<Props> {
   selectedTarget = () => {
     const { selectedTap } = this.props.tapsStore;
     switch (selectedTap.name) {

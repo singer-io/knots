@@ -50,7 +50,8 @@ type Props = {
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: (fielsValues: {}, knotName: string) => void
+  submitFields: (fielsValues: {}, knotName: string) => void,
+  targetsPageLoaded: () => void
 };
 
 type State = {
@@ -63,6 +64,7 @@ export default class Targets extends Component<Props, State> {
   };
 
   componentWillMount() {
+    this.props.targetsPageLoaded();
     this.props.getTargets();
   }
 

@@ -71,6 +71,7 @@ type Props = {
     fieldValues: {},
     knotName: string
   ) => void,
+  schemaPageLoaded: () => void,
   updateSchemaLogs: (log: string) => void,
   history: { push: (path: string) => void }
 };
@@ -105,6 +106,10 @@ export default class Schema extends Component<Props, State> {
     socket.on('schemaLog', (log) => {
       this.props.updateSchemaLogs(log);
     });
+  }
+
+  componentWillMount() {
+    this.props.schemaPageLoaded();
   }
 
   handleCheckBoxChange = (

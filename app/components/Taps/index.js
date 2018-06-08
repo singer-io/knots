@@ -51,7 +51,8 @@ type Props = {
     selectedTap: { name: string, image: string },
     fieldValues: {},
     knotName: string
-  ) => void
+  ) => void,
+  tapsPageLoaded: () => void
 };
 
 type State = {
@@ -64,6 +65,7 @@ export default class Taps extends Component<Props, State> {
   };
 
   componentWillMount() {
+    this.props.tapsPageLoaded();
     this.props.fetchTaps();
   }
 

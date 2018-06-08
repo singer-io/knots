@@ -79,7 +79,8 @@ type Props = {
   updateTargetLogs: (log: string) => void,
   location: { search: string },
   sync: (knot: string) => void,
-  partialSync: (knot: string) => void
+  partialSync: (knot: string) => void,
+  syncPageLoaded: () => void
 };
 
 export default class Sync extends Component<Props> {
@@ -96,6 +97,7 @@ export default class Sync extends Component<Props> {
   }
 
   componentWillMount() {
+    this.props.syncPageLoaded();
     const { knot, mode } = queryString.parse(this.props.location.search);
     if (mode === 'full') {
       this.props.sync(knot);

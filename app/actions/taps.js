@@ -24,6 +24,9 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
 
+export const TAPS_PAGE_LOADED = 'TAPS_PAGE_LOADED';
+export const SCHEMA_PAGE_LOADED = 'SCHEMA_PAGE_LOADED';
+
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 
@@ -42,6 +45,22 @@ export const TAP_SELECTED = 'TAP_SELECTED';
 type actionType = {
   +type: string
 };
+
+export function tapsPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: TAPS_PAGE_LOADED
+    });
+  };
+}
+
+export function schemaPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SCHEMA_PAGE_LOADED
+    });
+  };
+}
 
 export function fetchTaps() {
   return (dispatch: (action: actionType) => void) => {

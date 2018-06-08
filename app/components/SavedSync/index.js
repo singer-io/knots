@@ -158,7 +158,7 @@ export default class Sync extends Component<Props> {
             <span className="align-self-center">{knotError}</span>
             <Link to="/taps">
               <Button className="btn btn-outline-danger float-right">
-                Reconfigure
+                Re-configure
               </Button>
             </Link>
           </Alert>

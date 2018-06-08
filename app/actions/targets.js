@@ -23,6 +23,8 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
 
+export const TARGETS_PAGE_LOADED = 'TARGETS_PAGE_LOADED';
+
 export const TARGETS_LOADING = 'TARGETS_LOADING';
 export const TARGET_SELECTED = 'TARGET_SELECTED';
 export const UPDATE_TARGETS = 'UPDATE_TARGETS';
@@ -33,6 +35,14 @@ export const TARGET_CONFIGURED = 'TARGET_CONFIGURED';
 type actionType = {
   +type: string
 };
+
+export function targetsPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: TARGETS_PAGE_LOADED
+    });
+  };
+}
 
 export function getTargets() {
   return (dispatch: (action: actionType) => void) => {

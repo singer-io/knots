@@ -25,6 +25,8 @@ import { shell } from 'electron';
 
 const baseUrl = 'http://localhost:4321';
 
+export const SYNC_PAGE_LOADED = 'SYNC_PAGE_LOADED';
+
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
 export const DOCKER_RUNNING = 'DOCKER_RUNNING';
@@ -45,6 +47,14 @@ export const RESET_STORE = 'RESET_STORE';
 type actionType = {
   +type: string
 };
+
+export function syncPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SYNC_PAGE_LOADED
+    });
+  };
+}
 
 export function verifyDocker() {
   return (dispatch: (action: actionType) => void) => {
