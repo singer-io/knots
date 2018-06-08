@@ -75,6 +75,7 @@ class Knot extends Component<Props, State> {
 
   edit = () => {
     const { name } = this.props.knot;
+    this.props.history.push('/taps');
     this.props.loadValues(name);
   };
 
