@@ -8679,10 +8679,6 @@ react-hot-loader@^4.0.0-beta.13:
     hoist-non-react-statics "^2.3.1"
     react-stand-in "^4.0.0-beta.18"
 
-react-loading@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/react-loading/-/react-loading-1.0.4.tgz#9bd8c78313f61796551f47e6530d8eae1b593e09"
-
 react-overlays@^0.8.0:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-0.8.3.tgz#fad65eea5b24301cca192a169f5dddb0b20d3ac5"

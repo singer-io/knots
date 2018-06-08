@@ -93,7 +93,11 @@ export function selectTap(
   };
 }
 
-export function updateTapField(tap: string, field: string, value: string) {
+export function updateTapField(
+  tap: string,
+  field: string,
+  value: string | number
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TAP_FIELD,

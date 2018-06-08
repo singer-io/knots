@@ -283,7 +283,7 @@ export default class Salesforce extends Component<Props, State> {
                 type="date"
                 name="start_date"
                 id="start_date"
-                value={this.formatDate(start_date)}
+                value={start_date ? this.formatDate(start_date) : ''}
                 onBlur={(event) => {
                   const { value } = event.currentTarget;
                   this.validate('start_date', value);

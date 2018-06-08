@@ -47,7 +47,7 @@ export type tapsStateType = {
   +'tap-redshift': {
     fieldValues: {
       host: string,
-      port: string,
+      port: number,
       dbname: string,
       schema: string,
       user: string,
@@ -71,12 +71,12 @@ const defaultState = {
   'tap-redshift': {
     fieldValues: {
       host: '',
-      port: '',
+      port: undefined,
       dbname: '',
       schema: 'public',
       user: '',
       password: '',
-      start_date: new Date().toISOString()
+      start_date: ''
     }
   },
   'tap-salesforce': {
@@ -86,7 +86,7 @@ const defaultState = {
       refresh_token: '',
       api_type: 'BULK',
       select_fields_by_default: true,
-      start_date: new Date().toISOString()
+      start_date: ''
     }
   }
 };

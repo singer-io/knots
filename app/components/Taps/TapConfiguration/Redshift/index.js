@@ -41,7 +41,7 @@ type Props = {
       fieldValues: {
         host: string,
         dbname: string,
-        port: number,
+        port?: number,
         schema: string,
         user: string,
         password: string,
@@ -49,7 +49,7 @@ type Props = {
       }
     }
   },
-  updateTapField: (tap: string, field: string, value: string) => void
+  updateTapField: (tap: string, field: string, value: string | number) => void
 };
 type State = {
   host: {},
@@ -96,7 +96,10 @@ export default class Redshift extends Component<Props, State> {
 
     if (name === 'start_date') {
       value = this.toISODateString(new Date(value));
+    } else if (name === 'port') {
+      value = parseInt(value, 10);
     }
+
     this.props.updateTapField('tap-redshift', name, value);
   };
 
@@ -155,7 +158,7 @@ export default class Redshift extends Component<Props, State> {
                 type="number"
                 name="port"
                 id="port"
-                value={port}
+                value={port || ''}
                 onFocus={() => {
                   this.setState({ port: {} });
                 }}
@@ -260,7 +263,7 @@ export default class Redshift extends Component<Props, State> {
                 type="date"
                 name="start_date"
                 id="start_date"
-                value={this.formatDate(start_date)}
+                value={start_date ? this.formatDate(start_date) : ''}
                 onBlur={(event) => {
                   const { value } = event.currentTarget;
                   this.validate('start_date', value);

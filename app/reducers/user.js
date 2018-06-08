@@ -62,9 +62,11 @@ export default function targets(state = defaultState, action) {
         targetConfigured: true
       });
     case UPDATE_TARGET_FIELD:
-      const { targetValues } = action;
+      const target = state[action.target];
+      target.fieldValues[action.field] = action.value;
+
       return Object.assign({}, state, {
-        [Object.keys(targetValues)[0]]: Object.values(targetValues)[0]
+        [action.target]: target
       });
     case LOADED_KNOT:
       const newTarget = state[action.target.name];
