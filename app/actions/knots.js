@@ -134,7 +134,8 @@ export function updateName(name: string) {
 export function save(
   knotName: string,
   selectedTap: { name: string, image: string },
-  selectedTarget: { name: string, image: string }
+  selectedTarget: { name: string, image: string },
+  currentName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -145,7 +146,8 @@ export function save(
       .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
-        target: selectedTarget
+        target: selectedTarget,
+        currentName
       })
       .then(() =>
         dispatch({

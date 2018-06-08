@@ -42,8 +42,9 @@ router.get('/', (req, res) => {
 router.post('/save/', (req, res) => {
   // eslint-disable-next-line
   const knotName = req.body.knotName.replace(' ', `\ `);
+  const { currentName } = req.body;
 
-  saveKnot(knotName)
+  saveKnot(knotName, currentName)
     .then(() => {
       sync(req)
         .then(() => {

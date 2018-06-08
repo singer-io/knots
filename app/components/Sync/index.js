@@ -73,7 +73,8 @@ type Props = {
   save: (
     knotName: string,
     selectedTap: { name: string, image: string },
-    selectedTarget: { name: string, image: string }
+    selectedTarget: { name: string, image: string },
+    currentName: string
   ) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
@@ -83,9 +84,15 @@ type Props = {
   syncPageLoaded: () => void
 };
 
-export default class Sync extends Component<Props> {
-  constructor() {
+type State = {
+  currentKnotName: string
+};
+
+export default class Sync extends Component<Props, State> {
+  constructor(props: Props) {
     super();
+
+    this.state = { currentKnotName: props.knotsStore.knotName };
 
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
@@ -116,7 +123,13 @@ export default class Sync extends Component<Props> {
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
     const { knotName } = this.props.knotsStore;
-    this.props.save(knotName, selectedTap, selectedTarget);
+
+    this.props.save(
+      knotName,
+      selectedTap,
+      selectedTarget,
+      this.state.currentKnotName
+    );
   };
 
   terminateProcess = () => {
@@ -226,6 +239,7 @@ export default class Sync extends Component<Props> {
                       <Input
                         placeholder="Untitled knot"
                         onChange={this.handleChange}
+                        value={knotName}
                       />
                     </InputGroup>
                     <div className="float-right">

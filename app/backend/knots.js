@@ -182,34 +182,53 @@ const sync = (req) =>
       .catch(reject);
   });
 
-const saveKnot = (name) =>
+const saveKnot = (name, currentName) =>
   new Promise((resolve, reject) => {
-    addKnotAttribute({ field: ['name'], value: name })
+    // eslint-disable-next-line
+    const knotName = name.replace(' ', `\ `);
+    // eslint-disable-next-line
+    const oldName = currentName.replace(' ', `\ `);
+    const pathToKnot = oldName
+      ? path.resolve(`${applicationFolder}/knots/${oldName}`, 'knot.json')
+      : path.resolve(applicationFolder, 'knot.json');
+
+    addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
       .then(() => {
-        readFile(path.resolve(applicationFolder, 'knot.json'))
+        readFile(pathToKnot)
           .then((knotObjectString) => {
             try {
               const knotObject = JSON.parse(knotObjectString);
-              // Create knots folder if it doesn't exist
-              shell.mkdir('-p', path.resolve(applicationFolder, 'knots', name));
+              if (!currentName) {
+                // Create knots folder if it doesn't exist
+                shell.mkdir(
+                  '-p',
+                  path.resolve(applicationFolder, 'knots', name)
+                );
 
-              // Move tap config to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'configs', 'tap'),
-                path.resolve(applicationFolder, 'knots', name, 'tap')
-              );
+                // Move tap config to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'configs', 'tap'),
+                  path.resolve(applicationFolder, 'knots', name, 'tap')
+                );
 
-              // Move target config to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'configs', 'target'),
-                path.resolve(applicationFolder, 'knots', name, 'target')
-              );
+                // Move target config to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'configs', 'target'),
+                  path.resolve(applicationFolder, 'knots', name, 'target')
+                );
 
-              // Move knot.json to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'knot.json'),
-                path.resolve(applicationFolder, 'knots', name, 'knot.json')
-              );
+                // Move knot.json to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'knot.json'),
+                  path.resolve(applicationFolder, 'knots', name, 'knot.json')
+                );
+              } else {
+                // Change knot's folder name
+                shell.mv(
+                  path.resolve(applicationFolder, 'knots', oldName),
+                  path.resolve(applicationFolder, 'knots', name)
+                );
+              }
 
               // Add the make file to the folder
               createMakeFile(knotObject, name)
