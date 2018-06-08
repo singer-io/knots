@@ -37,6 +37,8 @@ type Props = {
     knotError: string,
     knotLoaded: boolean
   },
+  dockerInstalled: boolean,
+  dockerRunning: boolean,
   deleteKnot: (knot: string) => void,
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
@@ -70,6 +72,8 @@ class Knots extends Component<Props> {
 
   render() {
     const { knots, knotError, knotLoaded } = this.props.knotsStore;
+    const { dockerInstalled, dockerRunning } = this.props;
+
     if (knotLoaded && !knotError) {
       this.props.history.push('/taps');
     }
@@ -78,7 +82,12 @@ class Knots extends Component<Props> {
         <div className="d-flex justify-content-between align-items-center mb-3">
           <p className="display-4">My Knots</p>
           <Link to="/taps">
-            <Button color="secondary" outline style={{ height: '50px' }}>
+            <Button
+              color="secondary"
+              outline
+              style={{ height: '50px' }}
+              disabled={!dockerInstalled || !dockerRunning}
+            >
               New Knot
             </Button>
           </Link>
@@ -111,6 +120,8 @@ class Knots extends Component<Props> {
               download={this.download}
               loadValues={this.loadValues}
               loadKnot={this.loadKnot}
+              dockerInstalled={dockerInstalled}
+              dockerRunning={dockerRunning}
             />
           ))}
         </table>

@@ -238,7 +238,7 @@ export default class Sync extends Component<Props> {
           {(knotSyncing || knotSynced) && (
             <Row>
               <Col sm="6">
-                <Card className="bg-light mt-3">
+                <Card className="bg-light">
                   <CardHeader className="d-flex align-items-center">
                     <img
                       alt={`${selectedTarget.name} logo`}
@@ -261,7 +261,7 @@ export default class Sync extends Component<Props> {
                 </Card>
               </Col>
               <Col sm="6">
-                <Card className="bg-light mt-3">
+                <Card className="bg-light">
                   <CardHeader className="d-flex align-items-center">
                     <img
                       alt={`${selectedTarget.name} logo`}

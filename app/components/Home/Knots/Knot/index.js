@@ -35,6 +35,8 @@ type Props = {
     target: { name: string }
   },
   delete: ({ name: string }) => void,
+  dockerInstalled: boolean,
+  dockerRunning: boolean,
   download: ({ name: string }) => void,
   history: { push: (path: string) => void },
   loadValues: (name: string) => void,
@@ -80,7 +82,7 @@ class Knot extends Component<Props, State> {
   };
 
   render() {
-    const { knot } = this.props;
+    const { knot, dockerInstalled, dockerRunning } = this.props;
     return (
       <tr key={knot.name}>
         <td className="align-middle text-center pr-0">
@@ -112,6 +114,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Run"
               onClick={this.partialSync}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-media-play" />
             </button>
@@ -123,6 +126,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Full sync"
               onClick={this.fullSync}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-reload" />
             </button>
@@ -134,6 +138,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Edit"
               onClick={this.edit}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-pencil" />
             </button>

@@ -156,7 +156,12 @@ export default class Home extends Component<Props, State> {
                   </button>
                 </span>
               </Alert>
-              {knots.length > 0 && <Knots />}
+              {knots.length > 0 && (
+                <Knots
+                  dockerInstalled={dockerInstalled}
+                  dockerRunning={dockerRunning}
+                />
+              )}
               {knots.length === 0 && <Create {...this.state} />}
             </div>
           )}
