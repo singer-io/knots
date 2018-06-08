@@ -80,12 +80,22 @@ export default class Redshift extends Component<Props, State> {
     }
   };
 
+  toISODateString = (date: Date) => {
+    const pad = (number) => (number < 10 ? `0${number}` : number);
+
+    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
+      date.getUTCDate()
+    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
+      date.getUTCSeconds()
+    )}Z`;
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = new Date(value).toISOString();
+      value = this.toISODateString(new Date(value));
     }
     this.props.updateTapField('tap-redshift', name, value);
   };

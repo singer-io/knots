@@ -40,8 +40,6 @@ export type tapsStateType = {
   +schemaLoaded: boolean,
   +taps: Array<string>,
   +selectedTap: { name: string, image: string },
-  +tapFields: Array<{}>,
-  +fieldValues: {},
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
@@ -66,11 +64,7 @@ const defaultState = {
   schemaLoaded: false,
   schemaLogs: [],
   taps: [],
-  tapFields: [],
-  fieldValues: {
-    api_type: 'BULK',
-    select_fields_by_default: true
-  },
+
   schema: [],
   schemaUpdated: false,
   error: '',
@@ -82,6 +76,16 @@ const defaultState = {
       schema: 'public',
       user: '',
       password: '',
+      start_date: new Date().toISOString()
+    }
+  },
+  'tap-salesforce': {
+    fieldValues: {
+      client_id: '',
+      client_secret: '',
+      refresh_token: '',
+      api_type: 'BULK',
+      select_fields_by_default: true,
       start_date: new Date().toISOString()
     }
   }

@@ -37,36 +37,17 @@ type Props = {
     tapSelected: boolean,
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
-    sfToken?: string,
     taps: Array<{
       logo: string,
       name: string,
       repo: string,
       tapKey: string,
       tapImage: string
-    }>,
-    tapFields: Array<{
-      key: string,
-      label: string,
-      validationText: string,
-      required: boolean,
-      placeholder: string,
-      options: Array<string>,
-      type?: string
-    }>,
-    fieldValues: {
-      password?: string,
-      client_id?: string,
-      client_secret?: string,
-      refresh_token?: string,
-      api_type?: string,
-      select_fields_by_default?: boolean
-    }
+    }>
   },
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string }) => void,
-  updateTapField: (value: {}) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},
