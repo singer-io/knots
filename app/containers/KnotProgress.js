@@ -26,7 +26,10 @@ import KnotProgress from '../components/KnotProgress';
 
 function mapStateToProps(state) {
   return {
-    progressStore: state.progress
+    progressStore: state.progress,
+    tapsStore: state.taps,
+    targetsStore: state.targets,
+    knotsStore: state.knots
   };
 }
 

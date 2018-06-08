@@ -26,7 +26,10 @@ import Item from './Item';
 import styles from './KnotProgress.css';
 
 type Props = {
-  progressStore: {}
+  progressStore: {},
+  tapsStore: { selectedTap: { name: string } },
+  targetsStore: { selectedTarget: { name: string } },
+  knotsStore: { knotName: string }
 };
 
 const calculateProgress = (items) => {
@@ -60,6 +63,9 @@ const KnotProgress = (props: Props) => (
             key={item}
             index={parseInt(item, 10)}
             {...props.progressStore[item]}
+            tapsStore={props.tapsStore}
+            targetsStore={props.targetsStore}
+            knotsStore={props.knotsStore}
           />
         ))}
       </Nav>

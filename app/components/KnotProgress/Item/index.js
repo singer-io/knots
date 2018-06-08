@@ -19,6 +19,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+/* eslint-disable react/no-unused-prop-types */
+
 import React from 'react';
 import { NavItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
@@ -31,12 +33,77 @@ type Props = {
   index: number,
   complete: boolean,
   active: boolean,
-  href: string
+  href: string,
+  tapsStore: { selectedTap: { name: string }, schema: Array<{}> },
+  targetsStore: { selectedTarget: { name: string } },
+  knosStore: { knotName: string }
 };
 
-const KnotProgress = (props: Props) => (
-  <NavItem>
-    <Link to={props.href}>
+const makeLink = (page: string, props: Props) => {
+  const tapsConfigured = !!props.tapsStore.selectedTap.name;
+  const schemaConfigured = props.tapsStore.schema.length > 0;
+  const targetsConfigured = !!props.targetsStore.selectedTarget.name;
+  const readyToSync = !!props.knosStore.knotName;
+
+  switch (page) {
+    case '/taps':
+      if (tapsConfigured) {
+        return true;
+      }
+      return false;
+    case '/schema':
+      if (schemaConfigured) {
+        return true;
+      }
+      return false;
+    case '/targets':
+      if (targetsConfigured) {
+        return true;
+      }
+      return false;
+    case '/sync':
+      if (readyToSync) {
+        return true;
+      }
+      return false;
+
+    default:
+      return false;
+  }
+};
+
+const KnotProgress = (props: Props) => {
+  const clickable = makeLink(props.href, props);
+  if (clickable) {
+    return (
+      <NavItem>
+        <Link to={props.href}>
+          <div
+            className={classNames(styles.navLink, {
+              [styles.completed]: props.complete,
+              [styles.active]: props.active
+            })}
+          >
+            <span
+              className={classNames(styles.step, {
+                [styles.hidden]: props.complete
+              })}
+            >
+              {props.index + 1}
+            </span>
+            <span
+              style={{ display: props.complete ? 'inline-block' : 'none' }}
+              className={classNames('oi', 'oi-check', styles.checkIcon)}
+            />
+          </div>
+          <small style={{ color: 'black' }}>{props.text}</small>
+        </Link>
+      </NavItem>
+    );
+  }
+
+  return (
+    <NavItem>
       <div
         className={classNames(styles.navLink, {
           [styles.completed]: props.complete,
@@ -56,8 +123,8 @@ const KnotProgress = (props: Props) => (
         />
       </div>
       <small style={{ color: 'black' }}>{props.text}</small>
-    </Link>
-  </NavItem>
-);
+    </NavItem>
+  );
+};
 
 export default KnotProgress;
