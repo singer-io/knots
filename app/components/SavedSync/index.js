@@ -156,6 +156,11 @@ export default class Sync extends Component<Props> {
             className="d-flex justify-content-between"
           >
             <span className="align-self-center">{knotError}</span>
+            <Link to="/taps">
+              <Button className="btn btn-outline-danger float-right">
+                Reconfigure
+              </Button>
+            </Link>
           </Alert>
 
           <Row>
