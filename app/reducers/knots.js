@@ -105,11 +105,11 @@ export default function knots(state = defaultState, action) {
       });
     case UPDATE_TAP_LOGS:
       return Object.assign({}, state, {
-        tapLogs: [...state.tapLogs, action.newLog]
+        tapLogs: action.newLog.split('\n')
       });
     case UPDATE_TARGET_LOGS:
       return Object.assign({}, state, {
-        targetLogs: [...state.targetLogs, action.newLog]
+        targetLogs: action.newLog.split('\n')
       });
     case UPDATE_NAME:
       return Object.assign({}, state, {

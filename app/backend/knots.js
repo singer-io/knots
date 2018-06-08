@@ -149,13 +149,13 @@ const sync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            execFile('tail', ['-n', '1', tapLogPath], (error, stdout) => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            execFile('tail', ['-n', '1', targetLogPath], (error, stdout) => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
@@ -326,13 +326,13 @@ const partialSync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            execFile('tail', ['-n', '1', tapLogPath], (error, stdout) => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            execFile('tail', ['-n', '1', targetLogPath], (error, stdout) => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
