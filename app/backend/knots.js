@@ -21,7 +21,7 @@
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execFile } = require('child_process');
 const { EOL } = require('os');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
@@ -127,14 +127,14 @@ const sync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = `"${path.resolve(
+          const tapLogPath = `${path.resolve(
             `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          )}"`;
-          const targetLogPath = `"${path.resolve(
+          )}`;
+          const targetLogPath = `${path.resolve(
             `${applicationFolder}/knots/${req.body.knotName}`,
             'target.log'
-          )}"`;
+          )}`;
 
           // Get tap and target from the knot object
           const syncData = exec(
@@ -149,13 +149,13 @@ const sync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+            execFile('tail', ['-n', '1', tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+            execFile('tail', ['-n', '1', targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
@@ -285,14 +285,14 @@ const partialSync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = `"${path.resolve(
+          const tapLogPath = `${path.resolve(
             `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          )}"`;
-          const targetLogPath = `"${path.resolve(
+          )}`;
+          const targetLogPath = `${path.resolve(
             `${applicationFolder}/knots/${knotName}`,
             'target.log'
-          )}"`;
+          )}`;
 
           // Get tap and target from the knot object
           const syncData = exec(
@@ -307,13 +307,13 @@ const partialSync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+            execFile('tail', ['-n', '1', tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+            execFile('tail', ['-n', '1', targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
