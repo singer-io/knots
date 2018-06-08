@@ -173,6 +173,9 @@ export default class Sync extends Component<Props> {
                   className="close"
                   title="Cancel sync"
                   style={{ display: knotSynced ? 'none' : '' }}
+                  onClick={() => {
+                    this.terminateProcess();
+                  }}
                 >
                   <span className="align-text-top" aria-hidden="true">
                     &times;
@@ -202,7 +205,7 @@ export default class Sync extends Component<Props> {
             {!knotSyncing &&
               !knotSynced &&
               !knotError && (
-                <Col xs="12">
+                <Col xs="12" className="mt-2">
                   <Form>
                     <InputGroup>
                       <InputGroupAddon addonType="prepend">
@@ -225,14 +228,21 @@ export default class Sync extends Component<Props> {
                         onChange={this.handleChange}
                       />
                     </InputGroup>
-                    <Button
-                      color="primary"
-                      className="float-right mt-2"
-                      disabled={!this.props.knotsStore.knotName}
-                      onClick={this.submit}
-                    >
-                      Save & Run
-                    </Button>
+                    <div className="float-right">
+                      <Link to="/">
+                        <Button className="btn btn-outline-danger mt-3 mr-3">
+                          Cancel
+                        </Button>
+                      </Link>
+                      <Button
+                        color="primary"
+                        className="mt-3"
+                        disabled={!this.props.knotsStore.knotName}
+                        onClick={this.submit}
+                      >
+                        Save & Run
+                      </Button>
+                    </div>
                   </Form>
                 </Col>
               )}
@@ -289,17 +299,13 @@ export default class Sync extends Component<Props> {
               </Col>
             </Row>
           )}
-          {knotSyncing &&
-            !knotError && (
-              <Button
-                onClick={this.terminateProcess}
-                className={classNames(
-                  'btn btn-outline-danger float-right my-3'
-                )}
-                disabled={!knotSyncing}
-              >
-                Cancel
-              </Button>
+          {!knotSynced &&
+            knotSyncing && (
+              <Link to="/">
+                <Button className="btn btn-outline-danger float-right my-3">
+                  Cancel
+                </Button>
+              </Link>
             )}
           {knotSynced &&
             !knotError && (

@@ -36,14 +36,14 @@ type Props = {
   href: string,
   tapsStore: { selectedTap: { name: string }, schema: Array<{}> },
   targetsStore: { selectedTarget: { name: string } },
-  knosStore: { knotName: string }
+  knotsStore: { knotName: string }
 };
 
 const makeLink = (page: string, props: Props) => {
   const tapsConfigured = !!props.tapsStore.selectedTap.name;
   const schemaConfigured = props.tapsStore.schema.length > 0;
   const targetsConfigured = !!props.targetsStore.selectedTarget.name;
-  const readyToSync = !!props.knosStore.knotName;
+  const readyToSync = !!props.knotsStore.knotName;
 
   switch (page) {
     case '/taps':

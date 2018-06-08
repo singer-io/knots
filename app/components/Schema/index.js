@@ -21,7 +21,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Redirect, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
   Container,
   Col,
@@ -135,6 +135,7 @@ export default class Schema extends Component<Props, State> {
     const { knotName } = this.props.knotsStore;
     if (this.validSchema()) {
       this.props.submitSchema(this.props.tapsStore.schema, knotName);
+      this.props.history.push('/targets');
     } else {
       this.setState({ streamSelected: !this.validSchema() });
     }
@@ -213,6 +214,7 @@ export default class Schema extends Component<Props, State> {
       tooltipOpen: !this.state.tooltipOpen
     });
   };
+
   retry() {
     const { selectedTap } = this.props.tapsStore;
     const { fieldValues } = this.props.tapsStore[selectedTap.name];
@@ -222,9 +224,6 @@ export default class Schema extends Component<Props, State> {
   }
 
   render() {
-    if (this.props.tapsStore.schemaUpdated) {
-      return <Redirect push to="/targets" />;
-    }
     const {
       schemaLoading,
       schemaLoaded,
