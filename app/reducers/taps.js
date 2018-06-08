@@ -31,7 +31,7 @@ import {
   UPDATE_SCHEMA_LOGS,
   TAP_SELECTED
 } from '../actions/taps';
-import { LOADED_KNOT, LOAD_KNOT } from '../actions/knots';
+import { LOADED_KNOT, LOAD_KNOT, RESET_STORE } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -52,6 +52,16 @@ export type tapsStateType = {
       schema: string,
       user: string,
       password: string
+    }
+  },
+  'tap-salesforce': {
+    fieldValues: {
+      client_id: string,
+      client_secret: string,
+      refresh_token: string,
+      api_type: string,
+      select_fields_by_default: string,
+      start_date: string
     }
   }
 };
@@ -93,6 +103,7 @@ const defaultState = {
 
 export default function taps(state = defaultState, action) {
   const { schema } = state;
+
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -196,6 +207,42 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         selectedTap: action.knot.tap
       });
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        tapsLoading: false,
+        tapSelected: false,
+        selectedTap: { name: '', image: '' },
+        schemaLoading: false,
+        schemaLoaded: false,
+        schemaLogs: [],
+        taps: [],
+
+        schema: [],
+        schemaUpdated: false,
+        error: '',
+        'tap-redshift': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            dbname: '',
+            schema: 'public',
+            user: '',
+            password: '',
+            start_date: ''
+          }
+        },
+        'tap-salesforce': {
+          fieldValues: {
+            client_id: '',
+            client_secret: '',
+            refresh_token: '',
+            api_type: 'BULK',
+            select_fields_by_default: true,
+            start_date: ''
+          }
+        }
+      };
     default:
       return state;
   }

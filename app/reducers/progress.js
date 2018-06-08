@@ -20,7 +20,7 @@
 
 import { UPDATE_TAPS, SCHEMA_LOADING } from '../actions/taps';
 import { TARGETS_LOADING, TARGET_CONFIGURING } from '../actions/targets';
-import { KNOT_SYNCED, FINAL_STEP } from '../actions/knots';
+import { KNOT_SYNCED, FINAL_STEP, RESET_STORE } from '../actions/knots';
 
 export type tapsStateType = {
   +items: [{ active: boolean }]
@@ -135,6 +135,29 @@ export default function progress(state = defaultState, action) {
         },
         3: { text: 'Save & Run', href: 'sync', complete: false, active: true }
       });
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        0: {
+          text: 'Configure Tap',
+          href: '/taps',
+          complete: false,
+          active: false
+        },
+        1: {
+          text: 'Replication Options',
+          href: '/schema',
+          complete: false,
+          active: false
+        },
+        2: {
+          text: 'Configure Target',
+          href: '/targets',
+          complete: false,
+          active: false
+        },
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+      };
     default:
       return state;
   }

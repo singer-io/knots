@@ -31,7 +31,8 @@ import {
   KNOT_DELETED,
   LOADED_KNOT,
   LOADING_KNOT,
-  DOCKER_RUNNING
+  DOCKER_RUNNING,
+  RESET_STORE
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -142,6 +143,27 @@ export default function knots(state = defaultState, action) {
         knotName: action.knotName,
         knotError: action.error || ''
       });
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        detectingDocker: false,
+        dockerVersion: '',
+        dockerRunning: false,
+        dockerError: '',
+        dockerVerified: false,
+
+        fetchingKnots: false,
+        knots: [],
+        tapLogs: [],
+        targetLogs: [],
+        knotName: '',
+        knotSyncing: false,
+        knotSynced: false,
+        knotDeleted: false,
+        knotError: '',
+        knotLoading: false,
+        knotLoaded: false
+      };
     default:
       return state;
   }

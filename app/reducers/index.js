@@ -35,12 +35,5 @@ const appReducer = combineReducers({
   router
 });
 
-const rootReducer = (state, action) => {
-  if (action.type === 'RESET_STORE') {
-    // eslint-disable-next-line no-param-reassign
-    state = undefined;
-  }
-  return appReducer(state, action);
-};
-
+const rootReducer = (state, action) => appReducer(state, action);
 export default rootReducer;
