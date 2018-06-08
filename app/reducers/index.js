@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -38,6 +37,7 @@ const appReducer = combineReducers({
 
 const rootReducer = (state, action) => {
   if (action.type === 'RESET_STORE') {
+    // eslint-disable-next-line no-param-reassign
     state = undefined;
   }
   return appReducer(state, action);

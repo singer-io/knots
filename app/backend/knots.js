@@ -117,7 +117,8 @@ const createMakeFile = (knot, name) =>
 
 const sync = (req) =>
   new Promise((resolve, reject) => {
-    const { knotName } = req.body;
+    // eslint-disable-next-line
+    const knotName = req.body.knotName.replace(' ', `\ `);
 
     // Get the stored knot object
     readFile(
@@ -126,19 +127,19 @@ const sync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          const tapLogPath = `"${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          );
-          const targetLogPath = path.resolve(
+          )}"`;
+          const targetLogPath = `"${path.resolve(
             `${applicationFolder}/knots/${req.body.knotName}`,
             'target.log'
-          );
+          )}"`;
 
           // Get tap and target from the knot object
           const syncData = exec(
             commands.runSync(
-              `${applicationFolder}/knots/${req.body.knotName}`,
+              `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
             ),
@@ -265,13 +266,17 @@ const packageKnot = (knotName) =>
   });
 
 const downloadKnot = (req, res) => {
+  // eslint-disable-next-line
+  const knot = req.query.knot.replace(' ', `\ `);
+
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download(`${applicationFolder}/${req.query.knot}.zip`);
+  res.download(`${applicationFolder}/${knot}.zip`);
 };
 
 const partialSync = (req) =>
   new Promise((resolve, reject) => {
-    const { knotName } = req.body;
+    // eslint-disable-next-line
+    const knotName = req.body.knotName.replace(' ', `\ `);
 
     // Get the stored knot object
     readFile(
@@ -280,19 +285,19 @@ const partialSync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          const tapLogPath = `"${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          );
-          const targetLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          )}"`;
+          const targetLogPath = `"${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'target.log'
-          );
+          )}"`;
 
           // Get tap and target from the knot object
           const syncData = exec(
             commands.runPartialSync(
-              `${applicationFolder}/knots/${req.body.knotName}`,
+              `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
             ),

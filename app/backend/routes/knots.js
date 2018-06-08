@@ -40,7 +40,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/save/', (req, res) => {
-  const { knotName } = req.body;
+  // eslint-disable-next-line
+  const knotName = req.body.knotName.replace(' ', `\ `);
+
   saveKnot(knotName)
     .then(() => {
       sync(req)
@@ -57,8 +59,10 @@ router.post('/save/', (req, res) => {
 });
 
 router.post('/delete/', (req, res) => {
-  const { knot } = req.body;
-  deleteKnot(knot)
+  // eslint-disable-next-line
+  const knotName = req.body.knot.replace(' ', `\ `);
+
+  deleteKnot(knotName)
     .then(() => {
       res.json({});
     })
@@ -68,8 +72,10 @@ router.post('/delete/', (req, res) => {
 });
 
 router.post('/download/', (req, res) => {
-  const { knot } = req.body;
-  packageKnot(knot)
+  // eslint-disable-next-line
+  const knotName = req.body.knot.replace(' ', `\ `);
+
+  packageKnot(knotName)
     .then(() => {
       res.json({});
     })
@@ -103,7 +109,9 @@ router.post('/partial-sync/', (req, res) => {
 });
 
 router.post('/load/', (req, res) => {
-  const { knot } = req.body;
+  // eslint-disable-next-line
+  const knot = req.body.knot.replace(' ', `\ `);
+
   loadValues(knot)
     .then((result) => {
       res.json(result);
