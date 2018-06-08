@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -18,6 +17,8 @@
  * This product includes software developed at
  * data.world, Inc. (http://data.world/).
  */
+
+// @flow
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
@@ -72,18 +73,26 @@ type Props = {
   save: (
     knotName: string,
     selectedTap: { name: string, image: string },
-    selectedTarget: { name: string, image: string }
+    selectedTarget: { name: string, image: string },
+    currentName: string
   ) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
   location: { search: string },
   sync: (knot: string) => void,
-  partialSync: (knot: string) => void
+  partialSync: (knot: string) => void,
+  syncPageLoaded: () => void
 };
 
-export default class Sync extends Component<Props> {
-  constructor() {
+type State = {
+  currentKnotName: string
+};
+
+export default class Sync extends Component<Props, State> {
+  constructor(props: Props) {
     super();
+
+    this.state = { currentKnotName: props.knotsStore.knotName };
 
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
@@ -95,6 +104,7 @@ export default class Sync extends Component<Props> {
   }
 
   componentWillMount() {
+    this.props.syncPageLoaded();
     const { knot, mode } = queryString.parse(this.props.location.search);
     if (mode === 'full') {
       this.props.sync(knot);
@@ -113,7 +123,13 @@ export default class Sync extends Component<Props> {
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
     const { knotName } = this.props.knotsStore;
-    this.props.save(knotName, selectedTap, selectedTarget);
+
+    this.props.save(
+      knotName,
+      selectedTap,
+      selectedTarget,
+      this.state.currentKnotName
+    );
   };
 
   terminateProcess = () => {
@@ -131,7 +147,6 @@ export default class Sync extends Component<Props> {
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
-    const { mode } = queryString.parse(this.props.location.search);
 
     return (
       <div>
@@ -139,6 +154,59 @@ export default class Sync extends Component<Props> {
         <Container>
           <KnotProgress />
           <h2 className="mb-1 pt-4">Save & Run</h2>
+
+          <Alert
+            isOpen={!knotError && (knotSyncing || knotSynced)}
+            color="success"
+            className="mt-3 d-flex align-items-center"
+          >
+            <div className="d-flex align-items-center border border-success rounded-circle p-2 mr-4 ml-2">
+              <div
+                style={{ opacity: '0.5', fontSize: '2rem' }}
+                className="oi oi-check my-0"
+              />
+            </div>
+            <div className="w-100">
+              <div className="d-flex align-items-center justify-content-between">
+                <span>
+                  {knotSyncing && (
+                    <p>
+                      <strong>{knotName}</strong> has been saved! Running your
+                      Knot could take a while...
+                    </p>
+                  )}
+                  {knotSynced && (
+                    <p>
+                      <strong>{knotName}</strong> has been run successfully
+                    </p>
+                  )}
+                </span>
+                <Button
+                  size="sm"
+                  className="close"
+                  title="Cancel sync"
+                  style={{ display: knotSynced ? 'none' : '' }}
+                  onClick={() => {
+                    this.terminateProcess();
+                  }}
+                >
+                  <span className="align-text-top" aria-hidden="true">
+                    &times;
+                  </span>
+                </Button>
+              </div>
+              {knotSyncing && (
+                <Progress
+                  color="success"
+                  value="100"
+                  striped
+                  animated
+                  className="mt-2 mb-1"
+                />
+              )}
+            </div>
+          </Alert>
+
           <Alert
             isOpen={!!knotError}
             color="danger"
@@ -150,7 +218,7 @@ export default class Sync extends Component<Props> {
             {!knotSyncing &&
               !knotSynced &&
               !knotError && (
-                <Col xs="12">
+                <Col xs="12" className="mt-2">
                   <Form>
                     <InputGroup>
                       <InputGroupAddon addonType="prepend">
@@ -171,49 +239,32 @@ export default class Sync extends Component<Props> {
                       <Input
                         placeholder="Untitled knot"
                         onChange={this.handleChange}
+                        value={knotName}
                       />
                     </InputGroup>
-                    <Button
-                      color="primary"
-                      className="float-right mt-2"
-                      disabled={!this.props.knotsStore.knotName}
-                      onClick={this.submit}
-                    >
-                      Save & Run
-                    </Button>
+                    <div className="float-right">
+                      <Link to="/">
+                        <Button className="btn btn-outline-danger mt-3 mr-3">
+                          Cancel
+                        </Button>
+                      </Link>
+                      <Button
+                        color="primary"
+                        className="mt-3"
+                        disabled={!this.props.knotsStore.knotName}
+                        onClick={this.submit}
+                      >
+                        Save & Run
+                      </Button>
+                    </div>
                   </Form>
-                </Col>
-              )}
-            {knotSyncing && (
-              <Col xs="12">
-                <Alert color="success" className={styles.syncPageAlert}>
-                  <strong className="">{`${knotName} has been saved!`}</strong>
-                </Alert>
-              </Col>
-            )}
-
-            {knotSyncing && (
-              <Col xs="12">
-                <Progress value="100" striped animated className="mt-3">
-                  Running {mode === 'partial' ? 'incremental' : 'full'} sync.
-                  This may take a while…
-                </Progress>
-              </Col>
-            )}
-
-            {knotSynced &&
-              !knotError && (
-                <Col xs="12">
-                  <Alert color="success" className={styles.syncPageAlert}>
-                    <strong>{`${knotName} has been run successfully`}</strong>
-                  </Alert>
                 </Col>
               )}
           </Row>
           {(knotSyncing || knotSynced) && (
             <Row>
               <Col sm="6">
-                <Card className="bg-light mt-3">
+                <Card className="bg-light">
                   <CardHeader className="d-flex align-items-center">
                     <img
                       alt={`${selectedTarget.name} logo`}
@@ -236,7 +287,7 @@ export default class Sync extends Component<Props> {
                 </Card>
               </Col>
               <Col sm="6">
-                <Card className="bg-light mt-3">
+                <Card className="bg-light">
                   <CardHeader className="d-flex align-items-center">
                     <img
                       alt={`${selectedTarget.name} logo`}
@@ -262,17 +313,13 @@ export default class Sync extends Component<Props> {
               </Col>
             </Row>
           )}
-          {knotSyncing &&
-            !knotError && (
-              <Button
-                onClick={this.terminateProcess}
-                className={classNames(
-                  'btn btn-outline-danger float-right my-3'
-                )}
-                disabled={!knotSyncing}
-              >
-                Cancel
-              </Button>
+          {!knotSynced &&
+            knotSyncing && (
+              <Link to="/">
+                <Button className="btn btn-outline-danger float-right my-3">
+                  Cancel
+                </Button>
+              </Link>
             )}
           {knotSynced &&
             !knotError && (

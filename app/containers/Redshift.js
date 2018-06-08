@@ -18,26 +18,20 @@
  * data.world, Inc. (http://data.world/).
  */
 
-.emphasis {
-  font-weight: bold;
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+import * as TapActions from '../actions/taps';
+import Redshift from '../components/Taps/TapConfiguration/Redshift';
+
+function mapStateToProps(state) {
+  return {
+    tapsStore: state.taps
+  };
 }
 
-.normal {
-  font-weight: normal;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(TapActions, dispatch);
 }
 
-.connectBody {
-  text-align: left;
-  width: 50%;
-  margin: 0 auto;
-  padding-top: 10px;
-}
-
-.docker {
-  margin-top: 10%;
-  text-align: center;
-}
-
-.dockerButton {
-  margin-top: 15px;
-}
+export default connect(mapStateToProps, mapDispatchToProps)(Redshift);

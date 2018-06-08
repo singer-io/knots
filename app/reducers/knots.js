@@ -30,16 +30,21 @@ import {
   FETCHED_KNOTS,
   KNOT_DELETED,
   LOADED_KNOT,
-  LOADING_KNOT
+  LOADING_KNOT,
+  DOCKER_RUNNING,
+  RESET_STORE
 } from '../actions/knots';
 
 export type knotsStateType = {
   +detectingDocker: boolean,
+  +dockerVersion: string,
+  +dockerRunning: boolean,
+  +dockerError: string,
+  +dockerVerified: boolean,
+
   +fetchingKnots: boolean,
   +knots: Array<string>,
-  +dockerVersionDetected: boolean,
-  +dockerVersion: string,
-  +dockerVersionError: string,
+
   +tapLogs: Array<string>,
   +targetLogs: Array<string>,
   +knotName: string,
@@ -52,10 +57,12 @@ export type knotsStateType = {
 
 const defaultState = {
   detectingDocker: false,
-  fetchingKnots: false,
-  dockerVersionDetected: false,
   dockerVersion: '',
-  dockerVersionError: '',
+  dockerRunning: false,
+  dockerError: '',
+  dockerVerified: false,
+
+  fetchingKnots: false,
   knots: [],
   tapLogs: [],
   targetLogs: [],
@@ -76,10 +83,15 @@ export default function knots(state = defaultState, action) {
       });
     case UPDATE_DOCKER_VERSION:
       return Object.assign({}, state, {
-        detectingDocker: false,
-        dockerVersionDetected: true,
         dockerVersion: action.version,
-        dockerVersionError: action.error
+        dockerError: action.error,
+        dockerVerified: !!action.error
+      });
+    case DOCKER_RUNNING:
+      return Object.assign({}, state, {
+        dockerRunning: action.running,
+        dockerError: action.error,
+        dockerVerified: true
       });
     case FETCHING_KNOTS:
       return Object.assign({}, state, {
@@ -93,11 +105,11 @@ export default function knots(state = defaultState, action) {
       });
     case UPDATE_TAP_LOGS:
       return Object.assign({}, state, {
-        tapLogs: [...state.tapLogs, action.newLog]
+        tapLogs: action.newLog.split('\n')
       });
     case UPDATE_TARGET_LOGS:
       return Object.assign({}, state, {
-        targetLogs: [...state.targetLogs, action.newLog]
+        targetLogs: action.newLog.split('\n')
       });
     case UPDATE_NAME:
       return Object.assign({}, state, {
@@ -131,6 +143,27 @@ export default function knots(state = defaultState, action) {
         knotName: action.knotName,
         knotError: action.error || ''
       });
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        detectingDocker: false,
+        dockerVersion: '',
+        dockerRunning: false,
+        dockerError: '',
+        dockerVerified: false,
+
+        fetchingKnots: false,
+        knots: [],
+        tapLogs: [],
+        targetLogs: [],
+        knotName: '',
+        knotSyncing: false,
+        knotSynced: false,
+        knotDeleted: false,
+        knotError: '',
+        knotLoading: false,
+        knotLoaded: false
+      };
     default:
       return state;
   }

@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,13 +18,15 @@
  * data.world, Inc. (http://data.world/).
  */
 
+/* eslint-disable no-case-declarations */
+
 import {
   UPDATE_DATASET,
   SET_TOKEN,
   TARGET_CONFIGURED,
   UPDATE_TARGET_FIELD
 } from '../actions/user';
-import { LOADED_KNOT } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
 export type targetsStateType = {
   +targetConfigured: boolean,
@@ -62,16 +63,27 @@ export default function targets(state = defaultState, action) {
         targetConfigured: true
       });
     case UPDATE_TARGET_FIELD:
-      const { targetValues } = action;
+      const target = state[action.target];
+      target.fieldValues[action.field] = action.value;
+
       return Object.assign({}, state, {
-        [Object.keys(targetValues)[0]]: Object.values(targetValues)[0]
+        [action.target]: target
       });
     case LOADED_KNOT:
-      const newTarget = state[action.target.name];
-      newTarget.fieldValues = action.targetConfig;
-      return Object.assign({}, state, {
-        [action.target.name]: newTarget
-      });
+      const savedTarget = state[action.target.name];
+      savedTarget.fieldValues = action.targetConfig;
+
+      return Object.assign({}, state, { [action.target.name]: savedTarget });
+
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        targetConfigured: false,
+        'target-datadotworld': {
+          fieldValues: { dataset_id: '', dataset_owner: '', api_token: '' }
+        },
+        'target-stitch': { fieldValues: { client_id: '', token: '' } }
+      };
     default:
       return state;
   }

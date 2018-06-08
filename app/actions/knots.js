@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,13 +18,18 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import axios from 'axios';
 import { shell } from 'electron';
 
 const baseUrl = 'http://localhost:4321';
 
+export const SYNC_PAGE_LOADED = 'SYNC_PAGE_LOADED';
+
 export const DETECTING_DOCKER = 'DETECTING_DOCKER';
 export const UPDATE_DOCKER_VERSION = 'UPDATE_DOCKER_VERSION';
+export const DOCKER_RUNNING = 'DOCKER_RUNNING';
 export const FETCHING_KNOTS = 'FETCHING_KNOTS';
 export const FETCHED_KNOTS = 'FETCHED_KNOTS';
 
@@ -38,27 +42,52 @@ export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
-export const LOAD_KNOT = 'LOAD_KNOT';
 export const RESET_STORE = 'RESET_STORE';
 
 type actionType = {
   +type: string
 };
 
-export function detectDocker() {
+export function syncPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SYNC_PAGE_LOADED
+    });
+  };
+}
+
+export function verifyDocker() {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: DETECTING_DOCKER
     });
 
     axios
-      .get(`${baseUrl}/docker/`)
-      .then((response) =>
+      .get(`${baseUrl}/docker/installed`)
+      .then((installedResponse) => {
         dispatch({
           type: UPDATE_DOCKER_VERSION,
-          version: response.data.version
-        })
-      )
+          version: installedResponse.data.version
+        });
+
+        axios
+          .get(`${baseUrl}/docker/running`)
+          .then(() =>
+            dispatch({
+              type: DOCKER_RUNNING,
+              running: true
+            })
+          )
+          .catch((error) => {
+            dispatch({
+              type: DOCKER_RUNNING,
+              running: false,
+              error: error.response
+                ? error.response.data.message
+                : error.message
+            });
+          });
+      })
       .catch((error) => {
         dispatch({
           type: UPDATE_DOCKER_VERSION,
@@ -105,7 +134,8 @@ export function updateName(name: string) {
 export function save(
   knotName: string,
   selectedTap: { name: string, image: string },
-  selectedTarget: { name: string, image: string }
+  selectedTarget: { name: string, image: string },
+  currentName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -116,7 +146,8 @@ export function save(
       .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
-        target: selectedTarget
+        target: selectedTarget,
+        currentName
       })
       .then(() =>
         dispatch({
@@ -136,9 +167,6 @@ export function sync(knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
-    });
-    dispatch({
-      type: FINAL_STEP
     });
 
     axios
@@ -161,9 +189,6 @@ export function partialSync(knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: KNOT_SYNCING
-    });
-    dispatch({
-      type: FINAL_STEP
     });
 
     axios
@@ -241,7 +266,6 @@ export function loadValues(knot: string) {
           type: LOADED_KNOT,
           tap: response.data.tap,
           target: response.data.target,
-          tapFields: response.data.tapFields,
           tapConfig: response.data.tapConfig,
           targetConfig: response.data.targetConfig,
           knotName: response.data.name,
@@ -254,15 +278,6 @@ export function loadValues(knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
-}
-
-export function loadKnot(knot: {}) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: LOAD_KNOT,
-      knot
-    });
   };
 }
 

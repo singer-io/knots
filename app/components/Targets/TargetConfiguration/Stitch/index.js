@@ -1,4 +1,3 @@
-// @flow
 /* eslint-disable camelcase */
 /*
  * Knots
@@ -20,6 +19,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import { Label, Input, FormFeedback, FormGroup, InputGroup } from 'reactstrap';
 
@@ -31,36 +32,32 @@ type Props = {
       fieldValues: { client_id: number | string, token: string }
     }
   },
-  updateField: (target: string, name: string, value: string) => void
+  updateTargetField: (target: string, name: string, value: string) => void
 };
 
 type State = {
-  formState: {},
-  targetValues: { 'target-stitch': { fieldValues: {} } }
+  client_id: {},
+  token: {}
 };
 
 export default class Stitch extends Component<Props, State> {
   state = {
-    formState: {},
-    targetValues: { 'target-stitch': { fieldValues: {} } }
+    client_id: {},
+    token: {}
+  };
+
+  validate = (field: string, value: string) => {
+    if (value) {
+      this.setState({ [field]: { valid: true } });
+    } else {
+      this.setState({ [field]: { invalid: true } });
+    }
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    const { targetValues } = this.state;
-    targetValues['target-stitch'].fieldValues[name] = value;
-    this.props.updateField(targetValues);
-  };
-
-  handleBlur = (e, key) => {
-    const { formState } = this.state;
-    formState[key] = e.target.value !== '';
-    this.setState({ formState });
-  };
-
-  getValidState = (key) => {
-    const { formState } = this.state;
-    return formState[key] !== undefined ? formState[key] : true;
+    this.setState({ [name]: { valid: true } });
+    this.props.updateTargetField('target-stitch', name, value);
   };
 
   render() {
@@ -74,27 +71,31 @@ export default class Stitch extends Component<Props, State> {
           <Label for="apiToken">Client ID</Label>
           <InputGroup>
             <Input
-              onBlur={(e) => this.handleBlur(e, 'client_id')}
               name="client_id"
               onChange={this.handleChange}
               value={client_id}
-              invalid={!this.getValidState('client_id') && !client_id}
-              valid={this.getValidState('client_id') || !!client_id}
+              onBlur={(event) => {
+                const { value } = event.currentTarget;
+                this.validate('client_id', value);
+              }}
+              {...this.state.client_id}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>
         </FormGroup>
         <FormGroup>
-          <Label for="apiToken">Token</Label>
+          <Label for="token">Token</Label>
           <InputGroup>
             <Input
-              onBlur={(e) => this.handleBlur(e, 'token')}
               name="token"
               type="password"
               onChange={this.handleChange}
               value={token}
-              invalid={!this.getValidState('token') && !token}
-              valid={this.getValidState('token') || !!token}
+              onBlur={(event) => {
+                const { value } = event.currentTarget;
+                this.validate('token', value);
+              }}
+              {...this.state.token}
             />
             <FormFeedback>Required</FormFeedback>
           </InputGroup>

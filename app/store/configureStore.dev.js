@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, routerActions } from 'react-router-redux';
 import { createLogger } from 'redux-logger';
-import { persistStore } from 'redux-persist';
+
 import rootReducer from '../reducers';
 import * as knotsActions from '../actions/knots';
 import * as tapsActions from '../actions/taps';
@@ -81,7 +81,6 @@ const configureStore = (initialState) => {
 
   // Create Store
   const store = createStore(rootReducer, initialState, enhancer);
-  persistStore(store);
 
   if (module.hot) {
     module.hot.accept(

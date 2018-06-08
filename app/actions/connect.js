@@ -107,12 +107,6 @@ export function submitConfig(config) {
   };
 }
 
-export function getTapConfig() {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({ type: 'persist/REHYDRATE' });
-  };
-}
-
 export function setKnot(knot) {
   return (dispatch: (action: actionType) => void) => {
     console.log('Called with', knot);

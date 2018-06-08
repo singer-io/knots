@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
@@ -26,50 +27,32 @@ import classNames from 'classnames';
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
-import Configure from './Configure';
+import TapConfiguration from '../../containers/TapConfiguration';
 
 import styles from './Taps.css';
 
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
+    tapSelected: boolean,
     selectedTap: { name: string, image: string },
     tapsLoading: boolean,
-    sfToken?: string,
     taps: Array<{
-      logo: string,
       name: string,
       repo: string,
       tapKey: string,
       tapImage: string
-    }>,
-    tapFields: Array<{
-      key: string,
-      label: string,
-      validationText: string,
-      required: boolean,
-      placeholder: string,
-      options: Array<string>,
-      type?: string
-    }>,
-    fieldValues: {
-      password?: string,
-      client_id?: string,
-      client_secret?: string,
-      refresh_token?: string,
-      api_type?: string,
-      select_fields_by_default?: boolean
-    }
+    }>
   },
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string }) => void,
-  updateTapField: (value: object) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},
     knotName: string
-  ) => void
+  ) => void,
+  tapsPageLoaded: () => void
 };
 
 type State = {
@@ -78,19 +61,16 @@ type State = {
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: true,
-    fieldValues: {
-      api_type: 'BULK',
-      select_fields_by_default: true
-    }
+    showTaps: true
   };
 
   componentWillMount() {
+    this.props.tapsPageLoaded();
     this.props.fetchTaps();
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.tapsStore.tapFields.length > 0) {
+    if (nextProps.tapsStore.tapSelected) {
       this.setState({ showTaps: false });
     }
   }
@@ -99,43 +79,31 @@ export default class Taps extends Component<Props, State> {
     this.setState({ showTaps: !this.state.showTaps });
   };
 
-  handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
-    const { name, value } = event.currentTarget;
-    const { fieldValues } = this.state;
-    fieldValues[name] = value;
-    this.props.updateTapField(fieldValues);
-  };
-
   formValid = () => {
-    const validState = this.props.tapsStore.tapFields.map((field) => {
-      if (field.required) {
-        if (!this.props.tapsStore.fieldValues[field.key]) {
-          return false;
-        }
-      }
-
-      return true;
-    });
-
-    if (validState.indexOf(false) > -1) {
+    const { selectedTap } = this.props.tapsStore;
+    if (!selectedTap.name) {
       return false;
     }
 
-    return true;
+    const { fieldValues } = this.props.tapsStore[selectedTap.name];
+    let valid = true;
+
+    Object.keys(fieldValues).forEach((field) => {
+      if (!fieldValues[field]) {
+        valid = false;
+      }
+    });
+
+    return valid;
   };
 
   submit = () => {
-    const { selectedTap, fieldValues } = this.props.tapsStore;
+    const { selectedTap } = this.props.tapsStore;
+    const { fieldValues } = this.props.tapsStore[selectedTap.name];
     const { knotName } = this.props.knotsStore;
 
     this.props.submitConfig(selectedTap, fieldValues, knotName);
     this.props.history.push('/schema');
-  };
-
-  setSfRefreshToken = (token: string) => {
-    const { fieldValues } = this.state;
-    fieldValues.refresh_token = token;
-    this.props.updateTapField(fieldValues);
   };
 
   redirectToHome = () => {
@@ -143,13 +111,7 @@ export default class Taps extends Component<Props, State> {
   };
 
   render() {
-    const {
-      taps,
-      tapFields,
-      fieldValues,
-      sfToken,
-      selectedTap
-    } = this.props.tapsStore;
+    const { taps, selectedTap } = this.props.tapsStore;
     const { knotName } = this.props.knotsStore;
     const { showTaps } = this.state;
 
@@ -197,23 +159,16 @@ export default class Taps extends Component<Props, State> {
               </CardHeader>
               <CardBody
                 className={classNames('collapse', {
-                  show: !showTaps && tapFields.length > 0
+                  show: !showTaps && selectedTap
                 })}
               >
-                <Configure
-                  fields={tapFields}
-                  fieldValues={fieldValues}
-                  submit={this.submit}
-                  handleChange={this.handleChange}
-                  setSfRefreshToken={this.setSfRefreshToken}
-                  sfToken={sfToken}
-                />
+                <TapConfiguration />
               </CardBody>
             </Card>
           </div>
           <Button
             color="primary"
-            className={classNames('float-right my-3')}
+            className="float-right my-3"
             onClick={this.submit}
             disabled={!this.formValid() || showTaps}
           >

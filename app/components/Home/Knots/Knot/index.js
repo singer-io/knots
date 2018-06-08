@@ -35,10 +35,11 @@ type Props = {
     target: { name: string }
   },
   delete: ({ name: string }) => void,
+  dockerInstalled: boolean,
+  dockerRunning: boolean,
   download: ({ name: string }) => void,
   history: { push: (path: string) => void },
-  loadValues: (name: string) => void,
-  loadKnot: (knot: {}) => void
+  loadValues: (name: string) => void
 };
 
 type State = {
@@ -62,25 +63,24 @@ class Knot extends Component<Props, State> {
 
   fullSync = () => {
     const { knot } = this.props;
-    this.props.loadKnot(knot);
-
-    this.props.history.push(`/sync?knot=${knot.name}&mode=full`);
+    this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
+    this.props.loadValues(knot.name);
   };
 
   partialSync = () => {
     const { knot } = this.props;
-    this.props.loadKnot(knot);
-
-    this.props.history.push(`/sync?knot=${knot.name}&mode=partial`);
+    this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
+    this.props.loadValues(knot.name);
   };
 
   edit = () => {
     const { name } = this.props.knot;
+    this.props.history.push('/taps');
     this.props.loadValues(name);
   };
 
   render() {
-    const { knot } = this.props;
+    const { knot, dockerInstalled, dockerRunning } = this.props;
     return (
       <tr key={knot.name}>
         <td className="align-middle text-center pr-0">
@@ -112,6 +112,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Run"
               onClick={this.partialSync}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-media-play" />
             </button>
@@ -123,6 +124,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Full sync"
               onClick={this.fullSync}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-reload" />
             </button>
@@ -134,6 +136,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Edit"
               onClick={this.edit}
+              disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-pencil" />
             </button>

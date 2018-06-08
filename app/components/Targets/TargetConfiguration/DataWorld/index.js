@@ -1,4 +1,3 @@
-// @flow
 /* eslint-disable camelcase */
 /* eslint-disable react/prop-types */
 /*
@@ -21,6 +20,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
 import {
   Label,
@@ -37,42 +38,52 @@ import { ipcRenderer } from 'electron';
 import styles from './DataWorld.css';
 
 type Props = {
-  updateField: (targetValues: object) => void
+  updateTargetField: (target: string, field: string, value: string) => void
 };
 
 type State = {
-  formState: {},
-  targetValues: { fieldValues: {} }
+  api_token: {},
+  dataset: {}
 };
 
 export default class DataWorld extends Component<Props, State> {
   constructor() {
     super();
+
     ipcRenderer.on('dataworld-oauth-reply', (event, token) => {
       this.setToken(token.access_token);
     });
   }
 
   state = {
-    formState: {},
-    targetValues: { 'target-datadotworld': { fieldValues: {} } }
+    api_token: {},
+    dataset: {}
   };
+
+  componentWillReceiveProps(nextProps: Props) {
+    // $FlowFixMe
+    const { dataset_id, dataset_owner, api_token } = nextProps.userStore[
+      'target-datadotworld'
+    ].fieldValues;
+
+    this.setState({
+      api_token: { valid: !!api_token },
+      dataset: { valid: !!(dataset_id && dataset_owner) }
+    });
+  }
 
   authorize = () => {
     ipcRenderer.send('dataworld-oauth', 'getToken');
   };
 
   setToken = (token: string) => {
-    const { targetValues } = this.state;
-    targetValues['target-datadotworld'].fieldValues.api_token = token;
-    this.props.updateField(targetValues);
+    this.props.updateTargetField('target-datadotworld', 'api_token', token);
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    const { targetValues } = this.state;
-    targetValues['target-datadotworld'].fieldValues[name] = value;
-    this.props.updateField(targetValues);
+    this.setState({ [name]: { valid: true } });
+    this.props.updateTargetField('target-datadotworld', name, value);
   };
 
   showDatasetSelector = () => {
@@ -86,13 +97,18 @@ export default class DataWorld extends Component<Props, State> {
 
     datasetSelector.success((datasets) => {
       const selectedDataset = datasets[0];
-      const { targetValues } = this.state;
-      targetValues['target-datadotworld'].fieldValues.dataset_id =
-        selectedDataset.id;
-      targetValues['target-datadotworld'].fieldValues.dataset_owner =
-        selectedDataset.owner;
 
-      this.props.updateField(targetValues);
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_id',
+        selectedDataset.id
+      );
+
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_owner',
+        selectedDataset.owner
+      );
     });
 
     datasetSelector.show();
@@ -114,15 +130,12 @@ export default class DataWorld extends Component<Props, State> {
     return '';
   };
 
-  handleBlur = (e, key) => {
-    const { formState } = this.state;
-    formState[key] = e.target.value !== '';
-    this.setState({ formState });
-  };
+  getDataset = (id?: string, owner?: string) => {
+    if (id && owner) {
+      return `${owner}/${id}`;
+    }
 
-  getValidState = (key) => {
-    const { formState } = this.state;
-    return formState[key] !== undefined ? formState[key] : true;
+    return '';
   };
 
   render() {
@@ -136,12 +149,11 @@ export default class DataWorld extends Component<Props, State> {
           <Label for="apiToken">API Token</Label>
           <InputGroup>
             <Input
-              onBlur={(e) => this.handleBlur(e, 'api_token')}
+              name="api_token"
               readOnly
               type="password"
-              value={api_token || ''}
-              invalid={!this.getValidState('api_token') && !api_token}
-              valid={this.getValidState('api_token') || !!api_token}
+              value={api_token}
+              {...this.state.api_token}
             />
             <InputGroupAddon addonType="append">
               <Button outline color="secondary" onClick={this.authorize}>
@@ -158,20 +170,12 @@ export default class DataWorld extends Component<Props, State> {
               <InputGroupText>https://data.world/</InputGroupText>
             </InputGroupAddon>
             <Input
-              onBlur={(e) => this.handleBlur(e, 'dataset_url')}
               name="dataset"
               placeholder="jonloyens/intro-to-dataworld-dataset"
               value={this.getDataset(dataset_id, dataset_owner)}
               onChange={this.handleChange}
-              invalid={
-                !this.getValidState('dataset_url') &&
-                !this.validDataset(dataset_id, dataset_owner)
-              }
-              valid={
-                this.getValidState('dataset_url') ||
-                !!this.validDataset(dataset_id, dataset_owner)
-              }
               disabled
+              {...this.state.dataset}
             />
             <InputGroupAddon addonType="append">
               <Button

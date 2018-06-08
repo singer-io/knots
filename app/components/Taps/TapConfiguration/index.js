@@ -23,35 +23,32 @@
 import React, { Component } from 'react';
 import { Container, Row } from 'reactstrap';
 
-import DataWorld from '../../../containers/DataWorld';
-import Stitch from '../../../containers/Stitch';
+import Redshift from '../../../containers/Redshift';
+import Salesforce from '../../../containers/Salesforce';
 
 type Props = {
-  targetsStore: {
-    selectedTarget: { name: string, image: string }
+  tapsStore: {
+    selectedTap: { name: string, image: string }
   }
 };
 
-export default class Target extends Component<Props> {
+export default class Tap extends Component<Props> {
   selectedTarget = () => {
-    const { selectedTarget } = this.props.targetsStore;
-    switch (selectedTarget.name) {
-      case 'target-datadotworld':
-        return <DataWorld />;
-      case 'target-stitch':
-        return <Stitch />;
+    const { selectedTap } = this.props.tapsStore;
+    switch (selectedTap.name) {
+      case 'tap-redshift':
+        return <Redshift />;
+      case 'tap-salesforce':
+        return <Salesforce />;
       default:
         return <div>Unknown Target</div>;
     }
   };
-
   render() {
     return (
-      <div>
-        <Container>
-          <Row>{this.selectedTarget()}</Row>
-        </Container>
-      </div>
+      <Container>
+        <Row>{this.selectedTarget()}</Row>
+      </Container>
     );
   }
 }

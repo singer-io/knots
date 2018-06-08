@@ -18,22 +18,21 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import { combineReducers } from 'redux';
-import { routerReducer as router } from 'react-router-redux';
-import knots from './knots';
-import taps from './taps';
-import targets from './targets';
-import user from './user';
-import progress from './progress';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-const appReducer = combineReducers({
-  progress,
-  knots,
-  taps,
-  targets,
-  user,
-  router
-});
+import * as tapActions from '../actions/targets';
+import TapConfiguration from '../components/Taps/TapConfiguration';
 
-const rootReducer = (state, action) => appReducer(state, action);
-export default rootReducer;
+function mapStateToProps(state) {
+  return {
+    userStore: state.user,
+    tapsStore: state.taps
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(tapActions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TapConfiguration);

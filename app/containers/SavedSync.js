@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,30 +18,23 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-import queryString from 'query-string';
-import Loader from '../Loader';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-type Props = {
-  location: { search: string },
-  userStore: { token: '' },
-  getToken: (code: string) => void
-};
+import * as knotActions from '../actions/knots';
+import SavedSync from '../components/SavedSync';
 
-const Callback = (props: Props) => {
-  console.log('The props', props);
-  const { code } = queryString.parse(props.location.search);
+function mapStateToProps(state) {
+  return {
+    knotsStore: state.knots,
+    userStore: state.user,
+    tapStore: state.taps,
+    targetsStore: state.targets
+  };
+}
 
-  if (props.userStore.token) {
-    return <Redirect push to="/target/" />;
-  }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(knotActions, dispatch);
+}
 
-  if (code) {
-    props.getToken(code);
-    return <Loader />;
-  }
-  return <Redirect push to="/" />;
-};
-
-export default Callback;
+export default connect(mapStateToProps, mapDispatchToProps)(SavedSync);

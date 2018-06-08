@@ -24,7 +24,7 @@ const shell = require('shelljs');
 const { app } = require('electron');
 
 const { writeFile, readFile, addKnotAttribute } = require('./util');
-const { taps, getTapFields, commands } = require('./constants');
+const { taps, commands } = require('./constants');
 
 let applicationFolder;
 let runningProcess;
@@ -34,15 +34,15 @@ if (process.env.NODE_ENV === 'production') {
   applicationFolder = path.resolve(__dirname, '../../');
 }
 
-const createKnot = (tapName, tapImage, knotPath) =>
+const createKnot = (tap, knotPath) =>
   new Promise((resolve, reject) => {
     if (knotPath) {
       addKnotAttribute(
         {
           field: ['tap'],
           value: {
-            name: tapName,
-            image: tapImage
+            name: tap.name,
+            image: tap.image
           }
         },
         knotPath
@@ -59,8 +59,8 @@ const createKnot = (tapName, tapImage, knotPath) =>
         path.resolve(applicationFolder, 'knot.json'),
         JSON.stringify({
           tap: {
-            name: tapName,
-            image: tapImage
+            name: tap.name,
+            image: tap.image
           }
         })
       )
@@ -192,24 +192,6 @@ const getTaps = () =>
     }
   });
 
-const fetchTapFields = (tap, image, knot) =>
-  new Promise((resolve, reject) => {
-    const knotPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
-      : '';
-    createKnot(tap, image, knotPath)
-      .then(() => {
-        const fields = getTapFields(tap);
-
-        if (fields.length === 0) {
-          reject(new Error('Unknown tap'));
-        } else {
-          resolve(fields);
-        }
-      })
-      .catch(reject);
-  });
-
 const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
     const catalogPath = knot
@@ -240,9 +222,21 @@ const terminateDiscovery = () => {
   }
 };
 
+const addTap = (tap, knot) =>
+  new Promise((resolve, reject) => {
+    const knotPath = knot
+      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      : '';
+    createKnot(tap, knotPath)
+      .then(() => {
+        resolve();
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getTaps,
-  fetchTapFields,
+  addTap,
   addConfig,
   writeSchema,
   runningProcess,

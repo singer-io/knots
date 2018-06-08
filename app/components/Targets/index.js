@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,7 +18,10 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
 
@@ -34,7 +36,6 @@ type Props = {
     targetsLoading: boolean,
     targetSelected: boolean,
     targets: Array<{
-      logo: string,
       name: string,
       repo: string,
       targetKey: string,
@@ -50,7 +51,8 @@ type Props = {
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: (fielsValues: {}, knotName: string) => void
+  submitFields: (fielsValues: {}, knotName: string) => void,
+  targetsPageLoaded: () => void
 };
 
 type State = {
@@ -63,6 +65,7 @@ export default class Targets extends Component<Props, State> {
   };
 
   componentWillMount() {
+    this.props.targetsPageLoaded();
     this.props.getTargets();
   }
 
@@ -163,14 +166,22 @@ export default class Targets extends Component<Props, State> {
                 <TargetConfiguration />
               </CardBody>
             </Card>
-            <Button
-              color="primary"
-              className="float-right my-3"
-              disabled={!this.formValid()}
-              onClick={this.submit}
-            >
-              Continue
-            </Button>
+
+            <div className="float-right">
+              <Link to="/">
+                <Button className="btn btn-outline-danger my-3 mr-3">
+                  Cancel
+                </Button>
+              </Link>
+              <Button
+                color="primary"
+                className="float-right my-3"
+                disabled={!this.formValid()}
+                onClick={this.submit}
+              >
+                Continue
+              </Button>
+            </div>
           </div>
         </Container>
       </div>

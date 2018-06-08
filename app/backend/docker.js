@@ -18,11 +18,11 @@
  * data.world, Inc. (http://data.world/).
  */
 
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 
-const detectDocker = () =>
+const dockerInstalled = () =>
   new Promise((resolve, reject) => {
-    // Run `docker -v` on the user's shell
+    // Try to find out the docker version installed
     const docker = spawn('docker', ['-v']);
 
     // A version number was returned, docker is installed
@@ -36,4 +36,16 @@ const detectDocker = () =>
     });
   });
 
-module.exports = { detectDocker };
+const dockerRunning = () =>
+  new Promise((resolve, reject) => {
+    // Run a docker command to ensure it is running
+    exec('docker volume ls', (error) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+
+module.exports = { dockerInstalled, dockerRunning };

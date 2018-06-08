@@ -18,55 +18,92 @@
  * data.world, Inc. (http://data.world/).
  */
 
+/* eslint-disable no-case-declarations */
+
 import {
   TAPS_LOADING,
   UPDATE_TAPS,
-  UPDATE_TAP_FIELDS,
   UPDATE_TAP_FIELD,
   SCHEMA_RECEIVED,
   UPDATE_SCHEMA_FIELD,
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
-  SELECT_TAP,
-  UPDATE_SCHEMA_LOGS
+  UPDATE_SCHEMA_LOGS,
+  TAP_SELECTED
 } from '../actions/taps';
-import { LOADED_KNOT, LOAD_KNOT } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
+  +tapSelected: boolean,
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
   +selectedTap: { name: string, image: string },
-  +tapFields: Array<{}>,
-  +fieldValues: {},
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +liveLogs: string
+  +'tap-redshift': {
+    fieldValues: {
+      host: string,
+      port: number,
+      dbname: string,
+      schema: string,
+      user: string,
+      password: string
+    }
+  },
+  'tap-salesforce': {
+    fieldValues: {
+      client_id: string,
+      client_secret: string,
+      refresh_token: string,
+      api_type: string,
+      select_fields_by_default: string,
+      start_date: string
+    }
+  }
 };
 
 const defaultState = {
   tapsLoading: false,
+  tapSelected: false,
   selectedTap: { name: '', image: '' },
   schemaLoading: false,
   schemaLoaded: false,
   schemaLogs: [],
   taps: [],
-  tapFields: [],
-  fieldValues: {
-    api_type: 'BULK',
-    select_fields_by_default: true
-  },
+
   schema: [],
   schemaUpdated: false,
   error: '',
-  liveLogs: ''
+  'tap-redshift': {
+    fieldValues: {
+      host: '',
+      port: undefined,
+      dbname: '',
+      schema: 'public',
+      user: '',
+      password: '',
+      start_date: ''
+    }
+  },
+  'tap-salesforce': {
+    fieldValues: {
+      client_id: '',
+      client_secret: '',
+      refresh_token: '',
+      api_type: 'BULK',
+      select_fields_by_default: true,
+      start_date: ''
+    }
+  }
 };
 
 export default function taps(state = defaultState, action) {
-  const { fieldValues, schema } = state;
+  const { schema } = state;
+
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -76,23 +113,23 @@ export default function taps(state = defaultState, action) {
         taps: action.taps,
         error: action.error
       });
-    case SELECT_TAP:
+    case TAP_SELECTED:
       return Object.assign({}, state, {
-        selectedTap: action.tap
-      });
-    case UPDATE_TAP_FIELDS:
-      return Object.assign({}, state, {
-        tapsLoading: false,
-        tapFields: action.tapFields,
+        tapSelected: !action.error,
+        selectedTap: action.tap,
         error: action.error
       });
     case UPDATE_TAP_FIELD:
+      const tap = state[action.tap];
+      tap.fieldValues[action.field] = action.value;
+
       return Object.assign({}, state, {
-        fieldValues: action.values
+        [action.tap]: tap
       });
     case SCHEMA_LOADING:
       return Object.assign({}, state, {
-        schemaLoading: true
+        schemaLoading: true,
+        schemaLogs: []
       });
     case UPDATE_SCHEMA_LOGS:
       return Object.assign({}, state, {
@@ -160,16 +197,56 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case LOADED_KNOT:
-      return Object.assign({}, state, {
-        selectedTap: action.tap,
-        fieldValues: action.tapConfig,
-        tapFields: action.tapFields,
-        schema: action.schema
-      });
-    case LOAD_KNOT:
-      return Object.assign({}, state, {
-        selectedTap: action.knot.tap
-      });
+      const savedTap = state[action.tap.name];
+      savedTap.fieldValues = action.tapConfig;
+
+      return Object.assign(
+        {},
+        state,
+        {
+          selectedTap: action.tap,
+          schema: action.schema,
+          schemaLoaded: true
+        },
+        { [action.tap.name]: savedTap }
+      );
+
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        tapsLoading: false,
+        tapSelected: false,
+        selectedTap: { name: '', image: '' },
+        schemaLoading: false,
+        schemaLoaded: false,
+        schemaLogs: [],
+        taps: [],
+
+        schema: [],
+        schemaUpdated: false,
+        error: '',
+        'tap-redshift': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            dbname: '',
+            schema: 'public',
+            user: '',
+            password: '',
+            start_date: ''
+          }
+        },
+        'tap-salesforce': {
+          fieldValues: {
+            client_id: '',
+            client_secret: '',
+            refresh_token: '',
+            api_type: 'BULK',
+            select_fields_by_default: true,
+            start_date: ''
+          }
+        }
+      };
     default:
       return state;
   }

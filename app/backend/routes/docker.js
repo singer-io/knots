@@ -20,12 +20,22 @@
 
 const router = require('express').Router();
 
-const { detectDocker } = require('../docker');
+const { dockerInstalled, dockerRunning } = require('../docker');
 
-router.get('/', (req, res) => {
-  detectDocker()
+router.get('/installed', (req, res) => {
+  dockerInstalled()
     .then((version) => {
       res.json({ version });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.get('/running', (req, res) => {
+  dockerRunning()
+    .then(() => {
+      res.json({});
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });

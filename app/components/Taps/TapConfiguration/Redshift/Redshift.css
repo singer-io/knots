@@ -18,8 +18,6 @@
  * data.world, Inc. (http://data.world/).
  */
 
-.loader {
-  display: flex;
-  justify-content: center;
-  margin-top: 15%;
+.Redshift {
+  width: 100%;
 }

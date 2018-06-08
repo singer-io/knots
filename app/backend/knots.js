@@ -21,14 +21,14 @@
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
+const { exec, execFile } = require('child_process');
 const { EOL } = require('os');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const { readFile, addKnotAttribute, writeFile } = require('./util');
-const { commands, getTapFields } = require('./constants');
+const { commands } = require('./constants');
 
 let applicationFolder;
 let runningProcess;
@@ -117,7 +117,8 @@ const createMakeFile = (knot, name) =>
 
 const sync = (req) =>
   new Promise((resolve, reject) => {
-    const { knotName } = req.body;
+    // eslint-disable-next-line
+    const knotName = req.body.knotName.replace(' ', `\ `);
 
     // Get the stored knot object
     readFile(
@@ -126,19 +127,19 @@ const sync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          const tapLogPath = `${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          );
-          const targetLogPath = path.resolve(
+          )}`;
+          const targetLogPath = `${path.resolve(
             `${applicationFolder}/knots/${req.body.knotName}`,
             'target.log'
-          );
+          )}`;
 
           // Get tap and target from the knot object
           const syncData = exec(
             commands.runSync(
-              `${applicationFolder}/knots/${req.body.knotName}`,
+              `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
             ),
@@ -148,13 +149,13 @@ const sync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
@@ -181,34 +182,53 @@ const sync = (req) =>
       .catch(reject);
   });
 
-const saveKnot = (name) =>
+const saveKnot = (name, currentName) =>
   new Promise((resolve, reject) => {
-    addKnotAttribute({ field: ['name'], value: name })
+    // eslint-disable-next-line
+    const knotName = name.replace(' ', `\ `);
+    // eslint-disable-next-line
+    const oldName = currentName.replace(' ', `\ `);
+    const pathToKnot = oldName
+      ? path.resolve(`${applicationFolder}/knots/${oldName}`, 'knot.json')
+      : path.resolve(applicationFolder, 'knot.json');
+
+    addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
       .then(() => {
-        readFile(path.resolve(applicationFolder, 'knot.json'))
+        readFile(pathToKnot)
           .then((knotObjectString) => {
             try {
               const knotObject = JSON.parse(knotObjectString);
-              // Create knots folder if it doesn't exist
-              shell.mkdir('-p', path.resolve(applicationFolder, 'knots', name));
+              if (!currentName) {
+                // Create knots folder if it doesn't exist
+                shell.mkdir(
+                  '-p',
+                  path.resolve(applicationFolder, 'knots', name)
+                );
 
-              // Move tap config to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'configs', 'tap'),
-                path.resolve(applicationFolder, 'knots', name, 'tap')
-              );
+                // Move tap config to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'configs', 'tap'),
+                  path.resolve(applicationFolder, 'knots', name, 'tap')
+                );
 
-              // Move target config to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'configs', 'target'),
-                path.resolve(applicationFolder, 'knots', name, 'target')
-              );
+                // Move target config to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'configs', 'target'),
+                  path.resolve(applicationFolder, 'knots', name, 'target')
+                );
 
-              // Move knot.json to knot's folder
-              shell.mv(
-                path.resolve(applicationFolder, 'knot.json'),
-                path.resolve(applicationFolder, 'knots', name, 'knot.json')
-              );
+                // Move knot.json to knot's folder
+                shell.mv(
+                  path.resolve(applicationFolder, 'knot.json'),
+                  path.resolve(applicationFolder, 'knots', name, 'knot.json')
+                );
+              } else {
+                // Change knot's folder name
+                shell.mv(
+                  path.resolve(applicationFolder, 'knots', oldName),
+                  path.resolve(applicationFolder, 'knots', name)
+                );
+              }
 
               // Add the make file to the folder
               createMakeFile(knotObject, name)
@@ -236,22 +256,46 @@ const deleteKnot = (knot) =>
   });
 
 const packageKnot = (knotName) =>
-  new Promise((resolve) => {
-    const zip = new EasyZip();
-    zip.zipFolder(path.resolve(applicationFolder, 'knots', knotName), () => {
-      zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
-      resolve();
-    });
+  new Promise((resolve, reject) => {
+    try {
+      const zip = new EasyZip();
+
+      // Make a clone of the knot to be downloaded
+      shell.cp(
+        '-R',
+        path.resolve(applicationFolder, 'knots', knotName),
+        path.resolve(applicationFolder)
+      );
+
+      // Remove log files
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'tap.log'));
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'target.log'));
+
+      // Create zip from clone
+      zip.zipFolder(path.resolve(applicationFolder, knotName), () => {
+        zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+
+        // Done, clean up
+        shell.rm('-rf', path.resolve(applicationFolder, knotName));
+        resolve();
+      });
+    } catch (error) {
+      reject(error);
+    }
   });
 
 const downloadKnot = (req, res) => {
+  // eslint-disable-next-line
+  const knot = req.query.knot.replace(' ', `\ `);
+
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download(`${applicationFolder}/${req.query.knot}.zip`);
+  res.download(`${applicationFolder}/${knot}.zip`);
 };
 
 const partialSync = (req) =>
   new Promise((resolve, reject) => {
-    const { knotName } = req.body;
+    // eslint-disable-next-line
+    const knotName = req.body.knotName.replace(' ', `\ `);
 
     // Get the stored knot object
     readFile(
@@ -260,19 +304,19 @@ const partialSync = (req) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          const tapLogPath = `${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'tap.log'
-          );
-          const targetLogPath = path.resolve(
-            `${applicationFolder}/knots/${req.body.knotName}`,
+          )}`;
+          const targetLogPath = `${path.resolve(
+            `${applicationFolder}/knots/${knotName}`,
             'target.log'
-          );
+          )}`;
 
           // Get tap and target from the knot object
           const syncData = exec(
             commands.runPartialSync(
-              `${applicationFolder}/knots/${req.body.knotName}`,
+              `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
             ),
@@ -282,13 +326,13 @@ const partialSync = (req) =>
           runningProcess = syncData;
 
           fs.watchFile(tapLogPath, () => {
-            exec(`tail -n 1 ${tapLogPath}`, (error, stdout) => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
               req.io.emit('tapLog', stdout.toString());
             });
           });
 
           fs.watchFile(targetLogPath, () => {
-            exec(`tail -n 1 ${targetLogPath}`, (error, stdout) => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
               req.io.emit('targetLog', stdout.toString());
             });
           });
@@ -320,7 +364,10 @@ const partialSync = (req) =>
 
 const loadValues = (knot) =>
   new Promise((resolve, reject) => {
-    const knotPath = path.resolve(applicationFolder, 'knots', knot);
+    const knotPath = path
+      .resolve(applicationFolder, 'knots', knot)
+      // eslint-disable-next-line
+      .replace(' ', `\ `);
 
     const promises = [
       readFile(`${knotPath}/knot.json`),
@@ -347,13 +394,11 @@ const loadValues = (knot) =>
         const tapConfig = values[1];
         const schema = values[2].streams;
         const targetConfig = values[3];
-        const tapFields = getTapFields(knotJson.tap.name);
 
         resolve({
           name: knotJson.name,
           tap: knotJson.tap,
           target: knotJson.target,
-          tapFields,
           tapConfig,
           targetConfig,
           schema

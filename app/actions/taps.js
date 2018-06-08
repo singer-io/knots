@@ -1,4 +1,3 @@
-// @flow
 /*
  * Knots
  * Copyright 2018 data.world, Inc.
@@ -19,18 +18,20 @@
  * data.world, Inc. (http://data.world/).
  */
 
+// @flow
+
 import axios from 'axios';
 
 const baseUrl = 'http://localhost:4321';
+
+export const TAPS_PAGE_LOADED = 'TAPS_PAGE_LOADED';
+export const SCHEMA_PAGE_LOADED = 'SCHEMA_PAGE_LOADED';
 
 export const TAPS_LOADING = 'TAPS_LOADING';
 export const UPDATE_TAPS = 'UPDATE_TAPS';
 
 export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
-
-export const SELECT_TAP = 'SELECT_TAP';
-export const UPDATE_TAP_FIELDS = 'UPDATE_TAP_FIELDS';
 
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
@@ -39,9 +40,27 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 
 export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
+export const TAP_SELECTED = 'TAP_SELECTED';
+
 type actionType = {
   +type: string
 };
+
+export function tapsPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: TAPS_PAGE_LOADED
+    });
+  };
+}
+
+export function schemaPageLoaded() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: SCHEMA_PAGE_LOADED
+    });
+  };
+}
 
 export function fetchTaps() {
   return (dispatch: (action: actionType) => void) => {
@@ -72,50 +91,40 @@ export function selectTap(
   knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: SELECT_TAP,
-      tap
-    });
-
     axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
         knot: knotName
       })
-      .then((response) => {
+      .then(() => {
         dispatch({
-          type: UPDATE_TAP_FIELDS,
-          tapFields: response.data.config
+          type: TAP_SELECTED,
+          tap
         });
       })
       .catch((error) => {
         dispatch({
-          type: UPDATE_TAP_FIELDS,
-          tapFields: [],
+          type: TAP_SELECTED,
+          tap: '',
           error: error.response ? error.response.data.message : error.message
         });
       });
   };
 }
 
-export function updateTapField(values: object) {
+export function updateTapField(
+  tap: string,
+  field: string,
+  value: string | number
+) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TAP_FIELD,
-      values
+      tap,
+      field,
+      value
     });
   };
-}
-
-function ISODateString(d) {
-  function pad(n) {
-    return n < 10 ? `0${n}` : n;
-  }
-  return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(
-    d.getUTCDate()
-  )}T${pad(d.getUTCHours())}:${pad(d.getUTCMinutes())}:${pad(
-    d.getUTCSeconds()
-  )}Z`;
 }
 
 export function submitConfig(
@@ -128,10 +137,6 @@ export function submitConfig(
       type: SCHEMA_LOADING
     });
     const tapConfig = config;
-
-    if (tapConfig.start_date) {
-      tapConfig.start_date = ISODateString(new Date(tapConfig.start_date));
-    }
 
     const payload = {
       tap,

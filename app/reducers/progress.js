@@ -18,9 +18,9 @@
  * data.world, Inc. (http://data.world/).
  */
 
-import { UPDATE_TAPS, SCHEMA_LOADING } from '../actions/taps';
-import { TARGETS_LOADING, TARGET_CONFIGURING } from '../actions/targets';
-import { KNOT_SYNCED, FINAL_STEP } from '../actions/knots';
+import { TAPS_PAGE_LOADED, SCHEMA_PAGE_LOADED } from '../actions/taps';
+import { TARGETS_PAGE_LOADED } from '../actions/targets';
+import { RESET_STORE, SYNC_PAGE_LOADED } from '../actions/knots';
 
 export type tapsStateType = {
   +items: [{ active: boolean }]
@@ -50,17 +50,30 @@ const defaultState = {
 
 export default function progress(state = defaultState, action) {
   switch (action.type) {
-    case UPDATE_TAPS:
-      return Object.assign({}, state, {
+    case TAPS_PAGE_LOADED:
+      return {
         0: {
           text: 'Configure Tap',
           href: '/taps',
           complete: false,
           active: true
-        }
-      });
-    case SCHEMA_LOADING:
-      return Object.assign({}, state, {
+        },
+        1: {
+          text: 'Replication Options',
+          href: '/schema',
+          complete: false,
+          active: false
+        },
+        2: {
+          text: 'Configure Target',
+          href: '/targets',
+          complete: false,
+          active: false
+        },
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+      };
+    case SCHEMA_PAGE_LOADED:
+      return {
         0: {
           text: 'Configure Tap',
           href: '/taps',
@@ -72,69 +85,82 @@ export default function progress(state = defaultState, action) {
           href: '/schema',
           complete: false,
           active: true
-        }
-      });
-    case TARGETS_LOADING:
-      return Object.assign({}, state, {
-        1: {
-          text: 'Replication Options',
-          href: '/schema',
-          complete: true,
-          active: false
         },
         2: {
           text: 'Configure Target',
           href: '/targets',
           complete: false,
-          active: true
-        }
-      });
-    case TARGET_CONFIGURING:
-      return Object.assign({}, state, {
-        2: {
-          text: 'Configure Target',
-          href: '/targets',
-          complete: true,
           active: false
         },
-        3: {
-          text: 'Save & Run',
-          href: 'run',
-          complete: false,
-          active: true
-        }
-      });
-    case KNOT_SYNCED:
-      return Object.assign({}, state, {
-        3: {
-          text: 'Save & Run',
-          href: 'sync',
-          complete: true,
-          active: false
-        }
-      });
-    case FINAL_STEP:
-      return Object.assign({}, state, {
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+      };
+    case TARGETS_PAGE_LOADED:
+      return {
         0: {
           text: 'Configure Tap',
           href: '/taps',
           complete: true,
-          active: true
+          active: false
         },
         1: {
           text: 'Replication Options',
           href: '/schema',
           complete: true,
+          active: false
+        },
+        2: {
+          text: 'Configure Target',
+          href: '/targets',
+          complete: false,
           active: true
+        },
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+      };
+    case SYNC_PAGE_LOADED:
+      return {
+        0: {
+          text: 'Configure Tap',
+          href: '/taps',
+          complete: true,
+          active: false
+        },
+        1: {
+          text: 'Replication Options',
+          href: '/schema',
+          complete: true,
+          active: false
         },
         2: {
           text: 'Configure Target',
           href: '/targets',
           complete: true,
-          active: true
+          active: false
         },
         3: { text: 'Save & Run', href: 'sync', complete: false, active: true }
-      });
+      };
+    case RESET_STORE:
+      // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      return {
+        0: {
+          text: 'Configure Tap',
+          href: '/taps',
+          complete: false,
+          active: false
+        },
+        1: {
+          text: 'Replication Options',
+          href: '/schema',
+          complete: false,
+          active: false
+        },
+        2: {
+          text: 'Configure Target',
+          href: '/targets',
+          complete: false,
+          active: false
+        },
+        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+      };
     default:
       return state;
   }
