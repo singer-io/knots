@@ -129,11 +129,11 @@ app.on('ready', async () => {
       .catch((error) => console.log(error));
   });
 
-  ipcMain.on('sf-oauth', (event, args) => {
+  ipcMain.on('sf-oauth', (event, clientId, clientSecret) => {
     // $FlowFixMe
-    sfConfig.clientId = args.clientId;
+    sfConfig.clientId = clientId;
     // $FlowFixMe
-    sfConfig.clientSecret = args.clientSecret;
+    sfConfig.clientSecret = clientSecret;
     const salesforceOauth = electronOauth2(sfConfig, windowParams);
     salesforceOauth
       .getAccessToken({})
