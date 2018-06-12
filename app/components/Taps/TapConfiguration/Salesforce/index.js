@@ -47,8 +47,6 @@ type Props = {
         client_id: string,
         client_secret: string,
         refresh_token: string,
-        api_type: string,
-        select_fields_by_default: boolean,
         start_date: string
       }
     }
@@ -60,8 +58,6 @@ type State = {
   client_id: {},
   client_secret: {},
   refresh_token: {},
-  api_type: {},
-  select_fields_by_default: {},
   start_date: {}
 };
 
@@ -82,8 +78,6 @@ export default class Salesforce extends Component<Props, State> {
     client_id: {},
     client_secret: {},
     refresh_token: {},
-    api_type: {},
-    select_fields_by_default: {},
     start_date: {}
   };
 
@@ -127,17 +121,11 @@ export default class Salesforce extends Component<Props, State> {
     }`;
   };
 
-  authorize = (clientId: string, clientSecret: string) => {
-    const authorizationCredentials = { clientId, clientSecret };
-    ipcRenderer.send('sf-oauth', authorizationCredentials);
-  };
-
-  getRefreshToken = () => {
+  authorize = () => {
     const { client_id, client_secret } = this.props.tapsStore[
       'tap-salesforce'
     ].fieldValues;
-
-    this.authorize(client_id, client_secret);
+    ipcRenderer.send('sf-oauth', client_id, client_secret);
   };
 
   render() {
@@ -145,8 +133,6 @@ export default class Salesforce extends Component<Props, State> {
       client_id,
       client_secret,
       refresh_token,
-      api_type,
-      select_fields_by_default,
       start_date
     } = this.props.tapsStore['tap-salesforce'].fieldValues;
 
@@ -213,65 +199,15 @@ export default class Salesforce extends Component<Props, State> {
                 />
                 <InputGroupAddon addonType="append">
                   <Button
-                    disabled={!(client_id && client_secret) || !!refresh_token}
+                    disabled={!(client_id && client_secret)}
                     outline
                     color="secondary"
-                    onClick={() => {
-                      this.getRefreshToken();
-                    }}
+                    onClick={this.authorize}
                   >
                     Get token
                   </Button>
                 </InputGroupAddon>
               </InputGroup>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="api_type">API type</Label>
-              <Input
-                type="text"
-                name="api_type"
-                id="api_type"
-                value={api_type}
-                readOnly
-                onFocus={() => {
-                  this.setState({ api_type: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('api_type', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.api_type}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-              <Label for="select_fields_by_default">
-                Select fields by default
-              </Label>
-              <Input
-                type="text"
-                name="select_fields_by_default"
-                id="select_fields_by_default"
-                value={select_fields_by_default}
-                readOnly
-                onFocus={() => {
-                  this.setState({ select_fields_by_default: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('select_fields_by_default', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.select_fields_by_default}
-              />
-              <FormFeedback>Required</FormFeedback>
             </FormGroup>
           </Col>
         </Row>
