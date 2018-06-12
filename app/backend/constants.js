@@ -25,13 +25,15 @@ const taps = [
     name: 'Redshift',
     tapKey: 'tap-redshift',
     tapImage: 'gbolahan/tap-redshift:1.0.0b5',
-    repo: 'https://github.com/datadotworld/tap-redshift'
+    repo: 'https://github.com/datadotworld/tap-redshift',
+    isLegacy: true
   },
   {
     name: 'Salesforce',
     tapKey: 'tap-salesforce',
     tapImage: 'gbolahan/tap-salesforce:1.0',
-    repo: 'https://github.com/singer-io/tap-salesforce'
+    repo: 'https://github.com/singer-io/tap-salesforce',
+    isLegacy: false
   }
 ];
 
@@ -72,7 +74,7 @@ const commands = {
   runPartialSync: (folderPath, tap, target) =>
     `docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image
-    } tap-redshift -c ${tap.name}/data/config.json --properties ${
+    } ${tap.name} -c ${tap.name}/data/config.json --properties ${
       tap.name
     }/data/catalog.json --state ${tap.name}/data/state.json 2> "${path.resolve(
       folderPath,

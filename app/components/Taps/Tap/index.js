@@ -33,7 +33,11 @@ type Props = {
   tapKey: string,
   tapImage: string,
   selected: string,
-  selectTap: (tap: { name: string, image: string }, knotName: string) => void,
+  isLegacy: boolean,
+  selectTap: (
+    tap: { name: string, image: string, isLegacy: boolean },
+    knotName: string
+  ) => void,
   knotName: string
 };
 
@@ -81,7 +85,8 @@ export default class Tap extends Component<Props, State> {
               this.props.selectTap(
                 {
                   name: tapKey,
-                  image: this.props.tapImage
+                  image: this.props.tapImage,
+                  isLegacy: this.props.isLegacy
                 },
                 knotName
               );

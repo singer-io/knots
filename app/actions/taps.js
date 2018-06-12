@@ -166,7 +166,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  tapName: string
+  isLegacy: boolean
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -174,7 +174,7 @@ export function editSchemaField(
       field,
       index,
       value,
-      tapName
+      isLegacy
     });
   };
 }

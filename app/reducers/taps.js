@@ -39,7 +39,7 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: { name: string, image: string },
+  +selectedTap: { name: string, image: string, isLegacy: boolean },
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
@@ -69,7 +69,7 @@ export type tapsStateType = {
 const defaultState = {
   tapsLoading: false,
   tapSelected: false,
-  selectedTap: { name: '', image: '' },
+  selectedTap: { name: '', image: '', isLegacy: false },
   schemaLoading: false,
   schemaLoaded: false,
   schemaLogs: [],
@@ -80,13 +80,12 @@ const defaultState = {
   error: '',
   'tap-redshift': {
     fieldValues: {
-      host: '',
-      port: undefined,
-      dbname: '',
       schema: 'public',
-      user: '',
-      password: '',
-      start_date: ''
+      host: 'db.panoply.io',
+      user: 'gbolahan.okerayi@andela.com',
+      password: 'Pastor-02',
+      dbname: 'knot',
+      port: 5439
     }
   },
   'tap-salesforce': {
@@ -143,10 +142,6 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {
-      const { tapName } = action;
-      const LEGACY_TAPS = ['tap-redshift'];
-      const isLegacyTap = LEGACY_TAPS.includes(tapName);
-
       if (schema[action.index]) {
         let indexToUpdate;
         switch (action.field) {
@@ -173,7 +168,7 @@ export default function taps(state = defaultState, action) {
 
             // Select a stream when a user chooses its replication key
             if (action.value === '') {
-              if (isLegacyTap) {
+              if (action.isLegacy) {
                 delete schema[action.index].replication_key;
                 delete schema[action.index].metadata[indexToUpdate].metadata
                   .selected;
@@ -184,7 +179,7 @@ export default function taps(state = defaultState, action) {
                 delete schema[action.index].metadata[indexToUpdate].metadata
                   .selected;
               }
-            } else if (isLegacyTap) {
+            } else if (action.isLegacy) {
               schema[action.index].replication_key = action.value;
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
