@@ -39,7 +39,7 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: { name: string, image: string },
+  +selectedTap: { name: string, image: string, isLegacy: boolean },
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
@@ -69,7 +69,7 @@ export type tapsStateType = {
 const defaultState = {
   tapsLoading: false,
   tapSelected: false,
-  selectedTap: { name: '', image: '' },
+  selectedTap: { name: '', image: '', isLegacy: false },
   schemaLoading: false,
   schemaLoaded: false,
   schemaLogs: [],
@@ -142,7 +142,7 @@ export default function taps(state = defaultState, action) {
         schema: state.schema.length > 0 ? state.schema : action.schema,
         error: action.error
       });
-    case UPDATE_SCHEMA_FIELD:
+    case UPDATE_SCHEMA_FIELD: {
       if (schema[action.index]) {
         let indexToUpdate;
         switch (action.field) {
@@ -169,12 +169,23 @@ export default function taps(state = defaultState, action) {
 
             // Select a stream when a user chooses its replication key
             if (action.value === '') {
-              delete schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-key'
-              ];
-
-              delete schema[action.index].metadata[indexToUpdate].metadata
-                .selected;
+              if (action.isLegacy) {
+                delete schema[action.index].replication_key;
+                delete schema[action.index].replication_method;
+                delete schema[action.index].metadata[indexToUpdate].metadata
+                  .selected;
+              } else {
+                delete schema[action.index].metadata[indexToUpdate].metadata[
+                  'replication-key'
+                ];
+                delete schema[action.index].metadata[indexToUpdate].metadata[
+                  'replication-method'
+                ];
+                delete schema[action.index].metadata[indexToUpdate].metadata
+                  .selected;
+              }
+            } else if (action.isLegacy) {
+              schema[action.index].replication_key = action.value;
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
@@ -190,6 +201,7 @@ export default function taps(state = defaultState, action) {
         }
       }
       return state;
+    }
     case SCHEMA_UPDATED:
       return Object.assign({}, state, {
         tapsLoading: false,

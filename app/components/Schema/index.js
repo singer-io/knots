@@ -56,14 +56,15 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
-    selectedTap: { name: string, image: string },
+    selectedTap: { name: string, image: string, isLegacy: boolean },
     error?: string
   },
   knotsStore: { knotName: string },
   editSchemaField: (
     field: string,
     index: string,
-    value: boolean | string
+    value: boolean | string,
+    isLegacy: boolean
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (
@@ -117,10 +118,11 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
+    const { isLegacy } = this.props.tapsStore.selectedTap;
     if (!this.validSchema()) {
       this.setState({ streamSelected: this.validSchema() });
     }
-    this.props.editSchemaField(field, index, value);
+    this.props.editSchemaField(field, index, value, isLegacy);
   };
 
   handleSelectChange = (
@@ -128,7 +130,8 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    this.props.editSchemaField(field, index, value);
+    const { isLegacy } = this.props.tapsStore.selectedTap;
+    this.props.editSchemaField(field, index, value, isLegacy);
   };
 
   submit = () => {

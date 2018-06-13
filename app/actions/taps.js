@@ -87,7 +87,7 @@ export function fetchTaps() {
 }
 
 export function selectTap(
-  tap: { name: string, image: string },
+  tap: { name: string, image: string, isLegacy: boolean },
   knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
@@ -165,14 +165,16 @@ export function submitConfig(
 export function editSchemaField(
   field: string,
   index: string,
-  value: boolean | string
+  value: boolean | string,
+  isLegacy: boolean
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_SCHEMA_FIELD,
       field,
       index,
-      value
+      value,
+      isLegacy
     });
   };
 }

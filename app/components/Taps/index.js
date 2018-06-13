@@ -46,7 +46,7 @@ type Props = {
   },
   knotsStore: { knotName: string },
   history: { push: (path: string) => void },
-  selectTap: (tap: { name: string, image: string }) => void,
+  selectTap: (tap: { name: string, image: string, isLegacy: boolean }) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},

@@ -24,14 +24,16 @@ const taps = [
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
-    tapImage: 'gbolahan/tap-redshift:1.0.0b5',
-    repo: 'https://github.com/datadotworld/tap-redshift'
+    tapImage: 'dataworld/tap-redshift:1.0.0b8',
+    repo: 'https://github.com/datadotworld/tap-redshift',
+    isLegacy: false
   },
   {
     name: 'Salesforce',
     tapKey: 'tap-salesforce',
     tapImage: 'gbolahan/tap-salesforce:1.0',
-    repo: 'https://github.com/singer-io/tap-salesforce'
+    repo: 'https://github.com/singer-io/tap-salesforce',
+    isLegacy: false
   }
 ];
 
@@ -70,11 +72,14 @@ const commands = {
       'target.log'
     )}" > "${folderPath}/tap/state.json"`,
   runPartialSync: (folderPath, tap, target) =>
-    `docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
+    `tail -1 "${folderPath}/tap/state.json" > "${folderPath}/tap/latest-state.json"; \\
+    docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image
-    } tap-redshift -c ${tap.name}/data/config.json --properties ${
+    } ${tap.name} -c ${tap.name}/data/config.json --properties ${
       tap.name
-    }/data/catalog.json --state ${tap.name}/data/state.json 2> "${path.resolve(
+    }/data/catalog.json --state ${
+      tap.name
+    }/data/latest-state.json 2> "${path.resolve(
       folderPath,
       'tap.log'
     )}" | docker run -v "${folderPath}/target:/app/${
@@ -84,8 +89,7 @@ const commands = {
     }/data/config.json 2> "${path.resolve(
       folderPath,
       'target.log'
-    )}" > "${folderPath}/tap/latest-state.json";
-    \\tail -1 "${folderPath}/tap/latest-state.json" > "${folderPath}/tap/state.json"`
+    )}" > "${folderPath}/tap/state.json";`
 };
 
 module.exports = {
