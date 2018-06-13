@@ -24,9 +24,9 @@ const taps = [
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
-    tapImage: 'gbolahan/tap-redshift:1.0.0b5',
+    tapImage: 'dataworld/tap-redshift:1.0.0b8',
     repo: 'https://github.com/datadotworld/tap-redshift',
-    isLegacy: true
+    isLegacy: false
   },
   {
     name: 'Salesforce',

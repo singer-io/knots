@@ -18,6 +18,8 @@
  * data.world, Inc. (http://data.world/).
  */
 
+/* eslint-disable array-callback-return */
+
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
