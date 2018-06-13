@@ -144,21 +144,30 @@ const sync = (req) =>
           readFile(catalogPath)
             .then((catalogObjectString) => {
               const catalogObject = JSON.parse(catalogObjectString);
-              let indexToUpdate;
 
-              // Update replication_method to top level of stream
-              // with replication_key for legacy taps
-              catalogObject.streams.some((value, index) => {
-                if ('replication_key' in value) {
-                  indexToUpdate = index;
-                }
-              });
+              if (knotObject.tap.isLegacy) {
+                catalogObject.streams.some((value, index) => {
+                  if ('replication_key' in value) {
+                    catalogObject.streams[index].replication_method =
+                      'FULL_TABLE';
+                  }
+                });
+              } else {
+                catalogObject.streams.some((value, index) => {
+                  value.metadata.forEach((mdata, i) => {
+                    if (
+                      mdata.breadcrumb.length === 0 &&
+                      mdata.metadata['replication-key']
+                    ) {
+                      catalogObject.streams[index].metadata[i].metadata[
+                        'replication-method'
+                      ] =
+                        'FULL_TABLE';
+                    }
+                  });
+                });
+              }
 
-              // TODO: Also add replication_method for new tap i.e
-              // adding them to metadata
-
-              catalogObject.streams[indexToUpdate].replication_method =
-                'FULL_TABLE';
               writeFile(catalogPath, JSON.stringify(catalogObject))
                 .then(() => {
                   // Get tap and target from the knot object
@@ -341,49 +350,85 @@ const partialSync = (req) =>
             `${applicationFolder}/knots/${knotName}`,
             'target.log'
           )}`;
-
-          // Get tap and target from the knot object
-          const syncData = exec(
-            commands.runPartialSync(
-              `${applicationFolder}/knots/${knotName}`,
-              knotObject.tap,
-              knotObject.target
-            ),
-            { detached: true }
+          const catalogPath = path.resolve(
+            `${applicationFolder}/knots/${knotName}/tap`,
+            'catalog.json'
           );
 
-          runningProcess = syncData;
+          readFile(catalogPath)
+            .then((catalogObjectString) => {
+              const catalogObject = JSON.parse(catalogObjectString);
 
-          fs.watchFile(tapLogPath, () => {
-            execFile('cat', [tapLogPath], (error, stdout) => {
-              req.io.emit('tapLog', stdout.toString());
-            });
-          });
+              if (knotObject.tap.isLegacy) {
+                catalogObject.streams.some((value, index) => {
+                  if ('replication_key' in value) {
+                    catalogObject.streams[index].replication_method =
+                      'INCREMENTAL';
+                  }
+                });
+              } else {
+                catalogObject.streams.some((value, index) => {
+                  value.metadata.forEach((mdata, i) => {
+                    if (
+                      mdata.breadcrumb.length === 0 &&
+                      mdata.metadata['replication-key']
+                    ) {
+                      catalogObject.streams[index].metadata[i].metadata[
+                        'replication-method'
+                      ] =
+                        'INCREMENTAL';
+                    }
+                  });
+                });
+              }
+              writeFile(catalogPath, JSON.stringify(catalogObject))
+                .then(() => {
+                  // Get tap and target from the knot object
+                  const syncData = exec(
+                    commands.runPartialSync(
+                      `${applicationFolder}/knots/${knotName}`,
+                      knotObject.tap,
+                      knotObject.target
+                    ),
+                    { detached: true }
+                  );
 
-          fs.watchFile(targetLogPath, () => {
-            execFile('cat', [targetLogPath], (error, stdout) => {
-              req.io.emit('targetLog', stdout.toString());
-            });
-          });
+                  runningProcess = syncData;
 
-          syncData.on('exit', () => {
-            addKnotAttribute(
-              {
-                field: ['lastRun'],
-                value: new Date().toISOString()
-              },
-              path.resolve(
-                `${applicationFolder}/knots/${knotName}`,
-                'knot.json'
-              )
-            )
-              .then(() => {
-                resolve();
-              })
-              .catch((error) => {
-                reject(error);
-              });
-          });
+                  fs.watchFile(tapLogPath, () => {
+                    execFile('cat', [tapLogPath], (error, stdout) => {
+                      req.io.emit('tapLog', stdout.toString());
+                    });
+                  });
+
+                  fs.watchFile(targetLogPath, () => {
+                    execFile('cat', [targetLogPath], (error, stdout) => {
+                      req.io.emit('targetLog', stdout.toString());
+                    });
+                  });
+
+                  syncData.on('exit', () => {
+                    addKnotAttribute(
+                      {
+                        field: ['lastRun'],
+                        value: new Date().toISOString()
+                      },
+                      path.resolve(
+                        `${applicationFolder}/knots/${knotName}`,
+                        'knot.json'
+                      )
+                    )
+                      .then(() => {
+                        resolve();
+                      })
+                      .catch((error) => {
+                        reject(error);
+                      });
+                  });
+                })
+                .catch(reject);
+            })
+            .catch(reject);
         } catch (error) {
           reject(error);
         }

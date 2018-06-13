@@ -87,7 +87,7 @@ export function fetchTaps() {
 }
 
 export function selectTap(
-  tap: { name: string, image: string },
+  tap: { name: string, image: string, isLegacy: boolean },
   knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {

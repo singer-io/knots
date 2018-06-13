@@ -42,7 +42,8 @@ const createKnot = (tap, knotPath) =>
           field: ['tap'],
           value: {
             name: tap.name,
-            image: tap.image
+            image: tap.image,
+            isLegacy: tap.isLegacy
           }
         },
         knotPath
@@ -60,7 +61,8 @@ const createKnot = (tap, knotPath) =>
         JSON.stringify({
           tap: {
             name: tap.name,
-            image: tap.image
+            image: tap.image,
+            isLegacy: tap.isLegacy
           }
         })
       )
