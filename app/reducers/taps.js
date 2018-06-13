@@ -186,16 +186,11 @@ export default function taps(state = defaultState, action) {
               }
             } else if (action.isLegacy) {
               schema[action.index].replication_key = action.value;
-              schema[action.index].replication_method = 'FULL_TABLE';
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
               ] =
                 action.value;
-              schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'FULL_TABLE';
             }
 
             return Object.assign({}, state, {

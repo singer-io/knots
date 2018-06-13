@@ -135,46 +135,75 @@ const sync = (req) =>
             `${applicationFolder}/knots/${req.body.knotName}`,
             'target.log'
           )}`;
-
-          // Get tap and target from the knot object
-          const syncData = exec(
-            commands.runSync(
-              `${applicationFolder}/knots/${knotName}`,
-              knotObject.tap,
-              knotObject.target
-            ),
-            { detached: true }
+          const catalogPath = path.resolve(
+            `${applicationFolder}/knots/${knotName}/tap`,
+            'catalog.json'
           );
 
-          runningProcess = syncData;
+          // Get the stored catalog object
+          readFile(catalogPath)
+            .then((catalogObjectString) => {
+              const catalogObject = JSON.parse(catalogObjectString);
+              let indexToUpdate;
 
-          fs.watchFile(tapLogPath, () => {
-            execFile('cat', [tapLogPath], (error, stdout) => {
-              req.io.emit('tapLog', stdout.toString());
-            });
-          });
-
-          fs.watchFile(targetLogPath, () => {
-            execFile('cat', [targetLogPath], (error, stdout) => {
-              req.io.emit('targetLog', stdout.toString());
-            });
-          });
-
-          syncData.on('exit', () => {
-            addKnotAttribute(
-              { field: ['lastRun'], value: new Date().toISOString() },
-              path.resolve(
-                `${applicationFolder}/knots/${knotName}`,
-                'knot.json'
-              )
-            )
-              .then(() => {
-                resolve();
-              })
-              .catch((error) => {
-                reject(error);
+              // Update replication_method to top level of stream
+              // with replication_key for legacy taps
+              catalogObject.streams.some((value, index) => {
+                if ('replication_key' in value) {
+                  indexToUpdate = index;
+                }
               });
-          });
+
+              // TODO: Also add replication_method for new tap i.e
+              // adding them to metadata
+
+              catalogObject.streams[indexToUpdate].replication_method =
+                'FULL_TABLE';
+              writeFile(catalogPath, JSON.stringify(catalogObject))
+                .then(() => {
+                  // Get tap and target from the knot object
+                  const syncData = exec(
+                    commands.runSync(
+                      `${applicationFolder}/knots/${knotName}`,
+                      knotObject.tap,
+                      knotObject.target
+                    ),
+                    { detached: true }
+                  );
+
+                  runningProcess = syncData;
+
+                  fs.watchFile(tapLogPath, () => {
+                    execFile('cat', [tapLogPath], (error, stdout) => {
+                      req.io.emit('tapLog', stdout.toString());
+                    });
+                  });
+
+                  fs.watchFile(targetLogPath, () => {
+                    execFile('cat', [targetLogPath], (error, stdout) => {
+                      req.io.emit('targetLog', stdout.toString());
+                    });
+                  });
+
+                  syncData.on('exit', () => {
+                    addKnotAttribute(
+                      { field: ['lastRun'], value: new Date().toISOString() },
+                      path.resolve(
+                        `${applicationFolder}/knots/${knotName}`,
+                        'knot.json'
+                      )
+                    )
+                      .then(() => {
+                        resolve();
+                      })
+                      .catch((error) => {
+                        reject(error);
+                      });
+                  });
+                })
+                .catch(reject);
+            })
+            .catch(reject);
         } catch (error) {
           reject(error);
         }
