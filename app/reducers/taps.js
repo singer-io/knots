@@ -80,12 +80,13 @@ const defaultState = {
   error: '',
   'tap-redshift': {
     fieldValues: {
+      host: '',
+      port: undefined,
+      dbname: '',
       schema: 'public',
-      host: 'db.panoply.io',
-      user: 'gbolahan.okerayi@andela.com',
-      password: 'Pastor-02',
-      dbname: 'knot',
-      port: 5439
+      user: '',
+      password: '',
+      start_date: ''
     }
   },
   'tap-salesforce': {
