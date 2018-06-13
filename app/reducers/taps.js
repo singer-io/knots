@@ -170,22 +170,31 @@ export default function taps(state = defaultState, action) {
             if (action.value === '') {
               if (action.isLegacy) {
                 delete schema[action.index].replication_key;
+                delete schema[action.index].replication_method;
                 delete schema[action.index].metadata[indexToUpdate].metadata
                   .selected;
               } else {
                 delete schema[action.index].metadata[indexToUpdate].metadata[
                   'replication-key'
                 ];
+                delete schema[action.index].metadata[indexToUpdate].metadata[
+                  'replication-method'
+                ];
                 delete schema[action.index].metadata[indexToUpdate].metadata
                   .selected;
               }
             } else if (action.isLegacy) {
               schema[action.index].replication_key = action.value;
+              schema[action.index].replication_method = 'FULL_TABLE';
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 'replication-key'
               ] =
                 action.value;
+              schema[action.index].metadata[indexToUpdate].metadata[
+                'replication-method'
+              ] =
+                'FULL_TABLE';
             }
 
             return Object.assign({}, state, {
