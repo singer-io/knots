@@ -31,7 +31,7 @@ const taps = [
   {
     name: 'Salesforce',
     tapKey: 'tap-salesforce',
-    tapImage: 'gbolahan/tap-salesforce:1.0',
+    tapImage: 'dataworld/tap-salesforce:1.4.14',
     repo: 'https://github.com/singer-io/tap-salesforce',
     isLegacy: false
   }
@@ -47,7 +47,7 @@ const targets = [
   {
     name: 'Stitch',
     targetKey: 'target-stitch',
-    targetImage: 'gbolahan/target-stitch:1.0',
+    targetImage: 'dataworld/target-stitch:1.7.4',
     repo: 'https://github.com/singer-io/target-stitch'
   }
 ];

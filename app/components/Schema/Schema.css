@@ -44,5 +44,10 @@
 }
 
 .repKeyToolTip {
-  left: 12px !important;
+  left: 10px !important;
+}
+
+.infoIcon {
+  vertical-align: middle;
+  margin-left: 5px;
 }
