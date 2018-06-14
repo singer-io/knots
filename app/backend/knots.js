@@ -293,24 +293,28 @@ const packageKnot = (knotName) =>
   new Promise((resolve, reject) => {
     try {
       const zip = new EasyZip();
+      const renamedKnot = knotName.replace(' ', '_');
 
       // Make a clone of the knot to be downloaded
       shell.cp(
         '-R',
         path.resolve(applicationFolder, 'knots', knotName),
-        path.resolve(applicationFolder)
+        path.resolve(applicationFolder, renamedKnot)
       );
 
       // Remove log files
-      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'tap.log'));
-      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'target.log'));
+      shell.rm('-rf', path.resolve(applicationFolder, renamedKnot, 'tap.log'));
+      shell.rm(
+        '-rf',
+        path.resolve(applicationFolder, renamedKnot, 'target.log')
+      );
 
       // Create zip from clone
-      zip.zipFolder(path.resolve(applicationFolder, knotName), () => {
-        zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+      zip.zipFolder(path.resolve(applicationFolder, renamedKnot), () => {
+        zip.writeToFile(`${applicationFolder}/${renamedKnot}.zip`);
 
         // Done, clean up
-        shell.rm('-rf', path.resolve(applicationFolder, knotName));
+        shell.rm('-rf', path.resolve(applicationFolder, renamedKnot));
         resolve();
       });
     } catch (error) {
@@ -320,7 +324,7 @@ const packageKnot = (knotName) =>
 
 const downloadKnot = (req, res) => {
   // eslint-disable-next-line
-  const knot = req.query.knot.replace(' ', `\ `);
+  const knot = req.query.knot.replace(' ', '_');
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.download(`${applicationFolder}/${knot}.zip`);
