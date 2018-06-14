@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build:
+    macos:
+      xcode: "9.0"
+
+    steps:
+      - checkout
+      - run:
+          name: Install rpm
+          command: brew install rpm
+      - run:
+          name: Build and run tests
+          command: yarn && yarn package
+      - store_test_results:
+          path: release/*.dmg
+          destination: mac
+
+  docker-dependencies:
+    docker:
+      - image: dataworld/pyenv-tox
+
+    working_directory: /root/knot
+
+    environment:
+      SALESFORCE_VERSION: "1.4.14"
+      STITCH_VERSION: "1.7.4"
+
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: docker build
+          working_directory: /root/knot/docker/images
+          command: |
+            docker build --build-arg version=$SALESFORCE_VERSION -t dataworld/tap-salesforce -t dataworld/tap-salesforce:$SALESFORCE_VERSION ./tap-salesforce
+            docker build --build-arg version=$STITCH_VERSION -t dataworld/target-stitch -t dataworld/target-stitch:$STITCH_VERSION ./target-stitch
+      - deploy:
+          name: docker-hub release
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASS
+            docker push dataworld/tap-salesforce:latest
+            docker push dataworld/tap-salesforce:$SALESFORCE_VERSION
+            docker push dataworld/target-stitch:latest
+            docker push dataworld/target-stitch:$STITCH_VERSION
+
+workflows:
+  version: 2
+  app:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore:
+                - docker-release
+  dependencies:
+    jobs:
+      - docker-dependencies:
+          filters:
+            branches:
+              only:
+                - docker-release
