@@ -60,3 +60,7 @@
 .hidden {
   display: none;
 }
+
+.link:hover {
+  text-decoration: none;
+}
