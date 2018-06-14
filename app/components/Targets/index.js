@@ -61,7 +61,7 @@ type State = {
 
 export default class Targets extends Component<Props, State> {
   state = {
-    showTargets: !!this.props.targetsStore.targetSelected
+    showTargets: !this.props.targetsStore.selectedTarget.name
   };
 
   componentWillMount() {

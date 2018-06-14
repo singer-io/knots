@@ -27,8 +27,7 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   index: string,
   columns: Array<string>,
-  handleChange: (field: string, index: string, value: boolean | string) => void,
-  isDisabled: boolean
+  handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
 export default class Dropdown extends Component<Props> {
@@ -49,7 +48,6 @@ export default class Dropdown extends Component<Props> {
           name="select"
           id="replicationKeys"
           onChange={this.handleChange}
-          disabled={this.props.isDisabled}
         >
           <option value="" hidden selected>
             Please select
