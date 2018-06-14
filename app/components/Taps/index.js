@@ -61,7 +61,7 @@ type State = {
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: !!this.props.tapsStore.tapSelected
+    showTaps: !this.props.tapsStore.selectedTap.name
   };
 
   componentWillMount() {
