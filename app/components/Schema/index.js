@@ -337,7 +337,16 @@ export default class Schema extends Component<Props, State> {
                         <tr>
                           <th className="text-center">Include</th>
                           <th>Table/Stream</th>
-                          <th id="ReplicationInfo">Replication Key</th>
+                          <th>
+                            Replication Key
+                            <i
+                              id="ReplicationInfo"
+                              className={classNames(
+                                'fa fa-info-circle',
+                                styles.infoIcon
+                              )}
+                            />
+                          </th>
                           <Tooltip
                             placement="right"
                             isOpen={this.state.tooltipOpen}
