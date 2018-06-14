@@ -78,7 +78,7 @@ const KnotProgress = (props: Props) => {
   if (clickable) {
     return (
       <NavItem>
-        <Link to={props.href}>
+        <Link to={props.href} className={styles.link}>
           <div
             className={classNames(styles.navLink, {
               [styles.completed]: props.complete,
