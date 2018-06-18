@@ -435,8 +435,15 @@ const partialSync = (req) =>
 
 const loadValues = (knot) =>
   new Promise((resolve, reject) => {
+    // Make a clone of the knot to be edited
+    shell.cp(
+      '-R',
+      path.resolve(applicationFolder, 'knots', knot),
+      path.resolve(applicationFolder)
+    );
+
     const knotPath = path
-      .resolve(applicationFolder, 'knots', knot)
+      .resolve(applicationFolder, knot)
       // eslint-disable-next-line
       .replace(' ', `\ `);
 
