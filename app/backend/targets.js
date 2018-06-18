@@ -45,7 +45,7 @@ const getTargets = () =>
 const addTarget = (target, knot) =>
   new Promise((resolve, reject) => {
     const knotPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      ? path.resolve(applicationFolder, knot, 'knot.json')
       : '';
     addKnotAttribute({ field: ['target'], value: target }, knotPath)
       .then(resolve)
@@ -55,7 +55,7 @@ const addTarget = (target, knot) =>
 const addTargetConfig = (config, knot) =>
   new Promise((resolve, reject) => {
     const configPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'target', 'config.json')
+      ? path.resolve(applicationFolder, knot, 'target', 'config.json')
       : path.resolve(applicationFolder, 'config.json');
     writeFile(configPath, JSON.stringify(config))
       .then(() => {
