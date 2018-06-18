@@ -82,7 +82,9 @@ type Props = {
   location: { search: string },
   sync: (knot: string) => void,
   partialSync: (knot: string) => void,
-  syncPageLoaded: () => void
+  history: { push: (path: string) => void },
+  syncPageLoaded: () => void,
+  cancel: () => void
 };
 
 type State = {
@@ -118,6 +120,12 @@ export default class Sync extends Component<Props, State> {
     const { value } = event.currentTarget;
 
     this.props.updateName(value);
+  };
+
+  cancel = () => {
+    const { knotName } = this.props.knotsStore;
+    this.props.cancel(knotName);
+    this.props.history.push('/');
   };
 
   submit = () => {
@@ -244,11 +252,13 @@ export default class Sync extends Component<Props, State> {
                       />
                     </InputGroup>
                     <div className="float-right">
-                      <Link to="/">
-                        <Button className="btn btn-outline-danger mt-3 mr-3">
-                          Cancel
-                        </Button>
-                      </Link>
+                      <Button
+                        className="btn btn-outline-danger mt-3 mr-3"
+                        onClick={this.cancel}
+                      >
+                        Cancel
+                      </Button>
+
                       <Button
                         color="primary"
                         className="mt-3"
@@ -316,11 +326,12 @@ export default class Sync extends Component<Props, State> {
           )}
           {!knotSynced &&
             knotSyncing && (
-              <Link to="/">
-                <Button className="btn btn-outline-danger float-right my-3">
-                  Cancel
-                </Button>
-              </Link>
+              <Button
+                className="btn btn-outline-danger float-right my-3"
+                onClick={this.cancel}
+              >
+                Cancel
+              </Button>
             )}
           {knotSynced &&
             !knotError && (
