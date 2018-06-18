@@ -62,7 +62,7 @@ type Props = {
     selectedTap: { name: string, image: string, isLegacy: boolean },
     error?: string
   },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, knotName: string },
   editSchemaField: (
     field: string,
     index: string,
@@ -77,7 +77,8 @@ type Props = {
   ) => void,
   schemaPageLoaded: () => void,
   updateSchemaLogs: (log: string) => void,
-  history: { push: (path: string) => void }
+  history: { push: (path: string) => void },
+  cancel: () => void
 };
 
 type State = {
@@ -205,8 +206,15 @@ export default class Schema extends Component<Props, State> {
     socket.emit('terminate', 'discovery');
   };
 
-  redirectToHome = () => {
+  cancel = (discovery: boolean) => {
+    const { knotName } = this.props.knotsStore;
+
+    if (discovery) {
+      this.terminateProcess();
+    }
+
     this.terminateProcess();
+    this.props.cancel(knotName);
     this.props.history.push('/');
   };
 
@@ -307,7 +315,17 @@ export default class Schema extends Component<Props, State> {
                     </div>
                   </Alert>
                   <Button
-                    onClick={this.redirectToHome}
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.showSchema}
+                    disabled={!schemaLoaded || !!error}
+                  >
+                    Continue
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      this.cancel(true);
+                    }}
                     className={classNames(
                       'btn btn-outline-danger float-right my-3',
                       styles.cancel
@@ -386,7 +404,9 @@ export default class Schema extends Component<Props, State> {
                       Continue
                     </Button>
                     <Button
-                      onClick={this.redirectToHome}
+                      onClick={() => {
+                        this.cancel();
+                      }}
                       className={classNames(
                         'btn btn-outline-danger float-right my-3',
                         styles.cancel
