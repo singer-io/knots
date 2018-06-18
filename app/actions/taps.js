@@ -209,3 +209,12 @@ export function updateSchemaLogs(newLog: string) {
     });
   };
 }
+
+export function cancel(knot: string) {
+  return () => {
+    axios
+      .post(`${baseUrl}/knots/cancel/`, { knot })
+      .then(() => {})
+      .catch(() => {});
+  };
+}

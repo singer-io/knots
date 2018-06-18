@@ -29,7 +29,8 @@ const {
   packageKnot,
   downloadKnot,
   partialSync,
-  loadValues
+  loadValues,
+  cancel
 } = require('../knots');
 
 router.get('/', (req, res) => {
@@ -121,6 +122,12 @@ router.post('/load/', (req, res) => {
     .catch((error) => {
       res.status(500).json({ message: error.message });
     });
+});
+
+router.post('/cancel/', (req) => {
+  cancel(req.body.knot)
+    .then()
+    .catch();
 });
 
 module.exports = router;
