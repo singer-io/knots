@@ -44,7 +44,7 @@ type Props = {
       tapImage: string
     }>
   },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string, isLegacy: boolean }) => void,
   submitConfig: (
@@ -61,7 +61,7 @@ type State = {
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: !this.props.tapsStore.selectedTap.name
+    showTaps: true
   };
 
   componentWillMount() {
@@ -70,7 +70,7 @@ export default class Taps extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.tapsStore.tapSelected) {
+    if (nextProps.tapsStore.tapSelected || nextProps.knotsStore.knotLoaded) {
       this.setState({ showTaps: false });
     }
   }
