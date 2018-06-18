@@ -234,8 +234,7 @@ export default function taps(state = defaultState, action) {
         state,
         {
           selectedTap: action.tap,
-          schema: action.schema,
-          schemaLoaded: true
+          schema: action.schema
         },
         { [action.tap.name]: savedTap }
       );
