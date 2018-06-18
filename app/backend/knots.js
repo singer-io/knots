@@ -223,6 +223,16 @@ const saveKnot = (name, currentName) =>
     const knotName = name.replace(' ', `\ `);
     // eslint-disable-next-line
     const oldName = currentName.replace(' ', `\ `);
+
+    if (oldName) {
+      shell.rm('-rf', path.resolve(applicationFolder, 'knots', oldName));
+
+      shell.mv(
+        path.resolve(applicationFolder, currentName),
+        path.resolve(applicationFolder, 'knots', oldName)
+      );
+    }
+
     const pathToKnot = oldName
       ? path.resolve(`${applicationFolder}/knots/${oldName}`, 'knot.json')
       : path.resolve(applicationFolder, 'knot.json');
