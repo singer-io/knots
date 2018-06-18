@@ -491,6 +491,21 @@ const terminateSync = () => {
   }
 };
 
+const cancel = (knot) =>
+  new Promise((resolve, reject) => {
+    try {
+      if (knot) {
+        shell.rm('-rf', path.resolve(applicationFolder, knot));
+      } else {
+        shell.rm('-rf', path.resolve(applicationFolder, 'configs'));
+        shell.rm('-rf', path.resolve(applicationFolder, 'knot.json'));
+      }
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 module.exports = {
   getKnots,
   saveKnot,
@@ -500,5 +515,6 @@ module.exports = {
   downloadKnot,
   partialSync,
   loadValues,
-  terminateSync
+  terminateSync,
+  cancel
 };

@@ -52,7 +52,8 @@ type Props = {
     fieldValues: {},
     knotName: string
   ) => void,
-  tapsPageLoaded: () => void
+  tapsPageLoaded: () => void,
+  cancel: () => void
 };
 
 type State = {
@@ -106,7 +107,9 @@ export default class Taps extends Component<Props, State> {
     this.props.history.push('/schema');
   };
 
-  redirectToHome = () => {
+  cancel = () => {
+    const { knotName } = this.props.knotsStore;
+    this.props.cancel(knotName);
     this.props.history.push('/');
   };
 
@@ -175,7 +178,7 @@ export default class Taps extends Component<Props, State> {
             Continue
           </Button>
           <Button
-            onClick={this.redirectToHome}
+            onClick={this.cancel}
             className={classNames(
               'btn btn-outline-danger float-right my-3',
               styles.cancelCta
