@@ -124,10 +124,14 @@ router.post('/load/', (req, res) => {
     });
 });
 
-router.post('/cancel/', (req) => {
+router.post('/cancel/', (req, res) => {
   cancel(req.body.knot)
-    .then()
-    .catch();
+    .then(() => {
+      res.json({});
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
 });
 
 module.exports = router;
