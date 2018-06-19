@@ -25,20 +25,22 @@
 
 import React, { Component } from 'react';
 import {
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Row,
-  Col,
-  FormFeedback,
-  InputGroupAddon,
+  Alert,
   Button,
-  InputGroup
+  Col,
+  Collapse,
+  Container,
+  Form,
+  FormFeedback,
+  FormGroup,
+  FormText,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  Label,
+  Row
 } from 'reactstrap';
-import { ipcRenderer } from 'electron';
-
-import styles from './Salesforce.css';
+import { ipcRenderer, shell } from 'electron';
 
 type Props = {
   tapsStore: {
@@ -129,6 +131,11 @@ export default class Salesforce extends Component<Props, State> {
     ipcRenderer.send('sf-oauth', client_id, client_secret);
   };
 
+  openLink = (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url);
+  };
+
   render() {
     const {
       client_id,
@@ -138,101 +145,153 @@ export default class Salesforce extends Component<Props, State> {
     } = this.props.tapsStore['tap-salesforce'].fieldValues;
 
     return (
-      <Form className={styles.Salesforce}>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="host">Client id</Label>
-              <Input
-                type="text"
-                name="client_id"
-                id="client_id"
-                value={client_id}
-                onFocus={() => {
-                  this.setState({ client_id: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('client_id', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.client_id}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="port">Client secret</Label>
-              <Input
-                type="password"
-                name="client_secret"
-                id="client_secret"
-                value={client_secret}
-                onFocus={() => {
-                  this.setState({ client_secret: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('client_secret', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.client_secret}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="dbname">Refresh token</Label>
-              <InputGroup>
+      <Container>
+        <Alert color="primary">
+          <h4>Shhh... Here is a secret!</h4>
+          <p>
+            This Tap requires you to provision your own SalesForce Connected
+            App. That will give you access to the consumer key and secret
+            required below. To do so, please follow&nbsp;
+            <a
+              href="#"
+              onClick={(e) =>
+                this.openLink(
+                  e,
+                  'https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5'
+                )
+              }
+            >
+              this guide
+            </a>.
+          </p>
+          <p>
+            You must select <strong>Enable OAuth settings</strong> and specify
+            the following options:
+          </p>
+          <ol>
+            <li>
+              Callback URL:{' '}
+              <code>https://login.salesforce.com/services/oauth2/success</code>
+            </li>
+            <li>
+              Selected OAuth Scopes:
+              <ul>
+                <li>
+                  <code>Access and manage your data (api)</code>
+                </li>
+                <li>
+                  <code>
+                    Perform requests on your behalf at any time (refresh_token,
+                    offline_access)
+                  </code>
+                </li>
+              </ul>
+            </li>
+          </ol>
+        </Alert>
+        <Form>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="client_id">Consumer key</Label>
                 <Input
-                  readOnly
-                  type="password"
-                  name="refresh_token"
-                  value={refresh_token}
-                  id="refresh_token"
+                  type="text"
+                  name="client_id"
+                  id="client_id"
+                  value={client_id}
+                  onFocus={() => {
+                    this.setState({ client_id: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('client_id', value);
+                  }}
                   onChange={this.handleChange}
-                  {...this.state.refresh_token}
+                  {...this.state.client_id}
                 />
-                <InputGroupAddon addonType="append">
-                  <Button
-                    disabled={!(client_id && client_secret)}
-                    outline
-                    color="secondary"
-                    onClick={this.authorize}
-                  >
-                    Get token
-                  </Button>
-                </InputGroupAddon>
-              </InputGroup>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs="4">
-            <FormGroup>
-              <Label for="start_date">Start date</Label>
-              <Input
-                type="date"
-                name="start_date"
-                id="start_date"
-                value={start_date ? this.formatDate(start_date) : ''}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('start_date', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.start_date}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="client_secret">Consumer secret</Label>
+                <Input
+                  type="password"
+                  name="client_secret"
+                  id="client_secret"
+                  value={client_secret}
+                  onFocus={() => {
+                    this.setState({ client_secret: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('client_secret', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.client_secret}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Collapse isOpen={!!(client_id && client_secret)}>
+            <Row>
+              <Col>
+                <FormGroup>
+                  <Label for="refresh_token">Refresh token</Label>
+                  <InputGroup>
+                    <Input
+                      readOnly
+                      type="password"
+                      name="refresh_token"
+                      value={refresh_token}
+                      id="refresh_token"
+                      onChange={this.handleChange}
+                      {...this.state.refresh_token}
+                    />
+                    <InputGroupAddon addonType="append">
+                      <Button
+                        disabled={!(client_id && client_secret)}
+                        outline
+                        color="secondary"
+                        onClick={this.authorize}
+                      >
+                        Get token
+                      </Button>
+                    </InputGroupAddon>
+                  </InputGroup>
+                </FormGroup>
+              </Col>
+            </Row>
+          </Collapse>
+          <Row>
+            <Col xs="6">
+              <FormGroup>
+                <Label for="start_date">Start date</Label>
+                <Input
+                  type="date"
+                  name="start_date"
+                  id="start_date"
+                  value={start_date ? this.formatDate(start_date) : ''}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('start_date', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.start_date}
+                />
+                <FormText>
+                  Applies to objects with a defined timestamp field and limits
+                  how much historical data will be replicated.
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+      </Container>
     );
   }
 }

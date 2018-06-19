@@ -180,8 +180,8 @@ export default class Schema extends Component<Props, State> {
     this.setState({ showSchema: true });
   };
 
-  openLink = (repo: string) => {
-    shell.openExternal(repo);
+  openLink = (url: string) => {
+    shell.openExternal(url);
   };
 
   validSchema = () => {

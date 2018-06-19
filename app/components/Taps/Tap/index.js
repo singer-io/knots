@@ -22,15 +22,13 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Col, Card, CardBody } from 'reactstrap';
+import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 import { shell } from 'electron';
 
 import getLogo from '../../../logos';
-import styles from './Tap.css';
 
 type Props = {
   name: string,
-  repo: string,
   tapKey: string,
   tapImage: string,
   selected: string,
@@ -64,12 +62,8 @@ export default class Tap extends Component<Props, State> {
     return '';
   };
 
-  openLink = (repo: string) => {
-    shell.openExternal(repo);
-  };
-
   render() {
-    const { tapKey, repo, knotName, name } = this.props;
+    const { tapKey, knotName, name } = this.props;
 
     return (
       <Col sm="12" md={{ size: 4 }}>
@@ -78,42 +72,27 @@ export default class Tap extends Component<Props, State> {
           style={{ cursor: 'pointer' }}
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
-          onClick={(e) => {
-            const text = e.target.textContent;
-
-            // Do not select tap when user clicks on 'Learn more'
-            if (text !== 'Learn more') {
-              this.props.selectTap(
-                {
-                  name: tapKey,
-                  image: this.props.tapImage,
-                  isLegacy: this.props.isLegacy
-                },
-                knotName
-              );
-            }
+          onClick={() => {
+            this.props.selectTap(
+              {
+                name: tapKey,
+                image: this.props.tapImage,
+                isLegacy: this.props.isLegacy
+              },
+              knotName
+            );
           }}
         >
           <CardBody>
-            <div className="media">
+            <CardTitle className="mb-0">
               <img
                 src={getLogo(tapKey)}
                 alt={name}
                 className="mr-3"
-                style={{ maxWidth: '44px' }}
+                style={{ width: '44px', height: '44px' }}
               />
-              <div className="media-body">
-                <h6 className="card-title mb-0">{name}</h6>
-                <small>
-                  <button
-                    onClick={() => this.openLink(repo)}
-                    className={styles.link}
-                  >
-                    Learn more
-                  </button>
-                </small>
-              </div>
-            </div>
+              {name}
+            </CardTitle>
           </CardBody>
         </Card>
       </Col>
