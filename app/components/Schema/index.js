@@ -114,6 +114,10 @@ export default class Schema extends Component<Props, State> {
     });
   }
 
+  updateLogs(log: text) {
+    this.props.updateSchemaLogs(log);
+  }
+
   handleCheckBoxChange = (
     field: string,
     index: string,
@@ -335,8 +339,30 @@ export default class Schema extends Component<Props, State> {
                   </Button>
                 </div>
               )}
-              {!error &&
-                schemaLoaded &&
+              {showSchema &&
+                schema.length === 0 && (
+                  <div>
+                    <Alert color="danger" className="my-3">
+                      Looks like you’ve got a dry Tap! Make sure your data
+                      source contains at least one table or stream.
+                    </Alert>
+                    <Button color="primary" className="float-right" disabled>
+                      Continue
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        this.cancel(false);
+                      }}
+                      className={classNames(
+                        'btn btn-outline-danger float-right',
+                        styles.cancel
+                      )}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                )}
+              {showSchema &&
                 schema.length > 0 && (
                   <div>
                     <p className="mb-4">
@@ -405,7 +431,7 @@ export default class Schema extends Component<Props, State> {
                     </Button>
                     <Button
                       onClick={() => {
-                        this.cancel();
+                        this.cancel(false);
                       }}
                       className={classNames(
                         'btn btn-outline-danger float-right my-3',
