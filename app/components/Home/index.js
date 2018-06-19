@@ -113,7 +113,7 @@ export default class Home extends Component<Props, State> {
                         Hey, Docker.{' '}
                         {dockerInstalled ? 'Wake up!' : 'Where are you?'}
                       </h4>
-                      <p>
+                      <p className="mb-0">
                         Please make sure that Docker is{' '}
                         {dockerInstalled ? 'running' : 'installed'}
                         &nbsp;and try again.
