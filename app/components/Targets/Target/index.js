@@ -22,11 +22,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Col, Card, CardBody } from 'reactstrap';
+import { Col, Card, CardBody, CardTitle } from 'reactstrap';
 import { shell } from 'electron';
 
 import getLogo from '../../../logos';
-import styles from './Target.css';
 
 type Props = {
   name: string,
@@ -76,41 +75,26 @@ export default class Target extends Component<Props, State> {
           style={{ cursor: 'pointer' }}
           onMouseEnter={() => this.setState({ hovered: true })}
           onMouseLeave={() => this.setState({ hovered: false })}
-          onClick={(event) => {
-            const text = event.target.textContent;
-
-            // Do not select target when user clicks on 'Learn more'
-            if (text !== 'Learn more') {
-              this.props.selectTarget(
-                {
-                  name: targetKey,
-                  image: this.props.targetImage
-                },
-                knotName
-              );
-            }
+          onClick={() => {
+            this.props.selectTarget(
+              {
+                name: targetKey,
+                image: this.props.targetImage
+              },
+              knotName
+            );
           }}
         >
           <CardBody>
-            <div className="media">
+            <CardTitle className="mb-0">
               <img
                 src={getLogo(targetKey)}
                 alt={name}
                 className="mr-3"
-                style={{ maxWidth: '44px' }}
+                style={{ width: '44px', height: '44px' }}
               />
-              <div className="media-body">
-                <h6 className="card-title mb-0">{name}</h6>
-                <small>
-                  <button
-                    onClick={() => this.openLink(repo)}
-                    className={styles.link}
-                  >
-                    Learn more
-                  </button>
-                </small>
-              </div>
-            </div>
+              {name}
+            </CardTitle>
           </CardBody>
         </Card>
       </Col>

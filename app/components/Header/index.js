@@ -23,23 +23,22 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Container, Navbar, NavbarBrand } from 'reactstrap';
+import { Container, Nav, Navbar, NavbarBrand, NavItem } from 'reactstrap';
 import logo from '../../img/knots.svg';
 
 const Header = () => (
-  <Navbar color="dark" dark className="mb-5">
+  <Navbar dark color="dark" className="mb-5">
     <Container>
       <NavbarBrand href="#/">
         <img src={logo} alt="KNOTS logo" width={40} height={40} />
       </NavbarBrand>
-      <NavLink
-        to="/"
-        activeClassName="active"
-        className="btn btn-outline-secondary"
-        exact
-      >
-        Saved knots
-      </NavLink>
+      <Nav pills navbar>
+        <NavItem>
+          <NavLink to="/" activeClassName="d-none" className="nav-link" exact>
+            Back to saved knots
+          </NavLink>
+        </NavItem>
+      </Nav>
     </Container>
   </Navbar>
 );

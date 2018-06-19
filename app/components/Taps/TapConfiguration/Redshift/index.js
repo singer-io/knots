@@ -25,16 +25,16 @@
 
 import React, { Component } from 'react';
 import {
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  Row,
   Col,
-  FormFeedback
+  Container,
+  Form,
+  FormFeedback,
+  FormGroup,
+  FormText,
+  Input,
+  Label,
+  Row
 } from 'reactstrap';
-
-import styles from './Redshift.css';
 
 type Props = {
   tapsStore: {
@@ -127,156 +127,162 @@ export default class Redshift extends Component<Props, State> {
     } = this.props.tapsStore['tap-redshift'].fieldValues;
 
     return (
-      <Form className={styles.Redshift}>
-        <Row>
-          <Col xs="8">
-            <FormGroup>
-              <Label for="host">Host/IP</Label>
-              <Input
-                type="text"
-                name="host"
-                id="host"
-                value={host}
-                onFocus={() => {
-                  this.setState({ host: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('host', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.host}
-              />
-              <FormFeedback>
-                Must be a valid server hostname or IP address
-              </FormFeedback>
-            </FormGroup>
-          </Col>
-          <Col xs="4">
-            <FormGroup>
-              <Label for="port">Port</Label>
-              <Input
-                type="number"
-                name="port"
-                id="port"
-                value={port || ''}
-                onFocus={() => {
-                  this.setState({ port: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('port', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.port}
-              />
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="dbname">Database name</Label>
-              <Input
-                type="text"
-                name="dbname"
-                id="dbname"
-                value={dbname}
-                onFocus={() => {
-                  this.setState({ dbname: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('dbname', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.dbname}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-              <Label for="schema">
-                Database schema <small>(optional)</small>
-              </Label>
-              <Input
-                type="text"
-                name="schema"
-                id="schema"
-                value={schema}
-                onChange={this.handleChange}
-                {...this.state.schema}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <FormGroup>
-              <Label for="user">Username</Label>
-              <Input
-                type="text"
-                name="user"
-                id="user"
-                value={user}
-                onFocus={() => {
-                  this.setState({ user: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('user', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.user}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-          <Col>
-            <FormGroup>
-              <Label for="password">Password</Label>
-              <Input
-                type="password"
-                name="password"
-                id="password"
-                value={password}
-                onFocus={() => {
-                  this.setState({ password: {} });
-                }}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('password', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.password}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-        <Row>
-          <Col xs="4">
-            <FormGroup>
-              <Label for="start_date">Start date</Label>
-              <Input
-                type="date"
-                name="start_date"
-                id="start_date"
-                value={start_date ? this.formatDate(start_date) : ''}
-                onBlur={(event) => {
-                  const { value } = event.currentTarget;
-                  this.validate('start_date', value);
-                }}
-                onChange={this.handleChange}
-                {...this.state.start_date}
-              />
-              <FormFeedback>Required</FormFeedback>
-            </FormGroup>
-          </Col>
-        </Row>
-      </Form>
+      <Container>
+        <Form>
+          <Row>
+            <Col xs="8">
+              <FormGroup>
+                <Label for="host">Host/IP</Label>
+                <Input
+                  type="text"
+                  name="host"
+                  id="host"
+                  value={host}
+                  onFocus={() => {
+                    this.setState({ host: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('host', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.host}
+                />
+                <FormFeedback>
+                  Must be a valid server hostname or IP address
+                </FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col xs="4">
+              <FormGroup>
+                <Label for="port">Port</Label>
+                <Input
+                  type="number"
+                  name="port"
+                  id="port"
+                  value={port || ''}
+                  onFocus={() => {
+                    this.setState({ port: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('port', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.port}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="dbname">Database name</Label>
+                <Input
+                  type="text"
+                  name="dbname"
+                  id="dbname"
+                  value={dbname}
+                  onFocus={() => {
+                    this.setState({ dbname: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('dbname', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.dbname}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="schema">
+                  Database schema <small>(optional)</small>
+                </Label>
+                <Input
+                  type="text"
+                  name="schema"
+                  id="schema"
+                  value={schema}
+                  onChange={this.handleChange}
+                  {...this.state.schema}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="user">Username</Label>
+                <Input
+                  type="text"
+                  name="user"
+                  id="user"
+                  value={user}
+                  onFocus={() => {
+                    this.setState({ user: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('user', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.user}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="password">Password</Label>
+                <Input
+                  type="password"
+                  name="password"
+                  id="password"
+                  value={password}
+                  onFocus={() => {
+                    this.setState({ password: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('password', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.password}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs="6">
+              <FormGroup>
+                <Label for="start_date">Start date</Label>
+                <Input
+                  type="date"
+                  name="start_date"
+                  id="start_date"
+                  value={start_date ? this.formatDate(start_date) : ''}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('start_date', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.start_date}
+                />
+                <FormText>
+                  Applies to tables with a defined timestamp field and limits
+                  how much historical data will be replicated.
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
+        </Form>
+      </Container>
     );
   }
 }

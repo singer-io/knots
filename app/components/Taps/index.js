@@ -122,10 +122,6 @@ export default class Taps extends Component<Props, State> {
         <Container>
           <KnotProgress />
           <h2 className="mb-1 pt-4">Configure Tap</h2>
-          <p className="mb-4">
-            <strong>Taps</strong> extract data from any source and write it to a
-            standard stream.
-          </p>
           <div id="accordion">
             <Card className="mt-3">
               <CardHeader>
@@ -138,6 +134,10 @@ export default class Taps extends Component<Props, State> {
                   show: this.state.showTaps
                 })}
               >
+                <p className="mb-4">
+                  <strong>Taps</strong> extract data from any source in a
+                  standard way.
+                </p>
                 <Row>
                   {taps.map((tap) => (
                     <Tap
