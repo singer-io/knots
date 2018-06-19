@@ -86,19 +86,19 @@ const getKnots = () =>
 const createMakeFile = (knot, name) =>
   new Promise((resolve, reject) => {
     /* eslint-disable no-template-curly-in-string */
-    const fileContent = `fullSync:${EOL}\t-\tdocker run -v ${'${CURDIR}'}/tap:/app/tap/data --interactive ${
+    const fileContent = `fullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
       knot.tap.image
     } ${
       knot.tap.name
-    } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v ${'${CURDIR}'}/target:/app/target/data --interactive ${
+    } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
       knot.target.image
     } ${
       knot.target.name
-    } -c target/data/config.json > ./tap/state.json${EOL}sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 ${'${CURDIR}'}/tap/state.json > ${'${CURDIR}'}/tap/latest-state.json; \\${EOL}\tdocker run -v ${'${CURDIR}'}/tap:/app/tap/data --interactive ${
+    } -c target/data/config.json > ./tap/state.json${EOL}sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${EOL}\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
       knot.tap.image
     } ${
       knot.tap.name
-    } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v ${'${CURDIR}'}/target:/app/target/data --interactive ${
+    } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
       knot.target.image
     } ${knot.target.name} -c target/data/config.json > ./tap/state.json`;
     /* eslint-disable no-template-curly-in-string */
@@ -293,28 +293,24 @@ const packageKnot = (knotName) =>
   new Promise((resolve, reject) => {
     try {
       const zip = new EasyZip();
-      const renamedKnot = knotName.replace(' ', '_');
 
       // Make a clone of the knot to be downloaded
       shell.cp(
         '-R',
         path.resolve(applicationFolder, 'knots', knotName),
-        path.resolve(applicationFolder, renamedKnot)
+        path.resolve(applicationFolder)
       );
 
       // Remove log files
-      shell.rm('-rf', path.resolve(applicationFolder, renamedKnot, 'tap.log'));
-      shell.rm(
-        '-rf',
-        path.resolve(applicationFolder, renamedKnot, 'target.log')
-      );
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'tap.log'));
+      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'target.log'));
 
       // Create zip from clone
-      zip.zipFolder(path.resolve(applicationFolder, renamedKnot), () => {
-        zip.writeToFile(`${applicationFolder}/${renamedKnot}.zip`);
+      zip.zipFolder(path.resolve(applicationFolder, knotName), () => {
+        zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
 
         // Done, clean up
-        shell.rm('-rf', path.resolve(applicationFolder, renamedKnot));
+        shell.rm('-rf', path.resolve(applicationFolder, knotName));
         resolve();
       });
     } catch (error) {
@@ -324,7 +320,7 @@ const packageKnot = (knotName) =>
 
 const downloadKnot = (req, res) => {
   // eslint-disable-next-line
-  const knot = req.query.knot.replace(' ', '_');
+  const knot = req.query.knot.replace(' ', `\ `);
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.download(`${applicationFolder}/${knot}.zip`);
