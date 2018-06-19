@@ -87,27 +87,21 @@ const getKnots = () =>
 const createMakeFile = (knot, name) =>
   new Promise((resolve, reject) => {
     /* eslint-disable no-template-curly-in-string */
-    const fileContent = `install:${EOL}\t-\tdocker run ${
-      knot.tap.image
-    }${EOL}\t-\tdocker run ${
-      knot.target.image
-    }${EOL}fullSync:${EOL}\t-\tdocker run -v ${'${CURDIR}'}/tap:/app/tap/data --interactive ${
+    const fileContent = `fullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
       knot.tap.image
     } ${
       knot.tap.name
-    } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v ${'${CURDIR}'}/target:/app/target/data --interactive ${
+    } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
       knot.target.image
     } ${
       knot.target.name
-    } -c target/data/config.json > ./tap/state.json${EOL}sync:${EOL}\t-\tdocker run -v ${'${CURDIR}'}/tap:/app/tap/data --interactive ${
+    } -c target/data/config.json > ./tap/state.json${EOL}sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${EOL}\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
       knot.tap.image
     } ${
       knot.tap.name
-    } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/state.json | docker run -v ${'${CURDIR}'}/target:/app/target/data --interactive ${
+    } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
       knot.target.image
-    } ${
-      knot.target.name
-    } -c target/data/config.json > /tmp/state.json${EOL}\t-\tcp /tmp/state.json ./tap/state.json`;
+    } ${knot.target.name} -c target/data/config.json > ./tap/state.json`;
     /* eslint-disable no-template-curly-in-string */
 
     writeFile(
