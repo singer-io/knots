@@ -36,8 +36,6 @@ import {
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
 
-import styles from './DataWorld.css';
-
 type Props = {
   updateTargetField: (target: string, field: string, value: string) => void
 };
@@ -145,7 +143,7 @@ export default class DataWorld extends Component<Props, State> {
       'target-datadotworld'
     ].fieldValues;
     return (
-      <div className={styles.DataWorld}>
+      <div>
         <FormGroup>
           <Label for="apiToken">API Token</Label>
           <InputGroup>
