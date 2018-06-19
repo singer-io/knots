@@ -23,7 +23,7 @@
 
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
-import { Alert, Button } from 'reactstrap';
+import { Alert, Button, Container, Table } from 'reactstrap';
 
 import Knot from './Knot';
 
@@ -75,20 +75,21 @@ class Knots extends Component<Props> {
       this.props.history.push('/taps');
     }
     return (
-      <div className="container mt-5">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <p className="display-4">My Knots</p>
+      <Container>
+        <p className="h2 mb-3 clearfix">
+          Saved knots
           <Link to="/taps">
             <Button
               color="secondary"
               outline
-              style={{ height: '50px' }}
               disabled={!dockerInstalled || !dockerRunning}
+              size="sm"
+              className="float-right"
             >
-              New Knot
+              New knot
             </Button>
           </Link>
-        </div>
+        </p>
         <Alert
           isOpen={!!knotError}
           color="danger"
@@ -96,7 +97,7 @@ class Knots extends Component<Props> {
         >
           <span className="align-self-center">{knotError}</span>
         </Alert>
-        <table className="table">
+        <Table hover>
           <thead className="thead-light">
             <th className="text-center pr-0" style={{ width: '6em' }}>
               Tap
@@ -120,8 +121,8 @@ class Knots extends Component<Props> {
               dockerRunning={dockerRunning}
             />
           ))}
-        </table>
-      </div>
+        </Table>
+      </Container>
     );
   }
 }

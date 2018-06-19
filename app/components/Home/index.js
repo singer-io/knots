@@ -22,15 +22,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Container, Alert, Progress } from 'reactstrap';
+import { Alert, Button, Col, Container, Progress, Row } from 'reactstrap';
 import { shell } from 'electron';
-import classNames from 'classnames';
 
 import Knots from '../../containers/Knots';
 import Header from '../Header';
 import Create from './Create';
-
-import styles from './Home.css';
 
 type Props = {
   verifyDocker: () => void,
@@ -106,56 +103,72 @@ export default class Home extends Component<Props, State> {
           {dockerVerified && (
             <div>
               <Alert
-                isOpen={!dockerInstalled}
+                isOpen={!dockerInstalled || !dockerRunning}
                 color="warning"
-                className="d-flex justify-content-between"
               >
-                <span className="align-self-center">
-                  <span>Docker must be installed before you can proceed. </span>
-                  <button
-                    onClick={() => {
-                      this.openLink(
-                        'https://store.docker.com/editions/community/docker-ce-desktop-mac'
-                      );
-                    }}
-                    className={classNames('alert-link', styles.download)}
-                  >
-                    Download Docker
-                  </button>
-                </span>
-                <span>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={this.onDismiss}
-                  >
-                    Continue
-                  </button>
-                </span>
-              </Alert>
-              <Alert
-                isOpen={dockerInstalled ? !dockerRunning : false}
-                color="warning"
-                className="d-flex justify-content-between"
-              >
-                <span className="align-self-center">
-                  <span>Cannot connect to Docker daemon. </span>
-                  <button
-                    onClick={() =>
-                      this.openLink('https://docs.docker.com/config/daemon/')
-                    }
-                    className={classNames('alert-link', styles.download)}
-                  >
-                    Is the Docker daemon running?
-                  </button>
-                </span>
-                <span>
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={this.onDismiss}
-                  >
-                    Continue
-                  </button>
-                </span>
+                <Container>
+                  <Row>
+                    <Col xs="8">
+                      <h4 className="alert-heading">
+                        Hey, Docker.{' '}
+                        {dockerInstalled ? 'Wake up!' : 'Where are you?'}
+                      </h4>
+                      <p>
+                        Please make sure that Docker is{' '}
+                        {dockerInstalled ? 'running' : 'installed'}
+                        &nbsp;and try again.
+                        <br />
+                        <small>
+                          <em>
+                            KNOTS uses&nbsp;
+                            <a
+                              href="https://www.docker.com/community-edition#/overview"
+                              className="alert-link"
+                            >
+                              Docker
+                            </a>
+                            &nbsp;to run pipelines reliably on various operating
+                            systems.
+                          </em>
+                        </small>
+                      </p>
+                    </Col>
+                    <Col xs="4">
+                      <p className="text-right">
+                        {dockerInstalled ? (
+                          <Button
+                            outline
+                            color="danger"
+                            onClick={() => {
+                              this.openLink(
+                                'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
+                              );
+                            }}
+                            className="mr-2"
+                          >
+                            Start Docker
+                          </Button>
+                        ) : (
+                          <Button
+                            outline
+                            color="danger"
+                            onClick={() => {
+                              this.openLink(
+                                'https://store.docker.com/editions/community/docker-ce-desktop-mac'
+                              );
+                            }}
+                            className="mr-2"
+                          >
+                            Install Docker
+                          </Button>
+                        )}
+                        <Button color="danger" onClick={this.onDismiss}>
+                          Retry
+                        </Button>
+                      </p>
+                    </Col>
+                  </Row>
+                </Container>
               </Alert>
               {knots.length > 0 && (
                 <Knots
