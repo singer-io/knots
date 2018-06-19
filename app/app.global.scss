@@ -23,6 +23,9 @@
  * @NOTE: Prepend a `~` to css file paths that are in your node_modules
  *        See https://github.com/webpack-contrib/sass-loader#imports
  */
+
+@import 'custom_bootstrap';
+@import '~bootstrap/scss/bootstrap';
 @import '~font-awesome/css/font-awesome.css';
 
 body {
@@ -37,6 +40,7 @@ body {
   z-index: -1;
   width: 80%;
 }
+
 .knot-wiz .nav-link {
   width: 32px;
   height: 32px;
@@ -52,6 +56,7 @@ body {
   position: relative;
   transition: border-color linear 0.2s, background-color linear 0.2s;
 }
+
 .knot-wiz .nav-link .oi,
 .knot-wiz .nav-link .step {
   transition: all linear 0.2s;
@@ -60,22 +65,27 @@ body {
   transform: translateY(-50%);
   font-weight: bold;
 }
+
 .knot-wiz .nav-link .oi {
   opacity: 0;
   position: absolute;
   top: 100%;
 }
+
 .knot-wiz .nav-link.active {
-  border-color: #007bff;
+  border-color: #5c56a5;
 }
+
 .knot-wiz .nav-link.completed {
   border-color: #28a745;
   color: #28a745;
   background-color: #fff;
 }
+
 .knot-wiz .nav-link.completed .step {
   opacity: 0;
 }
+
 .knot-wiz .nav-link.completed .oi {
   opacity: 1;
   top: calc(50% + 1px);

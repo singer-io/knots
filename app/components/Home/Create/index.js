@@ -23,7 +23,7 @@
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardBody, Button } from 'reactstrap';
+import { Button, Jumbotron } from 'reactstrap';
 
 type Props = {
   dockerInstalled: boolean,
@@ -35,27 +35,24 @@ class Create extends Component<Props> {
     const { dockerInstalled, dockerRunning } = this.props;
 
     return (
-      <Card className="card text-center">
-        <CardBody className="py-5">
-          <h3>
-            There is <em>knothing</em> here yet.
-          </h3>
-          <p>
-            Knot allows you to configure and download executable Singer
-            pipelines.
-          </p>
-          <Link to="/taps">
-            <Button
-              outline
-              color="secondary"
-              disabled={!dockerInstalled || !dockerRunning}
-              className="mt-3"
-            >
-              Get Started
-            </Button>
-          </Link>
-        </CardBody>
-      </Card>
+      <Jumbotron>
+        <h1 className="display-4">
+          There is <em>knothing</em> here yet.
+        </h1>
+        <p className="lead">
+          KNOTS allows you to set up simple data pipelines leveraging{' '}
+          <a href="https://singer.io">Singer</a> open-source technology.
+        </p>
+        <Link to="/taps">
+          <Button
+            color="primary"
+            disabled={!dockerInstalled || !dockerRunning}
+            className="mt-3"
+          >
+            Get Started
+          </Button>
+        </Link>
+      </Jumbotron>
     );
   }
 }
