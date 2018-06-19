@@ -40,7 +40,6 @@ type Props = {
     tapsLoading: boolean,
     taps: Array<{
       name: string,
-      repo: string,
       tapKey: string,
       tapImage: string
     }>

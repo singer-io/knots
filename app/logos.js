@@ -19,13 +19,15 @@
  * data.world, Inc.(http://data.world/).
  */
 
-function importAll(r) {
+const importAll = (r) => {
   const images = {};
-  r.keys().map((item, index) => {
+  const storeItem = (item) => {
     images[item.replace('./', '')] = r(item);
-  });
+  };
+
+  r.keys().map(storeItem);
   return images;
-}
+};
 
 const images = importAll(require.context('./img', false, /\.svg$/));
 

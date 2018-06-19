@@ -29,7 +29,6 @@ import getLogo from '../../../logos';
 
 type Props = {
   name: string,
-  repo: string,
   targetKey: string,
   targetImage: string,
   selected: string,
@@ -62,12 +61,8 @@ export default class Target extends Component<Props, State> {
     return '';
   };
 
-  openLink = (repo: string) => {
-    shell.openExternal(repo);
-  };
-
   render() {
-    const { targetKey, repo, knotName, name } = this.props;
+    const { targetKey, knotName, name } = this.props;
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card

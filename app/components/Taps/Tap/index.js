@@ -62,10 +62,6 @@ export default class Tap extends Component<Props, State> {
     return '';
   };
 
-  openLink = (repo: string) => {
-    shell.openExternal(repo);
-  };
-
   render() {
     const { tapKey, knotName, name } = this.props;
 

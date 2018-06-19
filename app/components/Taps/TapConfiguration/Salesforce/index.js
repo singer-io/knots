@@ -223,7 +223,7 @@ export default class Salesforce extends Component<Props, State> {
               </FormGroup>
             </Col>
           </Row>
-          <Collapse isOpen={client_id && client_secret}>
+          <Collapse isOpen={!!(client_id && client_secret)}>
             <Row>
               <Col>
                 <FormGroup>
