@@ -111,7 +111,7 @@ export default class Sync extends Component<Props> {
       <div>
         <Header />
         <Container>
-          <h2 className="mb-3 pt-4">{knot}</h2>
+          <h2 className="mb-3">{knot}</h2>
           <Alert
             isOpen={!knotError}
             color="success"
