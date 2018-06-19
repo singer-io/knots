@@ -27,6 +27,7 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   index: string,
   columns: Array<string>,
+  stream: { metadata: Array<{}> },
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
@@ -35,6 +36,38 @@ export default class Dropdown extends Component<Props> {
     const { value } = e.currentTarget;
     this.props.handleChange('replication-key', this.props.index, value);
   };
+
+  getOptions(columns) {
+    let indexToUpdate;
+
+    this.props.stream.metadata.forEach((metadata, index) => {
+      if (metadata.breadcrumb.length === 0) {
+        indexToUpdate = index;
+      }
+    });
+
+    if (indexToUpdate !== undefined) {
+      // Select a stream when a user chooses its replication key
+      const option = this.props.stream.metadata[indexToUpdate].metadata[
+        'replication-key'
+      ];
+
+      if (option) {
+        const newColumns = columns.map((column) => (
+          <option key={column} value={column} selected={column === option}>
+            {column}
+          </option>
+        ));
+        return newColumns;
+      }
+    }
+
+    return columns.map((column) => (
+      <option key={column} value={column}>
+        {column}
+      </option>
+    ));
+  }
 
   render() {
     if (this.props.columns.length < 1) {
@@ -52,11 +85,7 @@ export default class Dropdown extends Component<Props> {
           <option value="" hidden selected>
             Please select
           </option>
-          {this.props.columns.map((column) => (
-            <option key={column} value={column}>
-              {column}
-            </option>
-          ))}
+          {this.getOptions(this.props.columns)}
         </Input>
       </FormGroup>
     );

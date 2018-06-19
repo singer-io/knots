@@ -411,6 +411,7 @@ export default class Schema extends Component<Props, State> {
                                 columns={this.validReplicationKeys(stream)}
                                 index={index.toString()}
                                 handleChange={this.handleSelectChange}
+                                stream={stream}
                               />
                             </td>
                           </tr>
