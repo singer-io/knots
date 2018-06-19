@@ -24,6 +24,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Jumbotron } from 'reactstrap';
+import { shell } from 'electron';
 
 type Props = {
   dockerInstalled: boolean,
@@ -31,6 +32,11 @@ type Props = {
 };
 
 class Create extends Component<Props> {
+  openLink = (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url);
+  };
+
   render() {
     const { dockerInstalled, dockerRunning } = this.props;
 
@@ -41,7 +47,10 @@ class Create extends Component<Props> {
         </h1>
         <p className="lead">
           KNOTS allows you to set up simple data pipelines leveraging{' '}
-          <a href="https://singer.io">Singer</a> open-source technology.
+          <a href="#" onClick={(e) => this.openLink(e, 'https://singer.io')}>
+            Singer
+          </a>
+          &nbsp;open-source technology.
         </p>
         <Link to="/taps">
           <Button

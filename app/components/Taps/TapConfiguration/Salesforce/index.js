@@ -40,7 +40,7 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import { ipcRenderer } from 'electron';
+import { ipcRenderer, shell } from 'electron';
 
 type Props = {
   tapsStore: {
@@ -131,6 +131,11 @@ export default class Salesforce extends Component<Props, State> {
     ipcRenderer.send('sf-oauth', client_id, client_secret);
   };
 
+  openLink = (e, url) => {
+    e.preventDefault();
+    shell.openExternal(url);
+  };
+
   render() {
     const {
       client_id,
@@ -146,14 +151,22 @@ export default class Salesforce extends Component<Props, State> {
           <p>
             This Tap requires you to provision your own SalesForce Connected
             App. That will give you access to the consumer key and secret
-            required below.
+            required below. To do so, please follow&nbsp;
+            <a
+              href="#"
+              onClick={(e) =>
+                this.openLink(
+                  e,
+                  'https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5'
+                )
+              }
+            >
+              this guide
+            </a>.
           </p>
           <p>
-            To do so, please follow&nbsp;
-            <a href="https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5">
-              this guide
-            </a>{' '}
-            and make sure to specify the following options:
+            You must select <strong>Enable OAuth settings</strong> and specify
+            the following options:
           </p>
           <ol>
             <li>
