@@ -29,7 +29,7 @@ import logo from '../../img/knots.svg';
 const Header = () => (
   <Navbar color="dark" dark className="mb-5">
     <Container>
-      <NavbarBrand href="#">
+      <NavbarBrand href="#/">
         <img src={logo} alt="KNOTS logo" width={40} height={40} />
       </NavbarBrand>
       <NavLink
