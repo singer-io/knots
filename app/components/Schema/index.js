@@ -30,15 +30,12 @@ import {
   CardBody,
   Col,
   Container,
-  FormGroup,
-  Input,
   Progress,
   Table,
   Tooltip
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
-import classNames from 'classnames';
 import { shell } from 'electron';
 
 import Header from '../Header';
@@ -283,18 +280,18 @@ export default class Schema extends Component<Props, State> {
                     className="d-flex justify-content-between mt-1"
                   >
                     <p className="align-self-center mb-0">
-                      <strong>Well, that didn't work!</strong>&nbsp; Review logs
-                      for additional information.<br />
+                      <strong>Well, that didn&apos;t work!</strong>&nbsp; Review
+                      logs for additional information.<br />
                       <small>
                         If you need help,&nbsp;
-                        <a
-                          href="#"
-                          className="alert-link"
+                        <button
+                          className="alert-link border-0"
+                          style={{ background: 'none', cursor: 'pointer' }}
                           onClick={(e) => this.openLink(e, selectedTap.repo)}
                         >
                           report your issue to the{' '}
                           <code>{selectedTap.name}</code> team.
-                        </a>
+                        </button>
                       </small>
                     </p>
                     <div className="align-self-center">
