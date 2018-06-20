@@ -37,22 +37,34 @@ export default class Dropdown extends Component<Props> {
     this.props.handleChange('replication-key', this.props.index, value);
   };
 
-  getOptions(columns) {
-    let indexToUpdate;
-    let selectedOption;
+  getReplicationKey(stream: {}, isLegacy: boolean) {
+    if (isLegacy) {
+      return stream.replication_key;
+    }
 
-    this.props.stream.metadata.forEach((metadata, index) => {
+    let indexToUpdate;
+
+    // Look for the metadata with the empty breadcrumb
+    stream.metadata.forEach((metadata, index) => {
       if (metadata.breadcrumb.length === 0) {
         indexToUpdate = index;
       }
     });
 
     if (indexToUpdate !== undefined) {
-      // Select a stream when a user chooses its replication key
-      selectedOption = this.props.stream.metadata[indexToUpdate].metadata[
+      const replicationKey = this.props.stream.metadata[indexToUpdate].metadata[
         'replication-key'
       ];
+
+      return replicationKey;
     }
+
+    return '';
+  }
+
+  getOptions(columns) {
+    const { stream, isLegacy } = this.props;
+    const replicationKey = this.getReplicationKey(stream, isLegacy);
 
     return (
       <Input
@@ -60,7 +72,7 @@ export default class Dropdown extends Component<Props> {
         name="select"
         id="replicationKeys"
         onChange={this.handleChange}
-        defaultValue={selectedOption || ''}
+        defaultValue={replicationKey || ''}
       >
         <option value="" hidden>
           Please select
