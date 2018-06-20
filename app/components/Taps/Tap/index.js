@@ -30,7 +30,6 @@ type Props = {
   name: string,
   tapKey: string,
   tapImage: string,
-  tapRepo: string,
   selected: string,
   isLegacy: boolean,
   selectTap: (
@@ -63,7 +62,7 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-    const { tapKey, tapImage, repo, isLegacy, knotName, name } = this.props;
+    const { tapKey, tapImage, isLegacy, knotName, name } = this.props;
 
     return (
       <Col sm="12" md={{ size: 4 }}>
@@ -77,7 +76,6 @@ export default class Tap extends Component<Props, State> {
               {
                 name: tapKey,
                 image: tapImage,
-                repo,
                 isLegacy
               },
               knotName

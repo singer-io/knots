@@ -174,7 +174,7 @@ export default class Targets extends Component<Props, State> {
 
             <div className="float-right">
               <Button
-                className="btn btn-outline-danger my-3 mr-3"
+                className="btn btn-outline-danger my-3 mr-1"
                 onClick={this.cancel}
               >
                 Cancel
