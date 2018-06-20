@@ -22,7 +22,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Alert, Button, Col, Container, Progress, Row } from 'reactstrap';
+import { Alert, Button, Container, Progress } from 'reactstrap';
 import { shell } from 'electron';
 
 import Knots from '../../containers/Knots';
@@ -135,7 +135,7 @@ export default class Home extends Component<Props, State> {
                       systems.
                     </small>
                   </p>
-                  <div className="align-self-center">
+                  <div className="align-self-center mr-2">
                     {dockerInstalled ? (
                       <Button
                         outline
@@ -145,7 +145,6 @@ export default class Home extends Component<Props, State> {
                             'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
                           );
                         }}
-                        className="mr-2"
                       >
                         Start Docker
                       </Button>
@@ -158,7 +157,6 @@ export default class Home extends Component<Props, State> {
                             'https://store.docker.com/editions/community/docker-ce-desktop-mac'
                           );
                         }}
-                        className="mr-2"
                       >
                         Install Docker
                       </Button>

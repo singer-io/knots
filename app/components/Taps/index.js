@@ -176,8 +176,10 @@ export default class Taps extends Component<Props, State> {
             Continue
           </Button>
           <Button
+            color="danger"
+            outline
             onClick={this.cancel}
-            className="btn btn-outline-danger float-right my-3 mr-1"
+            className="float-right my-3 mr-2"
           >
             Cancel
           </Button>

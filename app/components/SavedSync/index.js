@@ -159,7 +159,7 @@ export default class Sync extends Component<Props> {
           >
             <span className="align-self-center">{knotError}</span>
             <Link to="/taps">
-              <Button className="btn btn-outline-danger float-right">
+              <Button color="danger" outline>
                 Re-configure
               </Button>
             </Link>
@@ -223,8 +223,10 @@ export default class Sync extends Component<Props> {
           {knotSyncing &&
             !knotError && (
               <Button
+                color="danger"
+                outline
                 onClick={this.terminateProcess}
-                className="btn btn-outline-danger float-right my-3"
+                className="float-right my-3"
                 disabled={!knotSyncing}
               >
                 Cancel

@@ -305,16 +305,18 @@ export default class Schema extends Component<Props, State> {
                       >
                         Retry
                       </Button>
-                      <Link to="/taps" className="btn btn-danger">
-                        Reconfigure
+                      <Link to="/taps">
+                        <Button color="danger">Reconfigure</Button>
                       </Link>
                     </div>
                   </Alert>
                   <Button
+                    color="danger"
+                    outline
                     onClick={() => {
                       this.cancel(true);
                     }}
-                    className="btn btn-outline-danger float-right my-3 mr-1"
+                    className="float-right my-3"
                   >
                     Cancel
                   </Button>
@@ -329,10 +331,12 @@ export default class Schema extends Component<Props, State> {
                       source contains at least one table or stream.
                     </Alert>
                     <Button
+                      color="danger"
+                      outline
                       onClick={() => {
                         this.cancel(false);
                       }}
-                      className="btn btn-outline-danger float-right, mr-1"
+                      className="float-right"
                     >
                       Cancel
                     </Button>
@@ -408,10 +412,12 @@ export default class Schema extends Component<Props, State> {
                       Continue
                     </Button>
                     <Button
+                      color="danger"
+                      outline
                       onClick={() => {
                         this.cancel(false);
                       }}
-                      className="btn btn-outline-danger float-right my-3 mr-1"
+                      className="float-right my-3 mr-2"
                     >
                       Cancel
                     </Button>

@@ -250,7 +250,9 @@ export default class Sync extends Component<Props, State> {
                     </InputGroup>
                     <div className="float-right">
                       <Button
-                        className="btn btn-outline-danger mt-3 mr-1"
+                        color="danger"
+                        outline
+                        className="mt-3 mr-2"
                         onClick={this.cancel}
                       >
                         Cancel
@@ -324,7 +326,9 @@ export default class Sync extends Component<Props, State> {
           {!knotSynced &&
             knotSyncing && (
               <Button
-                className="btn btn-outline-danger float-right my-3"
+                color="danger"
+                outline
+                className="float-right my-2"
                 onClick={this.cancel}
               >
                 Cancel
