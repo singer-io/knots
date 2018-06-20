@@ -51,7 +51,9 @@ export default class Dropdown extends Component<Props> {
           onChange={this.handleChange}
           disabled={this.props.isDisabled}
         >
-          <option value="">-</option>
+          <option value="" hidden selected>
+            Please select
+          </option>
           {this.props.columns.map((column) => (
             <option key={column} value={column}>
               {column}

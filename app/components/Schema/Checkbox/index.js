@@ -58,6 +58,7 @@ export default class Checkbox extends Component<Props, State> {
           type="checkbox"
           onClick={this.toggle}
           checked={this.state.checked}
+          className="position-static"
         />
       </FormGroup>
     );

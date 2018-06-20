@@ -78,7 +78,8 @@ export default class Home extends Component<Props, State> {
     }, 1000);
   };
 
-  openLink = (url: string) => {
+  openLink = (e: SyntheticEvent, url: string) => {
+    e.preventDefault();
     shell.openExternal(url);
   };
 
@@ -106,69 +107,67 @@ export default class Home extends Component<Props, State> {
                 isOpen={!dockerInstalled || !dockerRunning}
                 color="warning"
               >
-                <Container>
-                  <Row>
-                    <Col xs="8">
-                      <h4 className="alert-heading">
-                        Hey, Docker.{' '}
-                        {dockerInstalled ? 'Wake up!' : 'Where are you?'}
-                      </h4>
-                      <p className="mb-0">
-                        Please make sure that Docker is{' '}
-                        {dockerInstalled ? 'running' : 'installed'}
-                        &nbsp;and try again.
-                        <br />
-                        <small>
-                          <em>
-                            KNOTS uses&nbsp;
-                            <a
-                              href="https://www.docker.com/community-edition#/overview"
-                              className="alert-link"
-                            >
-                              Docker
-                            </a>
-                            &nbsp;to run pipelines reliably on various operating
-                            systems.
-                          </em>
-                        </small>
-                      </p>
-                    </Col>
-                    <Col xs="4">
-                      <p className="text-right">
-                        {dockerInstalled ? (
-                          <Button
-                            outline
-                            color="danger"
-                            onClick={() => {
-                              this.openLink(
-                                'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
-                              );
-                            }}
-                            className="mr-2"
-                          >
-                            Start Docker
-                          </Button>
-                        ) : (
-                          <Button
-                            outline
-                            color="danger"
-                            onClick={() => {
-                              this.openLink(
-                                'https://store.docker.com/editions/community/docker-ce-desktop-mac'
-                              );
-                            }}
-                            className="mr-2"
-                          >
-                            Install Docker
-                          </Button>
-                        )}
-                        <Button color="danger" onClick={this.onDismiss}>
-                          Retry
-                        </Button>
-                      </p>
-                    </Col>
-                  </Row>
-                </Container>
+                <div className="d-flex justify-content-between">
+                  <p className="align-self-center mb-0">
+                    <strong>
+                      {dockerInstalled
+                        ? 'Wake up, Docker!'
+                        : 'Where are you, Docker?'}
+                    </strong>&nbsp; Please make sure that Docker is{' '}
+                    {dockerInstalled ? 'running' : 'installed'}
+                    &nbsp;and try again.
+                    <br />
+                    <small>
+                      KNOTS uses&nbsp;
+                      <a
+                        href="#"
+                        onClick={(e) =>
+                          this.openLink(
+                            e,
+                            'https://www.docker.com/community-edition#/overview'
+                          )
+                        }
+                        className="alert-link"
+                      >
+                        Docker
+                      </a>
+                      &nbsp;to run pipelines reliably on various operating
+                      systems.
+                    </small>
+                  </p>
+                  <div className="align-self-center">
+                    {dockerInstalled ? (
+                      <Button
+                        outline
+                        color="danger"
+                        onClick={() => {
+                          this.openLink(
+                            'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
+                          );
+                        }}
+                        className="mr-2"
+                      >
+                        Start Docker
+                      </Button>
+                    ) : (
+                      <Button
+                        outline
+                        color="danger"
+                        onClick={() => {
+                          this.openLink(
+                            'https://store.docker.com/editions/community/docker-ce-desktop-mac'
+                          );
+                        }}
+                        className="mr-2"
+                      >
+                        Install Docker
+                      </Button>
+                    )}
+                    <Button color="danger" onClick={this.onDismiss}>
+                      Retry
+                    </Button>
+                  </div>
+                </div>
               </Alert>
               {knots.length > 0 && (
                 <Knots

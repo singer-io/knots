@@ -97,30 +97,34 @@ class Knots extends Component<Props> {
         >
           <span className="align-self-center">{knotError}</span>
         </Alert>
-        <Table hover>
+        <Table>
           <thead className="thead-light">
-            <th className="text-center pr-0" style={{ width: '6em' }}>
-              Tap
-            </th>
-            <th className="px-0 fit" />
-            <th className="text-center pl-0" style={{ width: '6em' }}>
-              Target
-            </th>
-            <th>Name</th>
-            <th>Last Run</th>
-            <th className="fit">Actions</th>
+            <tr>
+              <th className="text-center pr-0" style={{ width: '6em' }}>
+                Tap
+              </th>
+              <th className="px-0 fit" />
+              <th className="text-center pl-0" style={{ width: '6em' }}>
+                Target
+              </th>
+              <th>Name</th>
+              <th>Last Run</th>
+              <th className="fit">Actions</th>
+            </tr>
           </thead>
-          {knots.map((knot) => (
-            <Knot
-              key={knot.name}
-              knot={knot}
-              delete={this.delete}
-              download={this.download}
-              loadValues={this.loadValues}
-              dockerInstalled={dockerInstalled}
-              dockerRunning={dockerRunning}
-            />
-          ))}
+          <tbody>
+            {knots.map((knot) => (
+              <Knot
+                key={knot.name}
+                knot={knot}
+                delete={this.delete}
+                download={this.download}
+                loadValues={this.loadValues}
+                dockerInstalled={dockerInstalled}
+                dockerRunning={dockerRunning}
+              />
+            ))}
+          </tbody>
         </Table>
       </Container>
     );

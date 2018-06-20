@@ -23,7 +23,6 @@
 
 import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col } from 'reactstrap';
-import { shell } from 'electron';
 
 import getLogo from '../../../logos';
 
@@ -31,10 +30,11 @@ type Props = {
   name: string,
   tapKey: string,
   tapImage: string,
+  tapRepo: string,
   selected: string,
   isLegacy: boolean,
   selectTap: (
-    tap: { name: string, image: string, isLegacy: boolean },
+    tap: { name: string, image: string, repo: string, isLegacy: boolean },
     knotName: string
   ) => void,
   knotName: string
@@ -63,7 +63,7 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-    const { tapKey, knotName, name } = this.props;
+    const { tapKey, tapImage, repo, isLegacy, knotName, name } = this.props;
 
     return (
       <Col sm="12" md={{ size: 4 }}>
@@ -76,8 +76,9 @@ export default class Tap extends Component<Props, State> {
             this.props.selectTap(
               {
                 name: tapKey,
-                image: this.props.tapImage,
-                isLegacy: this.props.isLegacy
+                image: tapImage,
+                repo,
+                isLegacy
               },
               knotName
             );
