@@ -180,13 +180,13 @@ export default class Sync extends Component<Props, State> {
               <div className="d-flex align-items-center justify-content-between">
                 <span>
                   {knotSyncing && (
-                    <p>
+                    <p className="my-0">
                       <strong>{knotName}</strong> has been saved! Running your
                       Knot could take a while...
                     </p>
                   )}
                   {knotSynced && (
-                    <p>
+                    <p className="my-0">
                       <strong>{knotName}</strong> has been run successfully
                     </p>
                   )}
