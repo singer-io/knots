@@ -33,6 +33,7 @@ export type targetsStateType = {
   +targetConfigured: boolean,
   +'target-datadotworld': {
     fieldValues: {
+      dataset_url: string,
       dataset_id: string,
       dataset_owner: string,
       api_token: string

@@ -112,7 +112,7 @@ class Knot extends Component<Props, State> {
               className="btn btn-link"
               data-toggle="tooltip"
               data-placement="top"
-              title="Run"
+              title="Sync new data"
               onClick={this.partialSync}
               disabled={!dockerInstalled || !dockerRunning}
             >
@@ -124,7 +124,7 @@ class Knot extends Component<Props, State> {
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"
-              title="Full sync"
+              title="Sync all data"
               onClick={this.fullSync}
               disabled={!dockerInstalled || !dockerRunning}
             >
@@ -149,7 +149,7 @@ class Knot extends Component<Props, State> {
               data-toggle="tooltip"
               data-placement="top"
               onClick={this.download}
-              title="Download"
+              title="Export"
             >
               <span className="oi oi-cloud-download" />
             </button>

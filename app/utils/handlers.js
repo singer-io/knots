@@ -18,19 +18,13 @@
  * This product includes software developed at
  * data.world, Inc.(http://data.world/).
  */
+// @flow
 
-.DataWorld {
-  margin-top: 30px;
-  width: 100%;
-}
+import { shell } from 'electron';
 
-.targetFields {
-  display: flex;
-  align-items: center;
-  margin-bottom: 30px;
-}
-
-.buttonlabel {
-  font-weight: bold;
-  margin-bottom: 5px;
+// $FlowFixMe
+// eslint-disable-next-line import/prefer-default-export
+export function openLink(e: SyntheticEvent<HTMLAnchorElement>) {
+  e.preventDefault();
+  shell.openExternal(e.target.href);
 }

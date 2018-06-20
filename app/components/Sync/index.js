@@ -38,7 +38,8 @@ import {
   CardBody,
   CardHeader,
   Alert,
-  Progress
+  Progress,
+  Collapse
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import classNames from 'classnames';
@@ -262,7 +263,7 @@ export default class Sync extends Component<Props, State> {
                 </Col>
               )}
           </Row>
-          {(knotSyncing || knotSynced) && (
+          <Collapse isOpen={knotSyncing || (knotSynced && knotError)}>
             <Row>
               <Col sm="6">
                 <Card className="bg-light">
@@ -313,7 +314,7 @@ export default class Sync extends Component<Props, State> {
                 </Card>
               </Col>
             </Row>
-          )}
+          </Collapse>
           {!knotSynced &&
             knotSyncing && (
               <Link to="/">

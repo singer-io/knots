@@ -23,20 +23,19 @@
 /* eslint-disable react/prop-types */
 // @flow
 
+import classNames from 'classnames';
 import React, { Component } from 'react';
 import {
-  Label,
-  Input,
-  InputGroupText,
+  Button,
   FormFeedback,
   FormGroup,
+  FormText,
+  Input,
   InputGroup,
   InputGroupAddon,
-  Button
+  Label
 } from 'reactstrap';
-import { ipcRenderer } from 'electron';
-
-import styles from './DataWorld.css';
+import { openLink } from '../../../../utils/handlers';
 
 type Props = {
   updateTargetField: (target: string, field: string, value: string) => void
@@ -44,52 +43,54 @@ type Props = {
 
 type State = {
   api_token: {},
-  dataset: {}
+  dataset_url: {}
 };
 
 export default class DataWorld extends Component<Props, State> {
   constructor() {
     super();
 
-    ipcRenderer.on('dataworld-oauth-reply', (event, token) => {
-      this.setToken(token.access_token);
-    });
+    this.state = {
+      api_token: {},
+      dataset_url: {}
+    };
   }
-
-  state = {
-    api_token: {},
-    dataset: {}
-  };
-
-  componentWillReceiveProps(nextProps: Props) {
-    // $FlowFixMe
-    const { dataset_id, dataset_owner, api_token } = nextProps.userStore[
-      'target-datadotworld'
-    ].fieldValues;
-
-    this.setState({
-      api_token: { valid: !!api_token },
-      dataset: { valid: !!(dataset_id && dataset_owner) }
-    });
-  }
-
-  authorize = () => {
-    ipcRenderer.send('dataworld-oauth', 'getToken');
-  };
-
-  setToken = (token: string) => {
-    this.props.updateTargetField('target-datadotworld', 'api_token', token);
-  };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name, value } = e.currentTarget;
-    this.setState({ [name]: { valid: true } });
     this.props.updateTargetField('target-datadotworld', name, value);
+    this.setState({ [name]: { valid: !!value, invalid: !value } });
+  };
+
+  extractDatasetParams = (e: SyntheticEvent<HTMLButtonElement>) => {
+    const { value } = e.currentTarget;
+    const dsPattern = /^(https?:\/\/data\.world\/)?([^/?#]+)\/([^/?#]+)[/?#]?/g;
+    const result = dsPattern.exec(value);
+    if (result && result.length > 3) {
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_owner',
+        result[2]
+      );
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_id',
+        result[3]
+      );
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_url',
+        `${result[2]}/${result[3]}`
+      );
+    } else {
+      this.setState({ dataset_url: { valid: false, invalid: true } });
+    }
   };
 
   showDatasetSelector = () => {
     const options = {
-      client_id: 'knot-local'
+      client_id: 'knot-local',
+      linkText: 'Select'
     };
 
     const datasetSelector = new window.dataworldWidgets.DatasetSelector(
@@ -110,85 +111,77 @@ export default class DataWorld extends Component<Props, State> {
         'dataset_owner',
         selectedDataset.owner
       );
+
+      this.props.updateTargetField(
+        'target-datadotworld',
+        'dataset_url',
+        `${selectedDataset.owner}/${selectedDataset.id}`
+      );
+
+      this.setState({ dataset_url: { valid: true, invalid: false } });
     });
 
     datasetSelector.show();
   };
 
-  validDataset = (id?: string, owner?: string) => {
-    if (id && owner) {
-      return true;
-    }
-
-    return false;
-  };
-
-  getDataset = (id?: string, owner?: string) => {
-    if (id && owner) {
-      return `${owner}/${id}`;
-    }
-
-    return '';
-  };
-
-  getDataset = (id?: string, owner?: string) => {
-    if (id && owner) {
-      return `${owner}/${id}`;
-    }
-
-    return '';
-  };
-
   render() {
     // $FlowFixMe
-    const { dataset_id, dataset_owner, api_token } = this.props.userStore[
+    const { dataset_url, api_token } = this.props.userStore[
       'target-datadotworld'
     ].fieldValues;
     return (
-      <div className={styles.DataWorld}>
+      <div className="w-100">
         <FormGroup>
-          <Label for="apiToken">API Token</Label>
-          <InputGroup>
-            <Input
-              name="api_token"
-              readOnly
-              type="password"
-              value={api_token}
-              {...this.state.api_token}
-            />
-            <InputGroupAddon addonType="append">
-              <Button outline color="secondary" onClick={this.authorize}>
-                Authenticate
-              </Button>
-            </InputGroupAddon>
-            <FormFeedback>Required</FormFeedback>
-          </InputGroup>
+          <Label for="dataset_url">Dataset URL</Label>
+          <div className="d-flex">
+            <InputGroup className="flex-fill mr-2">
+              <InputGroupAddon addonType="prepend">
+                https://data.world/
+              </InputGroupAddon>
+              <Input
+                name="dataset_url"
+                value={dataset_url}
+                onChange={this.handleChange}
+                onBlur={this.extractDatasetParams}
+                {...this.state.dataset_url}
+              />
+            </InputGroup>
+            <Button
+              outline
+              color="secondary"
+              onClick={this.showDatasetSelector}
+            >
+              Browse
+            </Button>
+          </div>
+          <FormText>
+            Copy/paste the URL of the desired dataset, or simply click
+            &quot;Browse&quot;
+          </FormText>
+          <p
+            className={classNames('text-danger', {
+              'd-none': !this.state.dataset_url.invalid
+            })}
+          >
+            <small>Must be a valid data.world dataset URL</small>
+          </p>
         </FormGroup>
         <FormGroup>
-          <Label for="datasetUrl">Dataset URL</Label>
-          <InputGroup>
-            <InputGroupAddon addonType="prepend">
-              <InputGroupText>https://data.world/</InputGroupText>
-            </InputGroupAddon>
-            <Input
-              name="dataset"
-              placeholder="jonloyens/intro-to-dataworld-dataset"
-              value={this.getDataset(dataset_id, dataset_owner)}
-              onChange={this.handleChange}
-              disabled
-              {...this.state.dataset}
-            />
-            <InputGroupAddon addonType="append">
-              <Button
-                outline
-                color="secondary"
-                onClick={this.showDatasetSelector}
-              >
-                Search
-              </Button>
-            </InputGroupAddon>
-            <FormFeedback>Required</FormFeedback>
-          </InputGroup>
+          <Label for="api_token">API Token</Label>
+          <Input
+            name="api_token"
+            type="password"
+            value={api_token}
+            onChange={this.handleChange}
+            {...this.state.api_token}
+          />
+          <FormText>
+            Copy/paste your read/write API token from&nbsp;
+            <a href="https://data.world/settings/advanced" onClick={openLink}>
+              https://data.world/settings/advanced
+            </a>
+          </FormText>
+          <FormFeedback>Required</FormFeedback>
         </FormGroup>
       </div>
     );
