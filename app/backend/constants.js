@@ -66,7 +66,7 @@ const commands = {
   runSync: (folderPath, tap, target) =>
     `docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image
-    } ${tap.name} -c ${tap.name}/data/config.json --properties ${
+    } ${tap.name} -c ${tap.name}/data/config.json --${tap.optionalArgument} ${
       tap.name
     }/data/catalog.json 2> "${path.resolve(
       folderPath,
@@ -83,7 +83,7 @@ const commands = {
     `tail -1 "${folderPath}/tap/state.json" > "${folderPath}/tap/latest-state.json"; \\
     docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image
-    } ${tap.name} -c ${tap.name}/data/config.json --properties ${
+    } ${tap.name} -c ${tap.name}/data/config.json --${tap.optionalArgument} ${
       tap.name
     }/data/catalog.json --state ${
       tap.name

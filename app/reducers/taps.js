@@ -331,7 +331,7 @@ export default function taps(state = defaultState, action) {
       return {
         tapsLoading: false,
         tapSelected: false,
-        selectedTap: { name: '', image: '' },
+        selectedTap: { name: '', image: '', optionalArgument: '' },
         schemaLoading: false,
         schemaLoaded: false,
         schemaLogs: [],

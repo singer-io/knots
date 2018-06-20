@@ -67,7 +67,7 @@ type Props = {
     knotError: string
   },
   tapStore: {
-    selectedTap: { name: string, image: string }
+    selectedTap: { name: string, image: string, optionalArgument: string }
   },
   targetsStore: {
     selectedTarget: { name: string, image: string }
@@ -75,7 +75,7 @@ type Props = {
   updateName: (name: string) => void,
   save: (
     knotName: string,
-    selectedTap: { name: string, image: string },
+    selectedTap: { name: string, image: string, optionalArgument: string },
     selectedTarget: { name: string, image: string },
     currentName: string
   ) => void,
