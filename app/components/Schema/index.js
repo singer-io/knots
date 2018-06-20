@@ -391,6 +391,7 @@ export default class Schema extends Component<Props, State> {
                                 index={index.toString()}
                                 handleChange={this.handleSelectChange}
                                 stream={stream}
+                                isLegacy={selectedTap.isLegacy}
                               />
                             </td>
                           </tr>
