@@ -39,6 +39,7 @@ export default class Dropdown extends Component<Props> {
 
   getOptions(columns) {
     let indexToUpdate;
+    let selectedOption;
 
     this.props.stream.metadata.forEach((metadata, index) => {
       if (metadata.breadcrumb.length === 0) {
@@ -48,25 +49,29 @@ export default class Dropdown extends Component<Props> {
 
     if (indexToUpdate !== undefined) {
       // Select a stream when a user chooses its replication key
-      const option = this.props.stream.metadata[indexToUpdate].metadata[
+      selectedOption = this.props.stream.metadata[indexToUpdate].metadata[
         'replication-key'
       ];
-
-      if (option) {
-        const newColumns = columns.map((column) => (
-          <option key={column} value={column} selected={column === option}>
-            {column}
-          </option>
-        ));
-        return newColumns;
-      }
     }
 
-    return columns.map((column) => (
-      <option key={column} value={column}>
-        {column}
-      </option>
-    ));
+    return (
+      <Input
+        type="select"
+        name="select"
+        id="replicationKeys"
+        onChange={this.handleChange}
+        defaultValue={selectedOption || ''}
+      >
+        <option value="" hidden>
+          Please select
+        </option>
+        {columns.map((column) => (
+          <option key={column} value={column}>
+            {column}
+          </option>
+        ))}
+      </Input>
+    );
   }
 
   render() {
@@ -76,18 +81,7 @@ export default class Dropdown extends Component<Props> {
 
     return (
       <FormGroup style={{ margin: '0' }}>
-        <Input
-          type="select"
-          name="select"
-          id="replicationKeys"
-          onChange={this.handleChange}
-          defaultValue=""
-        >
-          <option value="" hidden>
-            Please select
-          </option>
-          {this.getOptions(this.props.columns)}
-        </Input>
+        {this.getOptions(this.props.columns)}
       </FormGroup>
     );
   }

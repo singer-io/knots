@@ -46,11 +46,7 @@ router.post('/select', (req, res) => {
 router.post('/config/', (req, res) => {
   addConfig(req)
     .then((schema) => {
-      if (req.body.knot) {
-        res.json({});
-      } else {
-        res.json({ schema: schema.streams });
-      }
+      res.json({ schema: schema.streams });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });
