@@ -30,7 +30,8 @@ type Props = {
   progressStore: {},
   tapsStore: { selectedTap: { name: string } },
   targetsStore: { selectedTarget: { name: string } },
-  knotsStore: { knotName: string }
+  knotsStore: { knotName: string },
+  userStore: {}
 };
 
 const calculateProgress = (items) => {
@@ -67,6 +68,7 @@ const KnotProgress = (props: Props) => (
             tapsStore={props.tapsStore}
             targetsStore={props.targetsStore}
             knotsStore={props.knotsStore}
+            userStore={props.userStore}
           />
         ))}
       </Nav>
