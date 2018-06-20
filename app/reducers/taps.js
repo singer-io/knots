@@ -65,6 +65,15 @@ export type tapsStateType = {
       select_fields_by_default: string,
       start_date: string
     }
+  },
+  'tap-postgres': {
+    fieldValues: {
+      host: string,
+      port: number,
+      dbname: string,
+      user: string,
+      password: string
+    }
   }
 };
 
@@ -102,6 +111,15 @@ const defaultState = {
       api_type: 'BULK',
       select_fields_by_default: true,
       start_date: ''
+    }
+  },
+  'tap-postgres': {
+    fieldValues: {
+      host: '',
+      port: undefined,
+      dbname: '',
+      user: '',
+      password: ''
     }
   }
 };
@@ -341,6 +359,15 @@ export default function taps(state = defaultState, action) {
             api_type: 'BULK',
             select_fields_by_default: true,
             start_date: ''
+          }
+        },
+        'tap-postgres': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            dbname: '',
+            user: '',
+            password: ''
           }
         }
       };

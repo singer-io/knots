@@ -36,6 +36,12 @@ const taps = [
     specImplementation: {
       usesCatalogArg: false
     }
+  },
+  {
+    name: 'Postgres',
+    tapKey: 'tap-postgres',
+    tapImage: 'gbolahan/tap-postgres:1.0.0',
+    repo: 'https://github.com/singer-io/tap-postgres',
   }
 ];
 

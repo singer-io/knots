@@ -26,6 +26,7 @@ import { Container, Row } from 'reactstrap';
 
 import Redshift from '../../../containers/Redshift';
 import Salesforce from '../../../containers/Salesforce';
+import Postgres from '../../../containers/Postgres';
 
 type Props = {
   tapsStore: {
@@ -41,6 +42,8 @@ export default class Tap extends Component<Props> {
         return <Redshift />;
       case 'tap-salesforce':
         return <Salesforce />;
+      case 'tap-postgres':
+        return <Postgres />;
       default:
         return <div>Unknown Tap</div>;
     }
