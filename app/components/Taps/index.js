@@ -171,7 +171,7 @@ export default class Taps extends Component<Props, State> {
             color="primary"
             className="float-right my-3"
             onClick={this.submit}
-            disabled={!this.formValid() || showTaps}
+            disabled={!this.formValid()}
           >
             Continue
           </Button>

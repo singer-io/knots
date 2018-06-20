@@ -37,37 +37,43 @@ type Props = {
   href: string,
   tapsStore: { selectedTap: { name: string }, schema: Array<{}> },
   targetsStore: { selectedTarget: { name: string } },
-  knotsStore: { knotName: string }
+  knotsStore: { knotName: string },
+  userStore: {}
 };
 
 const makeLink = (page: string, props: Props) => {
   const tapsConfigured = !!props.tapsStore.selectedTap.name;
   const schemaConfigured = props.tapsStore.schema.length > 0;
   const targetsConfigured = !!props.targetsStore.selectedTarget.name;
-  const readyToSync = !!props.knotsStore.knotName;
+  const readyToSync = () => {
+    const selectedTarget = props.targetsStore.selectedTarget.name;
+
+    if (selectedTarget) {
+      const targetFieldValues = props.userStore[selectedTarget].fieldValues;
+
+      let valid = true;
+
+      Object.keys(targetFieldValues).forEach((field) => {
+        if (!targetFieldValues[field]) {
+          valid = false;
+        }
+      });
+
+      return valid;
+    }
+
+    return false;
+  };
 
   switch (page) {
     case '/taps':
-      if (tapsConfigured) {
-        return true;
-      }
-      return false;
+      return tapsConfigured;
     case '/schema':
-      if (schemaConfigured) {
-        return true;
-      }
-      return false;
+      return schemaConfigured;
     case '/targets':
-      if (targetsConfigured) {
-        return true;
-      }
-      return false;
+      return targetsConfigured;
     case '/sync':
-      if (readyToSync) {
-        return true;
-      }
-      return false;
-
+      return readyToSync();
     default:
       return false;
   }

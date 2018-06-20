@@ -92,11 +92,9 @@ type State = {
 };
 
 export default class Sync extends Component<Props, State> {
-  constructor(props: Props) {
-    super();
+  state = { currentKnotName: this.props.knotsStore.knotName };
 
-    this.state = { currentKnotName: props.knotsStore.knotName };
-
+  componentWillMount() {
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
     });
@@ -104,9 +102,7 @@ export default class Sync extends Component<Props, State> {
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
     });
-  }
 
-  componentWillMount() {
     this.props.syncPageLoaded();
     const { knot, mode } = queryString.parse(this.props.location.search);
     if (mode === 'full') {
