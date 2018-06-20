@@ -129,18 +129,30 @@ export default function taps(state = defaultState, action) {
       });
     case SCHEMA_LOADING:
       return Object.assign({}, state, {
+        schemaLoaded: false,
         schemaLoading: true,
-        schemaLogs: []
+        schemaLogs: [],
+        error: ''
       });
     case UPDATE_SCHEMA_LOGS:
       return Object.assign({}, state, {
         schemaLogs: [...state.schemaLogs, action.newLog]
       });
     case SCHEMA_RECEIVED:
+      const compareStreams = (a, b) => {
+        if (a.stream < b.stream) {
+          return -1;
+        } else if (a.stream > b.stream) {
+          return 1;
+        }
+        return 0;
+      };
       return Object.assign({}, state, {
         schemaLoading: false,
         schemaLoaded: true,
-        schema: state.schema.length > 0 ? state.schema : action.schema,
+        schema: (state.schema.length > 0 ? state.schema : action.schema).sort(
+          compareStreams
+        ),
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {

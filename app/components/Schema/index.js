@@ -24,14 +24,16 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Container,
-  Col,
   Alert,
-  Table,
   Button,
-  Progress,
   Card,
   CardBody,
+  Col,
+  Container,
+  FormGroup,
+  Input,
+  Progress,
+  Table,
   Tooltip
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
@@ -79,7 +81,6 @@ type Props = {
 };
 
 type State = {
-  showSchema: boolean,
   streamSelected: boolean,
   tooltipOpen: boolean
 };
@@ -100,18 +101,16 @@ export default class Schema extends Component<Props, State> {
     super();
 
     this.state = {
-      showSchema: false,
       streamSelected: false,
       tooltipOpen: false
     };
-
-    socket.on('schemaLog', (log) => {
-      this.props.updateSchemaLogs(log);
-    });
   }
 
   componentWillMount() {
     this.props.schemaPageLoaded();
+    socket.on('schemaLog', (log) => {
+      this.props.updateSchemaLogs(log);
+    });
   }
 
   handleCheckBoxChange = (
@@ -136,6 +135,7 @@ export default class Schema extends Component<Props, State> {
   };
 
   submit = () => {
+    // TODO Ask for confirmation if no timestamp fields are selected when they are available
     const { knotName } = this.props.knotsStore;
     if (this.validSchema()) {
       this.props.submitSchema(this.props.tapsStore.schema, knotName);
@@ -176,11 +176,8 @@ export default class Schema extends Component<Props, State> {
     return false;
   };
 
-  showSchema = () => {
-    this.setState({ showSchema: true });
-  };
-
-  openLink = (url: string) => {
+  openLink = (e: SyntheticEvent, url: string) => {
+    e.preventDefault();
     shell.openExternal(url);
   };
 
@@ -229,6 +226,7 @@ export default class Schema extends Component<Props, State> {
 
   render() {
     const {
+      selectedTap,
       schemaLoading,
       schemaLoaded,
       schemaLogs,
@@ -236,17 +234,16 @@ export default class Schema extends Component<Props, State> {
       schema
     } = this.props.tapsStore;
 
-    const { showSchema, streamSelected } = this.state;
+    const { streamSelected } = this.state;
     return (
       <div>
         <Header />
         <Container>
           <KnotProgress />
           <Col xs="12">
-            <h2 className="mb-1 pt-4">Replication Options</h2>
-
+            <h2 className="mb-1 pt-4">Replication options</h2>
             <div>
-              {!showSchema && (
+              {(!schemaLoaded || !!error) && (
                 <div>
                   {schemaLoading && (
                     <Progress value="100" striped animated className="mt-3">
@@ -263,7 +260,7 @@ export default class Schema extends Component<Props, State> {
                           overflow: 'auto'
                         }}
                       >
-                        {schemaLogs.map((log, index) => (
+                        {schemaLogs.slice(-100).map((log, index) => (
                           // eslint-disable-next-line react/no-array-index-key
                           <Log key={index} log={log} />
                         ))}
@@ -278,43 +275,37 @@ export default class Schema extends Component<Props, State> {
                       styles.errorAlert
                     )}
                   >
-                    <span className="align-self-center">
-                      <span>Unable to execute tap in discovery mode. </span>
-                      <button
-                        onClick={() => this.openLink('https://help.data.world')}
-                        className={classNames('alert-link', styles.link)}
-                      >
-                        Contact Support
-                      </button>
-                    </span>
-                    <span>
+                    <p className="align-self-center mb-0">
+                      <strong>Well, that didn't work!</strong>&nbsp; Review logs
+                      for additional information.<br />
+                      <small>
+                        If you need help,&nbsp;
+                        <a
+                          href="#"
+                          className="alert-link"
+                          onClick={(e) => this.openLink(e, selectedTap.repo)}
+                        >
+                          report your issue to the{' '}
+                          <code>{selectedTap.name}</code> team.
+                        </a>
+                      </small>
+                    </p>
+                    <div className="align-self-center">
                       <Button
-                        className={classNames(
-                          'btn btn-outline-secondary',
-                          styles.abort
-                        )}
+                        outline
+                        color="danger"
+                        className="mr-2"
                         onClick={() => {
                           this.retry();
                         }}
                       >
                         Retry
                       </Button>
-
-                      <Link to="/taps">
-                        <Button className="btn btn-outline-primary">
-                          Reconfigure
-                        </Button>
+                      <Link to="/taps" className="btn btn-danger">
+                        Reconfigure
                       </Link>
-                    </span>
+                    </div>
                   </Alert>
-                  <Button
-                    color="primary"
-                    className="float-right my-3"
-                    onClick={this.showSchema}
-                    disabled={!schemaLoaded || !!error}
-                  >
-                    Continue
-                  </Button>
                   <Button
                     onClick={this.redirectToHome}
                     className={classNames(
@@ -326,26 +317,26 @@ export default class Schema extends Component<Props, State> {
                   </Button>
                 </div>
               )}
-              {showSchema &&
+              {!error &&
+                schemaLoaded &&
                 schema.length > 0 && (
                   <div>
                     <p className="mb-4">
                       Select the tables/streams that you would like to
                       replicate. A minimum of 1 is required.
                     </p>
-                    <Table className="mt-1">
+                    <Table striped className="mt-1">
                       <thead className="thead-light">
                         <tr>
-                          <th className="text-center">Include</th>
+                          <th className="text-center" style={{ width: '7em' }}>
+                            Include
+                          </th>
                           <th>Table/Stream</th>
                           <th>
-                            Replication Key
+                            Timestamp field
                             <i
                               id="ReplicationInfo"
-                              className={classNames(
-                                'fa fa-info-circle',
-                                styles.infoIcon
-                              )}
+                              className="fa fa-question-circle-o ml-1"
                             />
                           </th>
                           <Tooltip
@@ -353,25 +344,24 @@ export default class Schema extends Component<Props, State> {
                             isOpen={this.state.tooltipOpen}
                             target="ReplicationInfo"
                             toggle={this.toggleTooltip}
-                            className={classNames(styles.repKeyToolTip)}
                           >
-                            A sequence column or attribute that can be used to
-                            start replication from the last record transferred.
-                            Required to enable incremental sync.
+                            A date/time column or attribute that can be used to
+                            limit historical data replication and to enable
+                            incremental replication.
                           </Tooltip>
                         </tr>
                       </thead>
                       <tbody>
                         {schema.map((stream, index) => (
                           <tr key={stream.tap_stream_id}>
-                            <td className="text-center">
+                            <td className="text-center align-middle">
                               <Checkbox
                                 checked={this.fieldSelected(stream)}
                                 index={index.toString()}
                                 handleChange={this.handleCheckBoxChange}
                               />
                             </td>
-                            <td>{stream.stream}</td>
+                            <td className="align-middle">{stream.stream}</td>
                             <td>
                               <Dropdown
                                 isDisabled={!this.fieldSelected(stream)}
