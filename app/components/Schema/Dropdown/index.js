@@ -81,8 +81,9 @@ export default class Dropdown extends Component<Props> {
           name="select"
           id="replicationKeys"
           onChange={this.handleChange}
+          defaultValue=""
         >
-          <option value="" hidden selected>
+          <option value="" hidden>
             Please select
           </option>
           {this.getOptions(this.props.columns)}

@@ -30,8 +30,6 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
 
-import styles from './Taps.css';
-
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
@@ -179,10 +177,7 @@ export default class Taps extends Component<Props, State> {
           </Button>
           <Button
             onClick={this.cancel}
-            className={classNames(
-              'btn btn-outline-danger float-right my-3',
-              styles.cancelCta
-            )}
+            className="btn btn-outline-danger float-right my-3 mr-1"
           >
             Cancel
           </Button>

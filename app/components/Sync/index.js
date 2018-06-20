@@ -253,7 +253,7 @@ export default class Sync extends Component<Props, State> {
                     </InputGroup>
                     <div className="float-right">
                       <Button
-                        className="btn btn-outline-danger mt-3 mr-3"
+                        className="btn btn-outline-danger mt-3 mr-1"
                         onClick={this.cancel}
                       >
                         Cancel
