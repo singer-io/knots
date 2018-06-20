@@ -24,8 +24,6 @@ import { Row, Col, Progress, Nav } from 'reactstrap';
 
 import Item from './Item';
 
-import styles from './KnotProgress.css';
-
 type Props = {
   progressStore: {},
   tapsStore: { selectedTap: { name: string } },
@@ -50,12 +48,11 @@ const calculateProgress = (items) => {
 };
 
 const KnotProgress = (props: Props) => (
-  <Row>
+  <Row className="knot-wiz">
     <Col md={{ size: 8, offset: 2 }}>
       <Progress
         color="success"
         value={calculateProgress(props.progressStore)}
-        className={styles.progress}
         style={{ height: '2px' }}
       />
 
