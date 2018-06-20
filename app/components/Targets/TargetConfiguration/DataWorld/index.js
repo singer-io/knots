@@ -143,7 +143,7 @@ export default class DataWorld extends Component<Props, State> {
       'target-datadotworld'
     ].fieldValues;
     return (
-      <div>
+      <div className="w-100">
         <FormGroup>
           <Label for="apiToken">API Token</Label>
           <InputGroup>

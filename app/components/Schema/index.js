@@ -319,14 +319,6 @@ export default class Schema extends Component<Props, State> {
                     </div>
                   </Alert>
                   <Button
-                    color="primary"
-                    className="float-right my-3"
-                    onClick={this.showSchema}
-                    disabled={!schemaLoaded || !!error}
-                  >
-                    Continue
-                  </Button>
-                  <Button
                     onClick={() => {
                       this.cancel(true);
                     }}
@@ -339,110 +331,108 @@ export default class Schema extends Component<Props, State> {
                   </Button>
                 </div>
               )}
-              {showSchema &&
-                schema.length === 0 && (
-                  <div>
-                    <Alert color="danger" className="my-3">
-                      Looks like you’ve got a dry Tap! Make sure your data
-                      source contains at least one table or stream.
-                    </Alert>
-                    <Button color="primary" className="float-right" disabled>
-                      Continue
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        this.cancel(false);
-                      }}
-                      className={classNames(
-                        'btn btn-outline-danger float-right',
-                        styles.cancel
-                      )}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
-              {showSchema &&
-                schema.length > 0 && (
-                  <div>
-                    <p className="mb-4">
-                      Select the tables/streams that you would like to
-                      replicate. A minimum of 1 is required.
-                    </p>
-                    <Table striped className="mt-1">
-                      <thead className="thead-light">
-                        <tr>
-                          <th className="text-center" style={{ width: '7em' }}>
-                            Include
-                          </th>
-                          <th>Table/Stream</th>
-                          <th>
-                            Timestamp field
-                            <i
-                              id="ReplicationInfo"
-                              className="fa fa-question-circle-o ml-1"
-                            />
-                          </th>
-                          <Tooltip
-                            placement="right"
-                            isOpen={this.state.tooltipOpen}
-                            target="ReplicationInfo"
-                            toggle={this.toggleTooltip}
-                          >
-                            A date/time column or attribute that can be used to
-                            limit historical data replication and to enable
-                            incremental replication.
-                          </Tooltip>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {schema.map((stream, index) => (
-                          <tr key={stream.tap_stream_id}>
-                            <td className="text-center align-middle">
-                              <Checkbox
-                                checked={this.fieldSelected(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleCheckBoxChange}
-                              />
-                            </td>
-                            <td className="align-middle">{stream.stream}</td>
-                            <td>
-                              <Dropdown
-                                columns={this.validReplicationKeys(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleSelectChange}
-                                stream={stream}
-                              />
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                    {!!streamSelected && (
-                      <Alert color="danger" style={{ opacity: 1 }}>
-                        A minimum of one table/stream must be selected
-                      </Alert>
+              {schema.length === 0 && (
+                <div>
+                  <Alert color="danger" className="my-3">
+                    Looks like you’ve got a dry Tap! Make sure your data source
+                    contains at least one table or stream.
+                  </Alert>
+                  <Button color="primary" className="float-right" disabled>
+                    Continue
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      this.cancel(false);
+                    }}
+                    className={classNames(
+                      'btn btn-outline-danger float-right',
+                      styles.cancel
                     )}
-                    <Button
-                      color="primary"
-                      className="float-right my-3"
-                      onClick={this.submit}
-                    >
-                      Continue
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        this.cancel(false);
-                      }}
-                      className={classNames(
-                        'btn btn-outline-danger float-right my-3',
-                        styles.cancel
-                      )}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                )}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+              {schema.length > 0 && (
+                <div>
+                  <p className="mb-4">
+                    Select the tables/streams that you would like to replicate.
+                    A minimum of 1 is required.
+                  </p>
+                  <Table striped className="mt-1">
+                    <thead className="thead-light">
+                      <tr>
+                        <th className="text-center" style={{ width: '7em' }}>
+                          Include
+                        </th>
+                        <th>Table/Stream</th>
+                        <th>
+                          Timestamp field
+                          <i
+                            id="ReplicationInfo"
+                            className="fa fa-question-circle-o ml-1"
+                          />
+                        </th>
+                        <Tooltip
+                          placement="right"
+                          isOpen={this.state.tooltipOpen}
+                          target="ReplicationInfo"
+                          toggle={this.toggleTooltip}
+                        >
+                          A date/time column or attribute that can be used to
+                          limit historical data replication and to enable
+                          incremental replication.
+                        </Tooltip>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {schema.map((stream, index) => (
+                        <tr key={stream.tap_stream_id}>
+                          <td className="text-center align-middle">
+                            <Checkbox
+                              checked={this.fieldSelected(stream)}
+                              index={index.toString()}
+                              handleChange={this.handleCheckBoxChange}
+                            />
+                          </td>
+                          <td className="align-middle">{stream.stream}</td>
+                          <td>
+                            <Dropdown
+                              columns={this.validReplicationKeys(stream)}
+                              index={index.toString()}
+                              handleChange={this.handleSelectChange}
+                              stream={stream}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                  {!!streamSelected && (
+                    <Alert color="danger" style={{ opacity: 1 }}>
+                      A minimum of one table/stream must be selected
+                    </Alert>
+                  )}
+                  <Button
+                    color="primary"
+                    className="float-right my-3"
+                    onClick={this.submit}
+                  >
+                    Continue
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      this.cancel(false);
+                    }}
+                    className={classNames(
+                      'btn btn-outline-danger float-right my-3',
+                      styles.cancel
+                    )}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
             </div>
           </Col>
         </Container>
