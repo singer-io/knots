@@ -27,8 +27,6 @@ import { NavItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import styles from './Item.css';
-
 type Props = {
   text: string,
   index: number,
@@ -84,27 +82,17 @@ const KnotProgress = (props: Props) => {
   if (clickable) {
     return (
       <NavItem>
-        <Link to={props.href} className={styles.link}>
-          <div
-            className={classNames(styles.navLink, {
-              [styles.completed]: props.complete,
-              [styles.active]: props.active
-            })}
-          >
-            <span
-              className={classNames(styles.step, {
-                [styles.hidden]: props.complete
-              })}
-            >
-              {props.index + 1}
-            </span>
-            <span
-              style={{ display: props.complete ? 'inline-block' : 'none' }}
-              className={classNames('oi', 'oi-check', styles.checkIcon)}
-            />
-          </div>
-          <small style={{ color: 'black' }}>{props.text}</small>
+        <Link
+          to={props.href}
+          className={classNames('nav-link', {
+            completed: props.complete,
+            active: props.active
+          })}
+        >
+          <span className="step">{props.index + 1}</span>
+          <span className="oi oi-check" />
         </Link>
+        <small style={{ color: 'black' }}>{props.text}</small>
       </NavItem>
     );
   }
@@ -112,22 +100,13 @@ const KnotProgress = (props: Props) => {
   return (
     <NavItem>
       <div
-        className={classNames(styles.navLink, {
-          [styles.completed]: props.complete,
-          [styles.active]: props.active
+        className={classNames('nav-link', {
+          completed: props.complete,
+          active: props.active
         })}
       >
-        <span
-          className={classNames(styles.step, {
-            [styles.hidden]: props.complete
-          })}
-        >
-          {props.index + 1}
-        </span>
-        <span
-          style={{ display: props.complete ? 'inline-block' : 'none' }}
-          className={classNames('oi', 'oi-check', styles.checkIcon)}
-        />
+        <span className="step">{props.index + 1}</span>
+        <span className="oi oi-check" />
       </div>
       <small style={{ color: 'black' }}>{props.text}</small>
     </NavItem>
