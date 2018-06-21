@@ -116,15 +116,11 @@ class Knot extends Component<Props, State> {
             <Button
               color="link"
               style={{ background: 'white' }}
-<<<<<<< HEAD
               type="button"
               className="btn btn-link"
               data-toggle="tooltip"
               data-placement="top"
               title="Sync new data"
-=======
-              title="Run"
->>>>>>> Consistent styling of buttons
               onClick={this.partialSync}
               disabled={!dockerInstalled || !dockerRunning}
             >
@@ -134,15 +130,11 @@ class Knot extends Component<Props, State> {
             <Button
               color="link-secondary"
               style={{ background: 'white' }}
-<<<<<<< HEAD
               type="button"
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"
               title="Sync all data"
-=======
-              title="Full sync"
->>>>>>> Consistent styling of buttons
               onClick={this.fullSync}
               disabled={!dockerInstalled || !dockerRunning}
             >

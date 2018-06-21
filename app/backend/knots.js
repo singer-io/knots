@@ -224,20 +224,21 @@ const saveKnot = (name, currentName) =>
     // eslint-disable-next-line
     const oldName = currentName.replace(' ', `\ `);
 
+    // Rename knot folder if editing
     if (oldName) {
       shell.rm('-rf', path.resolve(applicationFolder, 'knots', oldName));
 
       shell.mv(
-        path.resolve(applicationFolder, currentName),
-        path.resolve(applicationFolder, 'knots', oldName)
+        path.resolve(applicationFolder, oldName),
+        path.resolve(applicationFolder, 'knots', knotName)
       );
     }
 
     const pathToKnot = oldName
-      ? path.resolve(`${applicationFolder}/knots/${oldName}`, 'knot.json')
+      ? path.resolve(`${applicationFolder}/knots/${knotName}`, 'knot.json')
       : path.resolve(applicationFolder, 'knot.json');
 
-    addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
+    addKnotAttribute({ field: ['name'], value: knotName }, pathToKnot)
       .then(() => {
         readFile(pathToKnot)
           .then((knotObjectString) => {
@@ -267,16 +268,10 @@ const saveKnot = (name, currentName) =>
                   path.resolve(applicationFolder, 'knot.json'),
                   path.resolve(applicationFolder, 'knots', name, 'knot.json')
                 );
-              } else {
-                // Change knot's folder name
-                shell.mv(
-                  path.resolve(applicationFolder, 'knots', oldName),
-                  path.resolve(applicationFolder, 'knots', name)
-                );
               }
 
               // Add the make file to the folder
-              createMakeFile(knotObject, name)
+              createMakeFile(knotObject, knotName)
                 .then(() => {
                   resolve();
                 })
