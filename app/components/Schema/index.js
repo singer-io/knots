@@ -277,7 +277,7 @@ export default class Schema extends Component<Props, State> {
                   <Alert
                     isOpen={!!error}
                     color="danger"
-                    className="d-flex justify-content-between mt-1"
+                    className="d-flex justify-content-between mt-3"
                   >
                     <p className="align-self-center mb-0">
                       <strong>Well, that didn&apos;t work!</strong>&nbsp; Review
