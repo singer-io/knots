@@ -188,20 +188,13 @@ export default function taps(state = defaultState, action) {
             });
             const selectedMetadata =
               action.specImplementation.usesMetadata.selected;
-            const repMethodMetadata =
-              action.specImplementation.usesMetadata.replication_method;
-            if (!selectedMetadata && !repMethodMetadata) {
+            if (!selectedMetadata) {
               schema[action.index][action.field] = action.value;
-              schema[action.index].replication_method = 'FULL_TABLE';
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
                 action.field
               ] =
                 action.value;
-              schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'FULL_TABLE';
             }
 
             return Object.assign({}, state, {

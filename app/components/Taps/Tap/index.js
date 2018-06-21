@@ -81,9 +81,6 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-<<<<<<< HEAD
-    const { tapKey, tapImage, isLegacy, repo, knotName, name } = this.props;
-=======
     const {
       tapKey,
       tapImage,
@@ -92,7 +89,6 @@ export default class Tap extends Component<Props, State> {
       knotName,
       name
     } = this.props;
->>>>>>> Refactor knot metadata and replication method handling
 
     return (
       <Col sm="12" md={{ size: 4 }}>
