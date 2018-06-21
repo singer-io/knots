@@ -328,7 +328,7 @@ export default class Sync extends Component<Props, State> {
               <Button
                 color="danger"
                 outline
-                className="float-right my-2"
+                className="float-right my-3"
                 onClick={this.cancel}
               >
                 Cancel
