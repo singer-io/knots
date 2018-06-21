@@ -40,7 +40,18 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: { name: string, image: string, isLegacy: boolean },
+  +selectedTap: {
+    name: string,
+    image: string,
+    specImplementation: {
+      usesMetadata: {
+        selected: boolean,
+        replication_key: boolean,
+        replication_method: boolean
+      },
+      usesCatalogArg: boolean
+    }
+  },
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
@@ -70,7 +81,18 @@ export type tapsStateType = {
 const defaultState = {
   tapsLoading: false,
   tapSelected: false,
-  selectedTap: { name: '', image: '', isLegacy: false },
+  selectedTap: {
+    name: '',
+    image: '',
+    specImplementation: {
+      usesMetadata: {
+        selected: true,
+        replication_key: true,
+        replication_method: true
+      },
+      usesCatalogArg: true
+    }
+  },
   schemaLoading: false,
   schemaLoaded: false,
   schemaLogs: [],
@@ -164,10 +186,17 @@ export default function taps(state = defaultState, action) {
                 indexToUpdate = index;
               }
             });
-            schema[action.index].metadata[indexToUpdate].metadata[
-              action.field
-            ] =
-              action.value;
+            const selectedMetadata =
+              action.specImplementation.usesMetadata.selected;
+            if (!selectedMetadata) {
+              schema[action.index][action.field] = action.value;
+            } else {
+              schema[action.index].metadata[indexToUpdate].metadata[
+                action.field
+              ] =
+                action.value;
+            }
+
             return Object.assign({}, state, {
               tapSchema: schema
             });
@@ -177,35 +206,20 @@ export default function taps(state = defaultState, action) {
                 indexToUpdate = index;
               }
             });
-
-            // Select a stream when a user chooses its replication key
-            schema[action.index].metadata[
-              indexToUpdate
-            ].metadata.selected = true;
-
-            if (action.value === '') {
-              if (action.isLegacy) {
-                delete schema[action.index].replication_key;
-                delete schema[action.index].replication_method;
-                delete schema[action.index].metadata[indexToUpdate].metadata
-                  .selected;
-              } else {
-                delete schema[action.index].metadata[indexToUpdate].metadata[
-                  'replication-key'
-                ];
-                delete schema[action.index].metadata[indexToUpdate].metadata[
-                  'replication-method'
-                ];
-                delete schema[action.index].metadata[indexToUpdate].metadata
-                  .selected;
-              }
-            } else if (action.isLegacy) {
+            const replicationKeyMetadata =
+              action.specImplementation.usesMetadata.replication_key;
+            if (!replicationKeyMetadata) {
               schema[action.index].replication_key = action.value;
+              schema[action.index].replication_method = 'INCREMENTAL';
             } else {
               schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-key'
+                action.field
               ] =
                 action.value;
+              schema[action.index].metadata[indexToUpdate].metadata[
+                'replication-method'
+              ] =
+                'INCREMENTAL';
             }
 
             return Object.assign({}, state, {

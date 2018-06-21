@@ -19,8 +19,6 @@
  * data.world, Inc.(http://data.world/).
  */
 
-/* eslint-disable array-callback-return */
-
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
@@ -131,84 +129,46 @@ const sync = (req) =>
             `${applicationFolder}/knots/${req.body.knotName}`,
             'target.log'
           )}`;
-          const catalogPath = path.resolve(
-            `${applicationFolder}/knots/${knotName}/tap`,
-            'catalog.json'
+
+          // Get tap and target from the knot object
+          const syncData = exec(
+            commands.runSync(
+              `${applicationFolder}/knots/${knotName}`,
+              knotObject.tap,
+              knotObject.target
+            ),
+            { detached: true }
           );
 
-          // Get the stored catalog object
-          readFile(catalogPath)
-            .then((catalogObjectString) => {
-              const catalogObject = JSON.parse(catalogObjectString);
+          runningProcess = syncData;
 
-              if (knotObject.tap.isLegacy) {
-                catalogObject.streams.some((value, index) => {
-                  if ('replication_key' in value) {
-                    catalogObject.streams[index].replication_method =
-                      'FULL_TABLE';
-                  }
-                });
-              } else {
-                catalogObject.streams.some((value, index) => {
-                  value.metadata.forEach((mdata, i) => {
-                    if (
-                      mdata.breadcrumb.length === 0 &&
-                      mdata.metadata['replication-key']
-                    ) {
-                      catalogObject.streams[index].metadata[i].metadata[
-                        'replication-method'
-                      ] =
-                        'FULL_TABLE';
-                    }
-                  });
-                });
-              }
+          fs.watchFile(tapLogPath, () => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
+              req.io.emit('tapLog', stdout.toString());
+            });
+          });
 
-              writeFile(catalogPath, JSON.stringify(catalogObject))
-                .then(() => {
-                  // Get tap and target from the knot object
-                  const syncData = exec(
-                    commands.runSync(
-                      `${applicationFolder}/knots/${knotName}`,
-                      knotObject.tap,
-                      knotObject.target
-                    ),
-                    { detached: true }
-                  );
+          fs.watchFile(targetLogPath, () => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
+              req.io.emit('targetLog', stdout.toString());
+            });
+          });
 
-                  runningProcess = syncData;
-
-                  fs.watchFile(tapLogPath, () => {
-                    execFile('cat', [tapLogPath], (error, stdout) => {
-                      req.io.emit('tapLog', stdout.toString());
-                    });
-                  });
-
-                  fs.watchFile(targetLogPath, () => {
-                    execFile('cat', [targetLogPath], (error, stdout) => {
-                      req.io.emit('targetLog', stdout.toString());
-                    });
-                  });
-
-                  syncData.on('exit', () => {
-                    addKnotAttribute(
-                      { field: ['lastRun'], value: new Date().toISOString() },
-                      path.resolve(
-                        `${applicationFolder}/knots/${knotName}`,
-                        'knot.json'
-                      )
-                    )
-                      .then(() => {
-                        resolve();
-                      })
-                      .catch((error) => {
-                        reject(error);
-                      });
-                  });
-                })
-                .catch(reject);
-            })
-            .catch(reject);
+          syncData.on('exit', () => {
+            addKnotAttribute(
+              { field: ['lastRun'], value: new Date().toISOString() },
+              path.resolve(
+                `${applicationFolder}/knots/${knotName}`,
+                'knot.json'
+              )
+            )
+              .then(() => {
+                resolve();
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          });
         } catch (error) {
           reject(error);
         }
@@ -346,85 +306,49 @@ const partialSync = (req) =>
             `${applicationFolder}/knots/${knotName}`,
             'target.log'
           )}`;
-          const catalogPath = path.resolve(
-            `${applicationFolder}/knots/${knotName}/tap`,
-            'catalog.json'
+
+          // Get tap and target from the knot object
+          const syncData = exec(
+            commands.runPartialSync(
+              `${applicationFolder}/knots/${knotName}`,
+              knotObject.tap,
+              knotObject.target
+            ),
+            { detached: true }
           );
 
-          readFile(catalogPath)
-            .then((catalogObjectString) => {
-              const catalogObject = JSON.parse(catalogObjectString);
+          runningProcess = syncData;
 
-              if (knotObject.tap.isLegacy) {
-                catalogObject.streams.some((value, index) => {
-                  if ('replication_key' in value) {
-                    catalogObject.streams[index].replication_method =
-                      'INCREMENTAL';
-                  }
-                });
-              } else {
-                catalogObject.streams.some((value, index) => {
-                  value.metadata.forEach((mdata, i) => {
-                    if (
-                      mdata.breadcrumb.length === 0 &&
-                      mdata.metadata['replication-key']
-                    ) {
-                      catalogObject.streams[index].metadata[i].metadata[
-                        'replication-method'
-                      ] =
-                        'INCREMENTAL';
-                    }
-                  });
-                });
-              }
-              writeFile(catalogPath, JSON.stringify(catalogObject))
-                .then(() => {
-                  // Get tap and target from the knot object
-                  const syncData = exec(
-                    commands.runPartialSync(
-                      `${applicationFolder}/knots/${knotName}`,
-                      knotObject.tap,
-                      knotObject.target
-                    ),
-                    { detached: true }
-                  );
+          fs.watchFile(tapLogPath, () => {
+            execFile('cat', [tapLogPath], (error, stdout) => {
+              req.io.emit('tapLog', stdout.toString());
+            });
+          });
 
-                  runningProcess = syncData;
+          fs.watchFile(targetLogPath, () => {
+            execFile('cat', [targetLogPath], (error, stdout) => {
+              req.io.emit('targetLog', stdout.toString());
+            });
+          });
 
-                  fs.watchFile(tapLogPath, () => {
-                    execFile('cat', [tapLogPath], (error, stdout) => {
-                      req.io.emit('tapLog', stdout.toString());
-                    });
-                  });
-
-                  fs.watchFile(targetLogPath, () => {
-                    execFile('cat', [targetLogPath], (error, stdout) => {
-                      req.io.emit('targetLog', stdout.toString());
-                    });
-                  });
-
-                  syncData.on('exit', () => {
-                    addKnotAttribute(
-                      {
-                        field: ['lastRun'],
-                        value: new Date().toISOString()
-                      },
-                      path.resolve(
-                        `${applicationFolder}/knots/${knotName}`,
-                        'knot.json'
-                      )
-                    )
-                      .then(() => {
-                        resolve();
-                      })
-                      .catch((error) => {
-                        reject(error);
-                      });
-                  });
-                })
-                .catch(reject);
-            })
-            .catch(reject);
+          syncData.on('exit', () => {
+            addKnotAttribute(
+              {
+                field: ['lastRun'],
+                value: new Date().toISOString()
+              },
+              path.resolve(
+                `${applicationFolder}/knots/${knotName}`,
+                'knot.json'
+              )
+            )
+              .then(() => {
+                resolve();
+              })
+              .catch((error) => {
+                reject(error);
+              });
+          });
         } catch (error) {
           reject(error);
         }

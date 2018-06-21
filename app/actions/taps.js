@@ -88,7 +88,19 @@ export function fetchTaps() {
 }
 
 export function selectTap(
-  tap: { name: string, image: string, isLegacy: boolean },
+  tap: {
+    name: string,
+    image: string,
+    repo: string,
+    specImplementation: {
+      usesMetadata: {
+        selected: boolean,
+        replication_key: boolean,
+        replication_method: boolean
+      },
+      usesCatalogArg: boolean
+    }
+  },
   knotName: string
 ) {
   return (dispatch: (action: actionType) => void) => {
@@ -167,7 +179,13 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  isLegacy: boolean
+  specImplementation: {
+    usesMetadata: {
+      selected: boolean,
+      replication_key: boolean,
+      replication_method: boolean
+    }
+  }
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -175,7 +193,7 @@ export function editSchemaField(
       field,
       index,
       value,
-      isLegacy
+      specImplementation
     });
   };
 }

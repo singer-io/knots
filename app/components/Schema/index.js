@@ -54,7 +54,18 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
-    selectedTap: { name: string, image: string, isLegacy: boolean },
+    selectedTap: {
+      name: string,
+      image: string,
+      specImplementation: {
+        usesMetadata: {
+          selected: boolean,
+          replication_key: boolean,
+          replication_method: boolean
+        },
+        usesCatalogArg: boolean
+      }
+    },
     error?: string
   },
   knotsStore: { knotName: string, knotName: string },
@@ -62,7 +73,13 @@ type Props = {
     field: string,
     index: string,
     value: boolean | string,
-    isLegacy: boolean
+    specImplementation: {
+      usesMetadata: {
+        selected: boolean,
+        replication_key: boolean,
+        replication_method: boolean
+      }
+    }
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (
@@ -118,11 +135,11 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    const { isLegacy } = this.props.tapsStore.selectedTap;
+    const { specImplementation } = this.props.tapsStore.selectedTap;
     if (!this.validSchema()) {
       this.setState({ streamSelected: this.validSchema() });
     }
-    this.props.editSchemaField(field, index, value, isLegacy);
+    this.props.editSchemaField(field, index, value, specImplementation);
   };
 
   handleSelectChange = (
@@ -130,8 +147,8 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    const { isLegacy } = this.props.tapsStore.selectedTap;
-    this.props.editSchemaField(field, index, value, isLegacy);
+    const { specImplementation } = this.props.tapsStore.selectedTap;
+    this.props.editSchemaField(field, index, value, specImplementation);
   };
 
   submit = () => {

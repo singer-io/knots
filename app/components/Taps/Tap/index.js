@@ -31,10 +31,28 @@ type Props = {
   tapKey: string,
   tapImage: string,
   selected: string,
-  isLegacy: boolean,
-  repo: string,
+  specImplementation: {
+    usesMetadata: {
+      selected: boolean,
+      replication_key: boolean,
+      replication_method: boolean
+    },
+    usesCatalogArg: boolean
+  },
   selectTap: (
-    tap: { name: string, image: string, repo: string, isLegacy: boolean },
+    tap: {
+      name: string,
+      image: string,
+      repo: string,
+      specImplementation: {
+        usesMetadata: {
+          selected: boolean,
+          replication_key: boolean,
+          replication_method: boolean
+        },
+        usesCatalogArg: boolean
+      }
+    },
     knotName: string
   ) => void,
   knotName: string
@@ -63,7 +81,18 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
+<<<<<<< HEAD
     const { tapKey, tapImage, isLegacy, repo, knotName, name } = this.props;
+=======
+    const {
+      tapKey,
+      tapImage,
+      repo,
+      specImplementation,
+      knotName,
+      name
+    } = this.props;
+>>>>>>> Refactor knot metadata and replication method handling
 
     return (
       <Col sm="12" md={{ size: 4 }}>
@@ -78,7 +107,7 @@ export default class Tap extends Component<Props, State> {
                 name: tapKey,
                 image: tapImage,
                 repo,
-                isLegacy
+                specImplementation
               },
               knotName
             );

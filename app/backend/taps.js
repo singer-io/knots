@@ -44,7 +44,7 @@ const createKnot = (tap, knotPath) =>
           value: {
             name: tap.name,
             image: tap.image,
-            isLegacy: tap.isLegacy
+            specImplementation: tap.specImplementation
           }
         },
         knotPath
@@ -63,7 +63,7 @@ const createKnot = (tap, knotPath) =>
           tap: {
             name: tap.name,
             image: tap.image,
-            isLegacy: tap.isLegacy
+            specImplementation: tap.specImplementation
           }
         })
       )

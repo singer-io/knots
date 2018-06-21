@@ -55,7 +55,18 @@ type Props = {
   },
   knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
-  selectTap: (tap: { name: string, image: string, isLegacy: boolean }) => void,
+  selectTap: (tap: {
+    name: string,
+    image: string,
+    specImplementation: {
+      usesMetadata: {
+        selected: boolean,
+        replication_key: boolean,
+        replication_method: boolean
+      },
+      usesCatalogArg: boolean
+    }
+  }) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},
