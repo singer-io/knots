@@ -135,11 +135,12 @@ export default class Home extends Component<Props, State> {
                       systems.
                     </small>
                   </p>
-                  <div className="align-self-center mr-2">
+                  <div className="align-self-center">
                     {dockerInstalled ? (
                       <Button
                         outline
-                        color="danger"
+                        color="warning"
+                        className="mr-2"
                         onClick={() => {
                           this.openLink(
                             'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
@@ -151,7 +152,8 @@ export default class Home extends Component<Props, State> {
                     ) : (
                       <Button
                         outline
-                        color="danger"
+                        color="warning"
+                        className="mr-2"
                         onClick={() => {
                           this.openLink(
                             'https://store.docker.com/editions/community/docker-ce-desktop-mac'
@@ -161,7 +163,7 @@ export default class Home extends Component<Props, State> {
                         Install Docker
                       </Button>
                     )}
-                    <Button color="danger" onClick={this.onDismiss}>
+                    <Button color="warning" onClick={this.onDismiss}>
                       Retry
                     </Button>
                   </div>
