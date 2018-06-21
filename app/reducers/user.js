@@ -33,6 +33,7 @@ export type targetsStateType = {
   +targetConfigured: boolean,
   +'target-datadotworld': {
     fieldValues: {
+      dataset_url: string,
       dataset_id: string,
       dataset_owner: string,
       api_token: string
@@ -44,7 +45,12 @@ export type targetsStateType = {
 const defaultState = {
   targetConfigured: false,
   'target-datadotworld': {
-    fieldValues: { dataset_id: '', dataset_owner: '', api_token: '' }
+    fieldValues: {
+      dataset_id: '',
+      dataset_owner: '',
+      dataset_url: '',
+      api_token: ''
+    }
   },
   'target-stitch': { fieldValues: { client_id: '', token: '' } }
 };
@@ -81,7 +87,12 @@ export default function targets(state = defaultState, action) {
       return {
         targetConfigured: false,
         'target-datadotworld': {
-          fieldValues: { dataset_id: '', dataset_owner: '', api_token: '' }
+          fieldValues: {
+            dataset_id: '',
+            dataset_owner: '',
+            dataset_url: '',
+            api_token: ''
+          }
         },
         'target-stitch': { fieldValues: { client_id: '', token: '' } }
       };

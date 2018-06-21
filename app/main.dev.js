@@ -39,14 +39,6 @@ const fixPath = require('fix-path');
 
 fixPath();
 
-const dwConfig = {
-  authorizationUrl: 'https://data.world/oauth/authorize',
-  clientId: 'knot-local',
-  redirectUri: 'http://localhost:3000/callback',
-  clientSecret: 'iEcKy7joLVrJgtbm6YzzhTuxwsxU.jVb',
-  tokenUrl: 'https://data.world/oauth/access_token'
-};
-
 const sfConfig = {
   authorizationUrl: 'https://login.salesforce.com/services/oauth2/authorize',
   redirectUri: 'https://login.salesforce.com/services/oauth2/success',
@@ -133,22 +125,6 @@ app.on('ready', async () => {
       nodeIntegration: false
     }
   };
-
-  const dataWorldOauth = electronOauth2(dwConfig, windowParams);
-
-  ipcMain.on('dataworld-oauth', (event) => {
-    dataWorldOauth
-      .getAccessToken({})
-      .then(
-        (token) => {
-          event.sender.send('dataworld-oauth-reply', token);
-        },
-        (err) => {
-          console.log('Error while getting token', err);
-        }
-      )
-      .catch((error) => console.log(error));
-  });
 
   ipcMain.on('sf-oauth', (event, clientId, clientSecret) => {
     // $FlowFixMe

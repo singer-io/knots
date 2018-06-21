@@ -121,11 +121,6 @@ export default class Targets extends Component<Props, State> {
         <Container>
           <KnotProgress />
           <h2 className="mb-1 pt-4">Configure Target</h2>
-          <p className="mb-4">
-            <strong>Targets</strong> consume data from taps and do something
-            with it, like load it into a file, API or database.
-          </p>
-
           <div id="accordion">
             <Card className="mt-3">
               <CardHeader>
@@ -138,6 +133,10 @@ export default class Targets extends Component<Props, State> {
                   show: showTargets
                 })}
               >
+                <p className="mb-4">
+                  <strong>Targets</strong> consume data from taps and do
+                  something with it, like load it into a file, API or database.
+                </p>
                 <Row>
                   {targets.map((target) => (
                     <Target
