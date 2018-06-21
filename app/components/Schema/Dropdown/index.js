@@ -28,6 +28,7 @@ type Props = {
   index: string,
   columns: Array<string>,
   stream: { metadata: Array<{}> },
+  isLegacy: boolean,
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
 

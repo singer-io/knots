@@ -326,20 +326,25 @@ export default class Schema extends Component<Props, State> {
                 !error &&
                 schema.length === 0 && (
                   <div>
-                    <Alert color="danger" className="my-3">
-                      Looks like you’ve got a dry Tap! Make sure your data
-                      source contains at least one table or stream.
-                    </Alert>
-                    <Button
+                    <Alert
                       color="danger"
-                      outline
-                      onClick={() => {
-                        this.cancel(false);
-                      }}
-                      className="float-right"
+                      className="d-flex justify-content-between align-items-center my-3"
                     >
-                      Cancel
-                    </Button>
+                      <p className="my-0">
+                        <strong>Looks like you’ve got a dry Tap!</strong> Make
+                        sure your data source contains at least one table or
+                        stream.
+                      </p>
+                      <Button
+                        color="danger"
+                        outline
+                        onClick={() => {
+                          this.cancel(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Alert>
                   </div>
                 )}
               {schemaLoaded &&
