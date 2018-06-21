@@ -167,22 +167,23 @@ export default class Taps extends Component<Props, State> {
               </CardBody>
             </Card>
           </div>
-          <Button
-            color="primary"
-            className="float-right my-3"
-            onClick={this.submit}
-            disabled={!this.formValid()}
-          >
-            Continue
-          </Button>
-          <Button
-            color="danger"
-            outline
-            onClick={this.cancel}
-            className="float-right my-3 mr-2"
-          >
-            Cancel
-          </Button>
+          <div className="d-flex justify-content-end my-3">
+            <Button
+              color="danger"
+              outline
+              className="mr-2"
+              onClick={this.cancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={this.submit}
+              disabled={!this.formValid()}
+            >
+              Continue
+            </Button>
+          </div>
         </Container>
       </div>
     );

@@ -172,18 +172,17 @@ export default class Targets extends Component<Props, State> {
               </CardBody>
             </Card>
 
-            <div className="float-right">
+            <div className="d-flex justify-content-end my-3">
               <Button
                 color="danger"
                 outline
-                className="my-3 mr-2"
+                className="mr-2"
                 onClick={this.cancel}
               >
                 Cancel
               </Button>
               <Button
                 color="primary"
-                className="float-right my-3"
                 disabled={!this.formValid()}
                 onClick={this.submit}
               >
