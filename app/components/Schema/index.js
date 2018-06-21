@@ -305,8 +305,8 @@ export default class Schema extends Component<Props, State> {
                       >
                         Retry
                       </Button>
-                      <Link to="/taps">
-                        <Button color="danger">Reconfigure</Button>
+                      <Link to="/taps" className="btn btn-danger">
+                        Reconfigure
                       </Link>
                     </div>
                   </Alert>
