@@ -409,23 +409,21 @@ export default class Schema extends Component<Props, State> {
                         A minimum of one table/stream must be selected
                       </Alert>
                     )}
-                    <Button
-                      color="primary"
-                      className="float-right my-3"
-                      onClick={this.submit}
-                    >
-                      Continue
-                    </Button>
-                    <Button
-                      color="danger"
-                      outline
-                      onClick={() => {
-                        this.cancel(false);
-                      }}
-                      className="float-right my-3 mr-2"
-                    >
-                      Cancel
-                    </Button>
+                    <div className="my-3 d-flex justify-content-end">
+                      <Button
+                        color="danger"
+                        outline
+                        className="mr-2"
+                        onClick={() => {
+                          this.cancel(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button color="primary" onClick={this.submit}>
+                        Continue
+                      </Button>
+                    </div>
                   </div>
                 )}
             </div>
