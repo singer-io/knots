@@ -208,8 +208,11 @@ export default class Taps extends Component<Props, State> {
             Update schema information?
           </ModalHeader>
           <ModalBody>
-            Select “Yes” if you’d like to retrieve the latest schema
-            information. That will reset your replication settings.
+            <p>
+              Select <strong>&quot;Yes&quot;</strong> if you’d like to retrieve
+              the latest schema information. That will reset your replication
+              options.
+            </p>
           </ModalBody>
           <ModalFooter>
             <Button
