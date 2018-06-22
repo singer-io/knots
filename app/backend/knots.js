@@ -110,6 +110,20 @@ const createMakeFile = (knot, name) =>
       .catch(reject);
   });
 
+const emitLogs = (req, tapLogPath, targetLogPath) => {
+  fs.watchFile(tapLogPath, () => {
+    execFile('cat', [tapLogPath], (error, stdout) => {
+      req.io.emit('tapLog', stdout.toString());
+    });
+  });
+
+  fs.watchFile(targetLogPath, () => {
+    execFile('cat', [targetLogPath], (error, stdout) => {
+      req.io.emit('targetLog', stdout.toString());
+    });
+  });
+};
+
 const sync = (req) =>
   new Promise((resolve, reject) => {
     const { knotName } = req.body;
@@ -142,17 +156,7 @@ const sync = (req) =>
 
           runningProcess = syncData;
 
-          fs.watchFile(tapLogPath, () => {
-            execFile('cat', [tapLogPath], (error, stdout) => {
-              req.io.emit('tapLog', stdout.toString());
-            });
-          });
-
-          fs.watchFile(targetLogPath, () => {
-            execFile('cat', [targetLogPath], (error, stdout) => {
-              req.io.emit('targetLog', stdout.toString());
-            });
-          });
+          emitLogs(req, tapLogPath, targetLogPath);
 
           syncData.on('exit', () => {
             addKnotAttribute(
@@ -319,17 +323,7 @@ const partialSync = (req) =>
 
           runningProcess = syncData;
 
-          fs.watchFile(tapLogPath, () => {
-            execFile('cat', [tapLogPath], (error, stdout) => {
-              req.io.emit('tapLog', stdout.toString());
-            });
-          });
-
-          fs.watchFile(targetLogPath, () => {
-            execFile('cat', [targetLogPath], (error, stdout) => {
-              req.io.emit('targetLog', stdout.toString());
-            });
-          });
+          emitLogs(req, tapLogPath, targetLogPath);
 
           syncData.on('exit', () => {
             addKnotAttribute(
