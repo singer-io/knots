@@ -71,8 +71,8 @@ type Props = {
 };
 
 export default class Sync extends Component<Props> {
-  constructor() {
-    super();
+  componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
 
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
@@ -81,10 +81,7 @@ export default class Sync extends Component<Props> {
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
     });
-  }
 
-  componentWillMount() {
-    const { knot, mode } = queryString.parse(this.props.location.search);
     if (mode === 'full') {
       this.props.sync(knot);
     } else if (mode === 'partial') {
@@ -127,8 +124,12 @@ export default class Sync extends Component<Props> {
             <div className="w-100">
               <div className="d-flex align-items-center justify-content-between">
                 <span>
-                  {knotSyncing && <p>{`Runing ${mode} sync`}</p>}
-                  {knotSynced && <p>{`${mode} sync has successfully run`}</p>}
+                  {knotSyncing && (
+                    <p className="my-0">{`Runing ${mode} sync`}</p>
+                  )}
+                  {knotSynced && (
+                    <p className="my-0">{`${mode} sync has successfully run`}</p>
+                  )}
                 </span>
                 <Button
                   size="sm"
