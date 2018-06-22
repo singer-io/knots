@@ -45,6 +45,7 @@ jobs:
             docker push dataworld/tap-salesforce:$SALESFORCE_VERSION
             docker push dataworld/target-stitch:latest
             docker push dataworld/target-stitch:$STITCH_VERSION
+            docker push dataworld/tap-mysql:latest
             docker push dataworld/tap-mysql:$MYSQL_VERSION
 
 workflows:
