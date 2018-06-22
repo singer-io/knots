@@ -141,8 +141,9 @@ export default class Home extends Component<Props, State> {
                         outline
                         color="warning"
                         className="mr-2"
-                        onClick={() => {
+                        onClick={(e) => {
                           this.openLink(
+                            e,
                             'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
                           );
                         }}
@@ -154,8 +155,9 @@ export default class Home extends Component<Props, State> {
                         outline
                         color="warning"
                         className="mr-2"
-                        onClick={() => {
+                        onClick={(e) => {
                           this.openLink(
+                            e,
                             'https://store.docker.com/editions/community/docker-ce-desktop-mac'
                           );
                         }}
