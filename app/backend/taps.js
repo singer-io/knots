@@ -79,11 +79,14 @@ const writeConfig = (config, configPath, knot) =>
     writeFile(configPath, JSON.stringify(config))
       .then(() => {
         if (knot) {
+          // Config file already written to file, no further action required
           resolve();
         } else {
           // Remove any previously saved temp config
           shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
           shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+
+          // Move written config file from root of directory to configs folder
           shell.mv(
             path.resolve(applicationFolder, 'config.json'),
             path.resolve(applicationFolder, 'configs', 'tap')
@@ -149,16 +152,14 @@ const readSchema = (knot) =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
-    const { knot } = req.body;
-    let configPath;
-    if (req.body.knot) {
-      configPath = path.resolve(applicationFolder, knot, 'tap', 'config.json');
-    } else {
-      configPath = path.resolve(applicationFolder, 'config.json');
-    }
+    const { knot, tapConfig } = req.body;
+
+    const configPath = knot
+      ? path.resolve(applicationFolder, knot, 'tap', 'config.json')
+      : path.resolve(applicationFolder, 'config.json');
 
     // Write the config to configs/tap/
-    writeConfig(req.body.tapConfig, configPath, knot)
+    writeConfig(tapConfig, configPath, knot)
       .then(() => {
         // Get tap schema by running discovery mode
         getSchema(req, knot)
@@ -187,15 +188,20 @@ const writeSchema = (schemaObject, knot) =>
     const catalogPath = knot
       ? path.resolve(applicationFolder, 'knots', knot, 'tap', 'catalog.json')
       : path.resolve(applicationFolder, 'catalog.json');
+
     writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
         if (knot) {
+          // Catalog file already written to file, no further action required
           resolve();
         } else {
+          // Remove previous catalog file if any
           shell.rm(
             '-f',
             path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
           );
+
+          // Move catalog file from root of directory to configs folder
           shell.mv(
             path.resolve(applicationFolder, 'catalog.json'),
             path.resolve(applicationFolder, 'configs', 'tap')

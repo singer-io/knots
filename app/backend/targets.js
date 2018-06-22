@@ -46,7 +46,8 @@ const addTarget = (target, knot) =>
   new Promise((resolve, reject) => {
     const knotPath = knot
       ? path.resolve(applicationFolder, knot, 'knot.json')
-      : '';
+      : path.resolve(applicationFolder, 'knot.json');
+
     addKnotAttribute({ field: ['target'], value: target }, knotPath)
       .then(resolve)
       .catch(reject);
