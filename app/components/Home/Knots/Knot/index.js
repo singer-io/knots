@@ -173,7 +173,7 @@ class Knot extends Component<Props, State> {
           </ModalHeader>
           <ModalBody>
             Are you sure you want to delete <strong>{knot.name}</strong>? Once
-            you delete a Knot, there is no going back.
+            you delete a knot, there is no going back.
           </ModalBody>
           <ModalFooter>
             <Button color="secondary" outline onClick={this.toggleDelete}>

@@ -42,7 +42,7 @@ routes(app);
 
 const PORT = 4321; // Random number that's unikely to clash with other apps
 
-server.listen(PORT, () => console.log(`Knot server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`KNOTS server running on port ${PORT}`));
 
 io.on('connection', (socket) => {
   socket.on('terminate', (mode) => {

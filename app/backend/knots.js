@@ -37,7 +37,7 @@ let applicationFolder;
 let runningProcess;
 if (process.env.NODE_ENV === 'production') {
   // Knots stored on user's home path on packaged app
-  applicationFolder = path.resolve(app.getPath('home'), 'knots');
+  applicationFolder = path.resolve(app.getPath('home'), '.knots');
 } else {
   // Use the repo during development
   applicationFolder = path.resolve(__dirname, '../..');

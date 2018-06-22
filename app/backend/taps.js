@@ -30,7 +30,7 @@ const { taps, commands } = require('./constants');
 let applicationFolder;
 let runningProcess;
 if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), 'knots');
+  applicationFolder = path.resolve(app.getPath('home'), '.knots');
 } else {
   applicationFolder = path.resolve(__dirname, '../../');
 }
