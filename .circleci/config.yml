@@ -24,6 +24,7 @@ jobs:
     environment:
       SALESFORCE_VERSION: "1.4.14"
       STITCH_VERSION: "1.7.4"
+      MYSQL_VERSION: "1.9.10"
 
     steps:
       - checkout
@@ -35,6 +36,7 @@ jobs:
           command: |
             docker build --build-arg version=$SALESFORCE_VERSION -t dataworld/tap-salesforce -t dataworld/tap-salesforce:$SALESFORCE_VERSION ./tap-salesforce
             docker build --build-arg version=$STITCH_VERSION -t dataworld/target-stitch -t dataworld/target-stitch:$STITCH_VERSION ./target-stitch
+            docker build --build-arg version=$MYSQL_VERSION -t dataworld/tap-mysql -t dataworld/tap-mysql:$MYSQL_VERSION ./tap-mysql
       - deploy:
           name: docker-hub release
           command: |
@@ -43,6 +45,8 @@ jobs:
             docker push dataworld/tap-salesforce:$SALESFORCE_VERSION
             docker push dataworld/target-stitch:latest
             docker push dataworld/target-stitch:$STITCH_VERSION
+            docker push dataworld/tap-mysql:latest
+            docker push dataworld/tap-mysql:$MYSQL_VERSION
 
 workflows:
   version: 2
