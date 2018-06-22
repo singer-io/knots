@@ -219,12 +219,19 @@ export default class Sync extends Component<Props, State> {
                   {knotSyncing && (
                     <p className="my-0">
                       <strong>{knotName}</strong> has been saved! Running your
-                      Knot could take a while...
+                      knot could take a while...<br />
+                      <small>
+                        You may cancel sync and resume any time. Progress will
+                        not be lost!
+                      </small>
                     </p>
                   )}
                   {knotSynced && (
                     <p className="my-0">
-                      <strong>{knotName}</strong> has been run successfully
+                      <strong>{knotName}</strong> is done syncing. For now! :-)<br />
+                      <small>
+                        Come back and run it again any time to sync new data.
+                      </small>
                     </p>
                   )}
                 </span>
@@ -253,13 +260,23 @@ export default class Sync extends Component<Props, State> {
               )}
             </div>
           </Alert>
-
           <Alert
             isOpen={!!knotError}
             color="danger"
             className="d-flex justify-content-between"
           >
-            <span className="align-self-center">{knotError}</span>
+            <p>
+              <strong>Bad news. Your knot failed to run.</strong>
+              <br />
+              The error message was: &quot;{knotError}&quot;, but make sure to
+              review the logs too!
+            </p>
+            <Link
+              to="/taps"
+              className="btn btn-outline-danger align-self-center"
+            >
+              Re-configure
+            </Link>
           </Alert>
           <Row>
             {!knotSyncing &&
