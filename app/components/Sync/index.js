@@ -308,7 +308,7 @@ export default class Sync extends Component<Props, State> {
                 </Col>
               )}
           </Row>
-          <Collapse isOpen={knotSyncing || (knotSynced && knotError)}>
+          <Collapse isOpen={!!(knotSyncing || (knotSynced && knotError))}>
             <Row>
               <Col sm="6">
                 <Card className="bg-light">

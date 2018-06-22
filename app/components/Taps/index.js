@@ -22,7 +22,18 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
+import {
+  Container,
+  Row,
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap';
 import classNames from 'classnames';
 
 import Header from '../Header';
@@ -55,12 +66,14 @@ type Props = {
 };
 
 type State = {
-  showTaps: boolean
+  showTaps: boolean,
+  showModal: boolean
 };
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: true
+    showTaps: true,
+    showModal: false
   };
 
   componentWillMount() {
@@ -96,13 +109,18 @@ export default class Taps extends Component<Props, State> {
     return valid;
   };
 
-  submit = () => {
+  submit = (showModal: boolean) => {
     const { selectedTap } = this.props.tapsStore;
     const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    const { knotName } = this.props.knotsStore;
+    const { knotName, knotLoaded } = this.props.knotsStore;
 
-    this.props.submitConfig(selectedTap, fieldValues, knotName);
-    this.props.history.push('/schema');
+    // When editing a knot show confirmation dialog
+    if (knotLoaded && showModal) {
+      this.setState({ showModal: true });
+    } else {
+      this.props.submitConfig(selectedTap, fieldValues, knotName);
+      this.props.history.push('/schema');
+    }
   };
 
   cancel = () => {
@@ -178,13 +196,34 @@ export default class Taps extends Component<Props, State> {
             </Button>
             <Button
               color="primary"
-              onClick={this.submit}
+              onClick={() => this.submit(true)}
               disabled={!this.formValid()}
             >
               Continue
             </Button>
           </div>
         </Container>
+        <Modal isOpen={this.state.showModal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle}>Run discovery</ModalHeader>
+          <ModalBody>
+            Retrieve latest schema information? This will reset your replication
+            options.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="secondary"
+              outline
+              onClick={() => {
+                this.setState({ showModal: false });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button color="primary" onClick={() => this.submit(false)}>
+              Continue
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }
