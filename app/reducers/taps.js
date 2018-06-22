@@ -83,15 +83,7 @@ const defaultState = {
   tapSelected: false,
   selectedTap: {
     name: '',
-    image: '',
-    specImplementation: {
-      usesMetadata: {
-        selected: true,
-        replication_key: true,
-        replication_method: true
-      },
-      usesCatalogArg: true
-    }
+    image: ''
   },
   schemaLoading: false,
   schemaLoaded: false,
@@ -186,10 +178,11 @@ export default function taps(state = defaultState, action) {
                 indexToUpdate = index;
               }
             });
-            const selectedMetadata =
-              action.specImplementation.usesMetadata.selected;
-            const repMethodMetadata =
-              action.specImplementation.usesMetadata.replication_method;
+
+            const {
+              selected: selectedMetadata = true,
+              replication_method: repMethodMetadata = true
+            } = action.specImplementation.usesMetadata;
             if (!selectedMetadata && !repMethodMetadata) {
               schema[action.index][action.field] = action.value;
               schema[action.index].replication_method = 'FULL_TABLE';
@@ -213,8 +206,9 @@ export default function taps(state = defaultState, action) {
                 indexToUpdate = index;
               }
             });
-            const replicationKeyMetadata =
-              action.specImplementation.usesMetadata.replication_key;
+            const {
+              replication_key: replicationKeyMetadata = true
+            } = action.specImplementation.usesMetadata;
             if (!replicationKeyMetadata) {
               schema[action.index].replication_key = action.value;
               schema[action.index].replication_method = 'INCREMENTAL';
