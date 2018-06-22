@@ -48,12 +48,12 @@ type actionType = {
 };
 
 type specImplementationProperties = {
-  usesMetadata: {
+  usesMetadata?: {
     selected: boolean,
     replicationKey: boolean,
     replicationMethod: boolean
   },
-  usesCatalogArg: boolean
+  usesCatalogArg?: boolean
 };
 
 export function tapsPageLoaded() {
@@ -101,7 +101,7 @@ export function selectTap(
     name: string,
     image: string,
     repo: string,
-    specImplementation: specImplementationProperties
+    specImplementation?: specImplementationProperties
   },
   knotName: string
 ) {
@@ -181,7 +181,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation: specImplementationProperties
+  specImplementation?: specImplementationProperties
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({

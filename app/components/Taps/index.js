@@ -46,7 +46,7 @@ import styles from './Taps.css';
 type tapProperties = {
   name: string,
   image: string,
-  specImplementation: {
+  specImplementation?: {
     usesMetadata: {
       selected: boolean,
       replicationKey: boolean,

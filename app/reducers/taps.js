@@ -37,7 +37,7 @@ import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 type selectedTapProperties = {
   name: string,
   image: string,
-  specImplementation: {
+  specImplementation?: {
     usesMetadata: {
       selected: boolean,
       replicationKey: boolean,
@@ -172,61 +172,107 @@ export default function taps(state = defaultState, action) {
     case UPDATE_SCHEMA_FIELD: {
       if (schema[action.index]) {
         let indexToUpdate;
-        switch (action.field) {
-          case 'selected':
-            // Find the metadata with an empty breadcrumb and update its metadata
-            schema[action.index].metadata.forEach((metadata, index) => {
+        const setImpliedReplicationMethod = (stream, usesMetadata, field) => {
+          const streamClone = Object.assign({}, stream);
+          const { replicationMethod: repMethodMetadata = true } =
+            usesMetadata || {};
+
+          if (repMethodMetadata) {
+            if (field === 'replication-key') {
+              streamClone.metadata[indexToUpdate].metadata[
+                'replication-method'
+              ] =
+                'INCREMENTAL';
+            } else {
+              streamClone.metadata[indexToUpdate].metadata[
+                'replication-method'
+              ] =
+                'FULL_TABLE';
+            }
+            return streamClone;
+          }
+
+          if (field === 'replication-key') {
+            streamClone.replication_method = 'INCREMENTAL';
+          } else {
+            streamClone.replication_method = 'FULL_TABLE';
+          }
+        };
+
+        const setSelected = (stream, usesMetadata, newSelectedValue) => {
+          const streamClone = Object.assign({}, stream);
+          const { selected: selectedMetadata = true } = usesMetadata || {};
+          if (selectedMetadata) {
+            streamClone.metadata.forEach((metadata, index) => {
               if (metadata.breadcrumb.length === 0) {
                 indexToUpdate = index;
               }
             });
 
-            const {
-              selected: selectedMetadata = true,
-              replicationMethod: repMethodMetadata = true
-            } = action.specImplementation.usesMetadata;
+            streamClone.metadata[
+              indexToUpdate
+            ].metadata.selected = newSelectedValue;
+          } else {
+            streamClone.selected = newSelectedValue;
+          }
+          return streamClone;
+        };
 
-            if (!selectedMetadata && !repMethodMetadata) {
-              schema[action.index][action.field] = action.value;
-              schema[action.index].replication_method = 'FULL_TABLE';
-            } else {
+        const setReplicationKey = (stream, usesMetadata, newReplicationKey) => {
+          const streamClone = Object.assign({}, stream);
+          const { replicationKey: repKeyMetadata = true } = usesMetadata || {};
+          if (repKeyMetadata) {
+            streamClone.metadata.forEach((metadata, index) => {
+              if (metadata.breadcrumb.length === 0) {
+                indexToUpdate = index;
+              }
+            });
+
+            streamClone.metadata[indexToUpdate].metadata[
+              'replication-key'
+            ] = newReplicationKey;
+          } else {
+            streamClone.replication_key = newReplicationKey;
+          }
+          return streamClone;
+        };
+
+        switch (action.field) {
+          case 'selected':
+            schema[action.index] = setSelected(
+              schema[action.index],
+              action.specImplementation.usesMetadata,
+              action.value
+            );
+
+            const forcedRepMethod =
               schema[action.index].metadata[indexToUpdate].metadata[
+                'forced-replication-method'
+              ];
+
+            if (!forcedRepMethod) {
+              schema[action.index] = setImpliedReplicationMethod(
+                schema[action.index],
+                action.specImplementation.usesMetadata,
                 action.field
-              ] =
-                action.value;
-              schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'FULL_TABLE';
+              );
             }
 
             return Object.assign({}, state, {
               tapSchema: schema
             });
           case 'replication-key':
-            schema[action.index].metadata.forEach((metadata, index) => {
-              if (metadata.breadcrumb.length === 0) {
-                indexToUpdate = index;
-              }
-            });
+            schema[action.index] = setReplicationKey(
+              schema[action.index],
+              action.specImplementation.usesMetadata,
+              action.value
+            );
 
-            const {
-              replicationKey: replicationKeyMetadata = true
-            } = action.specImplementation.usesMetadata;
-
-            if (!replicationKeyMetadata) {
-              schema[action.index].replication_key = action.value;
-              schema[action.index].replication_method = 'INCREMENTAL';
-            } else {
-              schema[action.index].metadata[indexToUpdate].metadata[
-                action.field
-              ] =
-                action.value;
-              schema[action.index].metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'INCREMENTAL';
-            }
+            schema[action.index] = setImpliedReplicationMethod(
+              schema[action.index],
+              action.specImplementation.usesMetadata,
+              action.field
+            );
 
             return Object.assign({}, state, {
               tapSchema: schema

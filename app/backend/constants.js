@@ -27,14 +27,7 @@ const taps = [
     tapKey: 'tap-redshift',
     tapImage: 'dataworld/tap-redshift:1.0.0b8',
     repo: 'https://github.com/datadotworld/tap-redshift',
-    specImplementation: {
-      usesMetadata: {
-        selected: true,
-        replicationKey: true,
-        replicationMethod: true
-      },
-      usesCatalogArg: true
-    }
+    specImplementation: {}
   },
   {
     name: 'Salesforce',
@@ -42,12 +35,7 @@ const taps = [
     tapImage: 'dataworld/tap-salesforce:1.4.14',
     repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
-      usesMetadata: {
-        selected: true,
-        replicationKey: true,
-        replicationMethod: true
-      },
-      usesCatalogArg: true
+      usesCatalogArg: false
     }
   }
 ];
