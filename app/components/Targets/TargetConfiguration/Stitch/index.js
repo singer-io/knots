@@ -25,8 +25,6 @@
 import React, { Component } from 'react';
 import { Label, Input, FormFeedback, FormGroup, InputGroup } from 'reactstrap';
 
-import styles from './Stitch.css';
-
 type Props = {
   userStore: {
     'target-stitch': {
@@ -67,7 +65,7 @@ export default class Stitch extends Component<Props, State> {
       'target-stitch'
     ].fieldValues;
     return (
-      <div className={styles.Stitch}>
+      <div className="w-100">
         <FormGroup>
           <Label for="apiToken">Client ID</Label>
           <InputGroup>

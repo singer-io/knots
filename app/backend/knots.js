@@ -114,8 +114,7 @@ const createMakeFile = (knot, name) =>
 
 const sync = (req) =>
   new Promise((resolve, reject) => {
-    // eslint-disable-next-line
-    const knotName = req.body.knotName.replace(' ', `\ `);
+    const { knotName } = req.body;
 
     // Get the stored knot object
     readFile(
@@ -219,12 +218,18 @@ const sync = (req) =>
 
 const saveKnot = (name, currentName) =>
   new Promise((resolve, reject) => {
-    // eslint-disable-next-line
-    const knotName = name.replace(' ', `\ `);
-    // eslint-disable-next-line
-    const oldName = currentName.replace(' ', `\ `);
-    const pathToKnot = oldName
-      ? path.resolve(`${applicationFolder}/knots/${oldName}`, 'knot.json')
+    // Rename knot folder if editing
+    if (currentName) {
+      shell.rm('-rf', path.resolve(applicationFolder, 'knots', currentName));
+
+      shell.mv(
+        path.resolve(applicationFolder, currentName),
+        path.resolve(applicationFolder, 'knots', name)
+      );
+    }
+
+    const pathToKnot = currentName
+      ? path.resolve(`${applicationFolder}/knots/${name}`, 'knot.json')
       : path.resolve(applicationFolder, 'knot.json');
 
     addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
@@ -256,12 +261,6 @@ const saveKnot = (name, currentName) =>
                 shell.mv(
                   path.resolve(applicationFolder, 'knot.json'),
                   path.resolve(applicationFolder, 'knots', name, 'knot.json')
-                );
-              } else {
-                // Change knot's folder name
-                shell.mv(
-                  path.resolve(applicationFolder, 'knots', oldName),
-                  path.resolve(applicationFolder, 'knots', name)
                 );
               }
 
@@ -321,7 +320,7 @@ const packageKnot = (knotName) =>
 
 const downloadKnot = (req, res) => {
   // eslint-disable-next-line
-  const knot = req.query.knot.replace(' ', `\ `);
+  const { knot } = req.query;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.download(`${applicationFolder}/${knot}.zip`);
@@ -330,7 +329,7 @@ const downloadKnot = (req, res) => {
 const partialSync = (req) =>
   new Promise((resolve, reject) => {
     // eslint-disable-next-line
-    const knotName = req.body.knotName.replace(' ', `\ `);
+    const { knotName } = req.body;
 
     // Get the stored knot object
     readFile(
@@ -435,10 +434,14 @@ const partialSync = (req) =>
 
 const loadValues = (knot) =>
   new Promise((resolve, reject) => {
-    const knotPath = path
-      .resolve(applicationFolder, 'knots', knot)
-      // eslint-disable-next-line
-      .replace(' ', `\ `);
+    // Make a clone of the knot to be edited
+    shell.cp(
+      '-R',
+      path.resolve(applicationFolder, 'knots', knot),
+      path.resolve(applicationFolder)
+    );
+
+    const knotPath = path.resolve(applicationFolder, knot);
 
     const promises = [
       readFile(`${knotPath}/knot.json`),
@@ -484,6 +487,21 @@ const terminateSync = () => {
   }
 };
 
+const cancel = (knot) =>
+  new Promise((resolve, reject) => {
+    try {
+      if (knot) {
+        shell.rm('-rf', path.resolve(applicationFolder, knot));
+      } else {
+        shell.rm('-rf', path.resolve(applicationFolder, 'configs'));
+        shell.rm('-rf', path.resolve(applicationFolder, 'knot.json'));
+      }
+      resolve();
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 module.exports = {
   getKnots,
   saveKnot,
@@ -493,5 +511,6 @@ module.exports = {
   downloadKnot,
   partialSync,
   loadValues,
-  terminateSync
+  terminateSync,
+  cancel
 };

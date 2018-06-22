@@ -30,15 +30,12 @@ import {
   CardBody,
   Col,
   Container,
-  FormGroup,
-  Input,
   Progress,
   Table,
   Tooltip
 } from 'reactstrap';
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
-import classNames from 'classnames';
 import { shell } from 'electron';
 
 import Header from '../Header';
@@ -46,8 +43,6 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
-
-import styles from './Schema.css';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
@@ -62,7 +57,7 @@ type Props = {
     selectedTap: { name: string, image: string, isLegacy: boolean },
     error?: string
   },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, knotName: string },
   editSchemaField: (
     field: string,
     index: string,
@@ -77,7 +72,8 @@ type Props = {
   ) => void,
   schemaPageLoaded: () => void,
   updateSchemaLogs: (log: string) => void,
-  history: { push: (path: string) => void }
+  history: { push: (path: string) => void },
+  cancel: () => void
 };
 
 type State = {
@@ -111,6 +107,10 @@ export default class Schema extends Component<Props, State> {
     socket.on('schemaLog', (log) => {
       this.props.updateSchemaLogs(log);
     });
+  }
+
+  updateLogs(log: text) {
+    this.props.updateSchemaLogs(log);
   }
 
   handleCheckBoxChange = (
@@ -205,8 +205,15 @@ export default class Schema extends Component<Props, State> {
     socket.emit('terminate', 'discovery');
   };
 
-  redirectToHome = () => {
+  cancel = (discovery: boolean) => {
+    const { knotName } = this.props.knotsStore;
+
+    if (discovery) {
+      this.terminateProcess();
+    }
+
     this.terminateProcess();
+    this.props.cancel(knotName);
     this.props.history.push('/');
   };
 
@@ -270,24 +277,23 @@ export default class Schema extends Component<Props, State> {
                   <Alert
                     isOpen={!!error}
                     color="danger"
-                    className={classNames(
-                      'd-flex justify-content-between',
-                      styles.errorAlert
-                    )}
+                    className="d-flex justify-content-between mt-3"
                   >
                     <p className="align-self-center mb-0">
-                      <strong>Well, that didn't work!</strong>&nbsp; Review logs
-                      for additional information.<br />
+                      <strong>Well, that didn&apos;t work!</strong>&nbsp; Review
+                      logs for additional information.<br />
                       <small>
                         If you need help,&nbsp;
+                        {/* eslint-disable */}
                         <a
-                          href="#"
-                          className="alert-link"
+                          className="alert-link border-0"
+                          style={{ cursor: 'pointer' }}
                           onClick={(e) => this.openLink(e, selectedTap.repo)}
                         >
                           report your issue to the{' '}
                           <code>{selectedTap.name}</code> team.
                         </a>
+                        {/* eslint-disable */}
                       </small>
                     </p>
                     <div className="align-self-center">
@@ -307,18 +313,43 @@ export default class Schema extends Component<Props, State> {
                     </div>
                   </Alert>
                   <Button
-                    onClick={this.redirectToHome}
-                    className={classNames(
-                      'btn btn-outline-danger float-right my-3',
-                      styles.cancel
-                    )}
+                    color="danger"
+                    outline
+                    onClick={() => {
+                      this.cancel(true);
+                    }}
+                    className="float-right my-3"
                   >
                     Cancel
                   </Button>
                 </div>
               )}
-              {!error &&
-                schemaLoaded &&
+              {schemaLoaded &&
+                !error &&
+                schema.length === 0 && (
+                  <div>
+                    <Alert
+                      color="danger"
+                      className="d-flex justify-content-between align-items-center my-3"
+                    >
+                      <p className="my-0">
+                        <strong>Looks like you’ve got a dry Tap!</strong> Make
+                        sure your data source contains at least one table or
+                        stream.
+                      </p>
+                      <Button
+                        color="danger"
+                        outline
+                        onClick={() => {
+                          this.cancel(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                    </Alert>
+                  </div>
+                )}
+              {schemaLoaded &&
                 schema.length > 0 && (
                   <div>
                     <p className="mb-4">
@@ -364,10 +395,11 @@ export default class Schema extends Component<Props, State> {
                             <td className="align-middle">{stream.stream}</td>
                             <td>
                               <Dropdown
-                                isDisabled={!this.fieldSelected(stream)}
                                 columns={this.validReplicationKeys(stream)}
                                 index={index.toString()}
                                 handleChange={this.handleSelectChange}
+                                stream={stream}
+                                isLegacy={selectedTap.isLegacy}
                               />
                             </td>
                           </tr>
@@ -379,22 +411,21 @@ export default class Schema extends Component<Props, State> {
                         A minimum of one table/stream must be selected
                       </Alert>
                     )}
-                    <Button
-                      color="primary"
-                      className="float-right my-3"
-                      onClick={this.submit}
-                    >
-                      Continue
-                    </Button>
-                    <Button
-                      onClick={this.redirectToHome}
-                      className={classNames(
-                        'btn btn-outline-danger float-right my-3',
-                        styles.cancel
-                      )}
-                    >
-                      Cancel
-                    </Button>
+                    <div className="my-3 d-flex justify-content-end">
+                      <Button
+                        color="danger"
+                        outline
+                        className="mr-2"
+                        onClick={() => {
+                          this.cancel(false);
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button color="primary" onClick={this.submit}>
+                        Continue
+                      </Button>
+                    </div>
                   </div>
                 )}
             </div>

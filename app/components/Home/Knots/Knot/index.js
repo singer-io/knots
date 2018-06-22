@@ -23,7 +23,14 @@
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button } from 'reactstrap';
+import {
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  Button,
+  ButtonGroup
+} from 'reactstrap';
 import moment from 'moment';
 
 import getLogo from '../../../../logos';
@@ -105,8 +112,9 @@ class Knot extends Component<Props, State> {
         <th className="align-middle">{knot.name}</th>
         <td className="align-middle">{moment(knot.lastRun).fromNow()}</td>
         <td className="fit align-middle">
-          <div className="btn-group" role="group" aria-label="Basic example">
-            <button
+          <ButtonGroup>
+            <Button
+              color="link"
               style={{ background: 'white' }}
               type="button"
               className="btn btn-link"
@@ -117,8 +125,10 @@ class Knot extends Component<Props, State> {
               disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-media-play" />
-            </button>
-            <button
+            </Button>
+
+            <Button
+              color="link-secondary"
               style={{ background: 'white' }}
               type="button"
               className="btn btn-link-secondary"
@@ -129,42 +139,33 @@ class Knot extends Component<Props, State> {
               disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-reload" />
-            </button>
-            <button
+            </Button>
+            <Button
+              color="link-secondary"
               style={{ background: 'white' }}
-              type="button"
-              className="btn btn-link-secondary"
-              data-toggle="tooltip"
-              data-placement="top"
               title="Edit"
               onClick={this.edit}
               disabled={!dockerInstalled || !dockerRunning}
             >
               <span className="oi oi-pencil" />
-            </button>
-            <button
+            </Button>
+            <Button
+              color="link-secondary"
               style={{ background: 'white' }}
-              type="button"
-              className="btn btn-link-secondary"
-              data-toggle="tooltip"
-              data-placement="top"
               onClick={this.download}
               title="Export"
             >
               <span className="oi oi-cloud-download" />
-            </button>
-            <button
+            </Button>
+            <Button
+              color="link-secondary"
               style={{ background: 'white' }}
-              type="button"
-              className="btn btn-link-secondary"
-              data-toggle="tooltip"
-              data-placement="top"
               onClick={this.toggleDelete}
               title="Delete"
             >
               <span className="oi oi-trash" />
-            </button>
-          </div>
+            </Button>
+          </ButtonGroup>
         </td>
         <Modal isOpen={this.state.showDelete} toggle={this.toggleDelete}>
           <ModalHeader toggle={this.toggleDelete}>

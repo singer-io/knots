@@ -20,16 +20,7 @@
  */
 
 const fs = require('fs');
-const path = require('path');
 const { set } = require('lodash');
-const { app } = require('electron');
-
-let applicationFolder;
-if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), 'knots');
-} else {
-  applicationFolder = path.resolve(__dirname, '../../');
-}
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {
@@ -54,10 +45,8 @@ const writeFile = (filePath, content) =>
     });
   });
 
-const addKnotAttribute = (content, passedPath) =>
+const addKnotAttribute = (content, pathToKnot) =>
   new Promise((resolve, reject) => {
-    const pathToKnot =
-      passedPath || path.resolve(applicationFolder, 'knot.json');
     readFile(pathToKnot)
       .then((knotObjectString) => {
         try {

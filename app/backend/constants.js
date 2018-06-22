@@ -55,7 +55,7 @@ const targets = [
 
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${folderPath}/configs/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${folderPath}/configs/tap/catalog.json"`,
+    `docker run -v "${folderPath}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${folderPath}/tap/catalog.json"`,
   runSync: (folderPath, tap, target) =>
     `docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image

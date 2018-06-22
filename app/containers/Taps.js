@@ -23,6 +23,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import * as TapsActions from '../actions/taps';
+import * as KnotsActions from '../actions/knots';
 import Taps from '../components/Taps';
 
 function mapStateToProps(state) {
@@ -33,7 +34,10 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators(TapsActions, dispatch);
+  return bindActionCreators(
+    Object.assign({}, TapsActions, KnotsActions),
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Taps);

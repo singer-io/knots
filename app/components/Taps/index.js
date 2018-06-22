@@ -22,15 +22,24 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
+import {
+  Container,
+  Row,
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap';
 import classNames from 'classnames';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
-
-import styles from './Taps.css';
 
 type Props = {
   fetchTaps: () => void,
@@ -44,7 +53,7 @@ type Props = {
       tapImage: string
     }>
   },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
   selectTap: (tap: { name: string, image: string, isLegacy: boolean }) => void,
   submitConfig: (
@@ -52,16 +61,19 @@ type Props = {
     fieldValues: {},
     knotName: string
   ) => void,
-  tapsPageLoaded: () => void
+  tapsPageLoaded: () => void,
+  cancel: () => void
 };
 
 type State = {
-  showTaps: boolean
+  showTaps: boolean,
+  showModal: boolean
 };
 
 export default class Taps extends Component<Props, State> {
   state = {
-    showTaps: true
+    showTaps: true,
+    showModal: false
   };
 
   componentWillMount() {
@@ -70,7 +82,7 @@ export default class Taps extends Component<Props, State> {
   }
 
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.tapsStore.tapSelected) {
+    if (nextProps.tapsStore.tapSelected || nextProps.knotsStore.knotLoaded) {
       this.setState({ showTaps: false });
     }
   }
@@ -97,16 +109,23 @@ export default class Taps extends Component<Props, State> {
     return valid;
   };
 
-  submit = () => {
+  submit = (showModal: boolean) => {
     const { selectedTap } = this.props.tapsStore;
     const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    const { knotName } = this.props.knotsStore;
+    const { knotName, knotLoaded } = this.props.knotsStore;
 
-    this.props.submitConfig(selectedTap, fieldValues, knotName);
-    this.props.history.push('/schema');
+    // When editing a knot show confirmation dialog
+    if (knotLoaded && showModal) {
+      this.setState({ showModal: true });
+    } else {
+      this.props.submitConfig(selectedTap, fieldValues, knotName);
+      this.props.history.push('/schema');
+    }
   };
 
-  redirectToHome = () => {
+  cancel = () => {
+    const { knotName } = this.props.knotsStore;
+    this.props.cancel(knotName);
     this.props.history.push('/');
   };
 
@@ -166,24 +185,50 @@ export default class Taps extends Component<Props, State> {
               </CardBody>
             </Card>
           </div>
-          <Button
-            color="primary"
-            className="float-right my-3"
-            onClick={this.submit}
-            disabled={!this.formValid() || showTaps}
-          >
-            Continue
-          </Button>
-          <Button
-            onClick={this.redirectToHome}
-            className={classNames(
-              'btn btn-outline-danger float-right my-3',
-              styles.cancelCta
-            )}
-          >
-            Cancel
-          </Button>
+          <div className="d-flex justify-content-end my-3">
+            <Button
+              color="danger"
+              outline
+              className="mr-2"
+              onClick={this.cancel}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => this.submit(true)}
+              disabled={!this.formValid()}
+            >
+              Continue
+            </Button>
+          </div>
         </Container>
+        <Modal isOpen={this.state.showModal} toggle={this.toggle}>
+          <ModalHeader toggle={this.toggle}>
+            Update schema information?
+          </ModalHeader>
+          <ModalBody>
+            <p>
+              Select <strong>&quot;Yes&quot;</strong> if you’d like to retrieve
+              the latest schema information. That will reset your replication
+              options.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="secondary"
+              outline
+              onClick={() => {
+                this.props.history.push('/schema');
+              }}
+            >
+              No
+            </Button>
+            <Button color="primary" onClick={() => this.submit(false)}>
+              Yes
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }

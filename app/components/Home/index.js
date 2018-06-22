@@ -22,7 +22,7 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Alert, Button, Col, Container, Progress, Row } from 'reactstrap';
+import { Alert, Button, Container, Progress } from 'reactstrap';
 import { shell } from 'electron';
 
 import Knots from '../../containers/Knots';
@@ -139,31 +139,33 @@ export default class Home extends Component<Props, State> {
                     {dockerInstalled ? (
                       <Button
                         outline
-                        color="danger"
-                        onClick={() => {
+                        color="warning"
+                        className="mr-2"
+                        onClick={(e) => {
                           this.openLink(
+                            e,
                             'https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac'
                           );
                         }}
-                        className="mr-2"
                       >
                         Start Docker
                       </Button>
                     ) : (
                       <Button
                         outline
-                        color="danger"
-                        onClick={() => {
+                        color="warning"
+                        className="mr-2"
+                        onClick={(e) => {
                           this.openLink(
+                            e,
                             'https://store.docker.com/editions/community/docker-ce-desktop-mac'
                           );
                         }}
-                        className="mr-2"
                       >
                         Install Docker
                       </Button>
                     )}
-                    <Button color="danger" onClick={this.onDismiss}>
+                    <Button color="warning" onClick={this.onDismiss}>
                       Retry
                     </Button>
                   </div>

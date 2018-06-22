@@ -150,9 +150,7 @@ export default function taps(state = defaultState, action) {
       return Object.assign({}, state, {
         schemaLoading: false,
         schemaLoaded: true,
-        schema: (state.schema.length > 0 ? state.schema : action.schema).sort(
-          compareStreams
-        ),
+        schema: action.schema.sort(compareStreams),
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {
@@ -181,6 +179,10 @@ export default function taps(state = defaultState, action) {
             });
 
             // Select a stream when a user chooses its replication key
+            schema[action.index].metadata[
+              indexToUpdate
+            ].metadata.selected = true;
+
             if (action.value === '') {
               if (action.isLegacy) {
                 delete schema[action.index].replication_key;

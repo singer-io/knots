@@ -22,7 +22,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { Container, Row, Card, CardHeader, CardBody, Button } from 'reactstrap';
 import classNames from 'classnames';
 
@@ -52,7 +51,8 @@ type Props = {
   history: { push: (path: string) => void },
   selectTarget: (target: { name: string, image: string }) => void,
   submitFields: (fielsValues: {}, knotName: string) => void,
-  targetsPageLoaded: () => void
+  targetsPageLoaded: () => void,
+  cancel: (knot: string) => void
 };
 
 type State = {
@@ -61,7 +61,7 @@ type State = {
 
 export default class Targets extends Component<Props, State> {
   state = {
-    showTargets: true
+    showTargets: !this.props.targetsStore.selectedTarget.name
   };
 
   componentWillMount() {
@@ -98,6 +98,12 @@ export default class Targets extends Component<Props, State> {
     });
 
     return valid;
+  };
+
+  cancel = () => {
+    const { knotName } = this.props.knotsStore;
+    this.props.cancel(knotName);
+    this.props.history.push('/');
   };
 
   submit = () => {
@@ -166,15 +172,17 @@ export default class Targets extends Component<Props, State> {
               </CardBody>
             </Card>
 
-            <div className="float-right">
-              <Link to="/">
-                <Button className="btn btn-outline-danger my-3 mr-3">
-                  Cancel
-                </Button>
-              </Link>
+            <div className="d-flex justify-content-end my-3">
+              <Button
+                color="danger"
+                outline
+                className="mr-2"
+                onClick={this.cancel}
+              >
+                Cancel
+              </Button>
               <Button
                 color="primary"
-                className="float-right my-3"
                 disabled={!this.formValid()}
                 onClick={this.submit}
               >

@@ -71,8 +71,8 @@ type Props = {
 };
 
 export default class Sync extends Component<Props> {
-  constructor() {
-    super();
+  componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
 
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
@@ -81,10 +81,7 @@ export default class Sync extends Component<Props> {
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
     });
-  }
 
-  componentWillMount() {
-    const { knot, mode } = queryString.parse(this.props.location.search);
     if (mode === 'full') {
       this.props.sync(knot);
     } else if (mode === 'partial') {
@@ -127,8 +124,12 @@ export default class Sync extends Component<Props> {
             <div className="w-100">
               <div className="d-flex align-items-center justify-content-between">
                 <span>
-                  {knotSyncing && <p>{`Runing ${mode} sync`}</p>}
-                  {knotSynced && <p>{`${mode} sync has successfully run`}</p>}
+                  {knotSyncing && (
+                    <p className="my-0">{`Runing ${mode} sync`}</p>
+                  )}
+                  {knotSynced && (
+                    <p className="my-0">{`${mode} sync has successfully run`}</p>
+                  )}
                 </span>
                 <Button
                   size="sm"
@@ -158,10 +159,8 @@ export default class Sync extends Component<Props> {
             className="d-flex justify-content-between"
           >
             <span className="align-self-center">{knotError}</span>
-            <Link to="/taps">
-              <Button className="btn btn-outline-danger float-right">
-                Re-configure
-              </Button>
+            <Link to="/taps" className="btn btn-outline-danger">
+              Re-configure
             </Link>
           </Alert>
 
@@ -223,8 +222,10 @@ export default class Sync extends Component<Props> {
           {knotSyncing &&
             !knotError && (
               <Button
+                color="danger"
+                outline
                 onClick={this.terminateProcess}
-                className="btn btn-outline-danger float-right my-3"
+                className="float-right my-3"
                 disabled={!knotSyncing}
               >
                 Cancel

@@ -27,8 +27,9 @@ import { FormGroup, Input } from 'reactstrap';
 type Props = {
   index: string,
   columns: Array<string>,
-  handleChange: (field: string, index: string, value: boolean | string) => void,
-  isDisabled: boolean
+  stream: { metadata: Array<{}> },
+  isLegacy: boolean,
+  handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
 export default class Dropdown extends Component<Props> {
@@ -37,6 +38,55 @@ export default class Dropdown extends Component<Props> {
     this.props.handleChange('replication-key', this.props.index, value);
   };
 
+  getReplicationKey(stream: {}, isLegacy: boolean) {
+    if (isLegacy) {
+      return stream.replication_key;
+    }
+
+    let indexToUpdate;
+
+    // Look for the metadata with the empty breadcrumb
+    stream.metadata.forEach((metadata, index) => {
+      if (metadata.breadcrumb.length === 0) {
+        indexToUpdate = index;
+      }
+    });
+
+    if (indexToUpdate !== undefined) {
+      const replicationKey = this.props.stream.metadata[indexToUpdate].metadata[
+        'replication-key'
+      ];
+
+      return replicationKey;
+    }
+
+    return '';
+  }
+
+  getOptions(columns) {
+    const { stream, isLegacy } = this.props;
+    const replicationKey = this.getReplicationKey(stream, isLegacy);
+
+    return (
+      <Input
+        type="select"
+        name="select"
+        id="replicationKeys"
+        onChange={this.handleChange}
+        defaultValue={replicationKey || ''}
+      >
+        <option value="" hidden>
+          Please select
+        </option>
+        {columns.map((column) => (
+          <option key={column} value={column}>
+            {column}
+          </option>
+        ))}
+      </Input>
+    );
+  }
+
   render() {
     if (this.props.columns.length < 1) {
       return 'N/A';
@@ -44,22 +94,7 @@ export default class Dropdown extends Component<Props> {
 
     return (
       <FormGroup style={{ margin: '0' }}>
-        <Input
-          type="select"
-          name="select"
-          id="replicationKeys"
-          onChange={this.handleChange}
-          disabled={this.props.isDisabled}
-        >
-          <option value="" hidden selected>
-            Please select
-          </option>
-          {this.props.columns.map((column) => (
-            <option key={column} value={column}>
-              {column}
-            </option>
-          ))}
-        </Input>
+        {this.getOptions(this.props.columns)}
       </FormGroup>
     );
   }

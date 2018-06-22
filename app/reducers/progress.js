@@ -46,7 +46,7 @@ const defaultState = {
     complete: false,
     active: false
   },
-  3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+  3: { text: 'Save & Run', href: '/sync', complete: false, active: false }
 };
 
 export default function progress(state = defaultState, action) {
@@ -71,7 +71,7 @@ export default function progress(state = defaultState, action) {
           complete: false,
           active: false
         },
-        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+        3: { text: 'Save & Run', href: '/sync', complete: false, active: false }
       };
     case SCHEMA_PAGE_LOADED:
       return {
@@ -93,7 +93,7 @@ export default function progress(state = defaultState, action) {
           complete: false,
           active: false
         },
-        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+        3: { text: 'Save & Run', href: '/sync', complete: false, active: false }
       };
     case TARGETS_PAGE_LOADED:
       return {
@@ -115,7 +115,7 @@ export default function progress(state = defaultState, action) {
           complete: false,
           active: true
         },
-        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+        3: { text: 'Save & Run', href: '/sync', complete: false, active: false }
       };
     case SYNC_PAGE_LOADED:
       return {
@@ -137,7 +137,7 @@ export default function progress(state = defaultState, action) {
           complete: true,
           active: false
         },
-        3: { text: 'Save & Run', href: 'sync', complete: false, active: true }
+        3: { text: 'Save & Run', href: '/sync', complete: false, active: true }
       };
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
@@ -160,7 +160,7 @@ export default function progress(state = defaultState, action) {
           complete: false,
           active: false
         },
-        3: { text: 'Save & Run', href: 'sync', complete: false, active: false }
+        3: { text: 'Save & Run', href: '/sync', complete: false, active: false }
       };
     default:
       return state;

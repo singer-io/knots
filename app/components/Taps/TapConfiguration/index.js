@@ -42,7 +42,7 @@ export default class Tap extends Component<Props> {
       case 'tap-salesforce':
         return <Salesforce />;
       default:
-        return <div>Unknown Target</div>;
+        return <div>Unknown Tap</div>;
     }
   };
   render() {

@@ -29,6 +29,7 @@ import {
   Row,
   Col,
   Form,
+  FormFeedback,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
@@ -83,19 +84,31 @@ type Props = {
   location: { search: string },
   sync: (knot: string) => void,
   partialSync: (knot: string) => void,
-  syncPageLoaded: () => void
+  history: { push: (path: string) => void },
+  syncPageLoaded: () => void,
+  cancel: () => void
 };
 
 type State = {
-  currentKnotName: string
+  currentKnotName: string,
+  name: {},
+  errorMessage: string,
+  knotNameValid: boolean
 };
 
 export default class Sync extends Component<Props, State> {
-  constructor(props: Props) {
-    super();
+  state = {
+    currentKnotName: this.props.knotsStore.knotName,
+    name: {},
+    errorMessage: '',
+    knotNameValid: false
+  };
 
-    this.state = { currentKnotName: props.knotsStore.knotName };
+  componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
+    const { knotName } = this.props.knotsStore;
 
+    // Receive log messages from socket.io
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
     });
@@ -103,11 +116,12 @@ export default class Sync extends Component<Props, State> {
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
     });
-  }
 
-  componentWillMount() {
+    // Check whether the current knotName is valid for when editing knot
+    this.validateName(knotName);
+
     this.props.syncPageLoaded();
-    const { knot, mode } = queryString.parse(this.props.location.search);
+
     if (mode === 'full') {
       this.props.sync(knot);
     } else if (mode === 'partial') {
@@ -117,8 +131,39 @@ export default class Sync extends Component<Props, State> {
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = event.currentTarget;
+    this.validateName(value);
 
     this.props.updateName(value);
+  };
+
+  cancel = () => {
+    const { knotName } = this.props.knotsStore;
+    this.props.cancel(knotName);
+    this.props.history.push('/');
+  };
+
+  validateName = (value: string) => {
+    if (value.length <= 60) {
+      // Test for special characters /, ?, <, >, \, :, *, |, and "
+      const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
+
+      if (valid) {
+        this.setState({ name: { invalid: false }, knotNameValid: true });
+      } else {
+        this.setState({
+          name: { invalid: true },
+          errorMessage:
+            'Knot name cannot contain the characters /, ?, <, >, :, *, |, and "',
+          knotNameValid: false
+        });
+      }
+    } else {
+      this.setState({
+        name: { invalid: true },
+        errorMessage: 'Knot name must be 60 characters or less',
+        knotNameValid: false
+      });
+    }
   };
 
   submit = () => {
@@ -172,13 +217,13 @@ export default class Sync extends Component<Props, State> {
               <div className="d-flex align-items-center justify-content-between">
                 <span>
                   {knotSyncing && (
-                    <p>
+                    <p className="my-0">
                       <strong>{knotName}</strong> has been saved! Running your
                       Knot could take a while...
                     </p>
                   )}
                   {knotSynced && (
-                    <p>
+                    <p className="my-0">
                       <strong>{knotName}</strong> has been run successfully
                     </p>
                   )}
@@ -239,21 +284,28 @@ export default class Sync extends Component<Props, State> {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
+                        type="text"
                         placeholder="Untitled knot"
-                        onChange={this.handleChange}
                         value={knotName}
+                        onChange={this.handleChange}
+                        {...this.state.name}
                       />
+                      <FormFeedback>{this.state.errorMessage}</FormFeedback>
                     </InputGroup>
                     <div className="float-right">
-                      <Link to="/">
-                        <Button className="btn btn-outline-danger mt-3 mr-3">
-                          Cancel
-                        </Button>
-                      </Link>
+                      <Button
+                        color="danger"
+                        outline
+                        className="mt-3 mr-2"
+                        onClick={this.cancel}
+                      >
+                        Cancel
+                      </Button>
+
                       <Button
                         color="primary"
                         className="mt-3"
-                        disabled={!this.props.knotsStore.knotName}
+                        disabled={!this.state.knotNameValid}
                         onClick={this.submit}
                       >
                         Save & Run
@@ -263,7 +315,7 @@ export default class Sync extends Component<Props, State> {
                 </Col>
               )}
           </Row>
-          <Collapse isOpen={knotSyncing || (knotSynced && knotError)}>
+          <Collapse isOpen={!!(knotSyncing || (knotSynced && knotError))}>
             <Row>
               <Col sm="6">
                 <Card className="bg-light">
@@ -317,11 +369,14 @@ export default class Sync extends Component<Props, State> {
           </Collapse>
           {!knotSynced &&
             knotSyncing && (
-              <Link to="/">
-                <Button className="btn btn-outline-danger float-right my-3">
-                  Cancel
-                </Button>
-              </Link>
+              <Button
+                color="danger"
+                outline
+                className="float-right my-3"
+                onClick={this.cancel}
+              >
+                Cancel
+              </Button>
             )}
           {knotSynced &&
             !knotError && (

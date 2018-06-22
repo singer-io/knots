@@ -30,7 +30,8 @@ function mapStateToProps(state) {
     progressStore: state.progress,
     tapsStore: state.taps,
     targetsStore: state.targets,
-    knotsStore: state.knots
+    knotsStore: state.knots,
+    userStore: state.user
   };
 }
 
