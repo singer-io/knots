@@ -49,9 +49,9 @@ type actionType = {
 
 type specImplementationProperties = {
   usesMetadata?: {
-    selected: boolean,
-    replicationKey: boolean,
-    replicationMethod: boolean
+    selected?: boolean,
+    replicationKey?: boolean,
+    replicationMethod?: boolean
   },
   usesCatalogArg?: boolean
 };

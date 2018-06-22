@@ -48,12 +48,12 @@ const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
 
 type specImplementationProps = {
-  usesMetadata: {
-    selected: boolean,
-    replicationKey: boolean,
-    replicationMethod: boolean
+  usesMetadata?: {
+    selected?: boolean,
+    replicationKey?: boolean,
+    replicationMethod?: boolean
   },
-  usesCatalogArg: boolean
+  usesCatalogArg?: boolean
 };
 
 type Props = {
@@ -413,6 +413,9 @@ export default class Schema extends Component<Props, State> {
                                 handleChange={this.handleSelectChange}
                                 stream={stream}
                                 isLegacy={selectedTap.isLegacy}
+                                specImplementation={
+                                  selectedTap.specImplementation
+                                }
                               />
                             </td>
                           </tr>

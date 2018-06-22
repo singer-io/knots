@@ -28,7 +28,11 @@ type Props = {
   index: string,
   columns: Array<string>,
   stream: { metadata: Array<{}> },
-  isLegacy: boolean,
+  specImplementation: {
+    usesMetadata?: {
+      replicationKey: boolean
+    }
+  },
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
@@ -38,8 +42,10 @@ export default class Dropdown extends Component<Props> {
     this.props.handleChange('replication-key', this.props.index, value);
   };
 
-  getReplicationKey(stream: {}, isLegacy: boolean) {
-    if (isLegacy) {
+  getReplicationKey(stream: {}, specImplementation: {}) {
+    const { replicationKey: repKeyMetadata = true } =
+      specImplementation.usesMetadata || {};
+    if (!repKeyMetadata) {
       return stream.replication_key;
     }
 
@@ -64,8 +70,8 @@ export default class Dropdown extends Component<Props> {
   }
 
   getOptions(columns) {
-    const { stream, isLegacy } = this.props;
-    const replicationKey = this.getReplicationKey(stream, isLegacy);
+    const { stream, specImplementation } = this.props;
+    const replicationKey = this.getReplicationKey(stream, specImplementation);
 
     return (
       <Input

@@ -27,12 +27,12 @@ import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 import getLogo from '../../../logos';
 
 type specImplementationProps = {
-  usesMetadata: {
-    selected: boolean,
-    replicationKey: boolean,
-    replicationMethod: boolean
+  usesMetadata?: {
+    selected?: boolean,
+    replicationKey?: boolean,
+    replicationMethod?: boolean
   },
-  usesCatalogArg: boolean
+  usesCatalogArg?: boolean
 };
 
 type Props = {

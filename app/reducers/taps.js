@@ -209,9 +209,19 @@ export default function taps(state = defaultState, action) {
               }
             });
 
-            streamClone.metadata[
-              indexToUpdate
-            ].metadata.selected = newSelectedValue;
+            if (!newSelectedValue) {
+              delete streamClone.metadata[indexToUpdate].metadata[
+                'replication-key'
+              ];
+              delete streamClone.metadata[indexToUpdate].metadata[
+                'replication-method'
+              ];
+              delete streamClone.metadata[indexToUpdate].metadata['selected'];
+            } else {
+              streamClone.metadata[
+                indexToUpdate
+              ].metadata.selected = newSelectedValue;
+            }
           } else {
             streamClone.selected = newSelectedValue;
           }
@@ -250,7 +260,7 @@ export default function taps(state = defaultState, action) {
                 'forced-replication-method'
               ];
 
-            if (!forcedRepMethod) {
+            if (!forcedRepMethod && action.value) {
               schema[action.index] = setImpliedReplicationMethod(
                 schema[action.index],
                 action.specImplementation.usesMetadata,

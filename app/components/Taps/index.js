@@ -41,18 +41,18 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
 
-import styles from './Taps.css';
+// import styles from './Taps.css';
 
 type tapProperties = {
   name: string,
   image: string,
-  specImplementation?: {
-    usesMetadata: {
-      selected: boolean,
-      replicationKey: boolean,
-      replicationMethod: boolean
+  specImplementation: {
+    usesMetadata?: {
+      selected?: boolean,
+      replicationKey?: boolean,
+      replicationMethod?: boolean
     },
-    usesCatalogArg: boolean
+    usesCatalogArg?: boolean
   }
 };
 
