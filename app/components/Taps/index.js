@@ -204,23 +204,25 @@ export default class Taps extends Component<Props, State> {
           </div>
         </Container>
         <Modal isOpen={this.state.showModal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>Run discovery</ModalHeader>
+          <ModalHeader toggle={this.toggle}>
+            Update schema information?
+          </ModalHeader>
           <ModalBody>
-            Retrieve latest schema information? This will reset your replication
-            options.
+            Select “Yes” if you’d like to retrieve the latest schema
+            information. That will reset your replication settings.
           </ModalBody>
           <ModalFooter>
             <Button
               color="secondary"
               outline
               onClick={() => {
-                this.setState({ showModal: false });
+                this.props.history.push('/schema');
               }}
             >
-              Cancel
+              No
             </Button>
             <Button color="primary" onClick={() => this.submit(false)}>
-              Continue
+              Yes
             </Button>
           </ModalFooter>
         </Modal>
