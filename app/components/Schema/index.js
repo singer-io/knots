@@ -47,6 +47,15 @@ import Log from '../Log';
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
 
+type specImplementationProps = {
+  usesMetadata: {
+    selected: boolean,
+    replicationKey: boolean,
+    replicationMethod: boolean
+  },
+  usesCatalogArg: boolean
+};
+
 type Props = {
   tapsStore: {
     schema: Array<Stream>,
@@ -57,14 +66,7 @@ type Props = {
     selectedTap: {
       name: string,
       image: string,
-      specImplementation: {
-        usesMetadata: {
-          selected: boolean,
-          replication_key: boolean,
-          replication_method: boolean
-        },
-        usesCatalogArg: boolean
-      }
+      specImplementation: specImplementationProps
     },
     error?: string
   },
@@ -73,13 +75,7 @@ type Props = {
     field: string,
     index: string,
     value: boolean | string,
-    specImplementation: {
-      usesMetadata: {
-        selected: boolean,
-        replication_key: boolean,
-        replication_method: boolean
-      }
-    }
+    specImplementation: specImplementationProps
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (

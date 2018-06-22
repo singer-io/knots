@@ -26,32 +26,27 @@ import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 
 import getLogo from '../../../logos';
 
+type specImplementationProps = {
+  usesMetadata: {
+    selected: boolean,
+    replicationKey: boolean,
+    replicationMethod: boolean
+  },
+  usesCatalogArg: boolean
+};
+
 type Props = {
   name: string,
   tapKey: string,
   tapImage: string,
   selected: string,
-  specImplementation: {
-    usesMetadata: {
-      selected: boolean,
-      replication_key: boolean,
-      replication_method: boolean
-    },
-    usesCatalogArg: boolean
-  },
+  specImplementation: specImplementationProps,
   selectTap: (
     tap: {
       name: string,
       image: string,
       repo: string,
-      specImplementation: {
-        usesMetadata: {
-          selected: boolean,
-          replication_key: boolean,
-          replication_method: boolean
-        },
-        usesCatalogArg: boolean
-      }
+      specImplementation: specImplementationProps
     },
     knotName: string
   ) => void,

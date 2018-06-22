@@ -30,8 +30,8 @@ const taps = [
     specImplementation: {
       usesMetadata: {
         selected: true,
-        replication_key: true,
-        replication_method: true
+        replicationKey: true,
+        replicationMethod: true
       },
       usesCatalogArg: true
     }
@@ -44,8 +44,8 @@ const taps = [
     specImplementation: {
       usesMetadata: {
         selected: true,
-        replication_key: true,
-        replication_method: true
+        replicationKey: true,
+        replicationMethod: true
       },
       usesCatalogArg: true
     }

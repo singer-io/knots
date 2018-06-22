@@ -34,24 +34,26 @@ import {
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
+type selectedTapProperties = {
+  name: string,
+  image: string,
+  specImplementation: {
+    usesMetadata: {
+      selected: boolean,
+      replicationKey: boolean,
+      replicationMethod: boolean
+    },
+    usesCatalogArg: boolean
+  }
+};
+
 export type tapsStateType = {
   +tapsLoading: boolean,
   +tapSelected: boolean,
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: {
-    name: string,
-    image: string,
-    specImplementation: {
-      usesMetadata: {
-        selected: boolean,
-        replication_key: boolean,
-        replication_method: boolean
-      },
-      usesCatalogArg: boolean
-    }
-  },
+  +selectedTap: selectedTapProperties,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
@@ -181,8 +183,9 @@ export default function taps(state = defaultState, action) {
 
             const {
               selected: selectedMetadata = true,
-              replication_method: repMethodMetadata = true
+              replicationMethod: repMethodMetadata = true
             } = action.specImplementation.usesMetadata;
+
             if (!selectedMetadata && !repMethodMetadata) {
               schema[action.index][action.field] = action.value;
               schema[action.index].replication_method = 'FULL_TABLE';
@@ -206,9 +209,11 @@ export default function taps(state = defaultState, action) {
                 indexToUpdate = index;
               }
             });
+
             const {
-              replication_key: replicationKeyMetadata = true
+              replicationKey: replicationKeyMetadata = true
             } = action.specImplementation.usesMetadata;
+
             if (!replicationKeyMetadata) {
               schema[action.index].replication_key = action.value;
               schema[action.index].replication_method = 'INCREMENTAL';

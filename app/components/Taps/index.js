@@ -41,11 +41,31 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
 
+import styles from './Taps.css';
+
+type tapProperties = {
+  name: string,
+  image: string,
+  specImplementation: {
+    usesMetadata: {
+      selected: boolean,
+      replicationKey: boolean,
+      replicationMethod: boolean
+    },
+    usesCatalogArg: boolean
+  }
+};
+
+type selectedTapProperties = {
+  name: string,
+  image: string
+};
+
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
     tapSelected: boolean,
-    selectedTap: { name: string, image: string },
+    selectedTap: selectedTapProperties,
     tapsLoading: boolean,
     taps: Array<{
       name: string,
@@ -55,20 +75,9 @@ type Props = {
   },
   knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
-  selectTap: (tap: {
-    name: string,
-    image: string,
-    specImplementation: {
-      usesMetadata: {
-        selected: boolean,
-        replication_key: boolean,
-        replication_method: boolean
-      },
-      usesCatalogArg: boolean
-    }
-  }) => void,
+  selectTap: (tap: tapProperties) => void,
   submitConfig: (
-    selectedTap: { name: string, image: string },
+    selectedTap: selectedTapProperties,
     fieldValues: {},
     knotName: string
   ) => void,
