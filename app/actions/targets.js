@@ -117,12 +117,3 @@ export function submitFields(fieldValues: {}, knot: string) {
       });
   };
 }
-
-export function cancel(knot: string) {
-  return () => {
-    axios
-      .post(`${baseUrl}/knots/cancel/`, { knot })
-      .then(() => {})
-      .catch(() => {});
-  };
-}
