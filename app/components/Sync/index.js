@@ -29,6 +29,7 @@ import {
   Row,
   Col,
   Form,
+  FormFeedback,
   InputGroup,
   InputGroupAddon,
   InputGroupText,
@@ -89,11 +90,19 @@ type Props = {
 };
 
 type State = {
-  currentKnotName: string
+  currentKnotName: string,
+  name: {},
+  errorMessage: string,
+  knotNameValid: boolean
 };
 
 export default class Sync extends Component<Props, State> {
-  state = { currentKnotName: this.props.knotsStore.knotName };
+  state = {
+    currentKnotName: this.props.knotsStore.knotName,
+    name: {},
+    errorMessage: '',
+    knotNameValid: false
+  };
 
   componentWillMount() {
     socket.on('tapLog', (log) => {
@@ -115,6 +124,7 @@ export default class Sync extends Component<Props, State> {
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = event.currentTarget;
+    this.validateName(value);
 
     this.props.updateName(value);
   };
@@ -123,6 +133,30 @@ export default class Sync extends Component<Props, State> {
     const { knotName } = this.props.knotsStore;
     this.props.cancel(knotName);
     this.props.history.push('/');
+  };
+
+  validateName = (value: string) => {
+    if (value.length <= 60) {
+      // Test for special characters /, ?, <, >, \, :, *, |, and "
+      const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
+
+      if (valid) {
+        this.setState({ name: { invalid: false }, knotNameValid: true });
+      } else {
+        this.setState({
+          name: { invalid: true },
+          errorMessage:
+            'Knot name cannot contain the characters /, ?, <, >, :, *, |, and "',
+          knotNameValid: false
+        });
+      }
+    } else {
+      this.setState({
+        name: { invalid: true },
+        errorMessage: 'Knot name must be 60 characters or less',
+        knotNameValid: false
+      });
+    }
   };
 
   submit = () => {
@@ -243,10 +277,13 @@ export default class Sync extends Component<Props, State> {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
+                        type="text"
                         placeholder="Untitled knot"
-                        onChange={this.handleChange}
                         value={knotName}
+                        onChange={this.handleChange}
+                        {...this.state.name}
                       />
+                      <FormFeedback>{this.state.errorMessage}</FormFeedback>
                     </InputGroup>
                     <div className="float-right">
                       <Button
@@ -261,7 +298,7 @@ export default class Sync extends Component<Props, State> {
                       <Button
                         color="primary"
                         className="mt-3"
-                        disabled={!this.props.knotsStore.knotName}
+                        disabled={!this.state.knotNameValid}
                         onClick={this.submit}
                       >
                         Save & Run
