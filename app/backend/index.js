@@ -24,7 +24,6 @@ const bodyParser = require('body-parser');
 const socketIo = require('socket.io');
 const http = require('http');
 const routes = require('./routes');
-require('dotenv').config();
 const terminate = require('terminate');
 
 const app = express();

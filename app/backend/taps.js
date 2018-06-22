@@ -96,12 +96,9 @@ const writeConfig = (config, configPath, knot) =>
 
 const getSchema = (req, knot) =>
   new Promise((resolve, reject) => {
-    let knotPath = knot
+    const knotPath = knot
       ? path.resolve(applicationFolder, knot)
       : path.resolve(applicationFolder, 'configs');
-
-    // eslint-disable-next-line
-    knotPath = knotPath.replace(' ', `\ `);
 
     const runDiscovery = exec(
       commands.runDiscovery(knotPath, req.body.tap.name, req.body.tap.image),
