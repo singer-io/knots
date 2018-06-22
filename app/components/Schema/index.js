@@ -284,14 +284,16 @@ export default class Schema extends Component<Props, State> {
                       logs for additional information.<br />
                       <small>
                         If you need help,&nbsp;
-                        <button
+                        {/* eslint-disable */}
+                        <a
                           className="alert-link border-0"
-                          style={{ background: 'none', cursor: 'pointer' }}
+                          style={{ cursor: 'pointer' }}
                           onClick={(e) => this.openLink(e, selectedTap.repo)}
                         >
                           report your issue to the{' '}
                           <code>{selectedTap.name}</code> team.
-                        </button>
+                        </a>
+                        {/* eslint-disable */}
                       </small>
                     </p>
                     <div className="align-self-center">
