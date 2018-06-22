@@ -105,6 +105,10 @@ export default class Sync extends Component<Props, State> {
   };
 
   componentWillMount() {
+    const { knot, mode } = queryString.parse(this.props.location.search);
+    const { knotName } = this.props.knotsStore;
+
+    // Receive log messages from socket.io
     socket.on('tapLog', (log) => {
       this.props.updateTapLogs(log);
     });
@@ -113,8 +117,11 @@ export default class Sync extends Component<Props, State> {
       this.props.updateTargetLogs(log);
     });
 
+    // Check whether the current knotName is valid for when editing knot
+    this.validateName(knotName);
+
     this.props.syncPageLoaded();
-    const { knot, mode } = queryString.parse(this.props.location.search);
+
     if (mode === 'full') {
       this.props.sync(knot);
     } else if (mode === 'partial') {
