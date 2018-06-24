@@ -197,6 +197,7 @@ export default function taps(state = defaultState, action) {
           } else {
             streamClone.replication_method = 'FULL_TABLE';
           }
+          return streamClone;
         };
 
         const setSelected = (stream, usesMetadata, newSelectedValue) => {
@@ -216,14 +217,18 @@ export default function taps(state = defaultState, action) {
               delete streamClone.metadata[indexToUpdate].metadata[
                 'replication-method'
               ];
-              delete streamClone.metadata[indexToUpdate].metadata['selected'];
+              delete streamClone.metadata[indexToUpdate].metadata.selected;
             } else {
               streamClone.metadata[
                 indexToUpdate
               ].metadata.selected = newSelectedValue;
             }
-          } else {
+          } else if (newSelectedValue) {
             streamClone.selected = newSelectedValue;
+          } else {
+            delete streamClone.selected;
+            delete streamClone.replication_key;
+            delete streamClone.replication_method;
           }
           return streamClone;
         };
