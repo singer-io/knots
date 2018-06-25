@@ -43,7 +43,10 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
-import tapPropertiesType from '../../utils/shared-types';
+import {
+  specImplementationPropType,
+  tapPropertiesType
+} from '../../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
@@ -63,7 +66,7 @@ type Props = {
     field: string,
     index: string,
     value: boolean | string,
-    specImplementation: tapPropertiesType
+    specImplementation: specImplementationPropType
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (

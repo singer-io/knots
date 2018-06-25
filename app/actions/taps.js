@@ -22,7 +22,10 @@
 // @flow
 
 import axios from 'axios';
-import tapPropertiesType from '../utils/shared-types';
+import {
+  specImplementationPropType,
+  tapPropertiesType
+} from '../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -165,7 +168,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation?: tapPropertiesType = {}
+  specImplementation?: specImplementationPropType = {}
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({

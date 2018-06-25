@@ -40,7 +40,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
-import tapPropertiesType from '../../utils/shared-types';
+import { tapPropertiesType } from '../../utils/shared-types';
 
 type Props = {
   fetchTaps: () => void,

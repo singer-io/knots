@@ -33,7 +33,7 @@ import {
   TAP_SELECTED
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-import tapPropertiesType from '../utils/shared-types';
+import { tapPropertiesType } from '../utils/shared-types';
 
 export type tapsStateType = {
   +tapsLoading: boolean,

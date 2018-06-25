@@ -20,16 +20,17 @@
  */
 // @flow
 
+export type specImplementationPropType = {
+  usesMetadata?: {
+    selected?: boolean,
+    replicationKey?: boolean,
+    replicationMethod?: boolean
+  },
+  usesCatalogArg?: boolean
+};
+
 export type tapPropertiesType = {
   name: string,
   image: string,
-  repo: string,
-  specImplementation?: {
-    usesMetadata?: {
-      selected?: boolean,
-      replicationKey?: boolean,
-      replicationMethod?: boolean
-    },
-    usesCatalogArg?: boolean
-  }
+  specImplementation?: specImplementationPropType
 };

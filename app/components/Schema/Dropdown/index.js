@@ -23,14 +23,13 @@
 
 import React, { Component } from 'react';
 import { FormGroup, Input } from 'reactstrap';
-import tapPropertiesType from '../../../utils/shared-types';
+import { specImplementationPropType } from '../../../utils/shared-types';
 
-console.log(tapPropertiesType);
 type Props = {
   index: string,
   columns: Array<string>,
   stream: { metadata: Array<{}> },
-  specImplementation: tapPropertiesType,
+  specImplementation: specImplementationPropType,
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
 
