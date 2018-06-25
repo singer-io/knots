@@ -43,18 +43,10 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
+import tapPropertiesType from '../../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
-
-type specImplementationProps = {
-  usesMetadata?: {
-    selected?: boolean,
-    replicationKey?: boolean,
-    replicationMethod?: boolean
-  },
-  usesCatalogArg?: boolean
-};
 
 type Props = {
   tapsStore: {
@@ -63,11 +55,7 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
-    selectedTap: {
-      name: string,
-      image: string,
-      specImplementation?: specImplementationProps
-    },
+    selectedTap: tapPropertiesType,
     error?: string
   },
   knotsStore: { knotName: string, knotName: string },
@@ -75,7 +63,7 @@ type Props = {
     field: string,
     index: string,
     value: boolean | string,
-    specImplementation: specImplementationProps
+    specImplementation: tapPropertiesType
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (

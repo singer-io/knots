@@ -22,6 +22,7 @@
 // @flow
 
 import axios from 'axios';
+import tapPropertiesType from '../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -45,15 +46,6 @@ export const TAP_SELECTED = 'TAP_SELECTED';
 
 type actionType = {
   +type: string
-};
-
-type specImplementationProperties = {
-  usesMetadata?: {
-    selected?: boolean,
-    replicationKey?: boolean,
-    replicationMethod?: boolean
-  },
-  usesCatalogArg?: boolean
 };
 
 export function tapsPageLoaded() {
@@ -96,15 +88,7 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(
-  tap: {
-    name: string,
-    image: string,
-    repo: string,
-    specImplementation?: specImplementationProperties
-  },
-  knotName: string
-) {
+export function selectTap(tap: tapPropertiesType, knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
       .post(`${baseUrl}/taps/select/`, {
@@ -181,7 +165,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation?: specImplementationProperties
+  specImplementation?: tapPropertiesType
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({

@@ -25,31 +25,15 @@ import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 
 import getLogo from '../../../logos';
-
-type specImplementationProps = {
-  usesMetadata?: {
-    selected?: boolean,
-    replicationKey?: boolean,
-    replicationMethod?: boolean
-  },
-  usesCatalogArg?: boolean
-};
+import tapPropertiesType from '../../../utils/shared-types';
 
 type Props = {
   name: string,
   tapKey: string,
   tapImage: string,
   selected: string,
-  specImplementation: specImplementationProps,
-  selectTap: (
-    tap: {
-      name: string,
-      image: string,
-      repo: string,
-      specImplementation?: specImplementationProps
-    },
-    knotName: string
-  ) => void,
+  specImplementation: tapPropertiesType,
+  selectTap: (tap: tapPropertiesType, knotName: string) => void,
   knotName: string
 };
 

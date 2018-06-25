@@ -33,19 +33,7 @@ import {
   TAP_SELECTED
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-
-export type tapPropertiesType = {
-  name: string,
-  image: string,
-  specImplementation?: {
-    usesMetadata?: {
-      selected?: boolean,
-      replicationKey?: boolean,
-      replicationMethod?: boolean
-    },
-    usesCatalogArg?: boolean
-  }
-};
+import tapPropertiesType from '../utils/shared-types';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -97,12 +85,12 @@ const defaultState = {
   error: '',
   'tap-redshift': {
     fieldValues: {
-      host: '',
-      port: undefined,
-      dbname: '',
+      host: 'db.panoply.io',
+      port: 5439,
+      dbname: 'tap_redshift',
       schema: 'public',
-      user: '',
-      password: '',
+      user: 'oni.omowunmi@andela.com',
+      password: 'Pastor-02',
       start_date: ''
     }
   },
