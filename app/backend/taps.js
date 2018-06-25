@@ -187,7 +187,7 @@ const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
     const catalogPath = knot
       ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
-      : path.resolve(applicationFolder, 'knots', knot, 'tap', 'catalog.json');
+      : path.resolve(applicationFolder, 'catalog.json');
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
