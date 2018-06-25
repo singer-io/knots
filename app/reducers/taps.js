@@ -159,7 +159,7 @@ export default function taps(state = defaultState, action) {
       });
     case UPDATE_SCHEMA_FIELD: {
       if (schema[action.index]) {
-        const streamIndexToUpdate = (stream) => {
+        const metadataIndexToUpdate = (stream) => {
           let indexToUpdate = -1;
           stream.metadata.forEach((metadata, index) => {
             if (metadata.breadcrumb.length === 0) {
@@ -173,7 +173,7 @@ export default function taps(state = defaultState, action) {
           const streamClone = Object.assign({}, stream);
           const { replicationMethod: repMethodMetadata = true } =
             usesMetadata || {};
-          const indexToUpdate = streamIndexToUpdate(streamClone);
+          const indexToUpdate = metadataIndexToUpdate(streamClone);
 
           if (indexToUpdate > -1) {
             const forcedRepMethod =
@@ -210,7 +210,7 @@ export default function taps(state = defaultState, action) {
         const setSelected = (stream, usesMetadata, newSelectedValue) => {
           const streamClone = Object.assign({}, stream);
           const { selected: selectedMetadata = true } = usesMetadata || {};
-          const indexToUpdate = streamIndexToUpdate(streamClone);
+          const indexToUpdate = metadataIndexToUpdate(streamClone);
           if (selectedMetadata && indexToUpdate > -1) {
             if (!newSelectedValue) {
               delete streamClone.metadata[indexToUpdate].metadata[
@@ -238,7 +238,7 @@ export default function taps(state = defaultState, action) {
         const setReplicationKey = (stream, usesMetadata, newReplicationKey) => {
           const streamClone = Object.assign({}, stream);
           const { replicationKey: repKeyMetadata = true } = usesMetadata || {};
-          const indexToUpdate = streamIndexToUpdate(streamClone);
+          const indexToUpdate = metadataIndexToUpdate(streamClone);
 
           if (repKeyMetadata && indexToUpdate > -1) {
             streamClone.metadata[indexToUpdate].metadata[
