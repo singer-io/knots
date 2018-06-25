@@ -85,12 +85,12 @@ const defaultState = {
   error: '',
   'tap-redshift': {
     fieldValues: {
-      host: 'db.panoply.io',
-      port: 5439,
-      dbname: 'tap_redshift',
+      host: '',
+      port: undefined,
+      dbname: '',
       schema: 'public',
-      user: 'oni.omowunmi@andela.com',
-      password: 'Pastor-02',
+      user: '',
+      password: '',
       start_date: ''
     }
   },
@@ -160,18 +160,24 @@ export default function taps(state = defaultState, action) {
     case UPDATE_SCHEMA_FIELD: {
       if (schema[action.index]) {
         let indexToUpdate;
-        const setImpliedReplicationMethod = (stream, usesMetadata, field) => {
+        const setImpliedReplicationMethod = (stream, usesMetadata) => {
           const streamClone = Object.assign({}, stream);
           const { replicationMethod: repMethodMetadata = true } =
             usesMetadata || {};
+          const forcedRepMethod =
+            streamClone.metadata[indexToUpdate].metadata[
+              'forced-replication-method'
+            ];
 
           if (repMethodMetadata) {
-            if (field === 'replication-key') {
+            const repKey =
+              streamClone.metadata[indexToUpdate].metadata['replication-key'];
+            if (repKey) {
               streamClone.metadata[indexToUpdate].metadata[
                 'replication-method'
               ] =
                 'INCREMENTAL';
-            } else {
+            } else if (!forcedRepMethod && !repKey) {
               streamClone.metadata[indexToUpdate].metadata[
                 'replication-method'
               ] =
@@ -180,7 +186,7 @@ export default function taps(state = defaultState, action) {
             return streamClone;
           }
 
-          if (field === 'replication-key') {
+          if (streamClone.replication_key) {
             streamClone.replication_method = 'INCREMENTAL';
           } else {
             streamClone.replication_method = 'FULL_TABLE';
@@ -248,18 +254,10 @@ export default function taps(state = defaultState, action) {
               action.value
             );
 
-            const forcedRepMethod =
-              schema[action.index].metadata[indexToUpdate].metadata[
-                'forced-replication-method'
-              ];
-
-            if (!forcedRepMethod && action.value) {
-              schema[action.index] = setImpliedReplicationMethod(
-                schema[action.index],
-                action.specImplementation.usesMetadata,
-                action.field
-              );
-            }
+            schema[action.index] = setImpliedReplicationMethod(
+              schema[action.index],
+              action.specImplementation.usesMetadata
+            );
 
             return Object.assign({}, state, {
               tapSchema: schema
@@ -273,8 +271,7 @@ export default function taps(state = defaultState, action) {
 
             schema[action.index] = setImpliedReplicationMethod(
               schema[action.index],
-              action.specImplementation.usesMetadata,
-              action.field
+              action.specImplementation.usesMetadata
             );
 
             return Object.assign({}, state, {

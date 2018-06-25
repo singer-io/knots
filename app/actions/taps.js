@@ -165,7 +165,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation?: tapPropertiesType
+  specImplementation?: tapPropertiesType = {}
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
