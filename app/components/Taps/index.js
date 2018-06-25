@@ -40,12 +40,13 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
+import { tapPropertiesType } from '../../utils/shared-types';
 
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
     tapSelected: boolean,
-    selectedTap: { name: string, image: string },
+    selectedTap: tapPropertiesType,
     tapsLoading: boolean,
     taps: Array<{
       name: string,
@@ -55,9 +56,9 @@ type Props = {
   },
   knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
-  selectTap: (tap: { name: string, image: string, isLegacy: boolean }) => void,
+  selectTap: (tap: tapPropertiesType) => void,
   submitConfig: (
-    selectedTap: { name: string, image: string },
+    selectedTap: tapPropertiesType,
     fieldValues: {},
     knotName: string
   ) => void,

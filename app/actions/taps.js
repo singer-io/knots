@@ -22,6 +22,10 @@
 // @flow
 
 import axios from 'axios';
+import {
+  specImplementationPropType,
+  tapPropertiesType
+} from '../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -87,10 +91,7 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(
-  tap: { name: string, image: string, isLegacy: boolean },
-  knotName: string
-) {
+export function selectTap(tap: tapPropertiesType, knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
       .post(`${baseUrl}/taps/select/`, {
@@ -167,7 +168,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  isLegacy: boolean
+  specImplementation?: specImplementationPropType = {}
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -175,7 +176,7 @@ export function editSchemaField(
       field,
       index,
       value,
-      isLegacy
+      specImplementation
     });
   };
 }

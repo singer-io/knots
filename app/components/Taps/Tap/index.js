@@ -25,18 +25,18 @@ import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 
 import getLogo from '../../../logos';
+import {
+  specImplementationPropType,
+  tapPropertiesType
+} from '../../../utils/shared-types';
 
 type Props = {
   name: string,
   tapKey: string,
   tapImage: string,
   selected: string,
-  isLegacy: boolean,
-  repo: string,
-  selectTap: (
-    tap: { name: string, image: string, repo: string, isLegacy: boolean },
-    knotName: string
-  ) => void,
+  specImplementation?: specImplementationPropType,
+  selectTap: (tap: tapPropertiesType, knotName: string) => void,
   knotName: string
 };
 
@@ -63,7 +63,14 @@ export default class Tap extends Component<Props, State> {
   };
 
   render() {
-    const { tapKey, tapImage, isLegacy, repo, knotName, name } = this.props;
+    const {
+      tapKey,
+      tapImage,
+      repo,
+      specImplementation,
+      knotName,
+      name
+    } = this.props;
 
     return (
       <Col sm="12" md={{ size: 4 }}>
@@ -78,7 +85,7 @@ export default class Tap extends Component<Props, State> {
                 name: tapKey,
                 image: tapImage,
                 repo,
-                isLegacy
+                specImplementation
               },
               knotName
             );

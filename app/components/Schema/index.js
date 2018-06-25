@@ -43,6 +43,10 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
+import {
+  specImplementationPropType,
+  tapPropertiesType
+} from '../../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
@@ -54,7 +58,7 @@ type Props = {
     schemaLoaded: boolean,
     schemaLogs: Array<string>,
     schemaUpdated: boolean,
-    selectedTap: { name: string, image: string, isLegacy: boolean },
+    selectedTap: tapPropertiesType,
     error?: string
   },
   knotsStore: { knotName: string, knotName: string },
@@ -62,7 +66,7 @@ type Props = {
     field: string,
     index: string,
     value: boolean | string,
-    isLegacy: boolean
+    specImplementation: specImplementationPropType
   ) => void,
   submitSchema: (schema: Array<Stream>, knotName: string) => void,
   submitConfig: (
@@ -118,11 +122,11 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    const { isLegacy } = this.props.tapsStore.selectedTap;
+    const { specImplementation } = this.props.tapsStore.selectedTap;
     if (!this.validSchema()) {
       this.setState({ streamSelected: this.validSchema() });
     }
-    this.props.editSchemaField(field, index, value, isLegacy);
+    this.props.editSchemaField(field, index, value, specImplementation);
   };
 
   handleSelectChange = (
@@ -130,8 +134,8 @@ export default class Schema extends Component<Props, State> {
     index: string,
     value: boolean | string
   ) => {
-    const { isLegacy } = this.props.tapsStore.selectedTap;
-    this.props.editSchemaField(field, index, value, isLegacy);
+    const { specImplementation } = this.props.tapsStore.selectedTap;
+    this.props.editSchemaField(field, index, value, specImplementation);
   };
 
   submit = () => {
@@ -400,6 +404,9 @@ export default class Schema extends Component<Props, State> {
                                 handleChange={this.handleSelectChange}
                                 stream={stream}
                                 isLegacy={selectedTap.isLegacy}
+                                specImplementation={
+                                  selectedTap.specImplementation
+                                }
                               />
                             </td>
                           </tr>

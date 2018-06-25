@@ -44,7 +44,7 @@ const createKnot = (tap, knotPath) =>
           value: {
             name: tap.name,
             image: tap.image,
-            isLegacy: tap.isLegacy
+            specImplementation: tap.specImplementation
           }
         },
         knotPath
@@ -63,7 +63,7 @@ const createKnot = (tap, knotPath) =>
           tap: {
             name: tap.name,
             image: tap.image,
-            isLegacy: tap.isLegacy
+            specImplementation: tap.specImplementation
           }
         })
       )
@@ -186,7 +186,7 @@ const getTaps = () =>
 const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
     const catalogPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'tap', 'catalog.json')
+      ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
       : path.resolve(applicationFolder, 'catalog.json');
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
