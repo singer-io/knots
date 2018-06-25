@@ -66,7 +66,7 @@ type Props = {
     selectedTap: {
       name: string,
       image: string,
-      specImplementation: specImplementationProps
+      specImplementation?: specImplementationProps
     },
     error?: string
   },

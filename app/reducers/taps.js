@@ -34,16 +34,16 @@ import {
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
-type selectedTapProperties = {
+export type tapPropertiesType = {
   name: string,
   image: string,
   specImplementation?: {
-    usesMetadata: {
-      selected: boolean,
-      replicationKey: boolean,
-      replicationMethod: boolean
+    usesMetadata?: {
+      selected?: boolean,
+      replicationKey?: boolean,
+      replicationMethod?: boolean
     },
-    usesCatalogArg: boolean
+    usesCatalogArg?: boolean
   }
 };
 
@@ -53,7 +53,7 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: selectedTapProperties,
+  +selectedTap: tapPropertiesType,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,

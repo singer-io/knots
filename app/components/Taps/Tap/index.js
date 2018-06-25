@@ -46,7 +46,7 @@ type Props = {
       name: string,
       image: string,
       repo: string,
-      specImplementation: specImplementationProps
+      specImplementation?: specImplementationProps
     },
     knotName: string
   ) => void,
