@@ -159,31 +159,44 @@ export default function taps(state = defaultState, action) {
       });
     case UPDATE_SCHEMA_FIELD: {
       if (schema[action.index]) {
-        let indexToUpdate;
+        const streamIndexToUpdate = (stream) => {
+          let indexToUpdate = -1;
+          stream.metadata.forEach((metadata, index) => {
+            if (metadata.breadcrumb.length === 0) {
+              indexToUpdate = index;
+            }
+          });
+          return indexToUpdate;
+        };
+
         const setImpliedReplicationMethod = (stream, usesMetadata) => {
           const streamClone = Object.assign({}, stream);
           const { replicationMethod: repMethodMetadata = true } =
             usesMetadata || {};
-          const forcedRepMethod =
-            streamClone.metadata[indexToUpdate].metadata[
-              'forced-replication-method'
-            ];
+          const indexToUpdate = streamIndexToUpdate(streamClone);
 
-          if (repMethodMetadata) {
-            const repKey =
-              streamClone.metadata[indexToUpdate].metadata['replication-key'];
-            if (repKey) {
+          if (indexToUpdate > -1) {
+            const forcedRepMethod =
               streamClone.metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'INCREMENTAL';
-            } else if (!forcedRepMethod && !repKey) {
-              streamClone.metadata[indexToUpdate].metadata[
-                'replication-method'
-              ] =
-                'FULL_TABLE';
+                'forced-replication-method'
+              ];
+
+            if (repMethodMetadata) {
+              const repKey =
+                streamClone.metadata[indexToUpdate].metadata['replication-key'];
+              if (repKey) {
+                streamClone.metadata[indexToUpdate].metadata[
+                  'replication-method'
+                ] =
+                  'INCREMENTAL';
+              } else if (!forcedRepMethod && !repKey) {
+                streamClone.metadata[indexToUpdate].metadata[
+                  'replication-method'
+                ] =
+                  'FULL_TABLE';
+              }
+              return streamClone;
             }
-            return streamClone;
           }
 
           if (streamClone.replication_key) {
@@ -197,13 +210,8 @@ export default function taps(state = defaultState, action) {
         const setSelected = (stream, usesMetadata, newSelectedValue) => {
           const streamClone = Object.assign({}, stream);
           const { selected: selectedMetadata = true } = usesMetadata || {};
-          if (selectedMetadata) {
-            streamClone.metadata.forEach((metadata, index) => {
-              if (metadata.breadcrumb.length === 0) {
-                indexToUpdate = index;
-              }
-            });
-
+          const indexToUpdate = streamIndexToUpdate(streamClone);
+          if (selectedMetadata && indexToUpdate > -1) {
             if (!newSelectedValue) {
               delete streamClone.metadata[indexToUpdate].metadata[
                 'replication-key'
@@ -230,13 +238,9 @@ export default function taps(state = defaultState, action) {
         const setReplicationKey = (stream, usesMetadata, newReplicationKey) => {
           const streamClone = Object.assign({}, stream);
           const { replicationKey: repKeyMetadata = true } = usesMetadata || {};
-          if (repKeyMetadata) {
-            streamClone.metadata.forEach((metadata, index) => {
-              if (metadata.breadcrumb.length === 0) {
-                indexToUpdate = index;
-              }
-            });
+          const indexToUpdate = streamIndexToUpdate(streamClone);
 
+          if (repKeyMetadata && indexToUpdate > -1) {
             streamClone.metadata[indexToUpdate].metadata[
               'replication-key'
             ] = newReplicationKey;
