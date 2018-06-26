@@ -51,6 +51,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Log from '../Log';
 import getLogo from '../../logos';
+import { tapPropertiesType } from '../../utils/shared-types';
 
 import styles from './Sync.css';
 
@@ -67,7 +68,7 @@ type Props = {
     knotError: string
   },
   tapStore: {
-    selectedTap: { name: string, image: string, optionalArgument: string }
+    selectedTap: tapPropertiesType
   },
   targetsStore: {
     selectedTarget: { name: string, image: string }
@@ -75,7 +76,7 @@ type Props = {
   updateName: (name: string) => void,
   save: (
     knotName: string,
-    selectedTap: { name: string, image: string, optionalArgument: string },
+    selectedTap: tapPropertiesType,
     selectedTarget: { name: string, image: string },
     currentName: string
   ) => void,

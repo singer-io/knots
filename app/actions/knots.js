@@ -23,6 +23,7 @@
 
 import axios from 'axios';
 import { shell } from 'electron';
+import { tapPropertiesType } from '../utils/shared-types';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -134,7 +135,7 @@ export function updateName(name: string) {
 
 export function save(
   knotName: string,
-  selectedTap: { name: string, image: string, optionalArgument: string },
+  selectedTap: tapPropertiesType,
   selectedTarget: { name: string, image: string },
   currentName: string
 ) {

@@ -40,8 +40,8 @@ const taps = [
   {
     name: 'Postgres',
     tapKey: 'tap-postgres',
-    tapImage: 'gbolahan/tap-postgres:1.0.0',
-    repo: 'https://github.com/singer-io/tap-postgres',
+    tapImage: 'dataworld/tap-postgres:0.0.16',
+    repo: 'https://github.com/singer-io/tap-postgres'
   }
 ];
 
@@ -63,10 +63,13 @@ const targets = [
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
     `docker run -v "${folderPath}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${folderPath}/tap/catalog.json"`,
-  runSync: (folderPath, tap, target) =>
-    `docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
-      tap.image
-    } ${tap.name} -c ${tap.name}/data/config.json --${tap.optionalArgument} ${
+  runSync: (folderPath, tap, target) => {
+    const { usesCatalogArg = true } = tap.specImplementation || {};
+    return `docker run -v "${folderPath}/tap:/app/${
+      tap.name
+    }/data" --interactive ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
       tap.name
     }/data/catalog.json 2> "${path.resolve(
       folderPath,
@@ -78,14 +81,16 @@ const commands = {
     }/data/config.json 2> "${path.resolve(
       folderPath,
       'target.log'
-    )}" > "${folderPath}/tap/state.json"`,
-  runPartialSync: (folderPath, tap, target) =>
-    `tail -1 "${folderPath}/tap/state.json" > "${folderPath}/tap/latest-state.json"; \\
+    )}" > "${folderPath}/tap/state.json"`;
+  },
+  runPartialSync: (folderPath, tap, target) => {
+    const { usesCatalogArg = true } = tap.specImplementation || {};
+    return `tail -1 "${folderPath}/tap/state.json" > "${folderPath}/tap/latest-state.json"; \\
     docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
       tap.image
-    } ${tap.name} -c ${tap.name}/data/config.json --${tap.optionalArgument} ${
-      tap.name
-    }/data/catalog.json --state ${
+    } ${tap.name} -c ${tap.name}/data/config.json ${
+      usesCatalogArg ? '--catalog' : '--properties'
+    } ${tap.name}/data/catalog.json --state ${
       tap.name
     }/data/latest-state.json 2> "${path.resolve(
       folderPath,
@@ -97,7 +102,8 @@ const commands = {
     }/data/config.json 2> "${path.resolve(
       folderPath,
       'target.log'
-    )}" > "${folderPath}/tap/state.json";`
+    )}" > "${folderPath}/tap/state.json";`;
+  }
 };
 
 module.exports = {
