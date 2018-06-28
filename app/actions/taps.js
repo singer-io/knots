@@ -132,7 +132,8 @@ export function updateTapField(
 export function submitConfig(
   tap: { name: string, image: string },
   config: { start_date?: string },
-  knotName: string
+  knotName: string,
+  skipDiscovery: ?boolean
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -143,7 +144,8 @@ export function submitConfig(
     const payload = {
       tap,
       tapConfig,
-      knot: knotName
+      knot: knotName,
+      skipDiscovery
     };
 
     axios
