@@ -231,7 +231,12 @@ export default function taps(state = defaultState, action) {
               const updatedMetadata = streamClone.metadata.map(
                 (mdataProperties) => {
                   const fields = Object.assign({}, mdataProperties);
-                  fields.metadata.selected = true;
+                  if (
+                    fields.metadata.inclusion === 'available' ||
+                    !fields.metadata.inclusion
+                  ) {
+                    fields.metadata.selected = newSelectedValue;
+                  }
                   return fields;
                 }
               );
@@ -239,8 +244,15 @@ export default function taps(state = defaultState, action) {
             }
           } else if (newSelectedValue) {
             streamClone.schema.selected = newSelectedValue;
-            Object.keys(streamClone.schema.properties).forEach((field) => {
-              streamClone.schema.properties[field].selected = newSelectedValue;
+            const schemaProperties = streamClone.schema.properties;
+            Object.keys(schemaProperties).forEach((field) => {
+              const fieldProperties = schemaProperties[field];
+              if (
+                fieldProperties.inclusion === 'available' ||
+                !fieldProperties.inclusion
+              ) {
+                fieldProperties.selected = newSelectedValue;
+              }
             });
           } else {
             delete streamClone.schema.selected;
