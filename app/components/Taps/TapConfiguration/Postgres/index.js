@@ -96,7 +96,7 @@ export default class Postgres extends Component<Props, State> {
           <Row>
             <Col xs="8">
               <FormGroup>
-                <Label for="host">Host/IP</Label>
+                <Label for="host">Hostname/IP</Label>
                 <Input
                   type="text"
                   name="host"
@@ -160,6 +160,8 @@ export default class Postgres extends Component<Props, State> {
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
+          </Row>
+          <Row>
             <Col>
               <FormGroup>
                 <Label for="user">Username</Label>
@@ -181,8 +183,6 @@ export default class Postgres extends Component<Props, State> {
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
-          </Row>
-          <Row>
             <Col xs="6">
               <FormGroup>
                 <Label for="password">Password</Label>
