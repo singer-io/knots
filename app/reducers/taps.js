@@ -232,8 +232,8 @@ export default function taps(state = defaultState, action) {
                 (mdataProperties) => {
                   const fields = Object.assign({}, mdataProperties);
                   if (
-                    fields.metadata.inclusion === 'available' ||
-                    !fields.metadata.inclusion
+                    !fields.metadata.inclusion ||
+                    fields.metadata.inclusion === 'available'
                   ) {
                     fields.metadata.selected = newSelectedValue;
                   }
@@ -248,8 +248,8 @@ export default function taps(state = defaultState, action) {
             Object.keys(schemaProperties).forEach((field) => {
               const fieldProperties = schemaProperties[field];
               if (
-                fieldProperties.inclusion === 'available' ||
-                !fieldProperties.inclusion
+                !fieldProperties.inclusion ||
+                fieldProperties.inclusion === 'available'
               ) {
                 fieldProperties.selected = newSelectedValue;
               }
