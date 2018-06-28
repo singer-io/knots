@@ -85,7 +85,7 @@ const getKnots = () =>
 const createMakeFile = (knot, name) =>
   new Promise((resolve, reject) => {
     /* eslint-disable no-template-curly-in-string */
-    const fileContent = `fullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
+    const fileContent = `SHELL=/bin/bash -o pipefail\n\nfullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
       knot.tap.image
     } ${
       knot.tap.name
@@ -146,32 +146,36 @@ const sync = (req) =>
 
           // Get tap and target from the knot object
           const syncData = exec(
-            commands.runSync(
+            `set -o pipefail;${commands.runSync(
               `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
-            ),
-            { detached: true }
+            )}`,
+            { detached: true, shell: '/bin/bash' }
           );
 
           runningProcess = syncData;
 
           emitLogs(req, tapLogPath, targetLogPath);
 
-          syncData.on('exit', () => {
-            addKnotAttribute(
-              { field: ['lastRun'], value: new Date().toISOString() },
-              path.resolve(
-                `${applicationFolder}/knots/${knotName}`,
-                'knot.json'
+          syncData.on('exit', (code) => {
+            if (code > 0) {
+              reject(new Error('Sync failed'));
+            } else {
+              addKnotAttribute(
+                { field: ['lastRun'], value: new Date().toISOString() },
+                path.resolve(
+                  `${applicationFolder}/knots/${knotName}`,
+                  'knot.json'
+                )
               )
-            )
-              .then(() => {
-                resolve();
-              })
-              .catch((error) => {
-                reject(error);
-              });
+                .then(() => {
+                  resolve();
+                })
+                .catch((error) => {
+                  reject(error);
+                });
+            }
           });
         } catch (error) {
           reject(error);
@@ -313,35 +317,39 @@ const partialSync = (req) =>
 
           // Get tap and target from the knot object
           const syncData = exec(
-            commands.runPartialSync(
+            `set -o pipefail;${commands.runPartialSync(
               `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
-            ),
-            { detached: true }
+            )}`,
+            { detached: true, shell: '/bin/bash' }
           );
 
           runningProcess = syncData;
 
           emitLogs(req, tapLogPath, targetLogPath);
 
-          syncData.on('exit', () => {
-            addKnotAttribute(
-              {
-                field: ['lastRun'],
-                value: new Date().toISOString()
-              },
-              path.resolve(
-                `${applicationFolder}/knots/${knotName}`,
-                'knot.json'
+          syncData.on('exit', (code) => {
+            if (code > 0) {
+              reject(new Error('Partial sync failed'));
+            } else {
+              addKnotAttribute(
+                {
+                  field: ['lastRun'],
+                  value: new Date().toISOString()
+                },
+                path.resolve(
+                  `${applicationFolder}/knots/${knotName}`,
+                  'knot.json'
+                )
               )
-            )
-              .then(() => {
-                resolve();
-              })
-              .catch((error) => {
-                reject(error);
-              });
+                .then(() => {
+                  resolve();
+                })
+                .catch((error) => {
+                  reject(error);
+                });
+            }
           });
         } catch (error) {
           reject(error);
