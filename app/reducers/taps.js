@@ -219,18 +219,48 @@ export default function taps(state = defaultState, action) {
               delete streamClone.metadata[indexToUpdate].metadata[
                 'replication-method'
               ];
-              delete streamClone.metadata[indexToUpdate].metadata.selected;
+              const updatedMetadata = streamClone.metadata.map(
+                (mdataProperties) => {
+                  const fields = Object.assign({}, mdataProperties);
+                  delete fields.metadata.selected;
+                  return fields;
+                }
+              );
+              streamClone.metadata = updatedMetadata;
             } else {
-              streamClone.metadata[
-                indexToUpdate
-              ].metadata.selected = newSelectedValue;
+              const updatedMetadata = streamClone.metadata.map(
+                (mdataProperties) => {
+                  const fields = Object.assign({}, mdataProperties);
+                  if (
+                    !fields.metadata.inclusion ||
+                    fields.metadata.inclusion === 'available'
+                  ) {
+                    fields.metadata.selected = newSelectedValue;
+                  }
+                  return fields;
+                }
+              );
+              streamClone.metadata = updatedMetadata;
             }
           } else if (newSelectedValue) {
-            streamClone.selected = newSelectedValue;
+            streamClone.schema.selected = newSelectedValue;
+            const schemaProperties = streamClone.schema.properties;
+            Object.keys(schemaProperties).forEach((field) => {
+              const fieldProperties = schemaProperties[field];
+              if (
+                !fieldProperties.inclusion ||
+                fieldProperties.inclusion === 'available'
+              ) {
+                fieldProperties.selected = newSelectedValue;
+              }
+            });
           } else {
-            delete streamClone.selected;
+            delete streamClone.schema.selected;
             delete streamClone.replication_key;
             delete streamClone.replication_method;
+            Object.keys(streamClone.schema.properties).forEach((field) => {
+              delete streamClone.schema.properties[field].selected;
+            });
           }
           return streamClone;
         };
