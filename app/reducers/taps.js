@@ -169,10 +169,13 @@ export default function taps(state = defaultState, action) {
         }
         return 0;
       };
+
       return Object.assign({}, state, {
         schemaLoading: false,
         schemaLoaded: true,
-        schema: action.schema.sort(compareStreams),
+        schema: action.schema
+          ? action.schema.sort(compareStreams)
+          : state.schema,
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {
