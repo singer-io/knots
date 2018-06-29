@@ -200,6 +200,7 @@ export default class Schema extends Component<Props, State> {
     const { selected: usesSelected = true } =
       specImplementation.usesMetadata || {};
 
+    // true if a stream has been selected
     let valid = false;
 
     if (!usesSelected) {
@@ -209,15 +210,23 @@ export default class Schema extends Component<Props, State> {
         }
       });
     } else {
-      // Valid if a stream has been selected
       schema.forEach((stream) => {
         const { metadata } = stream;
-        metadata.forEach((meta) => {
+
+        // Determine index of metadata with empty breadcrumb
+        let updatedIndex = -1;
+        metadata.forEach((meta, index) => {
           const subMeta = meta.metadata;
-          if (subMeta.selected) {
-            valid = true;
+          if (subMeta.breadcrumb.length === 0) {
+            updatedIndex = index;
           }
         });
+
+        if (updatedIndex > -1) {
+          if (metadata[updatedIndex].metadata.selected) {
+            valid = true;
+          }
+        }
       });
     }
 
