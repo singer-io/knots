@@ -89,7 +89,7 @@ export type tapsStateType = {
   'tap-mysql': {
     fieldValue: {
       host: string,
-      port: string,
+      port: number,
       user: string,
       password: string
     }
@@ -450,6 +450,14 @@ export default function taps(state = defaultState, action) {
             start_date: '',
             user_agent: 'knots',
             customer_ids: ''
+          }
+        },
+        'tap-mysql': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            user: '',
+            password: ''
           }
         }
       };
