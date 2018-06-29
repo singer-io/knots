@@ -87,8 +87,6 @@ export default class MySQL extends Component<Props, State> {
       'tap-mysql'
     ].fieldValues;
 
-    console.log('These are the props', this.props);
-
     return (
       <Container>
         <Form>
