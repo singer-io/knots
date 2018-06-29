@@ -74,6 +74,15 @@ export default class Postgres extends Component<Props, State> {
     }
   };
 
+  validateHostName = (value: string) => {
+    const regex = /^[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,}$/gm;
+    if (regex.test(value)) {
+      this.setState({ host: { valid: true } });
+    } else {
+      this.setState({ host: { invalid: true } });
+    }
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -105,9 +114,8 @@ export default class Postgres extends Component<Props, State> {
                   onFocus={() => {
                     this.setState({ host: {} });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('host', value);
+                  onBlur={() => {
+                    this.validateHostName(host);
                   }}
                   onChange={this.handleChange}
                   {...this.state.host}
