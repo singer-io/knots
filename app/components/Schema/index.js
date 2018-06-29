@@ -215,20 +215,11 @@ export default class Schema extends Component<Props, State> {
       schema.forEach((stream) => {
         const { metadata } = stream;
 
-        // Determine index of metadata with empty breadcrumb
-        let updatedIndex = -1;
-        metadata.forEach((subMeta, index) => {
-          if (subMeta.breadcrumb.length === 0) {
-            updatedIndex = index;
-          }
-        });
-
-        // Use the obtained index to check whether the stream has been selected
-        if (updatedIndex > -1) {
-          if (metadata[updatedIndex].metadata.selected) {
+        metadata.forEach((meta) => {
+          if (meta.breadcrumb.length === 0 && meta.metadata.selected) {
             valid = true;
           }
-        }
+        });
       });
     }
 
