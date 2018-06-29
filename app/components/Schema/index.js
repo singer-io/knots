@@ -164,7 +164,8 @@ export default class Schema extends Component<Props, State> {
   };
 
   fieldSelected = (stream: Stream) => {
-    const { specImplementation } = this.props.tapsStore.selectedTap;
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
 
     const { selected: usesSelected = true } =
       specImplementation.usesMetadata || {};
@@ -195,7 +196,8 @@ export default class Schema extends Component<Props, State> {
   validSchema = () => {
     const { schema } = this.props.tapsStore;
 
-    const { specImplementation } = this.props.tapsStore.selectedTap;
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
 
     const { selected: usesSelected = true } =
       specImplementation.usesMetadata || {};
@@ -215,13 +217,13 @@ export default class Schema extends Component<Props, State> {
 
         // Determine index of metadata with empty breadcrumb
         let updatedIndex = -1;
-        metadata.forEach((meta, index) => {
-          const subMeta = meta.metadata;
+        metadata.forEach((subMeta, index) => {
           if (subMeta.breadcrumb.length === 0) {
             updatedIndex = index;
           }
         });
 
+        // Use the obtained index to check whether the stream has been selected
         if (updatedIndex > -1) {
           if (metadata[updatedIndex].metadata.selected) {
             valid = true;
