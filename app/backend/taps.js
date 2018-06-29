@@ -152,7 +152,7 @@ const readSchema = (knot) =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
-    const { knot, tapConfig } = req.body;
+    const { knot, tapConfig, skipDiscovery } = req.body;
 
     const configPath = knot
       ? path.resolve(applicationFolder, knot, 'tap', 'config.json')
@@ -161,15 +161,19 @@ const addConfig = (req) =>
     // Write the config to configs/tap/
     writeConfig(tapConfig, configPath, knot)
       .then(() => {
-        // Get tap schema by running discovery mode
-        getSchema(req, knot)
-          .then(() => {
-            // Schema now on file, read it and return the result
-            readSchema(knot)
-              .then(resolve)
-              .catch(reject);
-          })
-          .catch(reject);
+        if (skipDiscovery) {
+          resolve({});
+        } else {
+          // Get tap schema by running discovery mode
+          getSchema(req, knot)
+            .then(() => {
+              // Schema now on file, read it and return the result
+              readSchema(knot)
+                .then(resolve)
+                .catch(reject);
+            })
+            .catch(reject);
+        }
       })
       .catch(reject);
   });

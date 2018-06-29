@@ -60,7 +60,8 @@ type Props = {
   submitConfig: (
     selectedTap: tapPropertiesType,
     fieldValues: {},
-    knotName: string
+    knotName: string,
+    skipDiscovery: ?boolean
   ) => void,
   tapsPageLoaded: () => void,
   cancel: () => void
@@ -110,7 +111,7 @@ export default class Taps extends Component<Props, State> {
     return valid;
   };
 
-  submit = (showModal: boolean) => {
+  submit = (showModal: boolean, skipDiscovery: ?boolean) => {
     const { selectedTap } = this.props.tapsStore;
     const { fieldValues } = this.props.tapsStore[selectedTap.name];
     const { knotName, knotLoaded } = this.props.knotsStore;
@@ -119,7 +120,12 @@ export default class Taps extends Component<Props, State> {
     if (knotLoaded && showModal) {
       this.setState({ showModal: true });
     } else {
-      this.props.submitConfig(selectedTap, fieldValues, knotName);
+      this.props.submitConfig(
+        selectedTap,
+        fieldValues,
+        knotName,
+        skipDiscovery
+      );
       this.props.history.push('/schema');
     }
   };
@@ -220,6 +226,7 @@ export default class Taps extends Component<Props, State> {
               color="secondary"
               outline
               onClick={() => {
+                this.submit(false, true);
                 this.props.history.push('/schema');
               }}
             >
