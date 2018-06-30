@@ -75,8 +75,8 @@ export default class Postgres extends Component<Props, State> {
   };
 
   validateHostName = (value: string) => {
-    const regex = /^[a-z0-9]+([-.][a-z0-9]+)*\.[a-z]{2,}$/gm;
-    if (regex.test(value)) {
+    const unsupportedHost = /(^localhost|^127|::1|^\s*$)|^(?!.*\.[a-z0-9]{2,}$).*$/g;
+    if (!value.match(unsupportedHost)) {
       this.setState({ host: { valid: true } });
     } else {
       this.setState({ host: { invalid: true } });
@@ -121,7 +121,7 @@ export default class Postgres extends Component<Props, State> {
                   {...this.state.host}
                 />
                 <FormFeedback>
-                  Must be a valid server hostname or IP address
+                  KNOTS does not support loopback addresses
                 </FormFeedback>
               </FormGroup>
             </Col>
