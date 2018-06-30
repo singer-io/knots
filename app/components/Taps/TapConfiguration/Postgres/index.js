@@ -75,7 +75,7 @@ export default class Postgres extends Component<Props, State> {
   };
 
   validateHostName = (value: string) => {
-    const unsupportedHost = /(^localhost|^127|::1|^\s*$)|^(?!.*\.[a-z0-9]{2,}$).*$/g;
+    const unsupportedHost = /^(localhost|127(\.\d{1,3}){3}|::1)$/g;
     if (!value.match(unsupportedHost)) {
       this.setState({ host: { valid: true } });
     } else {
