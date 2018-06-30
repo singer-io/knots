@@ -137,6 +137,41 @@ export default class Taps extends Component<Props, State> {
     this.props.history.push('/');
   };
 
+  // Flow fix me
+  tapGrid = (
+    taps: Array<{
+      name: string,
+      repo: string,
+      tapImage: string,
+      tapKey: string
+    }>,
+    knotName: string,
+    selectedTap: { name: string }
+  ) => {
+    // TODO Find a cleaner way to display a list as a responsive grid with Bootstrap
+    const rows = [];
+    let row = [];
+    for (let i = 0; i < taps.length; i += 1) {
+      const tap = taps[i];
+      row.push(
+        <Tap
+          key={tap.name}
+          {...tap}
+          selectTap={this.props.selectTap}
+          selected={selectedTap.name}
+          knotName={knotName}
+        />
+      );
+      const lastTapInRow = (i + 1) % 3 === 0;
+      const lastTap = i + 1 === taps.length;
+      if (lastTapInRow || lastTap) {
+        rows.push(<Row className={!lastTap ? 'mb-4' : 'mb-0'}>{row}</Row>);
+        row = [];
+      }
+    }
+    return rows;
+  };
+
   render() {
     const { taps, selectedTap } = this.props.tapsStore;
     const { knotName } = this.props.knotsStore;
@@ -164,18 +199,9 @@ export default class Taps extends Component<Props, State> {
                   <strong>Taps</strong> extract data from any source in a
                   standard way.
                 </p>
-                <Row>
-                  {taps.map((tap) => (
-                    <Tap
-                      key={tap.name}
-                      repo={tap.repo}
-                      {...tap}
-                      selectTap={this.props.selectTap}
-                      selected={selectedTap.name}
-                      knotName={knotName}
-                    />
-                  ))}
-                </Row>
+                <Container>
+                  {this.tapGrid(taps, knotName, selectedTap)}
+                </Container>
               </CardBody>
             </Card>
 
