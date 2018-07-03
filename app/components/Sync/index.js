@@ -135,15 +135,32 @@ export default class Sync extends Component<Props, State> {
 
   handleChange = (event: SyntheticEvent<HTMLButtonElement>) => {
     const { value } = event.currentTarget;
-    this.validateName(value);
-
     this.props.updateName(value);
+
+    this.validateName(value);
   };
 
   cancel = () => {
     const { knotName } = this.props.knotsStore;
     this.props.cancel(knotName);
     this.props.history.push('/');
+  };
+
+  nameUsed = (enteredName: string) => {
+    const { knots, knotName } = this.props.knotsStore;
+    const { currentKnotName } = this.state;
+    const knotNames = knots.map((knotObject) => knotObject.name);
+
+    // User can overwrite knot being edited
+    if (enteredName === currentKnotName) {
+      return false;
+    }
+
+    if (knotNames.indexOf(enteredName) > -1) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   validateName = (value: string) => {
@@ -156,7 +173,16 @@ export default class Sync extends Component<Props, State> {
         const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
 
         if (valid) {
-          this.setState({ name: { invalid: false }, knotNameValid: true });
+          // Ensure unique name has been used
+          if (this.nameUsed(value)) {
+            this.setState({
+              name: { invalid: true },
+              errorMessage: 'This name is already in use by a different knot',
+              knotNameValid: false
+            });
+          } else {
+            this.setState({ name: { invalid: false }, knotNameValid: true });
+          }
         } else {
           this.setState({
             name: { invalid: true },
