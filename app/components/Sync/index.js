@@ -65,7 +65,8 @@ type Props = {
     knotSynced: boolean,
     tapLogs: Array<string>,
     targetLogs: Array<string>,
-    knotError: string
+    knotError: string,
+    knotLoaded: boolean
   },
   tapStore: {
     selectedTap: tapPropertiesType
@@ -107,7 +108,7 @@ export default class Sync extends Component<Props, State> {
 
   componentWillMount() {
     const { knot, mode } = queryString.parse(this.props.location.search);
-    const { knotName } = this.props.knotsStore;
+    const { knotName, knotLoaded } = this.props.knotsStore;
 
     // Receive log messages from socket.io
     socket.on('tapLog', (log) => {
@@ -119,7 +120,9 @@ export default class Sync extends Component<Props, State> {
     });
 
     // Check whether the current knotName is valid for when editing knot
-    this.validateName(knotName);
+    if (knotLoaded) {
+      this.validateName(knotName);
+    }
 
     this.props.syncPageLoaded();
 
@@ -145,18 +148,23 @@ export default class Sync extends Component<Props, State> {
 
   validateName = (value: string) => {
     if (value.length <= 60) {
-      // Test for special characters /, ?, <, >, \, :, *, |, and "
-      const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
-
-      if (valid) {
-        this.setState({ name: { invalid: false }, knotNameValid: true });
+      // Don't allow users to save blank knot names
+      if (value.length === 0) {
+        this.setState({ name: { invalid: false }, knotNameValid: false });
       } else {
-        this.setState({
-          name: { invalid: true },
-          errorMessage:
-            'Knot name cannot contain the characters /, ?, <, >, :, *, |, and "',
-          knotNameValid: false
-        });
+        // Test for special characters /, ?, <, >, \, :, *, |, and "
+        const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
+
+        if (valid) {
+          this.setState({ name: { invalid: false }, knotNameValid: true });
+        } else {
+          this.setState({
+            name: { invalid: true },
+            errorMessage:
+              'Knot name cannot contain the characters /, ?, <, >, :, *, |, and "',
+            knotNameValid: false
+          });
+        }
       }
     } else {
       this.setState({
