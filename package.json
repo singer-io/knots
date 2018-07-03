@@ -204,6 +204,7 @@
     "electron-oauth2": "^3.0.0",
     "fix-path": "^2.1.0",
     "font-awesome": "^4.7.0",
+    "google-auth-library": "^1.6.1",
     "history": "^4.7.2",
     "jquery": "^3.3.1",
     "moment": "^2.22.1",

@@ -34,6 +34,7 @@
 import { app, ipcMain, BrowserWindow } from 'electron';
 import electronOauth2 from 'electron-oauth2';
 import MenuBuilder from './menu';
+import { electronOauth } from './electron-oauth';
 
 const fixPath = require('fix-path');
 
@@ -142,6 +143,23 @@ app.on('ready', async () => {
           console.log('Error while getting token', err);
         }
       )
+      .catch((error) => console.log(error));
+  });
+
+  ipcMain.on('adwords-oauth', (event, clientId, clientSecret) => {
+    const tokenUrl = 'https://accounts.google.com/o/oauth2/token';
+    const googleOauth = electronOauth(windowParams);
+    googleOauth
+      .getAccessToken(
+        'https://www.googleapis.com/auth/adwords',
+        clientId,
+        clientSecret,
+        'urn:ietf:wg:oauth:2.0:oob',
+        tokenUrl
+      )
+      .then((token) => {
+        event.sender.send('adwords-oauth-reply', token);
+      })
       .catch((error) => console.log(error));
   });
 });
