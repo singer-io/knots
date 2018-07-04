@@ -149,14 +149,14 @@ export default class Sync extends Component<Props, State> {
   nameUsed = (enteredName: string) => {
     const { knots, knotName } = this.props.knotsStore;
     const { currentKnotName } = this.state;
-    const knotNames = knots.map((knotObject) => knotObject.name);
+    const knotNames = knots.map((knotObject) => knotObject.name.toLowerCase());
 
     // User can overwrite knot being edited
-    if (enteredName === currentKnotName) {
+    if (enteredName.toLowerCase() === currentKnotName.toLowerCase()) {
       return false;
     }
 
-    if (knotNames.indexOf(enteredName) > -1) {
+    if (knotNames.indexOf(enteredName.toLowerCase()) > -1) {
       return true;
     } else {
       return false;
@@ -173,7 +173,7 @@ export default class Sync extends Component<Props, State> {
         const valid = !value.match(/\*|\/|\?|>|<|:|\*|\||"/);
 
         if (valid) {
-          // Ensure unique name has been used
+          // Ensure unique name has been used (case insensitive)
           if (this.nameUsed(value)) {
             this.setState({
               name: { invalid: true },
