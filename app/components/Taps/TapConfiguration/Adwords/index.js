@@ -138,7 +138,6 @@ export default class Adwords extends Component<Props, State> {
     const { oauth_client_id, oauth_client_secret } = this.props.tapsStore[
       'tap-adwords'
     ].fieldValues;
-    console.log(oauth_client_id, oauth_client_secret);
     ipcRenderer.send('adwords-oauth', oauth_client_id, oauth_client_secret);
   };
 
@@ -160,49 +159,6 @@ export default class Adwords extends Component<Props, State> {
 
     return (
       <Container>
-        {/* <Alert color="primary">
-          <h4>Shhh... Here is a secret!</h4>
-          <p>
-            This Tap requires you to provision your own SalesForce Connected
-            App. That will give you access to the consumer key and secret
-            required below. To do so, please follow&nbsp;
-            <a
-              href="#"
-              onClick={(e) =>
-                this.openLink(
-                  e,
-                  'https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5'
-                )
-              }
-            >
-              this guide
-            </a>.
-          </p>
-          <p>
-            You must select <strong>Enable OAuth settings</strong> and specify
-            the following options:
-          </p>
-          <ol>
-            <li>
-              Callback URL:{' '}
-              <code>https://login.salesforce.com/services/oauth2/success</code>
-            </li>
-            <li>
-              Selected OAuth Scopes:
-              <ul>
-                <li>
-                  <code>Access and manage your data (api)</code>
-                </li>
-                <li>
-                  <code>
-                    Perform requests on your behalf at any time (refresh_token,
-                    offline_access)
-                  </code>
-                </li>
-              </ul>
-            </li>
-          </ol>
-        </Alert> */}
         <Form>
           <Row>
             <Col>

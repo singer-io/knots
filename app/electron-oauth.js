@@ -5,14 +5,22 @@ const fetch = require('node-fetch');
 const co = require('co');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { BrowserWindow } = require('electron');
+const nodeUrl = require('url');
 
 /* eslint-disable camelcase */
 
-const getAuthenticationUrl = (scopes, clientId, clientSecret, redirectUri) => {
+const getAuthenticationUrl = (
+  scopes,
+  clientId,
+  clientSecret,
+  redirectUri,
+  authBaseUrl
+) => {
   const oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUri);
+  oauth2Client.authBaseUrl = authBaseUrl;
   const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline', // 'online' (default) or 'offline' (gets refresh_token)
-    scope: scopes // If you only need one scope you can pass it as string
+    access_type: 'offline',
+    scope: scopes
   });
   return url;
 };
@@ -27,6 +35,34 @@ const authorizeApp = (url, browserWindowParams) =>
 
     win.on('closed', () => {
       reject(new Error('User closed the window'));
+    });
+
+    function onCallback(uri) {
+      const url_parts = nodeUrl.parse(uri, true);
+      const { query } = url_parts;
+      const { code, error } = query;
+
+      if (error !== undefined) {
+        reject(error);
+        win.removeAllListeners('closed');
+        setImmediate(() => {
+          win.close();
+        });
+      } else if (code) {
+        resolve(code);
+        win.removeAllListeners('closed');
+        setImmediate(() => {
+          win.close();
+        });
+      }
+    }
+
+    win.webContents.on('will-navigate', (event, urlString) => {
+      onCallback(urlString);
+    });
+
+    win.webContents.on('did-get-redirect-request', (event, oldUrl, newUrl) => {
+      onCallback(newUrl);
     });
 
     win.on('page-title-updated', () => {
@@ -52,13 +88,15 @@ export function electronOauth(browserWindowParams, httpAgent) {
     scopes,
     clientId,
     clientSecret,
-    redirectUri
+    redirectUri,
+    authBaseUrl
   ) => {
     const url = getAuthenticationUrl(
       scopes,
       clientId,
       clientSecret,
-      redirectUri
+      redirectUri,
+      authBaseUrl
     );
     return authorizeApp(url, browserWindowParams);
   };
@@ -69,13 +107,15 @@ export function electronOauth(browserWindowParams, httpAgent) {
     clientId,
     clientSecret,
     redirectUri,
-    tokenUrl
+    tokenUrl,
+    authBaseUrl
   ) {
     const authorizationCode = yield getAuthorizationCode(
       scopes,
       clientId,
       clientSecret,
-      redirectUri
+      redirectUri,
+      authBaseUrl
     );
     const data = stringify({
       code: authorizationCode,
