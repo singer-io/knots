@@ -115,6 +115,36 @@ export default class Redshift extends Component<Props, State> {
     }`;
   };
 
+  validateHostName = (value: string) => {
+    if (value) {
+      // Ensure a loopback address hasn't been provided
+      const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
+      if (loopBackAddresses.test(value)) {
+        this.setState({
+          host: {
+            validation: { invalid: true },
+            errorMessage: 'KNOTS does not support loopback addresses'
+          }
+        });
+      } else {
+        // All checks pass
+        this.setState({
+          host: {
+            validation: { valid: true }
+          }
+        });
+      }
+    } else {
+      // If no value is provided let the user know the field is required
+      this.setState({
+        host: {
+          validation: { invalid: true },
+          errorMessage: 'Must be a valid server hostname or IP address'
+        }
+      });
+    }
+  };
+
   render() {
     const {
       host,
@@ -141,16 +171,13 @@ export default class Redshift extends Component<Props, State> {
                   onFocus={() => {
                     this.setState({ host: {} });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('host', value);
+                  onBlur={() => {
+                    this.validateHostName(host);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.host}
+                  {...this.state.host.validation}
                 />
-                <FormFeedback>
-                  Must be a valid server hostname or IP address
-                </FormFeedback>
+                <FormFeedback>{this.state.host.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="4">
