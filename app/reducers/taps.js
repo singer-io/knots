@@ -140,7 +140,7 @@ const defaultState = {
       oauth_client_secret: '',
       refresh_token: '',
       start_date: '',
-      user_agent: '',
+      user_agent: 'knots',
       customer_ids: ''
     }
   }
@@ -432,7 +432,7 @@ export default function taps(state = defaultState, action) {
             oauth_client_secret: '',
             refresh_token: '',
             start_date: '',
-            user_agent: '',
+            user_agent: 'knots',
             customer_ids: ''
           }
         }

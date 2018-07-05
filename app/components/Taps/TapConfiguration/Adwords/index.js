@@ -25,7 +25,6 @@
 
 import React, { Component } from 'react';
 import {
-  Alert,
   Button,
   Col,
   Collapse,
@@ -90,7 +89,7 @@ export default class Adwords extends Component<Props, State> {
     oauth_client_secret: {},
     refresh_token: {},
     start_date: {},
-    user_agent: {},
+    user_agent: { valid: true },
     customer_ids: {}
   };
 
@@ -184,23 +183,17 @@ export default class Adwords extends Component<Props, State> {
             </Col>
             <Col>
               <FormGroup>
-                <Label for="client_id">User agent</Label>
+                <Label for="client_id">
+                  User agent <small>(optional)</small>
+                </Label>
                 <Input
                   type="text"
                   name="user_agent"
                   id="user_agent"
                   value={user_agent}
-                  onFocus={() => {
-                    this.setState({ user_agent: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('user_agent', value);
-                  }}
                   onChange={this.handleChange}
                   {...this.state.user_agent}
                 />
-                <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
