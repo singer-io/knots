@@ -223,7 +223,7 @@ export default class Adwords extends Component<Props, State> {
               <FormGroup>
                 <Label for="client_secret">Client secret</Label>
                 <Input
-                  type="text"
+                  type="password"
                   name="oauth_client_secret"
                   id="oauth_client_secret"
                   value={oauth_client_secret}
@@ -290,6 +290,9 @@ export default class Adwords extends Component<Props, State> {
                   onChange={this.handleChange}
                   {...this.state.customer_ids}
                 />
+                <FormText>
+                  Comma separated AdWords account IDs to replicate data from.
+                </FormText>
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
