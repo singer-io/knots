@@ -1,11 +1,10 @@
 import { stringify } from 'querystring';
 import { OAuth2Client } from 'google-auth-library';
 
-const fetch = require('node-fetch');
-const co = require('co');
-// eslint-disable-next-line import/no-extraneous-dependencies
-const { BrowserWindow } = require('electron');
-const nodeUrl = require('url');
+import fetch from 'node-fetch';
+import co from 'co';
+import { BrowserWindow } from 'electron';
+import nodeUrl from 'url';
 
 /* eslint-disable camelcase */
 
