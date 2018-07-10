@@ -42,6 +42,15 @@ const taps = [
     tapKey: 'tap-postgres',
     tapImage: 'dataworld/tap-postgres:0.0.16',
     repo: 'https://github.com/singer-io/tap-postgres'
+  },
+  {
+    name: 'Adwords',
+    tapKey: 'tap-adwords',
+    tapImage: 'dataworld/tap-adwords:1.3.3',
+    repo: 'https://github.com/singer-io/tap-adwords',
+    specImplementation: {
+      usesCatalogArg: false
+    }
   }
 ];
 

@@ -73,7 +73,7 @@ export default class Tap extends Component<Props, State> {
     } = this.props;
 
     return (
-      <Col sm="12" md={{ size: 4 }}>
+      <Col sm="12" md={{ size: 4 }} className="mb-4">
         <Card
           className={this.getBorderState()}
           style={{ cursor: 'pointer' }}

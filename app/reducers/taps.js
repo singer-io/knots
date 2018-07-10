@@ -74,6 +74,17 @@ export type tapsStateType = {
       user: string,
       password: string
     }
+  },
+  'tap-adwords': {
+    fieldValues: {
+      developer_token: string,
+      oauth_client_id: string,
+      oauth_client_secret: string,
+      refresh_token: string,
+      start_date: string,
+      user_agent: string,
+      customer_ids: string
+    }
   }
 };
 
@@ -120,6 +131,17 @@ const defaultState = {
       dbname: '',
       user: '',
       password: ''
+    }
+  },
+  'tap-adwords': {
+    fieldValues: {
+      developer_token: '',
+      oauth_client_id: '',
+      oauth_client_secret: '',
+      refresh_token: '',
+      start_date: '',
+      user_agent: 'knots',
+      customer_ids: ''
     }
   }
 };
@@ -401,6 +423,17 @@ export default function taps(state = defaultState, action) {
             dbname: '',
             user: '',
             password: ''
+          }
+        },
+        'tap-adwords': {
+          fieldValues: {
+            developer_token: '',
+            oauth_client_id: '',
+            oauth_client_secret: '',
+            refresh_token: '',
+            start_date: '',
+            user_agent: 'knots',
+            customer_ids: ''
           }
         }
       };
