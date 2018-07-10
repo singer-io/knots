@@ -106,7 +106,7 @@ export function getKnots() {
       type: FETCHING_KNOTS
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/knots/`)
       .then((response) => {
         dispatch({
