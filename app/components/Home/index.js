@@ -50,8 +50,8 @@ type State = {
 
 export default class Home extends Component<Props, State> {
   state = {
-    dockerInstalled: false,
-    dockerRunning: false
+    dockerInstalled: !!this.props.knotsStore.dockerVersion,
+    dockerRunning: this.props.knotsStore.dockerRunning
   };
 
   componentWillMount() {
