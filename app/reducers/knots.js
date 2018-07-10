@@ -56,7 +56,7 @@ export type knotsStateType = {
   +knotLoaded: boolean
 };
 
-const defaultState = {
+export const defaultState = {
   detectingDocker: false,
   dockerVersion: '',
   dockerRunning: false,
