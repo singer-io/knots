@@ -26,7 +26,7 @@ exports[`Home component Detects when Docker is not installed 1`] = `
           className="nav-item"
         >
           <a
-            aria-current={false}
+            aria-current={null}
             className="nav-link"
             href="/"
             onClick={[Function]}
@@ -162,7 +162,7 @@ exports[`Home component Detects when Docker is not running 1`] = `
           className="nav-item"
         >
           <a
-            aria-current={false}
+            aria-current={null}
             className="nav-link"
             href="/"
             onClick={[Function]}
@@ -952,7 +952,7 @@ exports[`Home component Shows jumbotron when there are no saved knots 1`] = `
           className="nav-item"
         >
           <a
-            aria-current={false}
+            aria-current={null}
             className="nav-link"
             href="/"
             onClick={[Function]}

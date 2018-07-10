@@ -10,6 +10,31 @@ const actions = {
   getKnots: () => {}
 };
 
+const sampleKnots = [
+  {
+    tap: {
+      name: 'tap-redshift',
+      image: 'dataworld/tap-redshift:1.0.0b8'
+    },
+    target: {
+      name: 'target-datadotworld',
+      image: 'dataworld/target-datadotworld:1.0.1'
+    },
+    name: 'knot1'
+  },
+  {
+    tap: {
+      name: 'tap-salesforce',
+      image: 'dataworld/tap-salesforce:1.4.14'
+    },
+    target: {
+      name: 'target-stitch',
+      image: 'dataworld/target-stitch:1.7.4'
+    },
+    name: 'knot2'
+  }
+];
+
 describe('Home component', () => {
   it('Detects when Docker is not installed', () => {
     const knotsStore = {
@@ -77,30 +102,7 @@ describe('Home component', () => {
   it('Shows saved knots', () => {
     const props = {
       knotsStore: {
-        knots: [
-          {
-            tap: {
-              name: 'tap-redshift',
-              image: 'dataworld/tap-redshift:1.0.0b8'
-            },
-            target: {
-              name: 'target-datadotworld',
-              image: 'dataworld/target-datadotworld:1.0.1'
-            },
-            name: 'knot1'
-          },
-          {
-            tap: {
-              name: 'tap-salesforce',
-              image: 'dataworld/tap-salesforce:1.4.14'
-            },
-            target: {
-              name: 'target-stitch',
-              image: 'dataworld/target-stitch:1.7.4'
-            },
-            name: 'knot2'
-          }
-        ],
+        knots: sampleKnots,
         knotDeleted: false,
         knotError: false,
         knotLoaded: false
@@ -128,30 +130,7 @@ describe('Home component', () => {
   it('Disables knot actions when Docker is not installed', () => {
     const props = {
       knotsStore: {
-        knots: [
-          {
-            tap: {
-              name: 'tap-redshift',
-              image: 'dataworld/tap-redshift:1.0.0b8'
-            },
-            target: {
-              name: 'target-datadotworld',
-              image: 'dataworld/target-datadotworld:1.0.1'
-            },
-            name: 'knot1'
-          },
-          {
-            tap: {
-              name: 'tap-salesforce',
-              image: 'dataworld/tap-salesforce:1.4.14'
-            },
-            target: {
-              name: 'target-stitch',
-              image: 'dataworld/target-stitch:1.7.4'
-            },
-            name: 'knot2'
-          }
-        ],
+        knots: sampleKnots,
         knotDeleted: false,
         knotError: false,
         knotLoaded: false
@@ -179,30 +158,7 @@ describe('Home component', () => {
   it('Disables knot actions when Docker is not running', () => {
     const props = {
       knotsStore: {
-        knots: [
-          {
-            tap: {
-              name: 'tap-redshift',
-              image: 'dataworld/tap-redshift:1.0.0b8'
-            },
-            target: {
-              name: 'target-datadotworld',
-              image: 'dataworld/target-datadotworld:1.0.1'
-            },
-            name: 'knot1'
-          },
-          {
-            tap: {
-              name: 'tap-salesforce',
-              image: 'dataworld/tap-salesforce:1.4.14'
-            },
-            target: {
-              name: 'target-stitch',
-              image: 'dataworld/target-stitch:1.7.4'
-            },
-            name: 'knot2'
-          }
-        ],
+        knots: sampleKnots,
         knotDeleted: false,
         knotError: false,
         knotLoaded: false
