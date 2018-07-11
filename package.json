@@ -87,8 +87,6 @@
     "start-main-dev": "concurrently \"npm run start-server\" \"npm run start-main\"",
     "start-renderer-dev": "cross-env NODE_ENV=development node --trace-warnings -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --config webpack.config.renderer.dev.js",
     "test": "NODE_ENV=test jest --coverage",
-    "test-all": "npm run lint && npm run flow && npm run build && npm run test && npm run test-e2e",
-    "test-e2e": "cross-env NODE_ENV=test BABEL_DISABLE_CACHE=1 node --trace-warnings -r babel-register ./internals/scripts/RunTests.js e2e",
     "test-watch": "npm test -- --watch"
   },
   "browserslist": "electron 1.6",
