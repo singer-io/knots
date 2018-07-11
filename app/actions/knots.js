@@ -144,7 +144,7 @@ export function save(
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
@@ -171,7 +171,7 @@ export function sync(knotName: string) {
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/full-sync`, { knotName })
       .then(() =>
         dispatch({
@@ -193,7 +193,7 @@ export function partialSync(knotName: string) {
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/partial-sync`, { knotName })
       .then(() =>
         dispatch({
@@ -229,7 +229,7 @@ export function updateTargetLogs(newLog: string) {
 
 export function deleteKnot(knot: string) {
   return (dispatch: (action: actionType) => void) => {
-    axios
+    return axios
       .post(`${baseUrl}/knots/delete`, { knot })
       .then(() => {
         dispatch({
