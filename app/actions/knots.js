@@ -64,7 +64,7 @@ export function verifyDocker() {
       type: DETECTING_DOCKER
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/docker/installed`)
       .then((installedResponse) => {
         dispatch({
@@ -72,7 +72,7 @@ export function verifyDocker() {
           version: installedResponse.data.version
         });
 
-        axios
+        return axios
           .get(`${baseUrl}/docker/running`)
           .then(() =>
             dispatch({
@@ -247,10 +247,16 @@ export function deleteKnot(knot: string) {
 
 export function downloadKnot(knot: string) {
   return () => {
-    axios
+    return axios
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
-        shell.openExternal(`http://localhost:4321/knots/download?knot=${knot}`);
+        if (process.env.NODE_ENV === 'test') {
+          console.log('Opening url via external browser');
+        } else {
+          shell.openExternal(
+            `http://localhost:4321/knots/download?knot=${knot}`
+          );
+        }
       })
       .catch();
   };
@@ -261,7 +267,7 @@ export function loadValues(knot: string) {
     dispatch({
       type: LOADING_KNOT
     });
-    axios
+    return axios
       .post(`${baseUrl}/knots/load`, { knot })
       .then((response) => {
         dispatch({
@@ -293,7 +299,7 @@ export function resetStore() {
 
 export function cancel(knot: string) {
   return () => {
-    axios
+    return axios
       .post(`${baseUrl}/knots/cancel/`, { knot })
       .then(() => {})
       .catch(() => {});
