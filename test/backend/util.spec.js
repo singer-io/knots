@@ -4,8 +4,19 @@ import shell from 'shelljs';
 import {
   getApplicationFolder,
   getKnotsFolder,
-  readFile
+  readFile,
+  writeFile
 } from '../../app/backend/util';
+
+const sampleKnotJson = {
+  tap: { name: 'tap-redshift', image: 'dataworld/tap-redshift:1.0.0b8' },
+  target: {
+    name: 'target-datadotworld',
+    image: 'dataworld/target-datadotworld:1.0.1'
+  },
+  name: 'Sample',
+  lastRun: '2018-07-04T18:44:14.581Z'
+};
 
 describe('util functions', () => {
   describe('getApplicationFolder', () => {
@@ -63,16 +74,6 @@ describe('util functions', () => {
   });
 
   describe('readFile', () => {
-    const sampleKnotJson = {
-      tap: { name: 'tap-redshift', image: 'dataworld/tap-redshift:1.0.0b8' },
-      target: {
-        name: 'target-datadotworld',
-        image: 'dataworld/target-datadotworld:1.0.1'
-      },
-      name: 'Sample',
-      lastRun: '2018-07-04T18:44:14.581Z'
-    };
-
     beforeAll((done) => {
       fs.writeFile(
         path.resolve('sampleKnot.json'),
@@ -118,6 +119,38 @@ describe('util functions', () => {
             `ENOENT: no such file or directory, open '${path.resolve(
               'nonExistent.json'
             )}'`
+          );
+          done();
+        });
+    });
+  });
+
+  describe('writeFile', () => {
+    afterAll(() => {
+      shell.rm('-f', path.resolve('sampleKnot.json'));
+    });
+
+    it('should write passed contents to file', (done) => {
+      writeFile(path.resolve('sampleKnot.json'), JSON.stringify(sampleKnotJson))
+        .then((res) => {
+          fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
+            expect(err).toBe(null);
+            expect(data).toEqual(JSON.stringify(sampleKnotJson));
+            done();
+          });
+        })
+        .catch((err) => {
+          expect(err).toBe(undefined);
+          done();
+        });
+    });
+
+    it('should reject promise when error is thrown', (done) => {
+      writeFile('undefined/path', JSON.stringify(sampleKnotJson))
+        .then()
+        .catch((err) => {
+          expect(err.message).toEqual(
+            "ENOENT: no such file or directory, open 'undefined/path'"
           );
           done();
         });
