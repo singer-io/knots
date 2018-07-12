@@ -5,7 +5,8 @@ import {
   getApplicationFolder,
   getKnotsFolder,
   readFile,
-  writeFile
+  writeFile,
+  addKnotAttribute
 } from '../../app/backend/util';
 
 const sampleKnotJson = {
@@ -154,6 +155,94 @@ describe('util functions', () => {
           );
           done();
         });
+    });
+  });
+
+  describe('addKnotAttribute', () => {
+    beforeAll((done) => {
+      fs.writeFile(
+        path.resolve('sampleKnot.json'),
+        JSON.stringify(sampleKnotJson),
+        (error) => {
+          if (!error) {
+            done();
+          } else {
+            expect(true).toBe(false);
+            done();
+          }
+        }
+      );
+    });
+
+    afterAll(() => {
+      shell.rm('-f', path.resolve('sampleKnot.json'));
+      shell.rm('-f', path.resolve('broken.json'));
+    });
+
+    it('should add an attribute to a knot json file', (done) => {
+      addKnotAttribute(
+        { field: 'foo', value: 'bar' },
+        path.resolve('sampleKnot.json')
+      )
+        .then((res) => {
+          fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
+            const updatedKnot = Object.assign({}, sampleKnotJson, {
+              foo: 'bar'
+            });
+
+            const actual = data;
+            const expected = JSON.stringify(updatedKnot);
+
+            expect(err).toBe(null);
+            expect(actual).toEqual(expected);
+            done();
+          });
+        })
+        .catch((err) => {
+          expect(err).toBe(undefined);
+          done();
+        });
+    });
+
+    it('should reject promise if error is thrown', (done) => {
+      addKnotAttribute(
+        { field: 'foo', value: 'bar' },
+        path.resolve('undefined.json')
+      )
+        .then(() => {
+          expect(true).toBe(false);
+          done();
+        })
+        .catch((err) => {
+          expect(err.message).toEqual(
+            `ENOENT: no such file or directory, open '${path.resolve(
+              'undefined.json'
+            )}'`
+          );
+          done();
+        });
+    });
+
+    it('should reject promise if json file is invalid', (done) => {
+      fs.writeFile(path.resolve('broken.json'), '{"ab":"cd"', (error) => {
+        if (!error) {
+          addKnotAttribute(
+            { field: 'foo', value: 'bar' },
+            path.resolve('broken.json')
+          )
+            .then(() => {
+              expect(true).toBe(false);
+              done();
+            })
+            .catch((err) => {
+              expect(err.message).toEqual('Unexpected end of JSON input');
+              done();
+            });
+        } else {
+          expect(true).toBe(false);
+          done();
+        }
+      });
     });
   });
 });
