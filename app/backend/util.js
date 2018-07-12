@@ -19,8 +19,35 @@
  * data.world, Inc.(http://data.world/).
  */
 
+const path = require('path');
 const fs = require('fs');
 const { set } = require('lodash');
+const { app } = require('electron');
+
+const getApplicationFolder = () => {
+  let applicationFolder;
+  if (process.env.NODE_ENV === 'production') {
+    if (app) {
+      // Knots are stored on the user's home path in the packaged app
+      applicationFolder = path.resolve(app.getPath('home'), '.knots');
+    } else {
+      // app is undefined when running tests, get home dir using node
+      const homePath = require('os').homedir();
+      applicationFolder = path.resolve(homePath, '.knots');
+    }
+  } else {
+    // Use the repo during development
+    applicationFolder = path.resolve(__dirname, '../..');
+  }
+
+  return applicationFolder;
+};
+
+const getKnotsFolder = () => {
+  const applicationFolder = getApplicationFolder();
+
+  return path.resolve(applicationFolder, 'knots');
+};
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {
@@ -71,6 +98,8 @@ const addKnotAttribute = (content, pathToKnot) =>
   });
 
 module.exports = {
+  getApplicationFolder,
+  getKnotsFolder,
   readFile,
   writeFile,
   addKnotAttribute

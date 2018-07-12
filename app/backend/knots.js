@@ -28,7 +28,13 @@ const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
-const { readFile, addKnotAttribute, writeFile } = require('./util');
+const {
+  getApplicationFolder,
+  getKnotsFolder,
+  readFile,
+  addKnotAttribute,
+  writeFile
+} = require('./util');
 const { commands } = require('./constants');
 
 let applicationFolder;
@@ -43,7 +49,8 @@ if (process.env.NODE_ENV === 'production') {
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
-    const knotsFolder = path.resolve(applicationFolder, 'knots');
+    const knotsFolder = getKnotsFolder();
+
     try {
       const isDirectory = (source) => lstatSync(source).isDirectory();
       const getDirectories = (source) =>
@@ -55,9 +62,10 @@ const getKnots = () =>
           // Get folder name from absolute path
           .map((folderPath) => path.basename(folderPath));
 
+      // Array of knot names
       const knots = getDirectories(knotsFolder);
 
-      // For each folder get the knot.json file
+      // For each knot folder get the knot.json file
       const knotJsons = knots.map((knot) =>
         readFile(`${knotsFolder}/${knot}/knot.json`)
       );
@@ -429,6 +437,8 @@ const cancel = (knot) =>
   });
 
 module.exports = {
+  getApplicationFolder,
+  getKnotsFolder,
   getKnots,
   saveKnot,
   sync,
