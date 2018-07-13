@@ -250,7 +250,7 @@ export function downloadKnot(knot: string) {
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
         if (process.env.NODE_ENV === 'test') {
-          console.log('Opening url via external browser');
+          // console.log('Opening url via external browser');
         } else {
           shell.openExternal(
             `http://localhost:4321/knots/download?knot=${knot}`

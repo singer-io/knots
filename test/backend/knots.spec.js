@@ -4,46 +4,22 @@ import shell from 'shelljs';
 
 import { getKnots, invalidKnotString } from '../../app/backend/knots';
 
-import { sampleKnotJsons } from '../util';
+import { sampleKnotJsons, seedKnots, cleanfs } from '../util';
 
 describe('knots functions', () => {
   describe('get knots', () => {
     beforeAll((done) => {
-      const sampleKnots = ['sample 1', 'sample 2'];
-
-      shell.mkdir('-p', path.resolve('knots'));
-
-      sampleKnots.forEach((knot) => {
-        shell.mkdir('-p', path.resolve('knots', knot));
-      });
-
-      fs.writeFile(
-        path.resolve('knots', 'sample 1', 'knot.json'),
-        JSON.stringify(sampleKnotJsons[0]),
-        (error) => {
-          if (!error) {
-            fs.writeFile(
-              path.resolve('knots', 'sample 2', 'knot.json'),
-              JSON.stringify(sampleKnotJsons[1]),
-              (err) => {
-                if (!err) {
-                  done();
-                } else {
-                  expect(true).toBe(false);
-                  done();
-                }
-              }
-            );
-          } else {
-            expect(true).toBe(false);
-            done();
-          }
-        }
-      );
+      seedKnots()
+        .then(() => {
+          done();
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+        });
     });
 
     afterAll(() => {
-      shell.rm('-rf', path.resolve('knots'));
+      cleanfs();
     });
 
     it('should return an array of knot jsons', () => {

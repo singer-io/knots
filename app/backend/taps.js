@@ -22,18 +22,18 @@
 const path = require('path');
 const { exec } = require('child_process');
 const shell = require('shelljs');
-const { app } = require('electron');
 
-const { writeFile, readFile, addKnotAttribute } = require('./util');
+const {
+  writeFile,
+  readFile,
+  addKnotAttribute,
+  getApplicationFolder,
+  createTemporaryKnotFolder,
+  getTemporaryKnotFolder
+} = require('./util');
 const { taps, commands } = require('./constants');
 
-let applicationFolder;
 let runningProcess;
-if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), '.knots');
-} else {
-  applicationFolder = path.resolve(__dirname, '../../');
-}
 
 const createKnot = (tap, knotPath) =>
   new Promise((resolve, reject) => {
@@ -54,11 +54,11 @@ const createKnot = (tap, knotPath) =>
         })
         .catch(reject);
     } else {
-      // Create knots folder if it doesn't exist
-      shell.mkdir('-p', applicationFolder);
+      // Create new temporary knot folder
+      createTemporaryKnotFolder();
 
       writeFile(
-        path.resolve(applicationFolder, 'knot.json'),
+        path.resolve(getTemporaryKnotFolder(), 'knot.json'),
         JSON.stringify({
           tap: {
             name: tap.name,
@@ -83,13 +83,19 @@ const writeConfig = (config, configPath, knot) =>
           resolve();
         } else {
           // Remove any previously saved temp config
-          shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
-          shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+          shell.rm(
+            '-rf',
+            path.resolve(getApplicationFolder(), 'configs', 'tap')
+          );
+          shell.mkdir(
+            '-p',
+            path.resolve(getApplicationFolder(), 'configs', 'tap')
+          );
 
           // Move written config file from root of directory to configs folder
           shell.mv(
-            path.resolve(applicationFolder, 'config.json'),
-            path.resolve(applicationFolder, 'configs', 'tap')
+            path.resolve(getApplicationFolder(), 'config.json'),
+            path.resolve(getApplicationFolder(), 'configs', 'tap')
           );
           resolve();
         }
@@ -100,11 +106,13 @@ const writeConfig = (config, configPath, knot) =>
 const getSchema = (req, knot) =>
   new Promise((resolve, reject) => {
     const knotPath = knot
-      ? path.resolve(applicationFolder, knot)
-      : path.resolve(applicationFolder, 'configs');
-    const runDiscovery = exec(commands.runDiscovery(knotPath, req.body.tap), {
-      detached: true
-    });
+      ? path.resolve(getApplicationFolder(), knot)
+      : path.resolve(getApplicationFolder(), 'configs');
+
+    const runDiscovery = exec(
+      commands.runDiscovery(knotPath, req.body.tap.name, req.body.tap.image),
+      { detached: true }
+    );
     runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
@@ -116,8 +124,9 @@ const getSchema = (req, knot) =>
         reject(
           new Error(
             `${commands.runDiscovery(
-              applicationFolder,
-              req.body.tap
+              getApplicationFolder(),
+              req.body.tap.name,
+              req.body.tap.image
             )} command failed`
           )
         );
@@ -129,8 +138,8 @@ const getSchema = (req, knot) =>
 const readSchema = (knot) =>
   new Promise((resolve, reject) => {
     const schemaPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
-      : path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json');
+      ? path.resolve(getApplicationFolder(), knot, 'tap', 'catalog.json')
+      : path.resolve(getApplicationFolder(), 'configs', 'tap', 'catalog.json');
     readFile(schemaPath)
       .then((schemaString) => {
         try {
@@ -152,8 +161,8 @@ const addConfig = (req) =>
     const { knot, tapConfig, skipDiscovery } = req.body;
 
     const configPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'config.json')
-      : path.resolve(applicationFolder, 'config.json');
+      ? path.resolve(getApplicationFolder(), knot, 'tap', 'config.json')
+      : path.resolve(getApplicationFolder(), 'config.json');
 
     // Write the config to configs/tap/
     writeConfig(tapConfig, configPath, knot)
@@ -187,8 +196,8 @@ const getTaps = () =>
 const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
     const catalogPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
-      : path.resolve(applicationFolder, 'catalog.json');
+      ? path.resolve(getApplicationFolder(), knot, 'tap', 'catalog.json')
+      : path.resolve(getApplicationFolder(), 'catalog.json');
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
@@ -199,13 +208,18 @@ const writeSchema = (schemaObject, knot) =>
           // Remove previous catalog file if any
           shell.rm(
             '-f',
-            path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
+            path.resolve(
+              getApplicationFolder(),
+              'configs',
+              'tap',
+              'catalog.json'
+            )
           );
 
           // Move catalog file from root of directory to configs folder
           shell.mv(
-            path.resolve(applicationFolder, 'catalog.json'),
-            path.resolve(applicationFolder, 'configs', 'tap')
+            path.resolve(getApplicationFolder(), 'catalog.json'),
+            path.resolve(getApplicationFolder(), 'configs', 'tap')
           );
           resolve();
         }
@@ -222,7 +236,7 @@ const terminateDiscovery = () => {
 const addTap = (tap, knot) =>
   new Promise((resolve, reject) => {
     const knotPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
+      ? path.resolve(getApplicationFolder(), 'knots', knot, 'knot.json')
       : '';
     createKnot(tap, knotPath)
       .then(() => {
@@ -237,5 +251,6 @@ module.exports = {
   addConfig,
   writeSchema,
   runningProcess,
-  terminateDiscovery
+  terminateDiscovery,
+  createKnot
 };

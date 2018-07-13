@@ -22,6 +22,7 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const shell = require('shelljs');
 const { set } = require('lodash');
 const { app } = require('electron');
 
@@ -49,6 +50,14 @@ const getKnotsFolder = () => {
 
   return path.resolve(applicationFolder, 'knots');
 };
+
+const createTemporaryKnotFolder = () => {
+  shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+};
+
+const getTemporaryKnotFolder = () =>
+  path.resolve(getApplicationFolder(), 'tmp', 'knot');
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {
@@ -103,5 +112,7 @@ module.exports = {
   getKnotsFolder,
   readFile,
   writeFile,
-  addKnotAttribute
+  addKnotAttribute,
+  createTemporaryKnotFolder,
+  getTemporaryKnotFolder
 };
