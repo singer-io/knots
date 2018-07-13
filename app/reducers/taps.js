@@ -88,7 +88,7 @@ export type tapsStateType = {
   }
 };
 
-const defaultState = {
+export const defaultState = {
   tapsLoading: false,
   tapSelected: false,
   selectedTap: {

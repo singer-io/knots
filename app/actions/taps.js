@@ -73,7 +73,7 @@ export function fetchTaps() {
       type: TAPS_LOADING
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/taps/`)
       .then((response) => {
         dispatch({
@@ -93,7 +93,7 @@ export function fetchTaps() {
 
 export function selectTap(tap: tapPropertiesType, knotName: string) {
   return (dispatch: (action: actionType) => void) => {
-    axios
+    return axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
         knot: knotName
@@ -130,7 +130,7 @@ export function updateTapField(
 }
 
 export function submitConfig(
-  tap: { name: string, image: string },
+  tap: tapPropertiesType,
   config: { start_date?: string },
   knotName: string,
   skipDiscovery: ?boolean
@@ -148,7 +148,7 @@ export function submitConfig(
       skipDiscovery
     };
 
-    axios
+    return axios
       .post(`${baseUrl}/taps/config/`, payload)
       .then((response) => {
         dispatch({
