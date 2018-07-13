@@ -2,6 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
 import os from 'os';
+
 import {
   getApplicationFolder,
   getKnotsFolder,
@@ -9,16 +10,7 @@ import {
   writeFile,
   addKnotAttribute
 } from '../../app/backend/util';
-
-const sampleKnotJson = {
-  tap: { name: 'tap-redshift', image: 'dataworld/tap-redshift:1.0.0b8' },
-  target: {
-    name: 'target-datadotworld',
-    image: 'dataworld/target-datadotworld:1.0.1'
-  },
-  name: 'Sample',
-  lastRun: '2018-07-04T18:44:14.581Z'
-};
+import { sampleKnotJsons } from '../util';
 
 describe('util functions', () => {
   describe('getApplicationFolder', () => {
@@ -61,7 +53,7 @@ describe('util functions', () => {
     beforeAll((done) => {
       fs.writeFile(
         path.resolve('sampleKnot.json'),
-        JSON.stringify(sampleKnotJson),
+        JSON.stringify(sampleKnotJsons[0]),
         (error) => {
           if (!error) {
             done();
@@ -81,7 +73,7 @@ describe('util functions', () => {
       readFile(path.resolve('sampleKnot.json'))
         .then((res) => {
           const actual = res;
-          const expected = JSON.stringify(sampleKnotJson);
+          const expected = JSON.stringify(sampleKnotJsons[0]);
 
           expect(actual).toEqual(expected);
           done();
@@ -115,11 +107,14 @@ describe('util functions', () => {
     });
 
     it('should write passed contents to file', (done) => {
-      writeFile(path.resolve('sampleKnot.json'), JSON.stringify(sampleKnotJson))
+      writeFile(
+        path.resolve('sampleKnot.json'),
+        JSON.stringify(sampleKnotJsons[0])
+      )
         .then(() => {
           fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
             expect(err).toBe(null);
-            expect(data).toEqual(JSON.stringify(sampleKnotJson));
+            expect(data).toEqual(JSON.stringify(sampleKnotJsons[0]));
             done();
           });
         })
@@ -130,7 +125,7 @@ describe('util functions', () => {
     });
 
     it('should reject promise when error is thrown', (done) => {
-      writeFile('undefined/path', JSON.stringify(sampleKnotJson))
+      writeFile('undefined/path', JSON.stringify(sampleKnotJsons[0]))
         .then()
         .catch((err) => {
           expect(err.message).toEqual(
@@ -145,7 +140,7 @@ describe('util functions', () => {
     beforeAll((done) => {
       fs.writeFile(
         path.resolve('sampleKnot.json'),
-        JSON.stringify(sampleKnotJson),
+        JSON.stringify(sampleKnotJsons[0]),
         (error) => {
           if (!error) {
             done();
@@ -169,7 +164,7 @@ describe('util functions', () => {
       )
         .then(() => {
           fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
-            const updatedKnot = Object.assign({}, sampleKnotJson, {
+            const updatedKnot = Object.assign({}, sampleKnotJsons[0], {
               foo: 'bar'
             });
 
