@@ -78,7 +78,7 @@ export default class Home extends Component<Props, State> {
     }, 1000);
   };
 
-  openLink = (e: SyntheticEvent, url: string) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

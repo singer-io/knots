@@ -23,8 +23,9 @@
 import { shell } from 'electron';
 
 // $FlowFixMe
-// eslint-disable-next-line import/prefer-default-export
+/* eslint-disable */
 export function openLink(e: SyntheticEvent<HTMLAnchorElement>) {
   e.preventDefault();
+  // $FlowFixMe
   shell.openExternal(e.target.href);
 }

@@ -1,6 +1,7 @@
 import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
+import os from 'os';
 import {
   getApplicationFolder,
   getKnotsFolder,
@@ -24,7 +25,7 @@ describe('util functions', () => {
     it('should return home path as the application folder when in production', () => {
       process.env.NODE_ENV = 'production';
       const actual = getApplicationFolder();
-      const expected = path.resolve(require('os').homedir(), '.knots');
+      const expected = path.resolve(os.homedir(), '.knots');
 
       expect(actual).toEqual(expected);
     });
@@ -42,25 +43,7 @@ describe('util functions', () => {
     it('should return folder based on home path as the application folder when in production', () => {
       process.env.NODE_ENV = 'production';
       const actual = getKnotsFolder();
-      const expected = path.resolve(require('os').homedir(), '.knots', 'knots');
-
-      expect(actual).toEqual(expected);
-    });
-
-    it('should return folder based on repo as the application folder when not in production', () => {
-      process.env.NODE_ENV = 'test';
-      const actual = getKnotsFolder();
-      const expected = path.resolve(__dirname, '../..', 'knots');
-
-      expect(actual).toEqual(expected);
-    });
-  });
-
-  describe('getKnotsFolder', () => {
-    it('should return folder based on home path as the application folder when in production', () => {
-      process.env.NODE_ENV = 'production';
-      const actual = getKnotsFolder();
-      const expected = path.resolve(require('os').homedir(), '.knots', 'knots');
+      const expected = path.resolve(os.homedir(), '.knots', 'knots');
 
       expect(actual).toEqual(expected);
     });
@@ -95,12 +78,12 @@ describe('util functions', () => {
     });
 
     it('should return the contents of a file', (done) => {
-      const actual = readFile(path.resolve('sampleKnot.json'))
+      readFile(path.resolve('sampleKnot.json'))
         .then((res) => {
           const actual = res;
           const expected = JSON.stringify(sampleKnotJson);
 
-          expect(1).toEqual(1);
+          expect(actual).toEqual(expected);
           done();
         })
         .catch((err) => {
@@ -110,7 +93,7 @@ describe('util functions', () => {
     });
 
     it('should reject promise if exception is thrown', (done) => {
-      const actual = readFile(path.resolve('nonExistent.json'))
+      readFile(path.resolve('nonExistent.json'))
         .then((res) => {
           expect(res).toBe(undefined);
           done();
@@ -133,7 +116,7 @@ describe('util functions', () => {
 
     it('should write passed contents to file', (done) => {
       writeFile(path.resolve('sampleKnot.json'), JSON.stringify(sampleKnotJson))
-        .then((res) => {
+        .then(() => {
           fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
             expect(err).toBe(null);
             expect(data).toEqual(JSON.stringify(sampleKnotJson));
@@ -184,7 +167,7 @@ describe('util functions', () => {
         { field: 'foo', value: 'bar' },
         path.resolve('sampleKnot.json')
       )
-        .then((res) => {
+        .then(() => {
           fs.readFile(path.resolve('sampleKnot.json'), 'utf8', (err, data) => {
             const updatedKnot = Object.assign({}, sampleKnotJson, {
               foo: 'bar'

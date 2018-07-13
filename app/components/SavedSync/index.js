@@ -94,7 +94,7 @@ export default class Sync extends Component<Props> {
   };
 
   render() {
-    const { knot, mode } = queryString.parse(this.props.location.search);
+    const { knot } = queryString.parse(this.props.location.search);
     const {
       knotSyncing,
       knotSynced,

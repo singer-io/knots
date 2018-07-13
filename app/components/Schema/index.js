@@ -19,8 +19,6 @@
  * data.world, Inc.(http://data.world/).
  */
 
-// @flow
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -43,7 +41,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
-import {
+import type {
   specImplementationPropType,
   tapPropertiesType
 } from '../../utils/shared-types';
@@ -77,7 +75,7 @@ type Props = {
   schemaPageLoaded: () => void,
   updateSchemaLogs: (log: string) => void,
   history: { push: (path: string) => void },
-  cancel: () => void
+  cancel: (name: string) => void
 };
 
 type State = {
@@ -113,7 +111,7 @@ export default class Schema extends Component<Props, State> {
     });
   }
 
-  updateLogs(log: text) {
+  updateLogs(log: string) {
     this.props.updateSchemaLogs(log);
   }
 
@@ -180,7 +178,7 @@ export default class Schema extends Component<Props, State> {
     return false;
   };
 
-  openLink = (e: SyntheticEvent, url: string) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

@@ -21,6 +21,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 const { set } = require('lodash');
 const { app } = require('electron');
 
@@ -32,7 +33,7 @@ const getApplicationFolder = () => {
       applicationFolder = path.resolve(app.getPath('home'), '.knots');
     } else {
       // app is undefined when running tests, get home dir using node
-      const homePath = require('os').homedir();
+      const homePath = os.homedir();
       applicationFolder = path.resolve(homePath, '.knots');
     }
   } else {

@@ -32,7 +32,7 @@ type Props = {
 };
 
 class Create extends Component<Props> {
-  openLink = (e, url) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

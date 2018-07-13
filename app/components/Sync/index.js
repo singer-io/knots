@@ -51,7 +51,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Log from '../Log';
 import getLogo from '../../logos';
-import { tapPropertiesType } from '../../utils/shared-types';
+import type { tapPropertiesType } from '../../utils/shared-types';
 
 import styles from './Sync.css';
 
@@ -60,6 +60,7 @@ const socket = socketIOClient(baseUrl);
 
 type Props = {
   knotsStore: {
+    knots: Array<{ name: string }>,
     knotName: string,
     knotSyncing: boolean,
     knotSynced: boolean,
@@ -88,7 +89,7 @@ type Props = {
   partialSync: (knot: string) => void,
   history: { push: (path: string) => void },
   syncPageLoaded: () => void,
-  cancel: () => void
+  cancel: (name: string) => void
 };
 
 type State = {
@@ -147,7 +148,7 @@ export default class Sync extends Component<Props, State> {
   };
 
   nameUsed = (enteredName: string) => {
-    const { knots, knotName } = this.props.knotsStore;
+    const { knots } = this.props.knotsStore;
     const { currentKnotName } = this.state;
     const knotNames = knots.map((knotObject) => knotObject.name.toLowerCase());
 
@@ -158,9 +159,9 @@ export default class Sync extends Component<Props, State> {
 
     if (knotNames.indexOf(enteredName.toLowerCase()) > -1) {
       return true;
-    } else {
-      return false;
     }
+
+    return false;
   };
 
   validateName = (value: string) => {

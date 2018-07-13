@@ -109,11 +109,11 @@ describe('Home component', () => {
       },
       dockerInstalled: true,
       dockerRunning: true,
-      deleteKnot: (knot) => {},
-      downloadKnot: (knot) => {},
+      deleteKnot: () => {},
+      downloadKnot: () => {},
       getKnots: () => {},
-      loadValues: (knot) => {},
-      history: { push: (path) => {} }
+      loadValues: () => {},
+      history: { push: () => {} }
     };
 
     const component = (
@@ -137,11 +137,11 @@ describe('Home component', () => {
       },
       dockerInstalled: false,
       dockerRunning: false,
-      deleteKnot: (knot) => {},
-      downloadKnot: (knot) => {},
+      deleteKnot: () => {},
+      downloadKnot: () => {},
       getKnots: () => {},
-      loadValues: (knot) => {},
-      history: { push: (path) => {} }
+      loadValues: () => {},
+      history: { push: () => {} }
     };
 
     const component = (
@@ -165,11 +165,11 @@ describe('Home component', () => {
       },
       dockerInstalled: true,
       dockerRunning: false,
-      deleteKnot: (knot) => {},
-      downloadKnot: (knot) => {},
+      deleteKnot: () => {},
+      downloadKnot: () => {},
       getKnots: () => {},
-      loadValues: (knot) => {},
-      history: { push: (path) => {} }
+      loadValues: () => {},
+      history: { push: () => {} }
     };
 
     const component = (

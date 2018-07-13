@@ -19,11 +19,11 @@
  * data.world, Inc.(http://data.world/).
  */
 
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const dockerInstalled = (mockSpawn) =>
   new Promise((resolve, reject) => {
-    const spawnFunction = mockSpawn ? mockSpawn : spawn;
+    const spawnFunction = mockSpawn || spawn;
 
     // Try to find out the docker version installed
     const dockerVersion = spawnFunction('docker', ['-v']);
@@ -42,7 +42,7 @@ const dockerInstalled = (mockSpawn) =>
 
 const dockerRunning = (mockSpawn) =>
   new Promise((resolve, reject) => {
-    const spawnFunction = mockSpawn ? mockSpawn : spawn;
+    const spawnFunction = mockSpawn || spawn;
 
     // Try to find out the docker version installed
     const dockerVolumes = spawnFunction('docker', ['volume', 'ls']);

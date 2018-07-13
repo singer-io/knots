@@ -23,7 +23,6 @@
 
 import React, { Component } from 'react';
 import { Col, Card, CardBody, CardTitle } from 'reactstrap';
-import { shell } from 'electron';
 
 import getLogo from '../../../logos';
 
