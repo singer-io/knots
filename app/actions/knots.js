@@ -64,7 +64,7 @@ export function verifyDocker() {
       type: DETECTING_DOCKER
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/docker/installed`)
       .then((installedResponse) => {
         dispatch({
@@ -72,7 +72,7 @@ export function verifyDocker() {
           version: installedResponse.data.version
         });
 
-        axios
+        return axios
           .get(`${baseUrl}/docker/running`)
           .then(() =>
             dispatch({
@@ -144,7 +144,7 @@ export function save(
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
@@ -171,7 +171,7 @@ export function sync(knotName: string) {
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/full-sync`, { knotName })
       .then(() =>
         dispatch({
@@ -193,7 +193,7 @@ export function partialSync(knotName: string) {
       type: KNOT_SYNCING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/knots/partial-sync`, { knotName })
       .then(() =>
         dispatch({
@@ -228,7 +228,7 @@ export function updateTargetLogs(newLog: string) {
 }
 
 export function deleteKnot(knot: string) {
-  return (dispatch: (action: actionType) => void) => {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .post(`${baseUrl}/knots/delete`, { knot })
       .then(() => {
@@ -242,18 +242,22 @@ export function deleteKnot(knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function downloadKnot(knot: string) {
-  return () => {
+  return () =>
     axios
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
-        shell.openExternal(`http://localhost:4321/knots/download?knot=${knot}`);
+        if (process.env.NODE_ENV === 'test') {
+          console.log('Opening url via external browser');
+        } else {
+          shell.openExternal(
+            `http://localhost:4321/knots/download?knot=${knot}`
+          );
+        }
       })
       .catch();
-  };
 }
 
 export function loadValues(knot: string) {
@@ -261,7 +265,7 @@ export function loadValues(knot: string) {
     dispatch({
       type: LOADING_KNOT
     });
-    axios
+    return axios
       .post(`${baseUrl}/knots/load`, { knot })
       .then((response) => {
         dispatch({
@@ -292,10 +296,9 @@ export function resetStore() {
 }
 
 export function cancel(knot: string) {
-  return () => {
+  return () =>
     axios
       .post(`${baseUrl}/knots/cancel/`, { knot })
       .then(() => {})
       .catch(() => {});
-  };
 }
