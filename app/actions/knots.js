@@ -228,8 +228,8 @@ export function updateTargetLogs(newLog: string) {
 }
 
 export function deleteKnot(knot: string) {
-  return (dispatch: (action: actionType) => void) => {
-    return axios
+  return (dispatch: (action: actionType) => void) =>
+    axios
       .post(`${baseUrl}/knots/delete`, { knot })
       .then(() => {
         dispatch({
@@ -242,12 +242,11 @@ export function deleteKnot(knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function downloadKnot(knot: string) {
-  return () => {
-    return axios
+  return () =>
+    axios
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
         if (process.env.NODE_ENV === 'test') {
@@ -259,7 +258,6 @@ export function downloadKnot(knot: string) {
         }
       })
       .catch();
-  };
 }
 
 export function loadValues(knot: string) {
@@ -298,10 +296,9 @@ export function resetStore() {
 }
 
 export function cancel(knot: string) {
-  return () => {
-    return axios
+  return () =>
+    axios
       .post(`${baseUrl}/knots/cancel/`, { knot })
       .then(() => {})
       .catch(() => {});
-  };
 }
