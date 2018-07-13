@@ -40,7 +40,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
-import { tapPropertiesType } from '../../utils/shared-types';
+import type { tapPropertiesType } from '../../utils/shared-types';
 
 type Props = {
   fetchTaps: () => void,
@@ -51,7 +51,8 @@ type Props = {
     taps: Array<{
       name: string,
       tapKey: string,
-      tapImage: string
+      tapImage: string,
+      repo: string
     }>
   },
   knotsStore: { knotName: string, knotLoaded: boolean },
@@ -64,7 +65,7 @@ type Props = {
     skipDiscovery: ?boolean
   ) => void,
   tapsPageLoaded: () => void,
-  cancel: () => void
+  cancel: (name: string) => void
 };
 
 type State = {
@@ -167,6 +168,7 @@ export default class Taps extends Component<Props, State> {
                   {taps.map((tap) => (
                     <Tap
                       key={tap.name}
+                      repo={tap.repo}
                       {...tap}
                       selectTap={this.props.selectTap}
                       selected={selectedTap.name}
@@ -210,10 +212,8 @@ export default class Taps extends Component<Props, State> {
             </Button>
           </div>
         </Container>
-        <Modal isOpen={this.state.showModal} toggle={this.toggle}>
-          <ModalHeader toggle={this.toggle}>
-            Update schema information?
-          </ModalHeader>
+        <Modal isOpen={this.state.showModal}>
+          <ModalHeader>Update schema information?</ModalHeader>
           <ModalBody>
             <p>
               Select <strong>&quot;Yes&quot;</strong> if you’d like to retrieve

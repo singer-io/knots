@@ -131,7 +131,7 @@ export default class Salesforce extends Component<Props, State> {
     ipcRenderer.send('sf-oauth', client_id, client_secret);
   };
 
-  openLink = (e, url) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

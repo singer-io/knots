@@ -19,32 +19,42 @@
  * data.world, Inc.(http://data.world/).
  */
 
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 
-const dockerInstalled = () =>
+const dockerInstalled = (mockSpawn) =>
   new Promise((resolve, reject) => {
+    const spawnFunction = mockSpawn || spawn;
+
     // Try to find out the docker version installed
-    const docker = spawn('docker', ['-v']);
+    const dockerVersion = spawnFunction('docker', ['-v']);
 
     // A version number was returned, docker is installed
-    docker.stdout.on('data', (version) => {
+    dockerVersion.stdout.on('data', (version) => {
       resolve(version.toString('utf8'));
     });
 
-    // Threw error, no Docker
-    docker.on('error', (error) => {
-      reject(error);
+    dockerVersion.on('exit', (code) => {
+      if (code > 0) {
+        reject(new Error('Unable to run Docker'));
+      }
     });
   });
 
-const dockerRunning = () =>
+const dockerRunning = (mockSpawn) =>
   new Promise((resolve, reject) => {
-    // Run a docker command to ensure it is running
-    exec('docker volume ls', (error) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
+    const spawnFunction = mockSpawn || spawn;
+
+    // Try to find out the docker version installed
+    const dockerVolumes = spawnFunction('docker', ['volume', 'ls']);
+
+    // A version number was returned, docker is installed
+    dockerVolumes.stdout.on('data', (version) => {
+      resolve(version.toString('utf8'));
+    });
+
+    dockerVolumes.on('exit', (code) => {
+      if (code > 0) {
+        reject(new Error('Unable to get Docker volumes'));
       }
     });
   });

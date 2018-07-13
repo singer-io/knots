@@ -40,7 +40,7 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer, shell } from 'electron';
-import { tapPropertiesType } from '../../../../utils/shared-types';
+import type { tapPropertiesType } from '../../../../utils/shared-types';
 
 type Props = {
   tapsStore: {
@@ -140,7 +140,7 @@ export default class Adwords extends Component<Props, State> {
     ipcRenderer.send('adwords-oauth', oauth_client_id, oauth_client_secret);
   };
 
-  openLink = (e, url) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

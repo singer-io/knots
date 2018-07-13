@@ -25,7 +25,7 @@ import React, { Component } from 'react';
 import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 
 import getLogo from '../../../logos';
-import {
+import type {
   specImplementationPropType,
   tapPropertiesType
 } from '../../../utils/shared-types';
@@ -35,6 +35,7 @@ type Props = {
   tapKey: string,
   tapImage: string,
   selected: string,
+  repo: string,
   specImplementation?: specImplementationPropType,
   selectTap: (tap: tapPropertiesType, knotName: string) => void,
   knotName: string
@@ -45,6 +46,10 @@ type State = {
 };
 
 export default class Tap extends Component<Props, State> {
+  static defaultProps = {
+    specImplementation: {}
+  };
+
   state = {
     hovered: false
   };

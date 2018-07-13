@@ -19,16 +19,14 @@
  * data.world, Inc.(http://data.world/).
  */
 
-// @flow
-
 import React, { Component } from 'react';
 import { FormGroup, Input } from 'reactstrap';
-import { specImplementationPropType } from '../../../utils/shared-types';
+import type { specImplementationPropType } from '../../../utils/shared-types';
 
 type Props = {
   index: string,
   columns: Array<string>,
-  stream: { metadata: Array<{}> },
+  stream: { metadata: Array<{}>, replication_key: string },
   specImplementation: specImplementationPropType,
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
@@ -39,7 +37,14 @@ export default class Dropdown extends Component<Props> {
     this.props.handleChange('replication-key', this.props.index, value);
   };
 
-  getReplicationKey(stream: {}, specImplementation?: {} = {}) {
+  getReplicationKey(
+    stream: {
+      metadata: Array<{ breadcrumb: Array<{}> }>,
+      replication_key: string,
+      breadcrumb: Array<{}>
+    },
+    specImplementation?: {} = {}
+  ) {
     const { replicationKey: repKeyMetadata = true } =
       specImplementation.usesMetadata || {};
     if (!repKeyMetadata) {

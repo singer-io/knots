@@ -53,7 +53,7 @@ type Props = {
   updateTapField: (tap: string, field: string, value: string | number) => void
 };
 type State = {
-  host: {},
+  host: { validation: {}, errorMessage: string },
   port: {},
   dbname: {},
   schema: {},
@@ -64,7 +64,7 @@ type State = {
 
 export default class Redshift extends Component<Props, State> {
   state = {
-    host: {},
+    host: { validation: {}, errorMessage: '' },
     port: {},
     dbname: {},
     schema: { valid: true },
@@ -130,7 +130,8 @@ export default class Redshift extends Component<Props, State> {
         // All checks pass
         this.setState({
           host: {
-            validation: { valid: true }
+            validation: { valid: true },
+            errorMessage: ''
           }
         });
       }
@@ -169,7 +170,9 @@ export default class Redshift extends Component<Props, State> {
                   id="host"
                   value={host}
                   onFocus={() => {
-                    this.setState({ host: {} });
+                    this.setState({
+                      host: { validation: {}, errorMessage: '' }
+                    });
                   }}
                   onBlur={() => {
                     this.validateHostName(host);
