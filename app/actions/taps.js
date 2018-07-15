@@ -92,8 +92,8 @@ export function fetchTaps() {
 }
 
 export function selectTap(tap: tapPropertiesType, knotName: string) {
-  return (dispatch: (action: actionType) => void) => {
-    return axios
+  return (dispatch: (action: actionType) => void) =>
+    axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
         knot: knotName
@@ -111,7 +111,6 @@ export function selectTap(tap: tapPropertiesType, knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateTapField(
@@ -184,7 +183,7 @@ export function editSchemaField(
 }
 
 export function submitSchema(schema: {}, knot: string) {
-  return (dispatch: (action: actionType) => void) => {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .put(`${baseUrl}/taps/schema/`, {
         schema: { streams: schema },
@@ -201,7 +200,6 @@ export function submitSchema(schema: {}, knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateSchemaLogs(newLog: string) {
