@@ -28,7 +28,6 @@ const {
   writeFile,
   readFile,
   addKnotAttribute,
-  getApplicationFolder,
   getKnotsFolder,
   createTemporaryKnotFolder,
   getTemporaryKnotFolder
@@ -188,36 +187,18 @@ const getTaps = () =>
     }
   });
 
-const writeSchema = (schemaObject, knot) =>
+const writeSchema = (schemaObject) =>
   new Promise((resolve, reject) => {
-    const catalogPath = knot
-      ? path.resolve(getKnotsFolder(), 'tap', 'catalog.json')
-      : path.resolve(getApplicationFolder(), 'catalog.json');
+    shell.mkdir('-p', path.resolve(getTemporaryKnotFolder(), 'tap'));
+    const catalogPath = path.resolve(
+      getTemporaryKnotFolder(),
+      'tap',
+      'catalog.json'
+    );
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
-        if (knot) {
-          // Catalog file already written to file, no further action required
-          resolve();
-        } else {
-          // Remove previous catalog file if any
-          shell.rm(
-            '-f',
-            path.resolve(
-              getApplicationFolder(),
-              'configs',
-              'tap',
-              'catalog.json'
-            )
-          );
-
-          // Move catalog file from root of directory to configs folder
-          shell.mv(
-            path.resolve(getApplicationFolder(), 'catalog.json'),
-            path.resolve(getApplicationFolder(), 'configs', 'tap')
-          );
-          resolve();
-        }
+        resolve();
       })
       .catch(reject);
   });

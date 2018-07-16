@@ -17,7 +17,8 @@ import {
   getSchema,
   readSchema,
   addConfig,
-  getTaps
+  getTaps,
+  writeSchema
 } from '../../app/backend/taps';
 import { taps } from '../../app/backend/constants';
 
@@ -295,6 +296,32 @@ describe('taps functions', () => {
         })
         .catch((err) => {
           expect(err).toBeUndefined();
+        });
+    });
+  });
+
+  describe('write schema', () => {
+    it('should write tap catalog to file', (done) => {
+      writeSchema(sampleTapCatalog)
+        .then(() => {
+          fs.readFile(
+            path.resolve('tmp', 'knot', 'tap', 'catalog.json'),
+            (err, data) => {
+              if (!err) {
+                const actual = data.toString();
+                const expected = JSON.stringify(sampleTapCatalog);
+                expect(actual).toEqual(expected);
+                done();
+              } else {
+                expect(err).toBeUndefined();
+                done();
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
         });
     });
   });
