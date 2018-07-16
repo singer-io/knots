@@ -29,6 +29,7 @@ const {
   readFile,
   addKnotAttribute,
   getApplicationFolder,
+  getKnotsFolder,
   createTemporaryKnotFolder,
   getTemporaryKnotFolder
 } = require('./util');
@@ -129,8 +130,8 @@ const getSchema = (req, mockSpawn) =>
 const readSchema = (knot) =>
   new Promise((resolve, reject) => {
     const schemaPath = knot
-      ? path.resolve(getApplicationFolder(), knot, 'tap', 'catalog.json')
-      : path.resolve(getApplicationFolder(), 'configs', 'tap', 'catalog.json');
+      ? path.resolve(getKnotsFolder(), knot, 'tap', 'catalog.json')
+      : path.resolve(getTemporaryKnotFolder(), 'tap', 'catalog.json');
     readFile(schemaPath)
       .then((schemaString) => {
         try {
@@ -152,7 +153,7 @@ const addConfig = (req) =>
     const { knot, tapConfig, skipDiscovery } = req.body;
 
     const configPath = knot
-      ? path.resolve(getApplicationFolder(), knot, 'tap', 'config.json')
+      ? path.resolve(getKnotsFolder(), 'tap', 'config.json')
       : path.resolve(getTemporaryKnotFolder(), 'tap', 'config.json');
 
     writeFile(configPath, JSON.stringify(tapConfig))
@@ -186,7 +187,7 @@ const getTaps = () =>
 const writeSchema = (schemaObject, knot) =>
   new Promise((resolve, reject) => {
     const catalogPath = knot
-      ? path.resolve(getApplicationFolder(), knot, 'tap', 'catalog.json')
+      ? path.resolve(getKnotsFolder(), 'tap', 'catalog.json')
       : path.resolve(getApplicationFolder(), 'catalog.json');
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
@@ -226,7 +227,7 @@ const terminateDiscovery = () => {
 const addTap = (tap, knot) =>
   new Promise((resolve, reject) => {
     const knotPath = knot
-      ? path.resolve(getApplicationFolder(), 'knots', knot, 'knot.json')
+      ? path.resolve(getKnotsFolder(), knot, 'knot.json')
       : '';
     createKnot(tap, knotPath)
       .then(() => {
@@ -243,5 +244,6 @@ module.exports = {
   runningProcess,
   terminateDiscovery,
   createKnot,
-  getSchema
+  getSchema,
+  readSchema
 };

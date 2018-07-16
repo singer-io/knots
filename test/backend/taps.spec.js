@@ -2,8 +2,15 @@ import path from 'path';
 import fs from 'fs';
 import mockSpawn from 'mock-spawn';
 
-import { seedKnots, sampleKnotJsons, cleanfs } from '../util';
-import { createKnot, getSchema } from '../../app/backend/taps';
+import {
+  seedKnots,
+  seedCatalog,
+  sampleKnotJsons,
+  sampleCatalog,
+  savedSampleCatalog,
+  cleanfs
+} from '../util';
+import { createKnot, getSchema, readSchema } from '../../app/backend/taps';
 
 const mySpawn = mockSpawn();
 
@@ -137,6 +144,59 @@ describe('taps functions', () => {
         })
         .catch((err) => {
           expect(err).toBeDefined();
+        });
+    });
+  });
+
+  describe('read schema', () => {
+    beforeAll((done) => {
+      seedCatalog()
+        .then(() => {
+          done();
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should read a temporary knot schema', (done) => {
+      readSchema()
+        .then((res) => {
+          expect(res).toEqual(sampleCatalog);
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should read a saved knot schema', (done) => {
+      readSchema('savedKnot')
+        .then((res) => {
+          expect(res).toEqual(savedSampleCatalog);
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should reject promise for invalid jsons', (done) => {
+      readSchema('invalidKnot')
+        .then(() => {
+          expect(true).toBe(false);
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeDefined();
+          done();
         });
     });
   });
