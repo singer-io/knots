@@ -33,7 +33,8 @@ const {
   addKnotAttribute,
   writeFile,
   createMakeFileCommand,
-  getTemporaryKnotFolder
+  getTemporaryKnotFolder,
+  createTemporaryKnotFolder
 } = require('./util');
 const { commands } = require('./constants');
 
@@ -341,14 +342,15 @@ const partialSync = (req) =>
 
 const loadValues = (knot) =>
   new Promise((resolve, reject) => {
+    createTemporaryKnotFolder();
     // Make a clone of the knot to be edited
     shell.cp(
       '-R',
-      path.resolve(applicationFolder, 'knots', knot),
-      path.resolve(applicationFolder)
+      path.resolve(getKnotsFolder(), knot, '*'),
+      path.resolve(getTemporaryKnotFolder())
     );
 
-    const knotPath = path.resolve(applicationFolder, knot);
+    const knotPath = path.resolve(getTemporaryKnotFolder());
 
     const promises = [
       readFile(`${knotPath}/knot.json`),

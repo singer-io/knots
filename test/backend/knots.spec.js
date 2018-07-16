@@ -2,9 +2,17 @@ import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
 
-import { getKnots, invalidKnotString, cancel } from '../../app/backend/knots';
+import { getKnots, loadValues, cancel } from '../../app/backend/knots';
 
-import { sampleKnotJsons, seedKnots, cleanfs } from '../util';
+import {
+  sampleKnotJsons,
+  sampleSavedKnot,
+  invalidKnotString,
+  seedKnots,
+  seedKnot,
+  seedInvalidKnot,
+  cleanfs
+} from '../util';
 
 describe('knots functions', () => {
   describe('get knots', () => {
@@ -49,7 +57,7 @@ describe('knots functions', () => {
         });
     });
 
-    it('should reject promise when there is an ivalid knot', (done) => {
+    it('should reject promise when there is an invalid knot', (done) => {
       process.env.NODE_ENV = 'test';
       shell.mkdir('-p', path.resolve('knots', 'sample 3'));
       fs.writeFile(
@@ -103,6 +111,60 @@ describe('knots functions', () => {
         })
         .catch((err) => {
           expect(err).toBeUndefined();
+        });
+    });
+  });
+
+  describe('load values', () => {
+    beforeAll((done) => {
+      seedKnot()
+        .then(() => {
+          seedInvalidKnot()
+            .then(() => {
+              done();
+            })
+            .catch((error) => {
+              expect(error).toBeUndefined();
+              done();
+            });
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should load values of a saved knot', (done) => {
+      loadValues('savedKnot')
+        .then((res) => {
+          expect(res.name).toEqual(sampleSavedKnot.knotJson.name);
+          expect(res.tap).toEqual(sampleSavedKnot.knotJson.tap);
+          expect(res.target).toEqual(sampleSavedKnot.knotJson.target);
+          expect(res.tapConfig).toEqual(sampleSavedKnot.tapConfig);
+          expect(res.targetConfig).toEqual(sampleSavedKnot.targetConfig);
+          expect(res.schema).toEqual(sampleSavedKnot.tapCatalog.streams);
+
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should reject promise when there is an invalid file', (done) => {
+      loadValues('invalidSavedKnot')
+        .then((res) => {
+          expect(res).toBeUndefined();
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeDefined();
+          done();
         });
     });
   });

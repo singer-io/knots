@@ -23,6 +23,17 @@ const sampleKnotJson2 = {
   lastRun: '2018-07-13T12:30:20.114Z'
 };
 
+export const sampleSavedKnot = {
+  knotJson: {
+    name: 'sampleSavedKnot',
+    tap: { name: 'sampleTap', image: 'sampleTapImage' },
+    target: { name: 'sampleTarget', image: 'sampleTargetImage' }
+  },
+  tapConfig: { host: 'www.example.com' },
+  tapCatalog: { streams: [{ stream: 'sampleStream' }] },
+  targetConfig: { user: 'exampleUser' }
+};
+
 export const invalidKnotString =
   '{"tap":{"name":"tap-salesforce","image":"dataworld/tap-salesforce:1.4.14"},"target":{"name":"target-stitch","image":"dataworld/target-stitch:1.7.4"},"name":"Salesforce-Stitch","lastRun":"2018-07-13T12:30:20.114Z"';
 
@@ -98,6 +109,73 @@ export const seedKnots = () =>
         }
       }
     );
+  });
+
+const writeFile = (filePath, content) =>
+  new Promise((resolve, reject) => {
+    fs.writeFile(filePath, content, (error) => {
+      if (!error) {
+        resolve();
+      }
+
+      reject(error);
+    });
+  });
+
+export const seedKnot = () =>
+  new Promise((resolve, reject) => {
+    shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'tap'));
+    shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'target'));
+    const promises = [
+      writeFile(
+        path.resolve('knots', 'savedKnot', 'knot.json'),
+        JSON.stringify(sampleSavedKnot.knotJson)
+      ),
+      writeFile(
+        path.resolve('knots', 'savedKnot', 'tap', 'config.json'),
+        JSON.stringify(sampleSavedKnot.tapConfig)
+      ),
+      writeFile(
+        path.resolve('knots', 'savedKnot', 'tap', 'catalog.json'),
+        JSON.stringify(sampleSavedKnot.tapCatalog)
+      ),
+      writeFile(
+        path.resolve('knots', 'savedKnot', 'target', 'config.json'),
+        JSON.stringify(sampleSavedKnot.targetConfig)
+      )
+    ];
+
+    Promise.all(promises)
+      .then(resolve)
+      .catch(reject);
+  });
+
+export const seedInvalidKnot = () =>
+  new Promise((resolve, reject) => {
+    shell.mkdir('-p', path.resolve('knots', 'invalidSavedKnot', 'tap'));
+    shell.mkdir('-p', path.resolve('knots', 'invalidSavedKnot', 'target'));
+    const promises = [
+      writeFile(
+        path.resolve('knots', 'invalidSavedKnot', 'knot.json'),
+        JSON.stringify(sampleSavedKnot.knotJson)
+      ),
+      writeFile(
+        path.resolve('knots', 'invalidSavedKnot', 'tap', 'config.json'),
+        JSON.stringify(sampleSavedKnot.tapConfig)
+      ),
+      writeFile(
+        path.resolve('knots', 'invalidSavedKnot', 'tap', 'catalog.json'),
+        `${JSON.stringify(sampleSavedKnot.tapCatalog)}}`
+      ),
+      writeFile(
+        path.resolve('knots', 'invalidSavedKnot', 'target', 'config.json'),
+        JSON.stringify(sampleSavedKnot.targetConfig)
+      )
+    ];
+
+    Promise.all(promises)
+      .then(resolve)
+      .catch(reject);
   });
 
 export const seedTapCatalog = () =>
