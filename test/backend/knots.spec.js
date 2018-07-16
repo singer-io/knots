@@ -2,7 +2,7 @@ import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
 
-import { getKnots, invalidKnotString } from '../../app/backend/knots';
+import { getKnots, invalidKnotString, cancel } from '../../app/backend/knots';
 
 import { sampleKnotJsons, seedKnots, cleanfs } from '../util';
 
@@ -71,6 +71,39 @@ describe('knots functions', () => {
           }
         }
       );
+    });
+  });
+
+  describe('cancel', () => {
+    beforeAll((done) => {
+      shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
+      shell.mkdir('-p', path.resolve('tmp', 'knot', 'target'));
+      done();
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should delete the temporary knot', () => {
+      cancel()
+        .then(() => {
+          const getDirectories = (source) =>
+            fs
+              .readdirSync(source)
+              // Get all files and folders in knots directory
+              .map((name) => path.join(source, name))
+              // Get folder name from absolute path
+              .map((folderPath) => path.basename(folderPath));
+
+          // Array of knot names
+          const knots = getDirectories(path.resolve('tmp'));
+
+          expect(knots.length).toEqual(0);
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+        });
     });
   });
 });

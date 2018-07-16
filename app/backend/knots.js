@@ -23,17 +23,17 @@ const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
 const { exec, execFile } = require('child_process');
-const { EOL } = require('os');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
 const { app } = require('electron');
 
 const {
-  getApplicationFolder,
   getKnotsFolder,
   readFile,
   addKnotAttribute,
-  writeFile
+  writeFile,
+  createMakeFileCommand,
+  getTemporaryKnotFolder
 } = require('./util');
 const { commands } = require('./constants');
 
@@ -88,40 +88,6 @@ const getKnots = () =>
     } catch (error) {
       reject(error);
     }
-  });
-
-const createMakeFile = (knot, name) =>
-  new Promise((resolve, reject) => {
-    const { specImplementation } = knot.tap;
-    const { usesReplication = true, dockerParameters = '' } =
-      specImplementation || {};
-
-    /* eslint-disable no-template-curly-in-string */
-    const fileContent = `SHELL=/bin/bash -o pipefail\n\nfullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" ${dockerParameters} --interactive ${
-      knot.tap.image
-    } ${
-      knot.tap.name
-    } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
-      knot.target.image
-    } ${knot.target.name} -c target/data/config.json > ./tap/state.json${EOL}${
-      usesReplication
-        ? `sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${EOL}\tdocker run -v "$(CURDIR)/tap:/app/tap/data" ${dockerParameters} --interactive ${
-            knot.tap.image
-          } ${
-            knot.tap.name
-          } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
-            knot.target.image
-          } ${knot.target.name} -c target/data/config.json > ./tap/state.json}`
-        : ''
-    }`;
-    /* eslint-disable no-template-curly-in-string */
-
-    writeFile(
-      path.resolve(applicationFolder, 'knots', name, 'Makefile'),
-      fileContent
-    )
-      .then(resolve)
-      .catch(reject);
   });
 
 const emitLogs = (req, tapLogPath, targetLogPath) => {
@@ -247,10 +213,11 @@ const saveKnot = (name, currentName) =>
               }
 
               // Add the make file to the folder
-              createMakeFile(knotObject, name)
-                .then(() => {
-                  resolve();
-                })
+              writeFile(
+                path.resolve(getKnotsFolder(), name, 'Makefile'),
+                createMakeFileCommand(knotObject)
+              )
+                .then(resolve)
                 .catch(reject);
             } catch (error) {
               reject(error);
@@ -427,15 +394,10 @@ const terminateSync = () => {
   }
 };
 
-const cancel = (knot) =>
+const cancel = () =>
   new Promise((resolve, reject) => {
     try {
-      if (knot) {
-        shell.rm('-rf', path.resolve(applicationFolder, knot));
-      } else {
-        shell.rm('-rf', path.resolve(applicationFolder, 'configs'));
-        shell.rm('-rf', path.resolve(applicationFolder, 'knot.json'));
-      }
+      shell.rm('-rf', getTemporaryKnotFolder());
       resolve();
     } catch (error) {
       reject(error);
@@ -443,8 +405,6 @@ const cancel = (knot) =>
   });
 
 module.exports = {
-  getApplicationFolder,
-  getKnotsFolder,
   getKnots,
   saveKnot,
   sync,
