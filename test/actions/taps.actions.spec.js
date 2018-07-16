@@ -250,46 +250,7 @@ describe('taps actions', () => {
     });
   });
 
-  describe('submit schema', () => {
-    // it('should dispatch SCHEMA_UPDATED', () => {
-    //   const store = mockStore({});
-    //   nock(`${baseUrl}/taps/`)
-    //     .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
-    //     .put('/schema/', {
-    //       schema: { streams: schema[0] },
-    //       knot
-    //     })
-    //     .reply(200, {});
-    //   const expectedActions = [
-    //     {
-    //       type: tapActions.SCHEMA_UPDATED
-    //     }
-    //   ];
-    //   return store
-    //     .dispatch(tapActions.submitSchema(schema[0], knot))
-    //     .then(() => {
-    //       expect(store.getActions()).toEqual(expectedActions);
-    //     });
-    // });
-    // it('should dispatch SCHEMA_UPDATED with errors', () => {
-    //   const store = mockStore({});
-    //   nock(`${baseUrl}/taps/`)
-    //     .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
-    //     .put('/schema/')
-    //     .reply(500, { message: 'error message' });
-    //   const expectedActions = [
-    //     {
-    //       type: tapActions.SCHEMA_UPDATED,
-    //       error: 'error message'
-    //     }
-    //   ];
-    //   return store
-    //     .dispatch(tapActions.submitSchema(undefined, undefined))
-    //     .then(() => {
-    //       expect(store.getActions()).toEqual(expectedActions);
-    //     });
-    // });
-  });
+  // TODO: Test case for SCHEMA_UPDATED action
 
   describe('update schema logs', () => {
     it('should dispatch UPDATE_SCHEMA_LOGS', () => {

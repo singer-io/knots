@@ -1,5 +1,6 @@
 import tapReducer, { defaultState } from '../../app/reducers/taps';
 import * as tapActions from '../../app/actions/taps';
+import { LOADED_KNOT, RESET_STORE } from '../../app/actions/knots';
 
 const taps = [
   {
@@ -13,7 +14,7 @@ const taps = [
     tapKey: 'tap-sampleTap2'
   }
 ];
-const selectedTap = { name: 'sampleTap' };
+const selectedTap = { name: 'tap-salesforce' };
 const updatedTap = {
   fieldValues: {
     api_type: 'BULK',
@@ -24,6 +25,8 @@ const updatedTap = {
     start_date: ''
   }
 };
+const tapConfig = { start_date: '01-01-2017' };
+const schema = [{ tap_stream_id: 'testing' }];
 
 describe('taps reducer', () => {
   it('should return the initial state', () => {
@@ -74,7 +77,7 @@ describe('taps reducer', () => {
 
   it('should handle UPDATE_TAP_FIELD', () => {
     expect(
-      tapReducer(defaultState, {
+      tapReducer(undefined, {
         type: tapActions.UPDATE_TAP_FIELD,
         tap: 'tap-salesforce',
         field: 'client_id',
@@ -106,17 +109,43 @@ describe('taps reducer', () => {
     expect(
       tapReducer(undefined, {
         type: tapActions.UPDATE_SCHEMA_LOGS,
-        newLog: ''
+        newLog: 'logs'
       })
     ).toEqual(
       Object.assign({}, defaultState, {
-        schemaLogs: ['']
+        schemaLogs: ['logs']
       })
     );
   });
 
-  it('should handle SCHEMA_RECIEVED', () => {});
-  it('should handle UPDATE_SCHEMA_FIELD', () => {});
+  it('should handle SCHEMA_RECEIVED', () => {
+    expect(
+      tapReducer(undefined, {
+        type: tapActions.SCHEMA_RECEIVED,
+        schema,
+        error: ''
+      })
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        schema,
+        schemaLoading: false,
+        schemaLoaded: true
+      })
+    );
+  });
+
+  // TODO: Needs a more comprehensive test
+  it('should handle UPDATE_SCHEMA_FIELD', () => {
+    expect(
+      tapReducer(undefined, {
+        type: tapActions.UPDATE_SCHEMA_FIELD
+      })
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        schema: []
+      })
+    );
+  });
 
   it('should handle SCHEMA_UPDATED', () => {
     expect(
@@ -132,11 +161,41 @@ describe('taps reducer', () => {
     );
   });
 
+  it('should handle LOADED_KNOT', () => {
+    expect(
+      tapReducer(undefined, {
+        type: LOADED_KNOT,
+        tap: selectedTap,
+        tapConfig,
+        schema
+      })
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        selectedTap,
+        schema,
+        schemaLoaded: true
+      })
+    );
+  });
+
   it('should handle RESET_STORE', () => {
     expect(
       tapReducer(undefined, {
-        type: tapActions.RESET_STORE
+        type: RESET_STORE
       })
-    ).toEqual(defaultState);
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        'tap-salesforce': {
+          fieldValues: {
+            client_id: '',
+            client_secret: '',
+            refresh_token: '',
+            api_type: 'BULK',
+            select_fields_by_default: true,
+            start_date: ''
+          }
+        }
+      })
+    );
   });
 });
