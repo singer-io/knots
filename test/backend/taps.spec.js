@@ -16,8 +16,10 @@ import {
   createKnot,
   getSchema,
   readSchema,
-  addConfig
+  addConfig,
+  getTaps
 } from '../../app/backend/taps';
+import { taps } from '../../app/backend/constants';
 
 const mySpawn = mockSpawn();
 
@@ -281,6 +283,18 @@ describe('taps functions', () => {
         .catch((err) => {
           expect(err).toBeUndefined();
           done();
+        });
+    });
+  });
+
+  describe('get taps', () => {
+    it('should return the list of available taps', () => {
+      getTaps()
+        .then((res) => {
+          expect(res).toEqual(taps);
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
         });
     });
   });
