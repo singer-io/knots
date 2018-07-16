@@ -88,8 +88,9 @@ const writeFile = (filePath, content) =>
     });
   });
 
-const addKnotAttribute = (content, pathToKnot) =>
+const addKnotAttribute = (content) =>
   new Promise((resolve, reject) => {
+    const pathToKnot = path.resolve(getTemporaryKnotFolder(), 'knot.json');
     readFile(pathToKnot)
       .then((knotObjectString) => {
         try {

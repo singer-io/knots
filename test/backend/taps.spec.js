@@ -302,7 +302,7 @@ describe('taps functions', () => {
   });
 
   describe('get taps', () => {
-    it('should return the list of available taps', () => {
+    it('should return a list of available taps', () => {
       getTaps()
         .then((res) => {
           expect(res).toEqual(taps);
