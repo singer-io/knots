@@ -53,7 +53,13 @@ const getKnotsFolder = () => {
 
 const createTemporaryKnotFolder = () => {
   shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+
   shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot', 'tap'));
+  shell.mkdir(
+    '-p',
+    path.resolve(getApplicationFolder(), 'tmp', 'knot', 'target')
+  );
 };
 
 const getTemporaryKnotFolder = () =>

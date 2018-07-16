@@ -6,13 +6,19 @@ import os from 'os';
 import {
   getApplicationFolder,
   getKnotsFolder,
+  createTemporaryKnotFolder,
+  getTemporaryKnotFolder,
   readFile,
   writeFile,
   addKnotAttribute
 } from '../../app/backend/util';
-import { sampleKnotJsons } from '../util';
+import { sampleKnotJsons, cleanfs } from '../util';
 
 describe('util functions', () => {
+  afterAll(() => {
+    cleanfs();
+  });
+
   describe('getApplicationFolder', () => {
     it('should return home path as the application folder when in production', () => {
       process.env.NODE_ENV = 'production';
@@ -32,7 +38,7 @@ describe('util functions', () => {
   });
 
   describe('getKnotsFolder', () => {
-    it('should return folder based on home path as the application folder when in production', () => {
+    it('should return folder based on home path when in production', () => {
       process.env.NODE_ENV = 'production';
       const actual = getKnotsFolder();
       const expected = path.resolve(os.homedir(), '.knots', 'knots');
@@ -40,10 +46,91 @@ describe('util functions', () => {
       expect(actual).toEqual(expected);
     });
 
-    it('should return folder based on repo as the application folder when not in production', () => {
+    it('should return folder based on repo when not in production', () => {
       process.env.NODE_ENV = 'test';
       const actual = getKnotsFolder();
       const expected = path.resolve(__dirname, '../..', 'knots');
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('createTemporaryKnotFolder', () => {
+    it('creates a temporary knots folder in production', () => {
+      process.env.NODE_ENV = 'production';
+      createTemporaryKnotFolder();
+
+      const tempFolderPath = path.resolve(
+        os.homedir(),
+        '.knots',
+        'tmp',
+        'knot'
+      );
+
+      fs.readdir(tempFolderPath, (err) => {
+        if (err) {
+          expect(err).toBeUndefined();
+        }
+
+        try {
+          const tapFolderCreated = fs
+            .lstatSync(path.resolve(tempFolderPath, 'tap'))
+            .isDirectory();
+
+          const targetFolderCreated = fs
+            .lstatSync(path.resolve(tempFolderPath, 'target'))
+            .isDirectory();
+
+          expect(tapFolderCreated).toBe(true);
+          expect(targetFolderCreated).toBe(true);
+        } catch (error) {
+          expect(error).toBeUndefined();
+        }
+      });
+    });
+
+    it('creates a temporary knots folder when not in production', () => {
+      process.env.NODE_ENV = 'test';
+      createTemporaryKnotFolder();
+
+      const tempFolderPath = path.resolve('tmp', 'knot');
+
+      fs.readdir(tempFolderPath, (err) => {
+        if (err) {
+          expect(err).toBeUndefined();
+        }
+
+        try {
+          const tapFolderCreated = fs
+            .lstatSync(path.resolve(tempFolderPath, 'tap'))
+            .isDirectory();
+
+          const targetFolderCreated = fs
+            .lstatSync(path.resolve(tempFolderPath, 'target'))
+            .isDirectory();
+
+          expect(tapFolderCreated).toBe(true);
+          expect(targetFolderCreated).toBe(true);
+        } catch (error) {
+          expect(error).toBeUndefined();
+        }
+      });
+    });
+  });
+
+  describe('getTemporaryKnotsFolder', () => {
+    it('should return folder based on home path when in production', () => {
+      process.env.NODE_ENV = 'production';
+      const actual = getTemporaryKnotFolder();
+      const expected = path.resolve(os.homedir(), '.knots', 'tmp', 'knot');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return folder based on repo when not in production', () => {
+      process.env.NODE_ENV = 'test';
+      const actual = getTemporaryKnotFolder();
+      const expected = path.resolve(__dirname, '../..', 'tmp', 'knot');
 
       expect(actual).toEqual(expected);
     });

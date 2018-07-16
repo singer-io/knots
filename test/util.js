@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import os from 'os';
 import shell from 'shelljs';
 
 const sampleKnotJson1 = {
@@ -63,4 +64,5 @@ export const seedKnots = () =>
 export const cleanfs = () => {
   shell.rm('-rf', path.resolve('knots'));
   shell.rm('-rf', path.resolve('tmp'));
+  shell.rm('-rf', path.resolve(os.homedir(), '.knots', 'tmp'));
 };
