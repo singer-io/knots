@@ -75,23 +75,28 @@ const createKnot = (tap, knotPath) =>
     }
   });
 
-const getSchema = (req) =>
+const getSchema = (req, mockSpawn) =>
   new Promise((resolve, reject) => {
+    const spawnFunction = mockSpawn || spawn;
     const knotPath = getTemporaryKnotFolder();
+
+    shell.mkdir('-p', path.resolve(knotPath, 'tap'));
     const stdoutStream = fs.createWriteStream(
       path.resolve(knotPath, 'tap', 'catalog.json'),
       { flags: 'a' }
     );
+
     const discoveryCommand = commands.runDiscovery(
       knotPath,
       req.body.tap.name,
       req.body.tap.image
     );
 
-    const runDiscovery = spawn(
+    const runDiscovery = spawnFunction(
       discoveryCommand.split(' ')[0],
       discoveryCommand.split(' ').slice(1),
       {
+        shell: true,
         detached: true
       }
     );
@@ -237,5 +242,6 @@ module.exports = {
   writeSchema,
   runningProcess,
   terminateDiscovery,
-  createKnot
+  createKnot,
+  getSchema
 };

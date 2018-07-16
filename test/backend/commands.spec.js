@@ -7,9 +7,7 @@ describe('commands', () => {
   it('returns the correct discovery command (without docker parameters)', () => {
     const expected = `docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data"  dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json -d > "${path.resolve(
-      'applicationFolder'
-    )}/tap/catalog.json"`;
+    )}/tap:/app/tap-redshift/data" dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json -d`;
 
     const actual = commands.runDiscovery('applicationFolder', {
       name: 'tap-redshift',
