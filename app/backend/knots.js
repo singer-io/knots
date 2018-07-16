@@ -235,7 +235,7 @@ const saveKnot = (name, currentName) =>
 
 const deleteKnot = (knot) =>
   new Promise((resolve) => {
-    shell.rm('-rf', path.resolve(applicationFolder, 'knots', knot));
+    shell.rm('-rf', path.resolve(getKnotsFolder(), knot));
     resolve();
   });
 

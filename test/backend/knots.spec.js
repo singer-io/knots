@@ -2,7 +2,12 @@ import path from 'path';
 import fs from 'fs';
 import shell from 'shelljs';
 
-import { getKnots, loadValues, cancel } from '../../app/backend/knots';
+import {
+  getKnots,
+  loadValues,
+  deleteKnot,
+  cancel
+} from '../../app/backend/knots';
 
 import {
   sampleKnotJsons,
@@ -164,6 +169,47 @@ describe('knots functions', () => {
         })
         .catch((err) => {
           expect(err).toBeDefined();
+          done();
+        });
+    });
+  });
+
+  describe('delete knot', () => {
+    beforeAll((done) => {
+      seedKnot()
+        .then(() => {
+          done();
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should delete specified knot', (done) => {
+      deleteKnot('savedKnot')
+        .then(() => {
+          fs.readFile(
+            path.resolve('knots', 'savedKnot', 'knot.json'),
+            (err) => {
+              if (!err) {
+                expect(true).toBe(false);
+                done();
+              } else {
+                expect(err).toBeDefined();
+                done();
+              }
+            }
+          );
+
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
           done();
         });
     });
