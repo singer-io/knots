@@ -1,12 +1,12 @@
 import path from 'path';
 import fs from 'fs';
 import mockSpawn from 'mock-spawn';
+import shell from 'shelljs';
 
 import {
   seedKnots,
   seedTapCatalog,
   seedTapConfig,
-  sampleKnotJsons,
   sampleTapCatalog,
   sampleTapConfig,
   savedSampleTapCatalog,
@@ -40,45 +40,58 @@ describe('taps functions', () => {
       cleanfs();
     });
 
-    it('should update knot at passed path', (done) => {
-      createKnot(
-        {
-          name: 'new-tap',
-          image: 'new-tap-image',
-          specImplementation: {}
-        },
-        path.resolve('knots', 'sample 1', 'knot.json')
-      )
-        .then(() => {
-          fs.readFile(
-            path.resolve('knots', 'sample 1', 'knot.json'),
-            'utf8',
-            (err, data) => {
-              if (!err) {
-                try {
-                  const actual = JSON.parse(data);
-                  const expected = Object.assign({}, sampleKnotJsons[0], {
-                    tap: {
-                      name: 'new-tap',
-                      image: 'new-tap-image',
-                      specImplementation: {}
-                    }
-                  });
+    it('should update saved knot', (done) => {
+      shell.mkdir('-p', path.resolve('tmp', 'knot'));
 
-                  expect(actual).toEqual(expected);
-                  done();
-                } catch (error) {
-                  expect(error).toBeUndefined();
-                  done();
-                }
-              }
-            }
-          );
-        })
-        .catch((err) => {
-          expect(err).toBeUndefined();
-          done();
-        });
+      fs.writeFile(
+        path.resolve('tmp', 'knot', 'knot.json'),
+        JSON.stringify({}),
+        (err) => {
+          if (!err) {
+            createKnot(
+              {
+                name: 'new-tap',
+                image: 'new-tap-image',
+                specImplementation: {}
+              },
+              true
+            )
+              .then(() => {
+                fs.readFile(
+                  path.resolve('tmp', 'knot', 'knot.json'),
+                  'utf8',
+                  (er, data) => {
+                    if (!er) {
+                      try {
+                        const actual = JSON.parse(data);
+                        const expected = {
+                          tap: {
+                            name: 'new-tap',
+                            image: 'new-tap-image',
+                            specImplementation: {}
+                          }
+                        };
+
+                        expect(actual).toEqual(expected);
+                        done();
+                      } catch (error) {
+                        expect(error).toBeUndefined();
+                        done();
+                      }
+                    }
+                  }
+                );
+              })
+              .catch((e) => {
+                expect(e).toBeUndefined();
+                done();
+              });
+          } else {
+            expect(err).toBeUndefined();
+            done();
+          }
+        }
+      );
     });
 
     it('should create a new knot json in a temp folder', (done) => {

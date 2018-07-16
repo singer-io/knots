@@ -21,7 +21,7 @@
 
 const router = require('express').Router();
 
-const { getTaps, addConfig, writeSchema, addTap } = require('../taps');
+const { getTaps, createKnot, addConfig, writeSchema } = require('../taps');
 
 router.get('/', (req, res) => {
   getTaps()
@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
 router.post('/select', (req, res) => {
   const { tap, knot } = req.body;
 
-  addTap(tap, knot)
+  createKnot(tap, !!knot)
     .then(() => {
       res.json({});
     })

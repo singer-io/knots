@@ -36,9 +36,9 @@ const { taps, commands } = require('./constants');
 
 let runningProcess;
 
-const createKnot = (tap, knotPath) =>
+const createKnot = (tap, modifyKnot) =>
   new Promise((resolve, reject) => {
-    if (knotPath) {
+    if (modifyKnot) {
       addKnotAttribute(
         {
           field: ['tap'],
@@ -48,7 +48,7 @@ const createKnot = (tap, knotPath) =>
             specImplementation: tap.specImplementation
           }
         },
-        knotPath
+        path.resolve(getTemporaryKnotFolder(), 'knot.json')
       )
         .then(() => {
           resolve();
@@ -209,21 +209,8 @@ const terminateDiscovery = () => {
   }
 };
 
-const addTap = (tap, knot) =>
-  new Promise((resolve, reject) => {
-    const knotPath = knot
-      ? path.resolve(getKnotsFolder(), knot, 'knot.json')
-      : '';
-    createKnot(tap, knotPath)
-      .then(() => {
-        resolve();
-      })
-      .catch(reject);
-  });
-
 module.exports = {
   getTaps,
-  addTap,
   addConfig,
   writeSchema,
   runningProcess,
