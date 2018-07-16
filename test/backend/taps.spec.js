@@ -4,13 +4,20 @@ import mockSpawn from 'mock-spawn';
 
 import {
   seedKnots,
-  seedCatalog,
+  seedTapCatalog,
+  seedTapConfig,
   sampleKnotJsons,
-  sampleCatalog,
-  savedSampleCatalog,
+  sampleTapCatalog,
+  sampleTapConfig,
+  savedSampleTapCatalog,
   cleanfs
 } from '../util';
-import { createKnot, getSchema, readSchema } from '../../app/backend/taps';
+import {
+  createKnot,
+  getSchema,
+  readSchema,
+  addConfig
+} from '../../app/backend/taps';
 
 const mySpawn = mockSpawn();
 
@@ -150,7 +157,7 @@ describe('taps functions', () => {
 
   describe('read schema', () => {
     beforeAll((done) => {
-      seedCatalog()
+      seedTapCatalog()
         .then(() => {
           done();
         })
@@ -167,7 +174,7 @@ describe('taps functions', () => {
     it('should read a temporary knot schema', (done) => {
       readSchema()
         .then((res) => {
-          expect(res).toEqual(sampleCatalog);
+          expect(res).toEqual(sampleTapCatalog);
           done();
         })
         .catch((err) => {
@@ -179,7 +186,7 @@ describe('taps functions', () => {
     it('should read a saved knot schema', (done) => {
       readSchema('savedKnot')
         .then((res) => {
-          expect(res).toEqual(savedSampleCatalog);
+          expect(res).toEqual(savedSampleTapCatalog);
           done();
         })
         .catch((err) => {
@@ -196,6 +203,83 @@ describe('taps functions', () => {
         })
         .catch((err) => {
           expect(err).toBeDefined();
+          done();
+        });
+    });
+  });
+
+  describe('add config', () => {
+    beforeAll((done) => {
+      seedTapConfig()
+        .then(() => {
+          done();
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it("should save a temp knot's tap config", (done) => {
+      addConfig({ body: { tapConfig: sampleTapConfig, skipDiscovery: false } })
+        .then(() => {
+          fs.readFile(
+            path.resolve('tmp', 'knot', 'tap', 'config.json'),
+            (err, data) => {
+              if (!err) {
+                const actual = data.toString();
+                const expected = JSON.stringify(sampleTapConfig);
+                expect(actual).toEqual(expected);
+                done();
+              } else {
+                expect(err).toBeUndefined();
+                done();
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should return empty object when skipDiscovery is defined', (done) => {
+      addConfig({
+        body: {
+          tapConfig: Object.assign({}, sampleTapConfig, {
+            skipDiscovery: true
+          }),
+          skipDiscovery: true
+        }
+      })
+        .then((res) => {
+          fs.readFile(
+            path.resolve('tmp', 'knot', 'tap', 'config.json'),
+            (err, data) => {
+              if (!err) {
+                const actual = data.toString();
+                const expected = JSON.stringify(
+                  Object.assign({}, sampleTapConfig, {
+                    skipDiscovery: true
+                  })
+                );
+                expect(actual).toEqual(expected);
+                expect(res).toEqual({});
+                done();
+              } else {
+                expect(err).toBeUndefined();
+                done();
+              }
+            }
+          );
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
           done();
         });
     });

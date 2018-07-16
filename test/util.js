@@ -28,7 +28,7 @@ export const invalidKnotString =
 
 export const sampleKnotJsons = [sampleKnotJson1, sampleKnotJson2];
 
-export const sampleCatalog = {
+export const sampleTapCatalog = {
   streams: [
     {
       stream: 'sample_stream',
@@ -45,7 +45,7 @@ export const sampleCatalog = {
   ]
 };
 
-export const savedSampleCatalog = {
+export const savedSampleTapCatalog = {
   streams: [
     {
       stream: 'saved_sample_stream',
@@ -60,6 +60,11 @@ export const savedSampleCatalog = {
       schema: {}
     }
   ]
+};
+
+export const sampleTapConfig = {
+  username: 'user',
+  password: 123
 };
 
 export const seedKnots = () =>
@@ -95,19 +100,19 @@ export const seedKnots = () =>
     );
   });
 
-export const seedCatalog = () =>
+export const seedTapCatalog = () =>
   new Promise((resolve, reject) => {
     shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
 
     fs.writeFile(
       path.resolve('tmp', 'knot', 'tap', 'catalog.json'),
-      JSON.stringify(sampleCatalog),
+      JSON.stringify(sampleTapCatalog),
       (error) => {
         if (!error) {
           shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'tap'));
           fs.writeFile(
             path.resolve('knots', 'savedKnot', 'tap', 'catalog.json'),
-            JSON.stringify(savedSampleCatalog),
+            JSON.stringify(savedSampleTapCatalog),
             (err) => {
               if (!err) {
                 shell.mkdir('-p', path.resolve('knots', 'invalidKnot', 'tap'));
@@ -127,6 +132,23 @@ export const seedCatalog = () =>
               }
             }
           );
+        } else {
+          reject(error);
+        }
+      }
+    );
+  });
+
+export const seedTapConfig = () =>
+  new Promise((resolve, reject) => {
+    shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
+
+    fs.writeFile(
+      path.resolve('tmp', 'knot', 'tap', 'config.json'),
+      JSON.stringify(sampleTapConfig),
+      (error) => {
+        if (!error) {
+          resolve();
         } else {
           reject(error);
         }
