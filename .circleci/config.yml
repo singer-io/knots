@@ -27,6 +27,7 @@ jobs:
       MYSQL_VERSION: "1.9.10"
       POSTGRES_VERSION: "0.0.16"
       ADWORDS_VERSION: "1.3.3"
+      FACEBOOK_VERSION: "1.5.2"
 
     steps:
       - checkout
@@ -41,6 +42,7 @@ jobs:
             docker build --build-arg version=$MYSQL_VERSION -t dataworld/tap-mysql -t dataworld/tap-mysql:$MYSQL_VERSION ./tap-mysql
             docker build --build-arg version=$POSTGRES_VERSION -t dataworld/tap-postgres -t dataworld/tap-postgres:$POSTGRES_VERSION ./tap-postgres
             docker build --build-arg version=$ADWORDS_VERSION -t dataworld/tap-adwords -t dataworld/tap-adwords:$ADWORDS_VERSION ./tap-adwords
+            docker build --build-arg version=$FACEBOOK_VERSION -t dataworld/tap-facebook -t dataworld/tap-facebook:$FACEBOOK_VERSION ./tap-facebook
       - deploy:
           name: docker-hub release
           command: |
@@ -55,6 +57,8 @@ jobs:
             docker push dataworld/tap-postgres:$POSTGRES_VERSION
             docker push dataworld/tap-adwords:latest
             docker push dataworld/tap-adwords:$ADWORDS_VERSION
+            docker push dataworld/tap-facebook:latest
+            docker push dataworld/tap-facebook:$FACEBOOK_VERSION
 
 workflows:
   version: 2
