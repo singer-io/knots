@@ -33,6 +33,7 @@ const {
   addKnotAttribute,
   writeFile,
   createMakeFileCommand,
+  getApplicationFolder,
   getTemporaryKnotFolder,
   createTemporaryKnotFolder
 } = require('./util');
@@ -241,31 +242,37 @@ const deleteKnot = (knot) =>
 
 const packageKnot = (knotName) =>
   new Promise((resolve, reject) => {
-    try {
-      const zip = new EasyZip();
+    const knotPath = path.resolve(getKnotsFolder(), knotName);
 
-      // Make a clone of the knot to be downloaded
-      shell.cp(
-        '-R',
-        path.resolve(applicationFolder, 'knots', knotName),
-        path.resolve(applicationFolder)
-      );
+    // Check if folder exists
+    fs.access(knotPath, fs.constants.F_OK, (err) => {
+      try {
+        if (err) {
+          throw new Error('Knot does not exist');
+        }
 
-      // Remove log files
-      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'tap.log'));
-      shell.rm('-rf', path.resolve(applicationFolder, knotName, 'target.log'));
+        const zip = new EasyZip();
+        const tempFolder = path.resolve(getApplicationFolder(), 'tmp');
 
-      // Create zip from clone
-      zip.zipFolder(path.resolve(applicationFolder, knotName), () => {
-        zip.writeToFile(`${applicationFolder}/${knotName}.zip`);
+        // Make a clone of the knot to be downloaded
+        shell.cp('-R', path.resolve(knotPath), path.resolve(tempFolder));
 
-        // Done, clean up
-        shell.rm('-rf', path.resolve(applicationFolder, knotName));
-        resolve();
-      });
-    } catch (error) {
-      reject(error);
-    }
+        // Remove log files
+        shell.rm('-rf', path.resolve(tempFolder, knotName, 'tap.log'));
+        shell.rm('-rf', path.resolve(tempFolder, knotName, 'target.log'));
+
+        // Create zip from clone
+        zip.zipFolder(path.resolve(tempFolder, knotName), () => {
+          zip.writeToFile(`${tempFolder}/${knotName}.zip`);
+
+          // Done, clean up
+          shell.rm('-rf', path.resolve(tempFolder, knotName));
+          resolve();
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
   });
 
 const downloadKnot = (req, res) => {
@@ -273,7 +280,7 @@ const downloadKnot = (req, res) => {
   const { knot } = req.query;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.download(`${applicationFolder}/${knot}.zip`);
+  res.download(`${path.resolve(getApplicationFolder(), 'tmp')}/${knot}.zip`);
 };
 
 const partialSync = (req) =>

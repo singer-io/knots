@@ -6,7 +6,8 @@ import {
   getKnots,
   loadValues,
   deleteKnot,
-  cancel
+  cancel,
+  packageKnot
 } from '../../app/backend/knots';
 
 import {
@@ -210,6 +211,49 @@ describe('knots functions', () => {
         })
         .catch((err) => {
           expect(err).toBeUndefined();
+          done();
+        });
+    });
+  });
+
+  describe('package knot', () => {
+    beforeAll((done) => {
+      seedKnot()
+        .then(() => {
+          done();
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should create a zip of the saved knot', (done) => {
+      packageKnot('savedKnot')
+        .then(() => {
+          const pathToZip = path.resolve('tmp', 'savedKnot.zip');
+          fs.access(pathToZip, fs.constants.F_OK, (err) => {
+            expect(err).toBeFalsy();
+            done();
+          });
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should reject promise when exception is thrown', (done) => {
+      packageKnot('undefined')
+        .then(() => {
+          expect(true).toBe(false);
+        })
+        .catch((err) => {
+          expect(err).toBeDefined();
           done();
         });
     });
