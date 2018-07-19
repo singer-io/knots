@@ -2,9 +2,9 @@
 
 ## General
 
-* Contributions of all kinds (issues, ideas, proposals), not just code, are highly appreciated.
-* Pull requests are welcome with the understanding that major changes will be carefully evaluated and discussed, and may not always be accepted. Starting with a discussion is always best!
-* All contributions including documentation, filenames and discussions should be written in the English language.
+- Contributions of all kinds (issues, ideas, proposals), not just code, are highly appreciated.
+- Pull requests are welcome with the understanding that major changes will be carefully evaluated and discussed, and may not always be accepted. Starting with a discussion is always best!
+- All contributions including documentation, filenames and discussions should be written in the English language.
 
 ## Issues
 
@@ -76,7 +76,7 @@ $ cd docker/images
 $ mkdir tap-redshift
 ```
 
-cd into `tap-redhift` directory and create a `Dockerfile`
+cd into `tap-redshift` directory and create a `Dockerfile`
 
 ```sh
 $ touch Dockerfile
