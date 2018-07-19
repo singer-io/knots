@@ -1,6 +1,6 @@
 # Knot
 
-This app allows you to configure and download executable Singer pipelines.
+This application allows you to configure and download executable Singer pipelines.
 
 ### Getting Started
 
