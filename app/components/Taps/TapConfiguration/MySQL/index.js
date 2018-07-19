@@ -42,7 +42,8 @@ type Props = {
         host: string,
         port?: number,
         user: string,
-        password: string
+        password: string,
+        database: string
       }
     }
   },
@@ -52,7 +53,8 @@ type State = {
   host: {},
   port: {},
   user: {},
-  password: {}
+  password: {},
+  database: {}
 };
 
 export default class MySQL extends Component<Props, State> {
@@ -60,7 +62,8 @@ export default class MySQL extends Component<Props, State> {
     host: {},
     port: {},
     user: {},
-    password: {}
+    password: {},
+    database: {}
   };
 
   validate = (field: string, value: string) => {
@@ -83,7 +86,7 @@ export default class MySQL extends Component<Props, State> {
   };
 
   render() {
-    const { host, port, user, password } = this.props.tapsStore[
+    const { host, port, user, password, database } = this.props.tapsStore[
       'tap-mysql'
     ].fieldValues;
 
@@ -132,6 +135,29 @@ export default class MySQL extends Component<Props, State> {
                   onChange={this.handleChange}
                   {...this.state.port}
                 />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="user">Database name</Label>
+                <Input
+                  type="text"
+                  name="database"
+                  id="database"
+                  value={database}
+                  onFocus={() => {
+                    this.setState({ database: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('database', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.database}
+                />
+                <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
           </Row>

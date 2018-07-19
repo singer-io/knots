@@ -91,7 +91,8 @@ export type tapsStateType = {
       host: string,
       port: number,
       user: string,
-      password: string
+      password: string,
+      database: string
     }
   }
 };
@@ -157,7 +158,8 @@ const defaultState = {
       host: '',
       port: undefined,
       user: '',
-      password: ''
+      password: '',
+      database: ''
     }
   }
 };
@@ -457,7 +459,8 @@ export default function taps(state = defaultState, action) {
             host: '',
             port: undefined,
             user: '',
-            password: ''
+            password: '',
+            database: ''
           }
         }
       };
