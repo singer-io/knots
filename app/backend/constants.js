@@ -62,6 +62,20 @@ const taps = [
         selected: false
       }
     }
+  },
+  {
+    name: 'Facebook',
+    tapKey: 'tap-facebook',
+    tapImage: 'dataworld/tap-facebook:1.5.1',
+    repo: 'https://github.com/singer-io/tap-facebook',
+    specImplementation: {
+      usesMetadata: {
+        selected: false,
+        replication_key: false,
+        replication_method: false
+      },
+      usesCatalogArg: false
+    }
   }
 ];
 

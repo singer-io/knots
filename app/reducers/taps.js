@@ -94,6 +94,14 @@ export type tapsStateType = {
       password: string,
       database: string
     }
+  },
+  'tap-facebook': {
+    fieldValues: {
+      account_id: string,
+      access_token: string,
+      app_secret: string,
+      start_date: string
+    }
   }
 };
 
@@ -160,6 +168,14 @@ const defaultState = {
       user: '',
       password: '',
       database: ''
+    }
+  },
+  'tap-facebook': {
+    fieldValues: {
+      account_id: '',
+      access_token: '',
+      app_secret: '',
+      start_date: ''
     }
   }
 };
@@ -461,6 +477,14 @@ export default function taps(state = defaultState, action) {
             user: '',
             password: '',
             database: ''
+          }
+        },
+        'tap-facebook': {
+          fieldValues: {
+            account_id: '',
+            access_token: '',
+            app_secret: '',
+            start_date: ''
           }
         }
       };
