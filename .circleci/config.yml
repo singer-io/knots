@@ -27,7 +27,7 @@ jobs:
       MYSQL_VERSION: "1.9.10"
       POSTGRES_VERSION: "0.0.16"
       ADWORDS_VERSION: "1.3.3"
-      FACEBOOK_VERSION: "1.5.2"
+      FACEBOOK_VERSION: "1.5.1"
 
     steps:
       - checkout
