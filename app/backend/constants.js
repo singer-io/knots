@@ -70,10 +70,10 @@ const targets = [
 ];
 
 const commands = {
-  runDiscovery: (folderPath, tap, image) =>
+  runDiscovery: (folderPath, tapName, image) =>
     `docker run -v "${path.resolve(
       folderPath
-    )}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
+    )}/tap:/app/${tapName}/data" ${image} ${tapName} -c ${tapName}/data/config.json -d > "${path.resolve(
       folderPath
     )}/tap/catalog.json"`,
   runSync: (folderPath, tap, target) => {

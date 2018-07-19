@@ -15,7 +15,7 @@
     "email": "help@data.world"
   },
   "build": {
-    "appId": "com.electron.${name}",
+    "appId": "com.electron.knots",
     "productName": "KNOTS",
     "copyright": "Copyright © 2018 ${author}",
     "directories": {
