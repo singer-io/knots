@@ -57,12 +57,19 @@ type State = {
 
 class Knot extends Component<Props, State> {
   state = {
-    showDelete: false
+    showDelete: false,
+    showDownloadDisclaimer: false
   };
 
   toggleDelete = () => {
     this.setState({
       showDelete: !this.state.showDelete
+    });
+  };
+
+  toggleDownloadDisclaimer = () => {
+    this.setState({
+      showDownloadDisclaimer: !this.state.showDownloadDisclaimer
     });
   };
 
@@ -152,7 +159,7 @@ class Knot extends Component<Props, State> {
             <Button
               color="link-secondary"
               style={{ background: 'white' }}
-              onClick={this.download}
+              onClick={this.toggleDownloadDisclaimer}
               title="Export"
             >
               <span className="oi oi-cloud-download" />
@@ -186,6 +193,37 @@ class Knot extends Component<Props, State> {
               }}
             >
               Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal
+          isOpen={this.state.showDownloadDisclaimer}
+          toggle={this.toggleDownloadDisclaimer}
+        >
+          <ModalHeader toggle={this.toggleDownloadDisclaimer}>
+            Download <strong>{knot.name}</strong>?
+          </ModalHeader>
+          <ModalBody>
+            The file you are downloading may contain personal information, like
+            your name and password. By continuing to download, you agree it is
+            your sole responsibility to protect and secure that information.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="secondary"
+              outline
+              onClick={this.toggleDownloadDisclaimer}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                console.log('Hello');
+                this.props.download(this.props.knot);
+              }}
+            >
+              Download
             </Button>
           </ModalFooter>
         </Modal>
