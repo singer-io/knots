@@ -78,6 +78,12 @@ const taps = [
       usesCatalogArg: false,
       usesReplication: false
     }
+  },
+  {
+    name: 'Amazon S3',
+    tapKey: 'tap-s3-csv',
+    tapImage: 'dataworld/tap-s3-csv:0.0.3',
+    repo: 'https://github.com/singer-io/tap-s3-csv'
   }
 ];
 
