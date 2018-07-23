@@ -87,12 +87,22 @@ export type tapsStateType = {
     }
   },
   'tap-mysql': {
-    fieldValue: {
+    fieldValues: {
       host: string,
       port: number,
       user: string,
       password: string,
       database: string
+    }
+  },
+  'tap-oracle': {
+    fieldValues: {
+      sid: string,
+      host: string,
+      port: ?number,
+      user: string,
+      password: string,
+      default_replication_method: string
     }
   }
 };
@@ -160,6 +170,17 @@ const defaultState = {
       user: '',
       password: '',
       database: ''
+    }
+  },
+  'tap-oracle': {
+    fieldValues: {
+      sid: '',
+      host: '',
+      port: undefined,
+      user: '',
+      password: '',
+      database: '',
+      default_replication_method: 'FULL_TABLE'
     }
   }
 };
@@ -461,6 +482,17 @@ export default function taps(state = defaultState, action) {
             user: '',
             password: '',
             database: ''
+          }
+        },
+        'tap-oracle': {
+          fieldValues: {
+            sid: '',
+            host: '',
+            port: undefined,
+            user: '',
+            password: '',
+            database: '',
+            default_replication_method: 'FULL_TABLE'
           }
         }
       };

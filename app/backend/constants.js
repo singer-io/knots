@@ -62,6 +62,12 @@ const taps = [
         selected: false
       }
     }
+  },
+  {
+    name: 'Oracle',
+    tapKey: 'tap-oracle',
+    tapImage: 'dataworld/tap-oracle:0.0.21',
+    repo: 'https://github.com/singer-io/tap-oracle'
   }
 ];
 
