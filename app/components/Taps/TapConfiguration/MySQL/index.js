@@ -32,7 +32,8 @@ import {
   FormGroup,
   Input,
   Label,
-  Row
+  Row,
+  Alert
 } from 'reactstrap';
 
 type Props = {
@@ -92,6 +93,10 @@ export default class MySQL extends Component<Props, State> {
 
     return (
       <Container>
+        <Alert color="primary">
+          <h4>Note:</h4>
+          <p>This Tap currently does not support MySQL version 8.0</p>
+        </Alert>
         <Form>
           <Row>
             <Col xs="8">
