@@ -95,13 +95,15 @@ type Stream = {
 };
 
 const metadataIndexToUpdate = (stream) => {
+  let indexToUpdate;
   if (stream && stream.metadata) {
     stream.metadata.forEach((meta, index) => {
       if (meta.breadcrumb.length === 0) {
-        return index;
+        indexToUpdate = index;
       }
     });
   }
+  return indexToUpdate;
 };
 
 export default class Schema extends Component<Props, State> {
