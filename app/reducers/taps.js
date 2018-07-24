@@ -85,6 +85,15 @@ export type tapsStateType = {
       user_agent: string,
       customer_ids: string
     }
+  },
+  'tap-mysql': {
+    fieldValue: {
+      host: string,
+      port: number,
+      user: string,
+      password: string,
+      database: string
+    }
   }
 };
 
@@ -142,6 +151,15 @@ const defaultState = {
       start_date: '',
       user_agent: 'knots',
       customer_ids: ''
+    }
+  },
+  'tap-mysql': {
+    fieldValues: {
+      host: '',
+      port: undefined,
+      user: '',
+      password: '',
+      database: ''
     }
   }
 };
@@ -434,6 +452,15 @@ export default function taps(state = defaultState, action) {
             start_date: '',
             user_agent: 'knots',
             customer_ids: ''
+          }
+        },
+        'tap-mysql': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            user: '',
+            password: '',
+            database: ''
           }
         }
       };

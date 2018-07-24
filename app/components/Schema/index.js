@@ -164,6 +164,16 @@ export default class Schema extends Component<Props, State> {
   };
 
   fieldSelected = (stream: Stream) => {
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
+
+    const { selected: usesSelected = true } =
+      specImplementation.usesMetadata || {};
+
+    if (!usesSelected) {
+      return !!stream.schema.selected;
+    }
+
     let indexToUpdate;
     stream.metadata.forEach((meta, index) => {
       if (meta.breadcrumb.length === 0) {
@@ -186,19 +196,32 @@ export default class Schema extends Component<Props, State> {
   validSchema = () => {
     const { schema } = this.props.tapsStore;
 
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
+
+    const { selected: usesSelected = true } =
+      specImplementation.usesMetadata || {};
+
+    // true if a stream has been selected
     let valid = false;
-    // Valid if a stream has been selected
-    schema.forEach((stream) => {
-      const { metadata } = stream;
 
-      metadata.forEach((meta) => {
-        const subMeta = meta.metadata;
-
-        if (subMeta.selected) {
+    if (!usesSelected) {
+      schema.forEach((stream) => {
+        if (stream.schema) {
           valid = true;
         }
       });
-    });
+    } else {
+      schema.forEach((stream) => {
+        const { metadata } = stream;
+
+        metadata.forEach((meta) => {
+          if (meta.breadcrumb.length === 0 && meta.metadata.selected) {
+            valid = true;
+          }
+        });
+      });
+    }
 
     return valid;
   };
