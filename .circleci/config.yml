@@ -65,6 +65,8 @@ workflows:
             branches:
               ignore:
                 - docker-release
+            tags:
+              only: /^v.*/
   dependencies:
     jobs:
       - docker-dependencies:
