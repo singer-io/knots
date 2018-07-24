@@ -240,11 +240,13 @@ export default function taps(state = defaultState, action) {
       if (schema[action.index]) {
         const metadataIndexToUpdate = (stream) => {
           let indexToUpdate = -1;
-          stream.metadata.forEach((metadata, index) => {
-            if (metadata.breadcrumb.length === 0) {
-              indexToUpdate = index;
-            }
-          });
+          if (stream && stream.metadata) {
+            stream.metadata.forEach((metadata, index) => {
+              if (metadata.breadcrumb.length === 0) {
+                indexToUpdate = index;
+              }
+            });
+          }
           return indexToUpdate;
         };
 

@@ -26,7 +26,7 @@ import type { specImplementationPropType } from '../../../utils/shared-types';
 type Props = {
   index: string,
   columns: Array<string>,
-  stream: { metadata: Array<{}>, replication_key: string },
+  stream: { metadata?: Array<{}>, replication_key?: string },
   specImplementation: specImplementationPropType,
   handleChange: (field: string, index: string, value: boolean | string) => void
 };

@@ -86,12 +86,22 @@ type State = {
 type Stream = {
   stream: string,
   tap_stream_id: string,
-  metadata: Array<{
+  metadata?: Array<{
     breadcrumb: Array<string>,
     metadata: {
       selected?: boolean
     }
   }>
+};
+
+const metadataIndexToUpdate = (stream) => {
+  if (stream && stream.metadata) {
+    stream.metadata.forEach((meta, index) => {
+      if (meta.breadcrumb.length === 0) {
+        return index;
+      }
+    });
+  }
 };
 
 export default class Schema extends Component<Props, State> {
@@ -148,12 +158,7 @@ export default class Schema extends Component<Props, State> {
   };
 
   validReplicationKeys = (stream: Stream) => {
-    let indexToUpdate;
-    stream.metadata.forEach((meta, index) => {
-      if (meta.breadcrumb.length === 0) {
-        indexToUpdate = index;
-      }
-    });
+    const indexToUpdate = metadataIndexToUpdate(stream);
     if (indexToUpdate !== undefined) {
       return (
         stream.metadata[indexToUpdate].metadata['valid-replication-keys'] || []
@@ -174,12 +179,7 @@ export default class Schema extends Component<Props, State> {
       return !!stream.schema.selected;
     }
 
-    let indexToUpdate;
-    stream.metadata.forEach((meta, index) => {
-      if (meta.breadcrumb.length === 0) {
-        indexToUpdate = index;
-      }
-    });
+    const indexToUpdate = metadataIndexToUpdate(stream);
 
     if (indexToUpdate !== undefined) {
       return !!stream.metadata[indexToUpdate].metadata.selected;
