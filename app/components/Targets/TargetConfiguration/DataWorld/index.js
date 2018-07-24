@@ -43,7 +43,7 @@ type Props = {
 
 type State = {
   api_token: {},
-  dataset_url: {}
+  dataset_url: { valid?: boolean, invalid?: boolean }
 };
 
 export default class DataWorld extends Component<Props, State> {

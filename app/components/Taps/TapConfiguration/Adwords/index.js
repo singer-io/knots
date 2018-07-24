@@ -25,7 +25,6 @@
 
 import React, { Component } from 'react';
 import {
-  Alert,
   Button,
   Col,
   Collapse,
@@ -41,16 +40,20 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer, shell } from 'electron';
+import type { tapPropertiesType } from '../../../../utils/shared-types';
 
 type Props = {
   tapsStore: {
-    selectedTap: { name: string, image: string },
-    'tap-salesforce': {
+    selectedTap: tapPropertiesType,
+    'tap-adwords': {
       fieldValues: {
-        client_id: string,
-        client_secret: string,
+        developer_token: string,
+        oauth_client_id: string,
+        oauth_client_secret: string,
         refresh_token: string,
-        start_date: string
+        start_date: string,
+        user_agent: string,
+        customer_ids: string
       }
     }
   },
@@ -58,19 +61,22 @@ type Props = {
 };
 
 type State = {
-  client_id: {},
-  client_secret: {},
+  developer_token: {},
+  oauth_client_id: {},
+  oauth_client_secret: {},
   refresh_token: {},
-  start_date: {}
+  start_date: {},
+  user_agent: {},
+  customer_ids: {}
 };
 
-export default class Salesforce extends Component<Props, State> {
+export default class Adwords extends Component<Props, State> {
   constructor() {
     super();
 
-    ipcRenderer.on('sf-oauth-reply', (event, token) => {
+    ipcRenderer.on('adwords-oauth-reply', (event, token) => {
       this.props.updateTapField(
-        'tap-salesforce',
+        'tap-adwords',
         'refresh_token',
         token.refresh_token
       );
@@ -78,10 +84,13 @@ export default class Salesforce extends Component<Props, State> {
   }
 
   state = {
-    client_id: {},
-    client_secret: {},
+    developer_token: {},
+    oauth_client_id: {},
+    oauth_client_secret: {},
     refresh_token: {},
-    start_date: {}
+    start_date: {},
+    user_agent: { valid: true },
+    customer_ids: {}
   };
 
   validate = (field: string, value: string) => {
@@ -110,7 +119,7 @@ export default class Salesforce extends Component<Props, State> {
       value = this.toISODateString(new Date(value));
     }
 
-    this.props.updateTapField('tap-salesforce', name, value);
+    this.props.updateTapField('tap-adwords', name, value);
   };
 
   formatDate = (ISODate: string) => {
@@ -125,10 +134,10 @@ export default class Salesforce extends Component<Props, State> {
   };
 
   authorize = () => {
-    const { client_id, client_secret } = this.props.tapsStore[
-      'tap-salesforce'
+    const { oauth_client_id, oauth_client_secret } = this.props.tapsStore[
+      'tap-adwords'
     ].fieldValues;
-    ipcRenderer.send('sf-oauth', client_id, client_secret);
+    ipcRenderer.send('adwords-oauth', oauth_client_id, oauth_client_secret);
   };
 
   openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
@@ -138,105 +147,101 @@ export default class Salesforce extends Component<Props, State> {
 
   render() {
     const {
-      client_id,
-      client_secret,
+      developer_token,
+      oauth_client_id,
+      oauth_client_secret,
       refresh_token,
-      start_date
-    } = this.props.tapsStore['tap-salesforce'].fieldValues;
+      start_date,
+      user_agent,
+      customer_ids
+    } = this.props.tapsStore['tap-adwords'].fieldValues;
 
     return (
       <Container>
-        <Alert color="primary">
-          <h4>Shhh... Here is a secret!</h4>
-          <p>
-            This Tap requires you to provision your own SalesForce Connected
-            App. That will give you access to the consumer key and secret
-            required below. To do so, please follow&nbsp;
-            <a
-              href="#"
-              onClick={(e) =>
-                this.openLink(
-                  e,
-                  'https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5'
-                )
-              }
-            >
-              this guide
-            </a>.
-          </p>
-          <p>
-            You must select <strong>Enable OAuth settings</strong> and specify
-            the following options:
-          </p>
-          <ol>
-            <li>
-              Callback URL:{' '}
-              <code>https://login.salesforce.com/services/oauth2/success</code>
-            </li>
-            <li>
-              Selected OAuth Scopes:
-              <ul>
-                <li>
-                  <code>Access and manage your data (api)</code>
-                </li>
-                <li>
-                  <code>
-                    Perform requests on your behalf at any time (refresh_token,
-                    offline_access)
-                  </code>
-                </li>
-              </ul>
-            </li>
-          </ol>
-        </Alert>
         <Form>
           <Row>
             <Col>
               <FormGroup>
-                <Label for="client_id">Consumer key</Label>
+                <Label for="client_id">Developer token</Label>
                 <Input
                   type="text"
-                  name="client_id"
-                  id="client_id"
-                  value={client_id}
+                  name="developer_token"
+                  id="developer_token"
+                  value={developer_token}
                   onFocus={() => {
-                    this.setState({ client_id: {} });
+                    this.setState({ developer_token: {} });
                   }}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
-                    this.validate('client_id', value);
+                    this.validate('developer_token', value);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.client_id}
+                  {...this.state.developer_token}
                 />
                 <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="client_id">
+                  User agent <small>(optional)</small>
+                </Label>
+                <Input
+                  type="text"
+                  name="user_agent"
+                  id="user_agent"
+                  value={user_agent}
+                  onChange={this.handleChange}
+                  {...this.state.user_agent}
+                />
               </FormGroup>
             </Col>
           </Row>
           <Row>
             <Col>
               <FormGroup>
-                <Label for="client_secret">Consumer secret</Label>
+                <Label for="client_secret">Client ID</Label>
                 <Input
-                  type="password"
-                  name="client_secret"
-                  id="client_secret"
-                  value={client_secret}
+                  type="text"
+                  name="oauth_client_id"
+                  id="oauth_client_id"
+                  value={oauth_client_id}
                   onFocus={() => {
-                    this.setState({ client_secret: {} });
+                    this.setState({ oauth_client_id: {} });
                   }}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
-                    this.validate('client_secret', value);
+                    this.validate('oauth_client_id', value);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.client_secret}
+                  {...this.state.oauth_client_id}
+                />
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label for="client_secret">Client secret</Label>
+                <Input
+                  type="password"
+                  name="oauth_client_secret"
+                  id="oauth_client_secret"
+                  value={oauth_client_secret}
+                  onFocus={() => {
+                    this.setState({ oauth_client_secret: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('oauth_client_secret', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.oauth_client_secret}
                 />
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
-          <Collapse isOpen={!!(client_id && client_secret)}>
+          <Collapse isOpen={!!(oauth_client_id && oauth_client_secret)}>
             <Row>
               <Col>
                 <FormGroup>
@@ -253,7 +258,7 @@ export default class Salesforce extends Component<Props, State> {
                     />
                     <InputGroupAddon addonType="append">
                       <Button
-                        disabled={!(client_id && client_secret)}
+                        disabled={!(oauth_client_id && oauth_client_secret)}
                         outline
                         color="secondary"
                         onClick={this.authorize}
@@ -267,7 +272,31 @@ export default class Salesforce extends Component<Props, State> {
             </Row>
           </Collapse>
           <Row>
-            <Col xs="6">
+            <Col>
+              <FormGroup>
+                <Label for="client_id">Customer ID</Label>
+                <Input
+                  type="text"
+                  name="customer_ids"
+                  id="customer_ids"
+                  value={customer_ids}
+                  onFocus={() => {
+                    this.setState({ customer_ids: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('customer_ids', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.customer_ids}
+                />
+                <FormText>
+                  Comma separated AdWords account IDs to replicate data from.
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+            <Col>
               <FormGroup>
                 <Label for="start_date">Start date</Label>
                 <Input

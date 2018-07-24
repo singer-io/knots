@@ -50,8 +50,8 @@ type State = {
 
 export default class Home extends Component<Props, State> {
   state = {
-    dockerInstalled: false,
-    dockerRunning: false
+    dockerInstalled: !!this.props.knotsStore.dockerVersion,
+    dockerRunning: this.props.knotsStore.dockerRunning
   };
 
   componentWillMount() {
@@ -78,7 +78,7 @@ export default class Home extends Component<Props, State> {
     }, 1000);
   };
 
-  openLink = (e: SyntheticEvent, url: string) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };

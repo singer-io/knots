@@ -22,7 +22,7 @@
 // @flow
 
 import axios from 'axios';
-import {
+import type {
   specImplementationPropType,
   tapPropertiesType
 } from '../utils/shared-types';

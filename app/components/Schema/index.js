@@ -19,8 +19,6 @@
  * data.world, Inc.(http://data.world/).
  */
 
-// @flow
-
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -43,7 +41,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
-import {
+import type {
   specImplementationPropType,
   tapPropertiesType
 } from '../../utils/shared-types';
@@ -77,7 +75,7 @@ type Props = {
   schemaPageLoaded: () => void,
   updateSchemaLogs: (log: string) => void,
   history: { push: (path: string) => void },
-  cancel: () => void
+  cancel: (name: string) => void
 };
 
 type State = {
@@ -113,7 +111,7 @@ export default class Schema extends Component<Props, State> {
     });
   }
 
-  updateLogs(log: text) {
+  updateLogs(log: string) {
     this.props.updateSchemaLogs(log);
   }
 
@@ -166,6 +164,16 @@ export default class Schema extends Component<Props, State> {
   };
 
   fieldSelected = (stream: Stream) => {
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
+
+    const { selected: usesSelected = true } =
+      specImplementation.usesMetadata || {};
+
+    if (!usesSelected) {
+      return !!stream.schema.selected;
+    }
+
     let indexToUpdate;
     stream.metadata.forEach((meta, index) => {
       if (meta.breadcrumb.length === 0) {
@@ -180,7 +188,7 @@ export default class Schema extends Component<Props, State> {
     return false;
   };
 
-  openLink = (e: SyntheticEvent, url: string) => {
+  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
     e.preventDefault();
     shell.openExternal(url);
   };
@@ -188,19 +196,32 @@ export default class Schema extends Component<Props, State> {
   validSchema = () => {
     const { schema } = this.props.tapsStore;
 
+    const specImplementation =
+      this.props.tapsStore.selectedTap.specImplementation || {};
+
+    const { selected: usesSelected = true } =
+      specImplementation.usesMetadata || {};
+
+    // true if a stream has been selected
     let valid = false;
-    // Valid if a stream has been selected
-    schema.forEach((stream) => {
-      const { metadata } = stream;
 
-      metadata.forEach((meta) => {
-        const subMeta = meta.metadata;
-
-        if (subMeta.selected) {
+    if (!usesSelected) {
+      schema.forEach((stream) => {
+        if (stream.schema) {
           valid = true;
         }
       });
-    });
+    } else {
+      schema.forEach((stream) => {
+        const { metadata } = stream;
+
+        metadata.forEach((meta) => {
+          if (meta.breadcrumb.length === 0 && meta.metadata.selected) {
+            valid = true;
+          }
+        });
+      });
+    }
 
     return valid;
   };

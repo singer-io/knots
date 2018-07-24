@@ -30,47 +30,41 @@ import {
   Form,
   FormFeedback,
   FormGroup,
-  FormText,
   Input,
   Label,
-  Row
+  Row,
+  Alert
 } from 'reactstrap';
 
 type Props = {
   tapsStore: {
-    'tap-redshift': {
+    'tap-mysql': {
       fieldValues: {
         host: string,
-        dbname: string,
         port?: number,
-        schema: string,
         user: string,
         password: string,
-        start_date: string
+        database: string
       }
     }
   },
   updateTapField: (tap: string, field: string, value: string | number) => void
 };
 type State = {
-  host: { validation: {}, errorMessage: string },
+  host: {},
   port: {},
-  dbname: {},
-  schema: {},
   user: {},
   password: {},
-  start_date: {}
+  database: {}
 };
 
-export default class Redshift extends Component<Props, State> {
+export default class MySQL extends Component<Props, State> {
   state = {
-    host: { validation: {}, errorMessage: '' },
+    host: {},
     port: {},
-    dbname: {},
-    schema: { valid: true },
     user: {},
     password: {},
-    start_date: {}
+    database: {}
   };
 
   validate = (field: string, value: string) => {
@@ -81,84 +75,28 @@ export default class Redshift extends Component<Props, State> {
     }
   };
 
-  toISODateString = (date: Date) => {
-    const pad = (number) => (number < 10 ? `0${number}` : number);
-
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-      date.getUTCSeconds()
-    )}Z`;
-  };
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
-    if (name === 'start_date') {
-      value = this.toISODateString(new Date(value));
-    } else if (name === 'port') {
+    if (name === 'port') {
       value = parseInt(value, 10);
     }
 
-    this.props.updateTapField('tap-redshift', name, value);
-  };
-
-  formatDate = (ISODate: string) => {
-    const date = new Date(ISODate);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}-${month < 10 ? `0${month}` : month}-${
-      day < 10 ? `0${day}` : day
-    }`;
-  };
-
-  validateHostName = (value: string) => {
-    if (value) {
-      // Ensure a loopback address hasn't been provided
-      const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
-      if (loopBackAddresses.test(value)) {
-        this.setState({
-          host: {
-            validation: { invalid: true },
-            errorMessage: 'KNOTS does not support loopback addresses'
-          }
-        });
-      } else {
-        // All checks pass
-        this.setState({
-          host: {
-            validation: { valid: true },
-            errorMessage: ''
-          }
-        });
-      }
-    } else {
-      // If no value is provided let the user know the field is required
-      this.setState({
-        host: {
-          validation: { invalid: true },
-          errorMessage: 'Must be a valid server hostname or IP address'
-        }
-      });
-    }
+    this.props.updateTapField('tap-mysql', name, value);
   };
 
   render() {
-    const {
-      host,
-      dbname,
-      port,
-      schema,
-      user,
-      password,
-      start_date
-    } = this.props.tapsStore['tap-redshift'].fieldValues;
+    const { host, port, user, password, database } = this.props.tapsStore[
+      'tap-mysql'
+    ].fieldValues;
 
     return (
       <Container>
+        <Alert color="primary">
+          <h4>Note:</h4>
+          <p>This Tap currently does not support MySQL version 8.0</p>
+        </Alert>
         <Form>
           <Row>
             <Col xs="8">
@@ -170,17 +108,18 @@ export default class Redshift extends Component<Props, State> {
                   id="host"
                   value={host}
                   onFocus={() => {
-                    this.setState({
-                      host: { validation: {}, errorMessage: '' }
-                    });
+                    this.setState({ host: {} });
                   }}
-                  onBlur={() => {
-                    this.validateHostName(host);
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('host', value);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.host.validation}
+                  {...this.state.host}
                 />
-                <FormFeedback>{this.state.host.errorMessage}</FormFeedback>
+                <FormFeedback>
+                  Must be a valid server hostname or IP address
+                </FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="4">
@@ -207,37 +146,21 @@ export default class Redshift extends Component<Props, State> {
           <Row>
             <Col>
               <FormGroup>
-                <Label for="dbname">Database name</Label>
+                <Label for="user">Database name</Label>
                 <Input
                   type="text"
-                  name="dbname"
-                  id="dbname"
-                  value={dbname}
+                  name="database"
+                  id="database"
+                  value={database}
                   onFocus={() => {
-                    this.setState({ dbname: {} });
+                    this.setState({ database: {} });
                   }}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
-                    this.validate('dbname', value);
+                    this.validate('database', value);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.dbname}
-                />
-                <FormFeedback>Required</FormFeedback>
-              </FormGroup>
-            </Col>
-            <Col>
-              <FormGroup>
-                <Label for="schema">
-                  Database schema <small>(optional)</small>
-                </Label>
-                <Input
-                  type="text"
-                  name="schema"
-                  id="schema"
-                  value={schema}
-                  onChange={this.handleChange}
-                  {...this.state.schema}
+                  {...this.state.database}
                 />
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
@@ -283,30 +206,6 @@ export default class Redshift extends Component<Props, State> {
                   onChange={this.handleChange}
                   {...this.state.password}
                 />
-                <FormFeedback>Required</FormFeedback>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
-            <Col xs="6">
-              <FormGroup>
-                <Label for="start_date">Start date</Label>
-                <Input
-                  type="date"
-                  name="start_date"
-                  id="start_date"
-                  value={start_date ? this.formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
-                  }}
-                  onChange={this.handleChange}
-                  {...this.state.start_date}
-                />
-                <FormText>
-                  Applies to tables with a defined timestamp field and limits
-                  how much historical data will be replicated.
-                </FormText>
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>

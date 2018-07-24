@@ -29,6 +29,20 @@ const importAll = (r) => {
   return images;
 };
 
-const images = importAll(require.context('./img', false, /\.svg$/));
+// require.context does not work with tests
+// https://github.com/facebook/create-react-app/issues/517
+let images = {};
+if (process.env.NODE_ENV === 'test') {
+  images = {
+    'knots.svg': 'knots',
+    'tap-postgres.svg': 'postgres',
+    'tap-redshift.svg': 'redshift',
+    'tap-salesforce.svg': 'salesforce',
+    'target-datadotworld.svg': 'datadotworld',
+    'target-stitch.svg': 'stitch'
+  };
+} else {
+  images = importAll(require.context('./img', false, /\.svg$/));
+}
 
 export default (logo) => images[`${logo}.svg`];

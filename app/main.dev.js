@@ -32,8 +32,8 @@
  * @flow
  */
 import { app, ipcMain, BrowserWindow } from 'electron';
-import electronOauth2 from 'electron-oauth2';
 import MenuBuilder from './menu';
+import { electronOauth } from './electron-oauth';
 
 const fixPath = require('fix-path');
 
@@ -131,9 +131,16 @@ app.on('ready', async () => {
     sfConfig.clientId = clientId;
     // $FlowFixMe
     sfConfig.clientSecret = clientSecret;
-    const salesforceOauth = electronOauth2(sfConfig, windowParams);
+    const salesforceOauth = electronOauth(windowParams);
     salesforceOauth
-      .getAccessToken({})
+      .getAccessToken(
+        ['refresh_token', 'api', 'offline_access'],
+        clientId,
+        clientSecret,
+        sfConfig.redirectUri,
+        sfConfig.tokenUrl,
+        sfConfig.authorizationUrl
+      )
       .then(
         (token) => {
           event.sender.send('sf-oauth-reply', token);
@@ -142,6 +149,19 @@ app.on('ready', async () => {
           console.log('Error while getting token', err);
         }
       )
+      .catch((error) => console.log(error));
+  });
+
+  ipcMain.on('adwords-oauth', (event, clientId, clientSecret) => {
+    const tokenUrl = 'https://accounts.google.com/o/oauth2/token';
+    const redirectUrl = 'urn:ietf:wg:oauth:2.0:oob';
+    const scope = 'https://www.googleapis.com/auth/adwords';
+    const googleOauth = electronOauth(windowParams);
+    googleOauth
+      .getAccessToken(scope, clientId, clientSecret, redirectUrl, tokenUrl)
+      .then((token) => {
+        event.sender.send('adwords-oauth-reply', token);
+      })
       .catch((error) => console.log(error));
   });
 });

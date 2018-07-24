@@ -18,14 +18,19 @@
  * This product includes software developed at
  * data.world, Inc.(http://data.world/).
  */
-// @flow
 
-import { shell } from 'electron';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-// $FlowFixMe
-/* eslint-disable */
-export function openLink(e: SyntheticEvent<HTMLAnchorElement>) {
-  e.preventDefault();
-  // $FlowFixMe
-  shell.openExternal(e.target.href);
+import * as TapsActions from '../actions/taps';
+import Adwords from '../components/Taps/TapConfiguration/Adwords';
+
+function mapStateToProps(state) {
+  return { tapsStore: state.taps };
 }
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(TapsActions, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Adwords);

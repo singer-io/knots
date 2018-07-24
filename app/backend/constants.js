@@ -42,6 +42,26 @@ const taps = [
     tapKey: 'tap-postgres',
     tapImage: 'dataworld/tap-postgres:0.0.16',
     repo: 'https://github.com/singer-io/tap-postgres'
+  },
+  {
+    name: 'Adwords',
+    tapKey: 'tap-adwords',
+    tapImage: 'dataworld/tap-adwords:1.3.3',
+    repo: 'https://github.com/singer-io/tap-adwords',
+    specImplementation: {
+      usesCatalogArg: false
+    }
+  },
+  {
+    name: 'MySQL',
+    tapKey: 'tap-mysql',
+    tapImage: 'dataworld/tap-mysql:1.9.10',
+    repo: 'https://github.com/singer-io/tap-mysql',
+    specImplementation: {
+      usesMetadata: {
+        selected: false
+      }
+    }
   }
 ];
 
@@ -62,10 +82,14 @@ const targets = [
 
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${folderPath}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${folderPath}/tap/catalog.json"`,
+    `docker run -v "${path.resolve(
+      folderPath
+    )}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
+      folderPath
+    )}/tap/catalog.json"`,
   runSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true } = tap.specImplementation || {};
-    return `docker run -v "${folderPath}/tap:/app/${
+    return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
     }/data" --interactive ${tap.image} ${tap.name} -c ${
       tap.name
@@ -74,35 +98,39 @@ const commands = {
     }/data/catalog.json 2> "${path.resolve(
       folderPath,
       'tap.log'
-    )}" | docker run -v "${folderPath}/target:/app/${
+    )}" | docker run -v "${path.resolve(folderPath)}/target:/app/${
       target.name
     }/data" --interactive ${target.image} ${target.name} -c ${
       target.name
     }/data/config.json 2> "${path.resolve(
       folderPath,
       'target.log'
-    )}" > "${folderPath}/tap/state.json"`;
+    )}" > "${path.resolve(folderPath)}/tap/state.json"`;
   },
   runPartialSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true } = tap.specImplementation || {};
-    return `tail -1 "${folderPath}/tap/state.json" > "${folderPath}/tap/latest-state.json"; \\
-    docker run -v "${folderPath}/tap:/app/${tap.name}/data" --interactive ${
-      tap.image
-    } ${tap.name} -c ${tap.name}/data/config.json ${
-      usesCatalogArg ? '--catalog' : '--properties'
-    } ${tap.name}/data/catalog.json --state ${
+    return `tail -1 "${path.resolve(
+      folderPath
+    )}/tap/state.json" > "${path.resolve(folderPath)}/tap/latest-state.json"; \\
+    docker run -v "${path.resolve(folderPath)}/tap:/app/${
+      tap.name
+    }/data" --interactive ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
+      tap.name
+    }/data/catalog.json --state ${
       tap.name
     }/data/latest-state.json 2> "${path.resolve(
       folderPath,
       'tap.log'
-    )}" | docker run -v "${folderPath}/target:/app/${
+    )}" | docker run -v "${path.resolve(folderPath)}/target:/app/${
       target.name
     }/data" --interactive ${target.image} ${target.name} -c ${
       target.name
     }/data/config.json 2> "${path.resolve(
       folderPath,
       'target.log'
-    )}" > "${folderPath}/tap/state.json";`;
+    )}" > "${path.resolve(folderPath)}/tap/state.json"`;
   }
 };
 
