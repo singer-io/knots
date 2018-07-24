@@ -23,27 +23,6 @@ const path = require('path');
 
 const taps = [
   {
-    name: 'Redshift',
-    tapKey: 'tap-redshift',
-    tapImage: 'dataworld/tap-redshift:1.0.0b8',
-    repo: 'https://github.com/datadotworld/tap-redshift'
-  },
-  {
-    name: 'Salesforce',
-    tapKey: 'tap-salesforce',
-    tapImage: 'dataworld/tap-salesforce:1.4.14',
-    repo: 'https://github.com/singer-io/tap-salesforce',
-    specImplementation: {
-      usesCatalogArg: false
-    }
-  },
-  {
-    name: 'Postgres',
-    tapKey: 'tap-postgres',
-    tapImage: 'dataworld/tap-postgres:0.0.16',
-    repo: 'https://github.com/singer-io/tap-postgres'
-  },
-  {
     name: 'Adwords',
     tapKey: 'tap-adwords',
     tapImage: 'dataworld/tap-adwords:1.3.3',
@@ -68,6 +47,27 @@ const taps = [
     tapKey: 'tap-oracle',
     tapImage: 'dataworld/tap-oracle:0.0.21',
     repo: 'https://github.com/singer-io/tap-oracle'
+  },
+  {
+    name: 'Postgres',
+    tapKey: 'tap-postgres',
+    tapImage: 'dataworld/tap-postgres:0.0.16',
+    repo: 'https://github.com/singer-io/tap-postgres'
+  },
+  {
+    name: 'Redshift',
+    tapKey: 'tap-redshift',
+    tapImage: 'dataworld/tap-redshift:1.0.0b8',
+    repo: 'https://github.com/datadotworld/tap-redshift'
+  },
+  {
+    name: 'Salesforce',
+    tapKey: 'tap-salesforce',
+    tapImage: 'dataworld/tap-salesforce:1.4.14',
+    repo: 'https://github.com/singer-io/tap-salesforce',
+    specImplementation: {
+      usesCatalogArg: false
+    }
   }
 ];
 

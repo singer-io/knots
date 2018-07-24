@@ -95,6 +95,7 @@ export default class Taps extends Component<Props, State> {
   };
 
   formValid = () => {
+    // TODO Delegate to tap-specific components
     const { selectedTap } = this.props.tapsStore;
     if (!selectedTap.name) {
       return false;

@@ -179,7 +179,6 @@ const defaultState = {
       port: undefined,
       user: '',
       password: '',
-      database: '',
       default_replication_method: 'FULL_TABLE'
     }
   }
@@ -491,7 +490,6 @@ export default function taps(state = defaultState, action) {
             port: undefined,
             user: '',
             password: '',
-            database: '',
             default_replication_method: 'FULL_TABLE'
           }
         }
