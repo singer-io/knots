@@ -97,8 +97,9 @@ export type tapsStateType = {
   },
   'tap-facebook': {
     fieldValues: {
-      account_id: string,
       access_token: string,
+      account_id: string,
+      app_id: string,
       app_secret: string,
       start_date: string
     }
@@ -172,8 +173,9 @@ const defaultState = {
   },
   'tap-facebook': {
     fieldValues: {
-      account_id: '',
       access_token: '',
+      account_id: '',
+      app_id: '',
       app_secret: '',
       start_date: ''
     }
@@ -417,6 +419,7 @@ export default function taps(state = defaultState, action) {
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      // TODO DRY (Same as defaultState?)
       return {
         tapsLoading: false,
         tapSelected: false,
@@ -481,8 +484,9 @@ export default function taps(state = defaultState, action) {
         },
         'tap-facebook': {
           fieldValues: {
-            account_id: '',
             access_token: '',
+            account_id: '',
+            app_id: '',
             app_secret: '',
             start_date: ''
           }

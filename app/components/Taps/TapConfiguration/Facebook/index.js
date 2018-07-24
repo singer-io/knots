@@ -40,8 +40,9 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import { ipcRenderer, shell } from 'electron';
+import { ipcRenderer } from 'electron';
 import { tapPropertiesType } from '../../../../utils/shared-types';
+import { openLink } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
@@ -79,10 +80,11 @@ export default class Facebook extends Component<Props, State> {
   }
 
   state = {
-    account_id: {},
-    access_token: {},
-    app_secret: {},
-    start_date: {}
+    access_token: '',
+    account_id: '',
+    app_id: '',
+    app_secret: '',
+    start_date: ''
   };
 
   validate = (field: string, value: string) => {
@@ -93,6 +95,7 @@ export default class Facebook extends Component<Props, State> {
     }
   };
 
+  // TODO DRY
   toISODateString = (date: Date) => {
     const pad = (number) => (number < 10 ? `0${number}` : number);
 
@@ -114,6 +117,7 @@ export default class Facebook extends Component<Props, State> {
     this.props.updateTapField('tap-facebook', name, value);
   };
 
+  // TODO DRY
   formatDate = (ISODate: string) => {
     const date = new Date(ISODate);
     const year = date.getFullYear();
@@ -126,21 +130,17 @@ export default class Facebook extends Component<Props, State> {
   };
 
   authorize = () => {
-    const { account_id, app_secret } = this.props.tapsStore[
+    const { app_id, app_secret } = this.props.tapsStore[
       'tap-facebook'
     ].fieldValues;
-    ipcRenderer.send('fb-authenticate', account_id, app_secret);
-  };
-
-  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
-    e.preventDefault();
-    shell.openExternal(url);
+    ipcRenderer.send('fb-authenticate', app_id, app_secret);
   };
 
   render() {
     const {
-      account_id,
       access_token,
+      account_id,
+      app_id,
       app_secret,
       start_date
     } = this.props.tapsStore['tap-facebook'].fieldValues;
@@ -154,69 +154,57 @@ export default class Facebook extends Component<Props, State> {
             give you access to the App ID and secret required below. To do so,
             please follow&nbsp;
             <a
-              href="#"
-              onClick={(e) =>
-                this.openLink(
-                  e,
-                  'https://developers.facebook.com/docs/marketing-apis/'
-                )
-              }
+              href="https://developers.facebook.com/docs/marketing-apis/"
+              onClick={openLink}
             >
               this guide
             </a>.
           </p>
           <p>
-            You must add <strong>Facebook Login</strong> and{' '}
-            <strong>Marketing API </strong>
-            as products on you Facebook Ads app. On Facebook Login settings,
-            select <strong>Client OAuth Login</strong> specifing the following
-            option:
+            Once your Facebook Ads App is created, add{' '}
+            <strong>Facebook Login</strong> and&nbsp;
+            <strong>Marketing API</strong> as products to it and specify the
+            following option under{' '}
+            <code>Facebook Login &gt; Settings &gt; Client OAuth Login</code>:
           </p>
           <ul>
             <li>
-              Valid OAuth Redirect URIs:{' '}
+              Valid OAuth Redirect URIs:&nbsp;
               <code>https://www.facebook.com/connect/login_success.html</code>
             </li>
           </ul>
           <p>
-            On Marketing API setting, you need to grant access to Ads insights
-            and Ads account by selecting the following options:
-            <ul>
-              <li>
-                App Review for Marketing API:
-                <ul>
-                  <li>
-                    <code>ads_read</code>
-                  </li>
-                  <li>
-                    <code>ads_management</code>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-            Once you are done, submit for review and wait until the review is
-            completed by Facebook.
+            You can find your App&apos;s ID and secret under{' '}
+            <code>Settings &gt; Basic</code>.<br />
+            <strong>IMPORTANT</strong>: If you are not the admin of the Facebook
+            Ads App you intend to use, the app owner will need to&nbsp;
+            <a
+              href="https://developers.facebook.com/docs/marketing-api/access#standard"
+              onClick={openLink}
+            >
+              apply for standard access
+            </a>.
           </p>
         </Alert>
         <Form>
           <Row>
             <Col>
               <FormGroup>
-                <Label for="account_id">App ID</Label>
+                <Label for="app_id">App ID</Label>
                 <Input
                   type="text"
-                  name="account_id"
-                  id="account_id"
-                  value={account_id}
+                  name="app_id"
+                  id="app_id"
+                  value={app_id}
                   onFocus={() => {
-                    this.setState({ account_id: {} });
+                    this.setState({ app_id: {} });
                   }}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
-                    this.validate('account_id', value);
+                    this.validate('app_id', value);
                   }}
                   onChange={this.handleChange}
-                  {...this.state.account_id}
+                  {...this.state.app_id}
                 />
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
@@ -243,7 +231,7 @@ export default class Facebook extends Component<Props, State> {
               </FormGroup>
             </Col>
           </Row>
-          <Collapse isOpen={!!(account_id && app_secret)}>
+          <Collapse isOpen={!!(app_id && app_secret)}>
             <Row>
               <Col>
                 <FormGroup>
@@ -260,7 +248,7 @@ export default class Facebook extends Component<Props, State> {
                     />
                     <InputGroupAddon addonType="append">
                       <Button
-                        disabled={!(account_id && app_secret)}
+                        disabled={!(app_id && app_secret)}
                         outline
                         color="secondary"
                         onClick={this.authorize}
@@ -273,6 +261,38 @@ export default class Facebook extends Component<Props, State> {
               </Col>
             </Row>
           </Collapse>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label for="account_id">Ad account ID</Label>
+                <Input
+                  type="text"
+                  name="account_id"
+                  id="account_id"
+                  value={account_id}
+                  onFocus={() => {
+                    this.setState({ account_id: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('account_id', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.account_id}
+                />
+                <FormText>
+                  Learn how to find your Ad account ID&nbsp;
+                  <a
+                    href="https://www.facebook.com/business/help/1492627900875762"
+                    onClick={openLink}
+                  >
+                    here
+                  </a>
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
+            </Col>
+          </Row>
           <Row>
             <Col xs="6">
               <FormGroup>
