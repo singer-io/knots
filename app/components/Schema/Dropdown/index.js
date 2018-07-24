@@ -39,9 +39,9 @@ export default class Dropdown extends Component<Props> {
 
   getReplicationKey(
     stream: {
-      metadata: Array<{ breadcrumb: Array<{}> }>,
-      replication_key: string,
-      breadcrumb: Array<{}>
+      metadata: Array<{ breadcrumb: ?Array<string> }>,
+      replication_key?: string,
+      breadcrumb?: Array<string>
     },
     specImplementation?: {} = {}
   ) {
