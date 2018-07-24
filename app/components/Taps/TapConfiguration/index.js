@@ -28,6 +28,7 @@ import Redshift from '../../../containers/Redshift';
 import Salesforce from '../../../containers/Salesforce';
 import Postgres from '../../../containers/Postgres';
 import Adwords from '../../../containers/Adwords';
+import MySQL from '../../../containers/MySQL';
 
 type Props = {
   tapsStore: {
@@ -47,6 +48,8 @@ export default class Tap extends Component<Props> {
         return <Postgres />;
       case 'tap-adwords':
         return <Adwords />;
+      case 'tap-mysql':
+        return <MySQL />;
       default:
         return <div>Unknown Tap</div>;
     }
