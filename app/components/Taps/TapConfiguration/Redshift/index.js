@@ -81,15 +81,8 @@ export default class Redshift extends Component<Props, State> {
     }
   };
 
-  toISODateString = (date: Date) => {
-    const pad = (number) => (number < 10 ? `0${number}` : number);
-
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-      date.getUTCSeconds()
-    )}Z`;
-  };
+  toISODateString = (date: Date) => `${date.toISOString().split('.')[0]}Z`;
+  formatDate = (ISODate: string) => ISODate.split('T')[0];
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -102,17 +95,6 @@ export default class Redshift extends Component<Props, State> {
     }
 
     this.props.updateTapField('tap-redshift', name, value);
-  };
-
-  formatDate = (ISODate: string) => {
-    const date = new Date(ISODate);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}-${month < 10 ? `0${month}` : month}-${
-      day < 10 ? `0${day}` : day
-    }`;
   };
 
   validateHostName = (value: string) => {
