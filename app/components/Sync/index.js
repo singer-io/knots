@@ -345,24 +345,33 @@ export default class Sync extends Component<Props, State> {
                       />
                       <FormFeedback>{this.state.errorMessage}</FormFeedback>
                     </InputGroup>
-                    <div className="float-right">
-                      <Button
-                        color="danger"
-                        outline
-                        className="mt-3 mr-2"
-                        onClick={this.cancel}
-                      >
-                        Cancel
-                      </Button>
+                    <div className="d-flex justify-content-between mt-3">
+                      <p className="text-muted small" style={{ width: '60%' }}>
+                        By choosing to save, you acknowledge that personal
+                        information, like your name and password, is being
+                        stored on your hard drive, and it is your sole
+                        responsibility to protect and secure that information
+                        where it is stored.
+                      </p>
 
-                      <Button
-                        color="primary"
-                        className="mt-3"
-                        disabled={!this.state.knotNameValid}
-                        onClick={this.submit}
-                      >
-                        Save & Run
-                      </Button>
+                      <div>
+                        <Button
+                          color="danger"
+                          outline
+                          className="mr-2"
+                          onClick={this.cancel}
+                        >
+                          Cancel
+                        </Button>
+
+                        <Button
+                          color="primary"
+                          disabled={!this.state.knotNameValid}
+                          onClick={this.submit}
+                        >
+                          Save & Run
+                        </Button>
+                      </div>
                     </div>
                   </Form>
                 </Col>
