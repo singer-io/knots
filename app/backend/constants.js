@@ -74,7 +74,8 @@ const taps = [
         replication_key: false,
         replication_method: false
       },
-      usesCatalogArg: false
+      usesCatalogArg: false,
+      usesReplication: false
     }
   }
 ];
