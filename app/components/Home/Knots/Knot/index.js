@@ -219,8 +219,8 @@ class Knot extends Component<Props, State> {
             <Button
               color="primary"
               onClick={() => {
-                console.log('Hello');
                 this.props.download(this.props.knot);
+                this.toggleDownloadDisclaimer();
               }}
             >
               Download
