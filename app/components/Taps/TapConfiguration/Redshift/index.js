@@ -35,6 +35,7 @@ import {
   Label,
   Row
 } from 'reactstrap';
+import { toISODateString, formatDate } from '../../../../utils';
 
 type Props = {
   tapsStore: {
@@ -81,15 +82,12 @@ export default class Redshift extends Component<Props, State> {
     }
   };
 
-  toISODateString = (date: Date) => `${date.toISOString().split('.')[0]}Z`;
-  formatDate = (ISODate: string) => ISODate.split('T')[0];
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = this.toISODateString(new Date(value));
+      value = toISODateString(new Date(value));
     } else if (name === 'port') {
       value = parseInt(value, 10);
     }
@@ -277,7 +275,7 @@ export default class Redshift extends Component<Props, State> {
                   type="date"
                   name="start_date"
                   id="start_date"
-                  value={start_date ? this.formatDate(start_date) : ''}
+                  value={start_date ? formatDate(start_date) : ''}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
                     this.validate('start_date', value);
