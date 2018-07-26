@@ -239,5 +239,6 @@ module.exports = {
   addTap,
   addConfig,
   writeSchema,
+  runningProcess,
   terminateDiscovery
 };
