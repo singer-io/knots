@@ -35,6 +35,7 @@ import {
   Label,
   Row
 } from 'reactstrap';
+import { toISODateString, formatDate } from '../../../../utils';
 
 type Props = {
   tapsStore: {
@@ -81,38 +82,17 @@ export default class Redshift extends Component<Props, State> {
     }
   };
 
-  toISODateString = (date: Date) => {
-    const pad = (number) => (number < 10 ? `0${number}` : number);
-
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-      date.getUTCSeconds()
-    )}Z`;
-  };
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = this.toISODateString(new Date(value));
+      value = toISODateString(new Date(value));
     } else if (name === 'port') {
       value = parseInt(value, 10);
     }
 
     this.props.updateTapField('tap-redshift', name, value);
-  };
-
-  formatDate = (ISODate: string) => {
-    const date = new Date(ISODate);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}-${month < 10 ? `0${month}` : month}-${
-      day < 10 ? `0${day}` : day
-    }`;
   };
 
   validateHostName = (value: string) => {
@@ -295,7 +275,7 @@ export default class Redshift extends Component<Props, State> {
                   type="date"
                   name="start_date"
                   id="start_date"
-                  value={start_date ? this.formatDate(start_date) : ''}
+                  value={start_date ? formatDate(start_date) : ''}
                   onBlur={(event) => {
                     const { value } = event.currentTarget;
                     this.validate('start_date', value);
