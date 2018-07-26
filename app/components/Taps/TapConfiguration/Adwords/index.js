@@ -25,6 +25,7 @@
 
 import React, { Component } from 'react';
 import {
+  Alert,
   Button,
   Col,
   Collapse,
@@ -39,8 +40,9 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import { ipcRenderer, shell } from 'electron';
+import { ipcRenderer } from 'electron';
 import type { tapPropertiesType } from '../../../../utils/shared-types';
+import { openLink } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
@@ -89,7 +91,6 @@ export default class Adwords extends Component<Props, State> {
     oauth_client_secret: {},
     refresh_token: {},
     start_date: {},
-    user_agent: { valid: true },
     customer_ids: {}
   };
 
@@ -140,11 +141,6 @@ export default class Adwords extends Component<Props, State> {
     ipcRenderer.send('adwords-oauth', oauth_client_id, oauth_client_secret);
   };
 
-  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
-    e.preventDefault();
-    shell.openExternal(url);
-  };
-
   render() {
     const {
       developer_token,
@@ -152,12 +148,45 @@ export default class Adwords extends Component<Props, State> {
       oauth_client_secret,
       refresh_token,
       start_date,
-      user_agent,
       customer_ids
     } = this.props.tapsStore['tap-adwords'].fieldValues;
 
     return (
       <Container>
+        <Alert color="primary">
+          <h4>Shhh... Here is a secret!</h4>
+          <p>
+            This Tap requires you to have requested and have access to Adwords
+            API. That will give you access to the Developer token required
+            below. To request for access, please follow&nbsp;
+            <a
+              href="https://developers.google.com/adwords/api/docs/guides/signup"
+              onClick={openLink}
+            >
+              this guide
+            </a>.
+          </p>
+          <p>
+            Once you are signed in to your&nbsp;
+            <a
+              href="https://ads.google.com/home/tools/manager-accounts/"
+              onClick={openLink}
+            >
+              manager account
+            </a>, you will have access to the Customer ID
+          </p>
+          <p>
+            It also requires you to generate OAuth2 credentials. This will give
+            you access to the Client ID and Client secret required below. To
+            generate OAuth2 credentials, please follow&nbsp;
+            <a
+              href="https://developers.google.com/adwords/api/docs/guides/authentication#installed"
+              onClick={openLink}
+            >
+              this guide
+            </a>.
+          </p>
+        </Alert>
         <Form>
           <Row>
             <Col>
@@ -183,17 +212,26 @@ export default class Adwords extends Component<Props, State> {
             </Col>
             <Col>
               <FormGroup>
-                <Label for="client_id">
-                  User agent <small>(optional)</small>
-                </Label>
+                <Label for="client_id">Customer ID</Label>
                 <Input
                   type="text"
-                  name="user_agent"
-                  id="user_agent"
-                  value={user_agent}
+                  name="customer_ids"
+                  id="customer_ids"
+                  value={customer_ids}
+                  onFocus={() => {
+                    this.setState({ customer_ids: {} });
+                  }}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('customer_ids', value);
+                  }}
                   onChange={this.handleChange}
-                  {...this.state.user_agent}
+                  {...this.state.customer_ids}
                 />
+                <FormText>
+                  Comma separated AdWords account IDs to replicate data from.
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -272,31 +310,7 @@ export default class Adwords extends Component<Props, State> {
             </Row>
           </Collapse>
           <Row>
-            <Col>
-              <FormGroup>
-                <Label for="client_id">Customer ID</Label>
-                <Input
-                  type="text"
-                  name="customer_ids"
-                  id="customer_ids"
-                  value={customer_ids}
-                  onFocus={() => {
-                    this.setState({ customer_ids: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('customer_ids', value);
-                  }}
-                  onChange={this.handleChange}
-                  {...this.state.customer_ids}
-                />
-                <FormText>
-                  Comma separated AdWords account IDs to replicate data from.
-                </FormText>
-                <FormFeedback>Required</FormFeedback>
-              </FormGroup>
-            </Col>
-            <Col>
+            <Col xs="6">
               <FormGroup>
                 <Label for="start_date">Start date</Label>
                 <Input
