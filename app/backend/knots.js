@@ -154,12 +154,12 @@ const sync = (req) =>
 
           // Get tap and target from the knot object
           const syncData = exec(
-            `set -o pipefail;${commands.runSync(
+            commands.runSync(
               `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
-            )}`,
-            { detached: true, shell: '/bin/bash' }
+            ),
+            { detached: true }
           );
 
           runningProcess = syncData;
@@ -325,12 +325,12 @@ const partialSync = (req) =>
 
           // Get tap and target from the knot object
           const syncData = exec(
-            `set -o pipefail;${commands.runPartialSync(
+            commands.runPartialSync(
               `${applicationFolder}/knots/${knotName}`,
               knotObject.tap,
               knotObject.target
-            )}`,
-            { detached: true, shell: '/bin/bash' }
+            ),
+            { detached: true }
           );
 
           runningProcess = syncData;
