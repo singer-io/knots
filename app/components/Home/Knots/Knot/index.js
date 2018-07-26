@@ -132,7 +132,7 @@ class Knot extends Component<Props, State> {
               data-placement="top"
               title="Sync new data"
               onClick={this.partialSync}
-              disabled={!usesReplication || !dockerInstalled || !dockerRunning}
+              disabled={!dockerInstalled || !dockerRunning || !usesReplication}
             >
               <span className="oi oi-media-play" />
             </Button>
