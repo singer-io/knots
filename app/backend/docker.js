@@ -33,6 +33,10 @@ const dockerInstalled = (mockSpawn) =>
       resolve(version.toString('utf8'));
     });
 
+    dockerVersion.on('error', () => {
+      reject(new Error('Unable to run Docker'));
+    });
+
     dockerVersion.on('exit', (code) => {
       if (code > 0) {
         reject(new Error('Unable to run Docker'));
@@ -50,6 +54,10 @@ const dockerRunning = (mockSpawn) =>
     // A version number was returned, docker is installed
     dockerVolumes.stdout.on('data', (version) => {
       resolve(version.toString('utf8'));
+    });
+
+    dockerVolumes.on('error', () => {
+      reject(new Error('Unable to get Docker volumes'));
     });
 
     dockerVolumes.on('exit', (code) => {
