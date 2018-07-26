@@ -49,7 +49,8 @@ const taps = [
     tapImage: 'dataworld/tap-adwords:1.3.3',
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
-      usesCatalogArg: false
+      usesCatalogArg: false,
+      usesReplication: false
     }
   },
   {
