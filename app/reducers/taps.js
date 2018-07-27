@@ -103,6 +103,13 @@ export type tapsStateType = {
       app_secret: string,
       start_date: string
     }
+  },
+  'tap-s3-csv': {
+    fieldValues: {
+      bucket: string,
+      start_date: string,
+      tables: Array<{}>
+    }
   }
 };
 
@@ -178,6 +185,13 @@ const defaultState = {
       app_id: '',
       app_secret: '',
       start_date: ''
+    }
+  },
+  'tap-s3-csv': {
+    fieldValues: {
+      bucket: '',
+      start_date: '',
+      tables: []
     }
   }
 };
@@ -491,6 +505,13 @@ export default function taps(state = defaultState, action) {
             app_id: '',
             app_secret: '',
             start_date: ''
+          }
+        },
+        'tap-s3-csv': {
+          fieldValues: {
+            bucket: '',
+            start_date: '',
+            tables: []
           }
         }
       };

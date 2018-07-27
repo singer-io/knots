@@ -30,6 +30,7 @@ import Postgres from '../../../containers/Postgres';
 import Adwords from '../../../containers/Adwords';
 import MySQL from '../../../containers/MySQL';
 import Facebook from '../../../containers/Facebook';
+import S3 from '../../../containers/S3';
 
 type Props = {
   tapsStore: {
@@ -53,6 +54,8 @@ export default class Tap extends Component<Props> {
         return <MySQL />;
       case 'tap-facebook':
         return <Facebook />;
+      case 'tap-s3-csv':
+        return <S3 />;
       default:
         return <div>Unknown Tap</div>;
     }
