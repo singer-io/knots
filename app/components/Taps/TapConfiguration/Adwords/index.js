@@ -42,8 +42,11 @@ import {
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
 import type { tapPropertiesType } from '../../../../utils/shared-types';
-import { openLink } from '../../../../utils/handlers';
-import { toISODateString, formatDate } from '../../../../utils';
+import {
+  openLink,
+  toISODateString,
+  formatDate
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
