@@ -35,7 +35,7 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import { toISODateString, formatDate } from '../../../../utils';
+import { toISODateString, formatDate } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {

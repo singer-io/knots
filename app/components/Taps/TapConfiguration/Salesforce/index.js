@@ -41,7 +41,7 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer, shell } from 'electron';
-import { toISODateString, formatDate } from '../../../../utils';
+import { toISODateString, formatDate } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
