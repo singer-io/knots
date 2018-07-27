@@ -153,12 +153,15 @@ const sync = (req) =>
           )}`;
 
           // Get tap and target from the knot object
+          const shellOptions =
+            process.platform !== 'win32' ? 'set -o pipefail;' : '';
           const syncData = exec(
-            commands.runSync(
-              `${applicationFolder}/knots/${knotName}`,
-              knotObject.tap,
-              knotObject.target
-            ),
+            shellOptions +
+              commands.runSync(
+                `${applicationFolder}/knots/${knotName}`,
+                knotObject.tap,
+                knotObject.target
+              ),
             { detached: true }
           );
 
@@ -324,12 +327,15 @@ const partialSync = (req) =>
           )}`;
 
           // Get tap and target from the knot object
+          const shellOptions =
+            process.platform !== 'win32' ? 'set -o pipefail;' : '';
           const syncData = exec(
-            commands.runPartialSync(
-              `${applicationFolder}/knots/${knotName}`,
-              knotObject.tap,
-              knotObject.target
-            ),
+            shellOptions +
+              commands.runPartialSync(
+                `${applicationFolder}/knots/${knotName}`,
+                knotObject.tap,
+                knotObject.target
+              ),
             { detached: true }
           );
 
