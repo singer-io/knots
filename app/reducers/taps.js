@@ -94,6 +94,15 @@ export type tapsStateType = {
       password: string,
       database: string
     }
+  },
+  'tap-facebook': {
+    fieldValues: {
+      access_token: string,
+      account_id: string,
+      app_id: string,
+      app_secret: string,
+      start_date: string
+    }
   }
 };
 
@@ -161,6 +170,15 @@ const defaultState = {
       password: '',
       database: ''
     }
+  },
+  'tap-facebook': {
+    fieldValues: {
+      access_token: '',
+      account_id: '',
+      app_id: '',
+      app_secret: '',
+      start_date: ''
+    }
   }
 };
 
@@ -222,11 +240,13 @@ export default function taps(state = defaultState, action) {
       if (schema[action.index]) {
         const metadataIndexToUpdate = (stream) => {
           let indexToUpdate = -1;
-          stream.metadata.forEach((metadata, index) => {
-            if (metadata.breadcrumb.length === 0) {
-              indexToUpdate = index;
-            }
-          });
+          if (stream && stream.metadata) {
+            stream.metadata.forEach((metadata, index) => {
+              if (metadata.breadcrumb.length === 0) {
+                indexToUpdate = index;
+              }
+            });
+          }
           return indexToUpdate;
         };
 
@@ -401,6 +421,7 @@ export default function taps(state = defaultState, action) {
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
+      // TODO DRY (Same as defaultState?)
       return {
         tapsLoading: false,
         tapSelected: false,
@@ -461,6 +482,15 @@ export default function taps(state = defaultState, action) {
             user: '',
             password: '',
             database: ''
+          }
+        },
+        'tap-facebook': {
+          fieldValues: {
+            access_token: '',
+            account_id: '',
+            app_id: '',
+            app_secret: '',
+            start_date: ''
           }
         }
       };

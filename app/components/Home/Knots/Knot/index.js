@@ -35,12 +35,13 @@ import moment from 'moment';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
+import { tapPropertiesType } from '../../../../utils/shared-types';
 
 type Props = {
   knot: {
     name: string,
     lastRun: string,
-    tap: { name: string },
+    tap: tapPropertiesType,
     target: { name: string }
   },
   delete: ({ name: string }) => void,
@@ -97,6 +98,9 @@ class Knot extends Component<Props, State> {
 
   render() {
     const { knot, dockerInstalled, dockerRunning } = this.props;
+    const { specImplementation } = knot.tap;
+    const { usesReplication: usesReplication = true } =
+      specImplementation || {};
     return (
       <tr key={knot.name}>
         <td className="align-middle text-center pr-0">
@@ -123,13 +127,12 @@ class Knot extends Component<Props, State> {
             <Button
               color="link"
               style={{ background: 'white' }}
-              type="button"
               className="btn btn-link"
               data-toggle="tooltip"
               data-placement="top"
               title="Sync new data"
               onClick={this.partialSync}
-              disabled={!dockerInstalled || !dockerRunning}
+              disabled={!dockerInstalled || !dockerRunning || !usesReplication}
             >
               <span className="oi oi-media-play" />
             </Button>
@@ -137,7 +140,6 @@ class Knot extends Component<Props, State> {
             <Button
               color="link-secondary"
               style={{ background: 'white' }}
-              type="button"
               className="btn btn-link-secondary"
               data-toggle="tooltip"
               data-placement="top"

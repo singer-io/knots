@@ -29,6 +29,7 @@ import Salesforce from '../../../containers/Salesforce';
 import Postgres from '../../../containers/Postgres';
 import Adwords from '../../../containers/Adwords';
 import MySQL from '../../../containers/MySQL';
+import Facebook from '../../../containers/Facebook';
 
 type Props = {
   tapsStore: {
@@ -50,6 +51,8 @@ export default class Tap extends Component<Props> {
         return <Adwords />;
       case 'tap-mysql':
         return <MySQL />;
+      case 'tap-facebook':
+        return <Facebook />;
       default:
         return <div>Unknown Tap</div>;
     }

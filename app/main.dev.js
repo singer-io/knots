@@ -39,12 +39,6 @@ const fixPath = require('fix-path');
 
 fixPath();
 
-const sfConfig = {
-  authorizationUrl: 'https://login.salesforce.com/services/oauth2/authorize',
-  redirectUri: 'https://login.salesforce.com/services/oauth2/success',
-  tokenUrl: 'https://login.salesforce.com/services/oauth2/token'
-};
-
 let mainWindow = null;
 
 if (process.env.NODE_ENV === 'production') {
@@ -127,19 +121,19 @@ app.on('ready', async () => {
   };
 
   ipcMain.on('sf-oauth', (event, clientId, clientSecret) => {
-    // $FlowFixMe
-    sfConfig.clientId = clientId;
-    // $FlowFixMe
-    sfConfig.clientSecret = clientSecret;
+    const authorizationUrl =
+      'https://login.salesforce.com/services/oauth2/authorize';
+    const redirectUri = 'https://login.salesforce.com/services/oauth2/success';
+    const tokenUrl = 'https://login.salesforce.com/services/oauth2/token';
     const salesforceOauth = electronOauth(windowParams);
     salesforceOauth
       .getAccessToken(
         ['refresh_token', 'api', 'offline_access'],
         clientId,
         clientSecret,
-        sfConfig.redirectUri,
-        sfConfig.tokenUrl,
-        sfConfig.authorizationUrl
+        redirectUri,
+        tokenUrl,
+        authorizationUrl
       )
       .then(
         (token) => {
@@ -161,6 +155,27 @@ app.on('ready', async () => {
       .getAccessToken(scope, clientId, clientSecret, redirectUrl, tokenUrl)
       .then((token) => {
         event.sender.send('adwords-oauth-reply', token);
+      })
+      .catch((error) => console.log(error));
+  });
+
+  ipcMain.on('fb-authenticate', (event, accountId, appSecret) => {
+    const scope = ['ads_read', 'ads_management'];
+    const redirectUrl = 'https://www.facebook.com/connect/login_success.html';
+    const authorizationUrl = 'https://graph.facebook.com/oauth/authorize';
+    const tokenUrl = 'https://graph.facebook.com/oauth/access_token';
+    const fbOauth = electronOauth(windowParams);
+    fbOauth
+      .getAccessToken(
+        scope,
+        accountId,
+        appSecret,
+        redirectUrl,
+        tokenUrl,
+        authorizationUrl
+      )
+      .then((token) => {
+        event.sender.send('fb-oauth-reply', token);
       })
       .catch((error) => console.log(error));
   });

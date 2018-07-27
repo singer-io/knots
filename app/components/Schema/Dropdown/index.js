@@ -26,7 +26,7 @@ import type { specImplementationPropType } from '../../../utils/shared-types';
 type Props = {
   index: string,
   columns: Array<string>,
-  stream: { metadata: Array<{}>, replication_key: string },
+  stream: { metadata?: Array<{}>, replication_key?: string },
   specImplementation: specImplementationPropType,
   handleChange: (field: string, index: string, value: boolean | string) => void
 };
@@ -39,9 +39,9 @@ export default class Dropdown extends Component<Props> {
 
   getReplicationKey(
     stream: {
-      metadata: Array<{ breadcrumb: Array<{}> }>,
-      replication_key: string,
-      breadcrumb: Array<{}>
+      metadata: Array<{ breadcrumb: ?Array<string> }>,
+      replication_key?: string,
+      breadcrumb?: Array<string>
     },
     specImplementation?: {} = {}
   ) {

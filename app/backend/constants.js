@@ -49,7 +49,8 @@ const taps = [
     tapImage: 'dataworld/tap-adwords:1.3.3',
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
-      usesCatalogArg: false
+      usesCatalogArg: false,
+      usesReplication: false
     }
   },
   {
@@ -61,6 +62,21 @@ const taps = [
       usesMetadata: {
         selected: false
       }
+    }
+  },
+  {
+    name: 'Facebook',
+    tapKey: 'tap-facebook',
+    tapImage: 'dataworld/tap-facebook:1.5.1',
+    repo: 'https://github.com/singer-io/tap-facebook',
+    specImplementation: {
+      usesMetadata: {
+        selected: false,
+        replication_key: false,
+        replication_method: false
+      },
+      usesCatalogArg: false,
+      usesReplication: false
     }
   }
 ];
