@@ -108,7 +108,7 @@ export type tapsStateType = {
     fieldValues: {
       bucket: string,
       start_date: string,
-      tables: Array<{}>
+      tables: string
     }
   }
 };
@@ -191,7 +191,7 @@ const defaultState = {
     fieldValues: {
       bucket: '',
       start_date: '',
-      tables: []
+      tables: ''
     }
   }
 };
@@ -511,7 +511,7 @@ export default function taps(state = defaultState, action) {
           fieldValues: {
             bucket: '',
             start_date: '',
-            tables: []
+            tables: ''
           }
         }
       };
