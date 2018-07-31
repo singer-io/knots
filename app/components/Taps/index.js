@@ -100,15 +100,7 @@ export default class Taps extends Component<Props, State> {
       return false;
     }
 
-    const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    let valid = true;
-
-    Object.keys(fieldValues).forEach((field) => {
-      if (!fieldValues[field]) {
-        valid = false;
-      }
-    });
-
+    const { valid } = this.props.tapsStore[selectedTap.name];
     return valid;
   };
 

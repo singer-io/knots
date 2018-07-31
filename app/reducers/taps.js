@@ -30,7 +30,8 @@ import {
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
   UPDATE_SCHEMA_LOGS,
-  TAP_SELECTED
+  TAP_SELECTED,
+  UPDATE_FORM_VALIDATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 import { tapPropertiesType } from '../utils/shared-types';
@@ -47,6 +48,7 @@ export type tapsStateType = {
   +schemaUpdated: false,
   +error: string,
   +'tap-redshift': {
+    valid: boolean,
     fieldValues: {
       host: string,
       port: number,
@@ -122,6 +124,7 @@ const defaultState = {
   schemaUpdated: false,
   error: '',
   'tap-redshift': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -418,6 +421,10 @@ export default function taps(state = defaultState, action) {
         },
         { [action.tap.name]: savedTap }
       );
+    case UPDATE_FORM_VALIDATION:
+      return Object.assign(state, {
+        [action.tap]: Object.assign(state[action.tap], { valid: action.value })
+      });
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
@@ -435,6 +442,7 @@ export default function taps(state = defaultState, action) {
         schemaUpdated: false,
         error: '',
         'tap-redshift': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,

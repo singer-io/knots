@@ -51,8 +51,10 @@ type Props = {
       }
     }
   },
-  updateTapField: (tap: string, field: string, value: string | number) => void
+  updateTapField: (tap: string, field: string, value: string | number) => void,
+  updateFormValidation: (tap: string, value: boolean) => void
 };
+
 type State = {
   host: { validation: {}, errorMessage: string },
   port: { validation: {}, errorMessage: string },
@@ -78,6 +80,17 @@ export default class Redshift extends Component<Props, State> {
     const { fieldValues } = nextProps.tapsStore['tap-redshift'];
     this.validateFields(fieldValues);
   }
+
+  formValid = (fields: {}) => {
+    let valid = true;
+    Object.keys(fields).forEach((field) => {
+      if (fields[field].errorMessage) {
+        valid = false;
+      }
+    });
+
+    return valid;
+  };
 
   validateFields(fieldValues: {
     host: string,
@@ -175,6 +188,7 @@ export default class Redshift extends Component<Props, State> {
       password,
       start_date
     } = this.props.tapsStore['tap-redshift'].fieldValues;
+    this.props.updateFormValidation('tap-redshift', this.formValid(this.state));
 
     return (
       <Container>
@@ -190,7 +204,9 @@ export default class Redshift extends Component<Props, State> {
                   value={host}
                   onFocus={() => {
                     this.setState({
-                      host: { validation: {}, errorMessage: 'Required' }
+                      host: Object.assign(this.state.host, {
+                        validation: {}
+                      })
                     });
                   }}
                   onBlur={() => {
@@ -212,7 +228,9 @@ export default class Redshift extends Component<Props, State> {
                   value={port || ''}
                   onFocus={() => {
                     this.setState({
-                      port: { validation: {}, errorMessage: 'Required' }
+                      port: Object.assign(this.state.port, {
+                        validation: {}
+                      })
                     });
                   }}
                   onBlur={() => {
@@ -236,7 +254,9 @@ export default class Redshift extends Component<Props, State> {
                   value={dbname}
                   onFocus={() => {
                     this.setState({
-                      dbname: { validation: {}, errorMessage: 'Required' }
+                      dbname: Object.assign(this.state.dbname, {
+                        validation: {}
+                      })
                     });
                   }}
                   onBlur={() => {
@@ -276,7 +296,9 @@ export default class Redshift extends Component<Props, State> {
                   value={user}
                   onFocus={() => {
                     this.setState({
-                      user: { validation: {}, errorMessage: 'Required' }
+                      user: Object.assign(this.state.user, {
+                        validation: {}
+                      })
                     });
                   }}
                   onBlur={() => {
@@ -298,7 +320,9 @@ export default class Redshift extends Component<Props, State> {
                   value={password}
                   onFocus={() => {
                     this.setState({
-                      password: { validation: {}, errorMessage: 'Required' }
+                      password: Object.assign(this.state.password, {
+                        validation: {}
+                      })
                     });
                   }}
                   onBlur={() => {
