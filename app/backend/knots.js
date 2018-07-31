@@ -96,17 +96,17 @@ const createMakeFile = (knot, name) =>
     const { usesReplication: usesReplication = true } =
       specImplementation || {};
     /* eslint-disable no-template-curly-in-string */
-    const fileContent = `SHELL=/bin/bash -o pipefail\n\nfullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
-      knot.tap.image
-    } ${
+    const fileContent = `SHELL=/bin/bash -o pipefail\n\nfullSync:${EOL}\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data"${
+      knot.tap.name === 'tap-s3-csv' ? ' -v $(HOME)/.aws:/root/.aws' : ''
+    } --interactive ${knot.tap.image} ${
       knot.tap.name
     } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
       knot.target.image
     } ${knot.target.name} -c target/data/config.json > ./tap/state.json${EOL}${
       usesReplication
-        ? `sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${EOL}\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
-            knot.tap.image
-          } ${
+        ? `sync:${EOL}\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${EOL}\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${EOL}\tdocker run -v "$(CURDIR)/tap:/app/tap/data"${
+            knot.tap.name === 'tap-s3-csv' ? ' -v $(HOME)/.aws:/root/.aws' : ''
+          } --interactive ${knot.tap.image} ${
             knot.tap.name
           } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
             knot.target.image
