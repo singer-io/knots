@@ -5,7 +5,7 @@ describe('commands', () => {
   it('returns the correct discovery command', () => {
     const expected = `docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data" dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json -d > "${path.resolve(
+    )}/tap:/app/tap-redshift/data"  dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json -d > "${path.resolve(
       'applicationFolder'
     )}/tap/catalog.json"`;
 
@@ -21,7 +21,7 @@ describe('commands', () => {
   it('returns the correct sync command (uses catalog)', () => {
     const expected = `docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data" --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --catalog tap-redshift/data/catalog.json 2> "${path.resolve(
+    )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --catalog tap-redshift/data/catalog.json 2> "${path.resolve(
       'applicationFolder'
     )}/tap.log" | docker run -v "${path.resolve(
       'applicationFolder'
@@ -44,7 +44,7 @@ describe('commands', () => {
   it('returns the correct sync command (uses properties)', () => {
     const expected = `docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data" --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json 2> "${path.resolve(
+    )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json 2> "${path.resolve(
       'applicationFolder'
     )}/tap.log" | docker run -v "${path.resolve(
       'applicationFolder'
@@ -78,7 +78,7 @@ describe('commands', () => {
     )}/tap/latest-state.json"; \\
     docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data" --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --catalog tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
+    )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --catalog tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
       'applicationFolder',
       'tap.log'
     )}" | docker run -v "${path.resolve(
@@ -111,7 +111,7 @@ describe('commands', () => {
     )}/tap/latest-state.json"; \\
     docker run -v "${path.resolve(
       'applicationFolder'
-    )}/tap:/app/tap-redshift/data" --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
+    )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
       'applicationFolder',
       'tap.log'
     )}" | docker run -v "${path.resolve(

@@ -83,7 +83,10 @@ const taps = [
     name: 'Amazon S3',
     tapKey: 'tap-s3-csv',
     tapImage: 'dataworld/tap-s3-csv:0.0.3',
-    repo: 'https://github.com/singer-io/tap-s3-csv'
+    repo: 'https://github.com/singer-io/tap-s3-csv',
+    specImplementation: {
+      usesCatalogArg: false
+    }
   }
 ];
 
@@ -104,20 +107,20 @@ const targets = [
 
 const commands = {
   runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${path.resolve(
-      folderPath
-    )}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
+    `docker run -v "${path.resolve(folderPath)}/tap:/app/${tap}/data" ${
+      tap === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
+    } ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
       folderPath
     )}/tap/catalog.json"`,
   runSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true } = tap.specImplementation || {};
     return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
-    }/data" --interactive ${tap.image} ${tap.name} -c ${
-      tap.name
-    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
-      tap.name
-    }/data/catalog.json 2> "${path.resolve(
+    }/data" ${
+      tap.name === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
+    } --interactive ${tap.image} ${tap.name} -c ${tap.name}/data/config.json ${
+      usesCatalogArg ? '--catalog' : '--properties'
+    } ${tap.name}/data/catalog.json 2> "${path.resolve(
       folderPath,
       'tap.log'
     )}" | docker run -v "${path.resolve(folderPath)}/target:/app/${
@@ -134,13 +137,11 @@ const commands = {
     return `tail -1 "${path.resolve(
       folderPath
     )}/tap/state.json" > "${path.resolve(folderPath)}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(folderPath)}/tap:/app/${
-      tap.name
-    }/data" --interactive ${tap.image} ${tap.name} -c ${
-      tap.name
-    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
-      tap.name
-    }/data/catalog.json --state ${
+    docker run -v "${path.resolve(folderPath)}/tap:/app/${tap.name}/data" ${
+      tap.name === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
+    } --interactive ${tap.image} ${tap.name} -c ${tap.name}/data/config.json ${
+      usesCatalogArg ? '--catalog' : '--properties'
+    } ${tap.name}/data/catalog.json --state ${
       tap.name
     }/data/latest-state.json 2> "${path.resolve(
       folderPath,
