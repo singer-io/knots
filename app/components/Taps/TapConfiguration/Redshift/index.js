@@ -55,32 +55,102 @@ type Props = {
 };
 type State = {
   host: { validation: {}, errorMessage: string },
-  port: {},
-  dbname: {},
-  schema: {},
-  user: {},
-  password: {},
-  start_date: {}
+  port: { validation: {}, errorMessage: string },
+  dbname: { validation: {}, errorMessage: string },
+  schema: { validation: {}, errorMessage: string },
+  user: { validation: {}, errorMessage: string },
+  password: { validation: {}, errorMessage: string },
+  start_date: { validation: {}, errorMessage: string }
 };
 
 export default class Redshift extends Component<Props, State> {
   state = {
     host: { validation: {}, errorMessage: '' },
-    port: {},
-    dbname: {},
-    schema: { valid: true },
-    user: {},
-    password: {},
-    start_date: {}
+    port: { validation: {}, errorMessage: '' },
+    dbname: { validation: {}, errorMessage: '' },
+    schema: { validation: { valid: true }, errorMessage: '' },
+    user: { validation: {}, errorMessage: '' },
+    password: { validation: {}, errorMessage: '' },
+    start_date: { validation: {}, errorMessage: '' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-redshift'];
+    this.validateFields(fieldValues);
+  }
+
+  validateFields(fieldValues: {
+    host: string,
+    dbname: string,
+    port?: number,
+    schema: string,
+    user: string,
+    password: string,
+    start_date: string
+  }) {
+    const fieldNames = Object.keys(fieldValues);
+
+    fieldNames.forEach((field) => {
+      const fieldValue = fieldValues[field];
+
+      if (field === 'host') {
+        if (fieldValue) {
+          // Ensure a loopback address hasn't been provided
+          const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
+          if (loopBackAddresses.test(fieldValue.toString())) {
+            this.setState({
+              host: {
+                validation: { invalid: true },
+                errorMessage: 'KNOTS does not support loopback addresses'
+              }
+            });
+          } else {
+            // All checks pass
+            this.setState({
+              host: {
+                validation: {},
+                errorMessage: ''
+              }
+            });
+          }
+        } else {
+          // If no value is provided let the user know the field is required
+          this.setState({
+            host: {
+              validation: {},
+              errorMessage: 'Must be a valid server hostname or IP address'
+            }
+          });
+        }
+      } else if (fieldValue) {
+        this.setState({
+          [field]: { validation: {}, errorMessage: '' }
+        });
+      } else {
+        this.setState({
+          [field]: { validation: {}, errorMessage: 'Required' }
+        });
+      }
+    });
+  }
+
+  showValidation(field: string) {
+    const fieldError = this.state[field].errorMessage;
+
+    if (fieldError) {
+      this.setState({
+        [field]: Object.assign(this.state[field], {
+          validation: { invalid: true }
+        })
+      });
     } else {
-      this.setState({ [field]: { invalid: true } });
+      this.setState({
+        [field]: Object.assign(this.state[field], {
+          validation: { valid: true }
+        })
+      });
     }
-  };
+  }
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -93,37 +163,6 @@ export default class Redshift extends Component<Props, State> {
     }
 
     this.props.updateTapField('tap-redshift', name, value);
-  };
-
-  validateHostName = (value: string) => {
-    if (value) {
-      // Ensure a loopback address hasn't been provided
-      const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
-      if (loopBackAddresses.test(value)) {
-        this.setState({
-          host: {
-            validation: { invalid: true },
-            errorMessage: 'KNOTS does not support loopback addresses'
-          }
-        });
-      } else {
-        // All checks pass
-        this.setState({
-          host: {
-            validation: { valid: true },
-            errorMessage: ''
-          }
-        });
-      }
-    } else {
-      // If no value is provided let the user know the field is required
-      this.setState({
-        host: {
-          validation: { invalid: true },
-          errorMessage: 'Must be a valid server hostname or IP address'
-        }
-      });
-    }
   };
 
   render() {
@@ -151,11 +190,11 @@ export default class Redshift extends Component<Props, State> {
                   value={host}
                   onFocus={() => {
                     this.setState({
-                      host: { validation: {}, errorMessage: '' }
+                      host: { validation: {}, errorMessage: 'Required' }
                     });
                   }}
                   onBlur={() => {
-                    this.validateHostName(host);
+                    this.showValidation('host');
                   }}
                   onChange={this.handleChange}
                   {...this.state.host.validation}
@@ -172,15 +211,17 @@ export default class Redshift extends Component<Props, State> {
                   id="port"
                   value={port || ''}
                   onFocus={() => {
-                    this.setState({ port: {} });
+                    this.setState({
+                      port: { validation: {}, errorMessage: 'Required' }
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('port', value);
+                  onBlur={() => {
+                    this.showValidation('port');
                   }}
                   onChange={this.handleChange}
-                  {...this.state.port}
+                  {...this.state.port.validation}
                 />
+                <FormFeedback>{this.state.port.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -194,16 +235,17 @@ export default class Redshift extends Component<Props, State> {
                   id="dbname"
                   value={dbname}
                   onFocus={() => {
-                    this.setState({ dbname: {} });
+                    this.setState({
+                      dbname: { validation: {}, errorMessage: 'Required' }
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('dbname', value);
+                  onBlur={() => {
+                    this.showValidation('dbname');
                   }}
                   onChange={this.handleChange}
-                  {...this.state.dbname}
+                  {...this.state.dbname.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.dbname.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -217,9 +259,9 @@ export default class Redshift extends Component<Props, State> {
                   id="schema"
                   value={schema}
                   onChange={this.handleChange}
-                  {...this.state.schema}
+                  {...this.state.schema.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.schema.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -233,16 +275,17 @@ export default class Redshift extends Component<Props, State> {
                   id="user"
                   value={user}
                   onFocus={() => {
-                    this.setState({ user: {} });
+                    this.setState({
+                      user: { validation: {}, errorMessage: 'Required' }
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('user', value);
+                  onBlur={() => {
+                    this.showValidation('user');
                   }}
                   onChange={this.handleChange}
-                  {...this.state.user}
+                  {...this.state.user.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.user.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -254,16 +297,17 @@ export default class Redshift extends Component<Props, State> {
                   id="password"
                   value={password}
                   onFocus={() => {
-                    this.setState({ password: {} });
+                    this.setState({
+                      password: { validation: {}, errorMessage: 'Required' }
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('password', value);
+                  onBlur={() => {
+                    this.showValidation('password');
                   }}
                   onChange={this.handleChange}
-                  {...this.state.password}
+                  {...this.state.password.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.password.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -276,18 +320,19 @@ export default class Redshift extends Component<Props, State> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
+                  onBlur={() => {
+                    this.showValidation('start_date');
                   }}
                   onChange={this.handleChange}
-                  {...this.state.start_date}
+                  {...this.state.start_date.validation}
                 />
                 <FormText>
                   Applies to tables with a defined timestamp field and limits
                   how much historical data will be replicated.
                 </FormText>
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.start_date.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>
