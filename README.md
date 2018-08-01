@@ -1,10 +1,10 @@
-# Knot
+# KNOTS
 
 This app allows you to configure and download executable Singer pipelines.
 
 ### Getting Started
 
-Download and install the dmg from [link](https://github.com/datadotworld/knot/releases)
+Download and install the dmg from [link](https://github.com/datadotworld/knots/releases)
 
 ### Prerequisites
 
@@ -15,9 +15,9 @@ NOTE: Check Docker [file sharing preferences](https://docs.docker.com/docker-for
 ### Running the app
 
 1.  Select a tap to use from the list of available taps.
-2.  Provide the configurations needed for the tap.
+2.  Provide the configuration needed for the tap.
 3.  Click on `Continue` to run the tap in discovery mode.
-4.  Make selections of tables to sync.
+4.  Make selections of tables/streams to sync.
 5.  Select a target and provide the target's config.
 6.  Enter a name to save the new knot with, save and run the knot.
 
@@ -29,4 +29,4 @@ Knots has been released as an open-source project. Community participation is en
 
 ### Support
 
-For support, either create a [new issue](https://github.com/datadotworld/knot/issues/new) here on GitHub, or send an email to help@data.world.
+For support, either create a [new issue](https://github.com/datadotworld/knots/issues/new) here on GitHub, or send an email to help@data.world.
