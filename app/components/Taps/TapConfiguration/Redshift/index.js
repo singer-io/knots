@@ -112,36 +112,37 @@ export default class Redshift extends Component<Props, State> {
           const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
           if (loopBackAddresses.test(fieldValue.toString())) {
             this.setState({
-              host: {
-                validation: { invalid: true },
+              host: Object.assign(this.state.host, {
                 errorMessage: 'KNOTS does not support loopback addresses'
-              }
+              })
             });
           } else {
             // All checks pass
             this.setState({
-              host: {
-                validation: {},
+              host: Object.assign(this.state.host, {
                 errorMessage: ''
-              }
+              })
             });
           }
         } else {
           // If no value is provided let the user know the field is required
           this.setState({
-            host: {
-              validation: {},
+            host: Object.assign(this.state.host, {
               errorMessage: 'Must be a valid server hostname or IP address'
-            }
+            })
           });
         }
       } else if (fieldValue) {
         this.setState({
-          [field]: { validation: {}, errorMessage: '' }
+          [field]: Object.assign(this.state[field], {
+            errorMessage: ''
+          })
         });
       } else {
         this.setState({
-          [field]: { validation: {}, errorMessage: 'Required' }
+          [field]: Object.assign(this.state[field], {
+            errorMessage: 'Required'
+          })
         });
       }
     });
