@@ -20,6 +20,16 @@
  */
 // @flow
 
+export type tapRedshiftFields = {
+  host: string,
+  dbname: string,
+  port?: number,
+  schema: string,
+  user: string,
+  password: string,
+  start_date: string
+};
+
 export type specImplementationPropType = {
   usesMetadata?: {
     selected?: boolean,

@@ -35,20 +35,13 @@ import {
   Label,
   Row
 } from 'reactstrap';
+import type { tapRedshiftFields } from '../../../../utils/shared-types';
 import { toISODateString, formatDate } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
     'tap-redshift': {
-      fieldValues: {
-        host: string,
-        dbname: string,
-        port?: number,
-        schema: string,
-        user: string,
-        password: string,
-        start_date: string
-      }
+      fieldValues: tapRedshiftFields
     }
   },
   updateTapField: (tap: string, field: string, value: string | number) => void,
@@ -92,15 +85,7 @@ export default class Redshift extends Component<Props, State> {
     return valid;
   };
 
-  validateFields(fieldValues: {
-    host: string,
-    dbname: string,
-    port?: number,
-    schema: string,
-    user: string,
-    password: string,
-    start_date: string
-  }) {
+  validateFields(fieldValues: tapRedshiftFields) {
     const fieldNames = Object.keys(fieldValues);
 
     fieldNames.forEach((field) => {
@@ -190,12 +175,10 @@ export default class Redshift extends Component<Props, State> {
       start_date
     } = this.props.tapsStore['tap-redshift'].fieldValues;
     const { valid } = this.props.tapsStore['tap-redshift'];
+    const validationState = this.formValid(this.state);
 
-    if (valid !== this.formValid(this.state)) {
-      this.props.updateFormValidation(
-        'tap-redshift',
-        this.formValid(this.state)
-      );
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-redshift', validationState);
     }
 
     return (

@@ -408,9 +408,6 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case LOADED_KNOT:
-      const savedTap = state[action.tap.name];
-      savedTap.fieldValues = action.tapConfig;
-
       return Object.assign(
         {},
         state,
@@ -419,12 +416,19 @@ export default function taps(state = defaultState, action) {
           schema: action.schema,
           schemaLoaded: true
         },
-        { [action.tap.name]: savedTap }
+        {
+          [action.tap.name]: Object.assign({}, state[action.tap.name], {
+            fieldValues: action.tapConfig,
+            valid: true
+          })
+        }
       );
     case UPDATE_FORM_VALIDATION:
-      const currentTap = state[action.tap];
-      currentTap.valid = action.value;
-      return Object.assign({}, state, { [action.tap]: currentTap });
+      return Object.assign({}, state, {
+        [action.tap]: Object.assign({}, state[action.tap], {
+          valid: action.value
+        })
+      });
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
