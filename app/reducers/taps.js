@@ -422,9 +422,9 @@ export default function taps(state = defaultState, action) {
         { [action.tap.name]: savedTap }
       );
     case UPDATE_FORM_VALIDATION:
-      return Object.assign(state, {
-        [action.tap]: Object.assign(state[action.tap], { valid: action.value })
-      });
+      const currentTap = state[action.tap];
+      currentTap.valid = action.value;
+      return Object.assign({}, state, { [action.tap]: currentTap });
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions

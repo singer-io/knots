@@ -67,13 +67,13 @@ type State = {
 
 export default class Redshift extends Component<Props, State> {
   state = {
-    host: { validation: {}, errorMessage: '' },
-    port: { validation: {}, errorMessage: '' },
-    dbname: { validation: {}, errorMessage: '' },
+    host: { validation: {}, errorMessage: 'Required' },
+    port: { validation: {}, errorMessage: 'Required' },
+    dbname: { validation: {}, errorMessage: 'Required' },
     schema: { validation: { valid: true }, errorMessage: '' },
-    user: { validation: {}, errorMessage: '' },
-    password: { validation: {}, errorMessage: '' },
-    start_date: { validation: {}, errorMessage: '' }
+    user: { validation: {}, errorMessage: 'Required' },
+    password: { validation: {}, errorMessage: 'Required' },
+    start_date: { validation: {}, errorMessage: 'Required' }
   };
 
   componentWillReceiveProps(nextProps: Props) {
