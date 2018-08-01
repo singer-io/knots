@@ -188,7 +188,14 @@ export default class Redshift extends Component<Props, State> {
       password,
       start_date
     } = this.props.tapsStore['tap-redshift'].fieldValues;
-    this.props.updateFormValidation('tap-redshift', this.formValid(this.state));
+    const { valid } = this.props.tapsStore['tap-redshift'];
+
+    if (valid !== this.formValid(this.state)) {
+      this.props.updateFormValidation(
+        'tap-redshift',
+        this.formValid(this.state)
+      );
+    }
 
     return (
       <Container>
