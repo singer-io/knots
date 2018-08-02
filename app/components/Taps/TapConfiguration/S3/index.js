@@ -43,9 +43,10 @@ import styles from './S3.css';
 
 const KeyCodes = {
   comma: 188,
-  enter: 13
+  enter: 13,
+  tab: 9
 };
-const delimiters = [KeyCodes.comma, KeyCodes.enter];
+const delimiters = [KeyCodes.comma, KeyCodes.enter, KeyCodes.tab];
 
 type Props = {
   tapsStore: {
