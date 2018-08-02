@@ -34,3 +34,32 @@ export const toISODateString = (date: Date) =>
   `${date.toISOString().split('.')[0]}Z`;
 
 export const formatDate = (ISODate: string) => ISODate.split('T')[0];
+
+export const formValid = (fields: {}) => {
+  let valid = true;
+  Object.keys(fields).forEach((field) => {
+    if (fields[field].errorMessage) {
+      valid = false;
+    }
+  });
+
+  return valid;
+};
+
+export const showValidation = (field: string, state: {}) => {
+  const fieldError = state[field].errorMessage;
+
+  if (fieldError) {
+    return {
+      [field]: Object.assign(state[field], {
+        validation: { invalid: true }
+      })
+    };
+  } else {
+    return {
+      [field]: Object.assign(state[field], {
+        validation: { valid: true }
+      })
+    };
+  }
+};

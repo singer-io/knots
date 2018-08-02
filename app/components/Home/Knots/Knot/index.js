@@ -35,7 +35,7 @@ import moment from 'moment';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
-import { tapPropertiesType } from '../../../../utils/shared-types';
+import type { tapPropertiesType } from '../../../../utils/sharedTypes';
 
 type Props = {
   knot: {

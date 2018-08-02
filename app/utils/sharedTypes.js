@@ -30,6 +30,35 @@ export type tapRedshiftFields = {
   start_date: string
 };
 
+export type tapSalesforceFields = {
+  client_id: string,
+  client_secret: string,
+  refresh_token: string,
+  api_type: string,
+  select_fields_by_default: boolean,
+  start_date: string
+};
+
+export type tapRedshift = {
+  valid: boolean,
+  fieldValues: tapRedshiftFields
+};
+
+export type tapSalesforce = {
+  valid: boolean,
+  fieldValues: tapSalesforceFields
+};
+
+export type updateTapField = (
+  tap: string,
+  field: string,
+  value: string | number
+) => void;
+
+export type updateFormValidation = (tap: string, value: boolean) => void;
+
+export type fieldState = { validation: {}, errorMessage: string };
+
 export type specImplementationPropType = {
   usesMetadata?: {
     selected?: boolean,

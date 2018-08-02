@@ -35,27 +35,36 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import type { tapRedshiftFields } from '../../../../utils/shared-types';
-import { toISODateString, formatDate } from '../../../../utils/handlers';
+import type {
+  tapRedshiftFields,
+  tapRedshift,
+  fieldState,
+  updateTapField,
+  updateFormValidation
+} from '../../../../utils/sharedTypes';
+import {
+  toISODateString,
+  formatDate,
+  formValid,
+  showValidation
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    'tap-redshift': {
-      fieldValues: tapRedshiftFields
-    }
+    'tap-redshift': tapRedshift
   },
-  updateTapField: (tap: string, field: string, value: string | number) => void,
-  updateFormValidation: (tap: string, value: boolean) => void
+  updateTapField: updateTapField,
+  updateFormValidation: updateFormValidation
 };
 
 type State = {
-  host: { validation: {}, errorMessage: string },
-  port: { validation: {}, errorMessage: string },
-  dbname: { validation: {}, errorMessage: string },
-  schema: { validation: {}, errorMessage: string },
-  user: { validation: {}, errorMessage: string },
-  password: { validation: {}, errorMessage: string },
-  start_date: { validation: {}, errorMessage: string }
+  host: fieldState,
+  port: fieldState,
+  dbname: fieldState,
+  schema: fieldState,
+  user: fieldState,
+  password: fieldState,
+  start_date: fieldState
 };
 
 export default class Redshift extends Component<Props, State> {
@@ -73,17 +82,6 @@ export default class Redshift extends Component<Props, State> {
     const { fieldValues } = nextProps.tapsStore['tap-redshift'];
     this.validateFields(fieldValues);
   }
-
-  formValid = (fields: {}) => {
-    let valid = true;
-    Object.keys(fields).forEach((field) => {
-      if (fields[field].errorMessage) {
-        valid = false;
-      }
-    });
-
-    return valid;
-  };
 
   validateFields(fieldValues: tapRedshiftFields) {
     const fieldNames = Object.keys(fieldValues);
@@ -133,24 +131,6 @@ export default class Redshift extends Component<Props, State> {
     });
   }
 
-  showValidation(field: string) {
-    const fieldError = this.state[field].errorMessage;
-
-    if (fieldError) {
-      this.setState({
-        [field]: Object.assign(this.state[field], {
-          validation: { invalid: true }
-        })
-      });
-    } else {
-      this.setState({
-        [field]: Object.assign(this.state[field], {
-          validation: { valid: true }
-        })
-      });
-    }
-  }
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -175,7 +155,7 @@ export default class Redshift extends Component<Props, State> {
       start_date
     } = this.props.tapsStore['tap-redshift'].fieldValues;
     const { valid } = this.props.tapsStore['tap-redshift'];
-    const validationState = this.formValid(this.state);
+    const validationState = formValid(this.state);
 
     if (valid !== validationState) {
       this.props.updateFormValidation('tap-redshift', validationState);
@@ -201,7 +181,7 @@ export default class Redshift extends Component<Props, State> {
                     });
                   }}
                   onBlur={() => {
-                    this.showValidation('host');
+                    this.setState(showValidation('host', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.host.validation}
@@ -225,7 +205,7 @@ export default class Redshift extends Component<Props, State> {
                     });
                   }}
                   onBlur={() => {
-                    this.showValidation('port');
+                    this.setState(showValidation('port', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.port.validation}
@@ -251,7 +231,7 @@ export default class Redshift extends Component<Props, State> {
                     });
                   }}
                   onBlur={() => {
-                    this.showValidation('dbname');
+                    this.setState(showValidation('dbname', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.dbname.validation}
@@ -293,7 +273,7 @@ export default class Redshift extends Component<Props, State> {
                     });
                   }}
                   onBlur={() => {
-                    this.showValidation('user');
+                    this.setState(showValidation('user', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.user.validation}
@@ -317,7 +297,7 @@ export default class Redshift extends Component<Props, State> {
                     });
                   }}
                   onBlur={() => {
-                    this.showValidation('password');
+                    this.setState(showValidation('password', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.password.validation}
@@ -335,8 +315,15 @@ export default class Redshift extends Component<Props, State> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
+                  onFocus={() => {
+                    this.setState({
+                      start_date: Object.assign(this.state.start_date, {
+                        validation: {}
+                      })
+                    });
+                  }}
                   onBlur={() => {
-                    this.showValidation('start_date');
+                    this.setState(showValidation('start_date', this.state));
                   }}
                   onChange={this.handleChange}
                   {...this.state.start_date.validation}

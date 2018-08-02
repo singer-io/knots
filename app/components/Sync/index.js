@@ -51,7 +51,7 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Log from '../Log';
 import getLogo from '../../logos';
-import type { tapPropertiesType } from '../../utils/shared-types';
+import type { tapPropertiesType } from '../../utils/sharedTypes';
 
 import styles from './Sync.css';
 

@@ -41,7 +41,7 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import { tapPropertiesType } from '../../../../utils/shared-types';
+import type { tapPropertiesType } from '../../../../utils/sharedTypes';
 import { openLink } from '../../../../utils/handlers';
 
 type Props = {

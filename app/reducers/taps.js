@@ -34,7 +34,11 @@ import {
   UPDATE_FORM_VALIDATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-import { tapPropertiesType } from '../utils/shared-types';
+import {
+  tapPropertiesType,
+  tapRedshift,
+  tapSalesforce
+} from '../utils/sharedTypes';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -47,28 +51,9 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +'tap-redshift': {
-    valid: boolean,
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      schema: string,
-      user: string,
-      password: string
-    }
-  },
-  'tap-salesforce': {
-    fieldValues: {
-      client_id: string,
-      client_secret: string,
-      refresh_token: string,
-      api_type: string,
-      select_fields_by_default: string,
-      start_date: string
-    }
-  },
-  'tap-postgres': {
+  +'tap-redshift': tapRedshift,
+  +'tap-salesforce': tapSalesforce,
+  +'tap-postgres': {
     fieldValues: {
       host: string,
       port: number,
@@ -77,7 +62,7 @@ export type tapsStateType = {
       password: string
     }
   },
-  'tap-adwords': {
+  +'tap-adwords': {
     fieldValues: {
       developer_token: string,
       oauth_client_id: string,
@@ -88,7 +73,7 @@ export type tapsStateType = {
       customer_ids: string
     }
   },
-  'tap-mysql': {
+  +'tap-mysql': {
     fieldValue: {
       host: string,
       port: number,
@@ -97,7 +82,7 @@ export type tapsStateType = {
       database: string
     }
   },
-  'tap-facebook': {
+  +'tap-facebook': {
     fieldValues: {
       access_token: string,
       account_id: string,
@@ -136,6 +121,7 @@ const defaultState = {
     }
   },
   'tap-salesforce': {
+    valid: false,
     fieldValues: {
       client_id: '',
       client_secret: '',
@@ -458,6 +444,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-salesforce': {
+          valid: false,
           fieldValues: {
             client_id: '',
             client_secret: '',

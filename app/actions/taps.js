@@ -25,7 +25,7 @@ import axios from 'axios';
 import type {
   specImplementationPropType,
   tapPropertiesType
-} from '../utils/shared-types';
+} from '../utils/sharedTypes';
 
 const baseUrl = 'http://localhost:4321';
 

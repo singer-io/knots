@@ -41,7 +41,7 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import type { tapPropertiesType } from '../../../../utils/shared-types';
+import type { tapPropertiesType } from '../../../../utils/sharedTypes';
 import {
   openLink,
   toISODateString,

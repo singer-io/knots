@@ -28,7 +28,7 @@ import getLogo from '../../../logos';
 import type {
   specImplementationPropType,
   tapPropertiesType
-} from '../../../utils/shared-types';
+} from '../../../utils/sharedTypes';
 
 type Props = {
   name: string,

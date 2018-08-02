@@ -23,7 +23,7 @@
 
 import axios from 'axios';
 import { shell } from 'electron';
-import type { tapPropertiesType } from '../utils/shared-types';
+import type { tapPropertiesType } from '../utils/sharedTypes';
 
 const baseUrl = 'http://localhost:4321';
 
