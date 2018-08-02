@@ -35,45 +35,39 @@ import {
   Row,
   Alert
 } from 'reactstrap';
+import type {
+  TapMySQL,
+  UpdateTapField,
+  UpdateFormValidation,
+  MySQLState
+} from '../../../../utils/sharedTypes';
+import {
+  validateFields,
+  formValid,
+  showValidation
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    'tap-mysql': {
-      fieldValues: {
-        host: string,
-        port?: number,
-        user: string,
-        password: string,
-        database: string
-      }
-    }
+    'tap-mysql': TapMySQL
   },
-  updateTapField: (tap: string, field: string, value: string | number) => void
-};
-type State = {
-  host: {},
-  port: {},
-  user: {},
-  password: {},
-  database: {}
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-export default class MySQL extends Component<Props, State> {
+export default class MySQL extends Component<Props, MySQLState> {
   state = {
-    host: {},
-    port: {},
-    user: {},
-    password: {},
-    database: {}
+    host: { validation: {}, errorMessage: 'Required' },
+    port: { validation: {}, errorMessage: 'Required' },
+    user: { validation: {}, errorMessage: 'Required' },
+    password: { validation: {}, errorMessage: 'Required' },
+    database: { validation: {}, errorMessage: 'Required' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
-  };
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-mysql'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -90,6 +84,12 @@ export default class MySQL extends Component<Props, State> {
     const { host, port, user, password, database } = this.props.tapsStore[
       'tap-mysql'
     ].fieldValues;
+    const { valid } = this.props.tapsStore['tap-mysql'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-mysql', validationState);
+    }
 
     return (
       <Container>
@@ -108,18 +108,19 @@ export default class MySQL extends Component<Props, State> {
                   id="host"
                   value={host}
                   onFocus={() => {
-                    this.setState({ host: {} });
+                    this.setState({
+                      host: Object.assign(this.state.host, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('host', value);
+                  onBlur={() => {
+                    this.setState(showValidation('host', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.host}
+                  {...this.state.host.validation}
                 />
-                <FormFeedback>
-                  Must be a valid server hostname or IP address
-                </FormFeedback>
+                <FormFeedback>{this.state.host.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="4">
@@ -131,15 +132,19 @@ export default class MySQL extends Component<Props, State> {
                   id="port"
                   value={port || ''}
                   onFocus={() => {
-                    this.setState({ port: {} });
+                    this.setState({
+                      port: Object.assign(this.state.port, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('port', value);
+                  onBlur={() => {
+                    this.setState(showValidation('port', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.port}
+                  {...this.state.port.validation}
                 />
+                <FormFeedback>{this.state.port.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -153,16 +158,19 @@ export default class MySQL extends Component<Props, State> {
                   id="database"
                   value={database}
                   onFocus={() => {
-                    this.setState({ database: {} });
+                    this.setState({
+                      database: Object.assign(this.state.database, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('database', value);
+                  onBlur={() => {
+                    this.setState(showValidation('database', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.database}
+                  {...this.state.database.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.database.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -176,16 +184,19 @@ export default class MySQL extends Component<Props, State> {
                   id="user"
                   value={user}
                   onFocus={() => {
-                    this.setState({ user: {} });
+                    this.setState({
+                      user: Object.assign(this.state.user, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('user', value);
+                  onBlur={() => {
+                    this.setState(showValidation('user', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.user}
+                  {...this.state.user.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.user.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -197,16 +208,19 @@ export default class MySQL extends Component<Props, State> {
                   id="password"
                   value={password}
                   onFocus={() => {
-                    this.setState({ password: {} });
+                    this.setState({
+                      password: Object.assign(this.state.password, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('password', value);
+                  onBlur={() => {
+                    this.setState(showValidation('password', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.password}
+                  {...this.state.password.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.password.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>

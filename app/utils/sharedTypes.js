@@ -23,7 +23,7 @@
 /**
  * TAPS
  */
-export type TapRedshiftFields = {
+type TapRedshiftFields = {
   host: string,
   dbname: string,
   port: ?number,
@@ -33,7 +33,7 @@ export type TapRedshiftFields = {
   start_date: string
 };
 
-export type TapSalesforceFields = {
+type TapSalesforceFields = {
   client_id: string,
   client_secret: string,
   refresh_token: string,
@@ -42,7 +42,7 @@ export type TapSalesforceFields = {
   start_date: string
 };
 
-export type TapPostgresFields = {
+type TapPostgresFields = {
   host: string,
   port: ?number,
   dbname: string,
@@ -50,7 +50,7 @@ export type TapPostgresFields = {
   password: string
 };
 
-export type TapAdwordsFields = {
+type TapAdwordsFields = {
   developer_token: string,
   oauth_client_id: string,
   oauth_client_secret: string,
@@ -58,6 +58,14 @@ export type TapAdwordsFields = {
   start_date: string,
   user_agent: string,
   customer_ids: string
+};
+
+type TapMySQLFields = {
+  host: string,
+  port: ?number,
+  user: string,
+  password: string,
+  database: string
 };
 
 export type TapRedshift = {
@@ -78,6 +86,11 @@ export type TapPostgres = {
 export type TapAdwords = {
   valid: boolean,
   fieldValues: TapAdwordsFields
+};
+
+export type TapMySQL = {
+  valid: boolean,
+  fieldValues: TapMySQLFields
 };
 
 /**
@@ -149,4 +162,12 @@ export type AdwordsState = {
   start_date: FieldState,
   customer_ids: FieldState,
   user_agent: FieldState
+};
+
+export type MySQLState = {
+  host: FieldState,
+  port: FieldState,
+  user: FieldState,
+  password: FieldState,
+  database: FieldState
 };

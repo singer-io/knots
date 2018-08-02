@@ -39,7 +39,8 @@ import type {
   TapRedshift,
   TapSalesforce,
   TapPostgres,
-  TapAdwords
+  TapAdwords,
+  TapMySQL
 } from '../utils/sharedTypes';
 
 export type tapsStateType = {
@@ -51,21 +52,13 @@ export type tapsStateType = {
   +selectedTap: TapPropertiesType,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
-  +schemaUpdated: false,
+  +schemaUpdated: boolean,
   +error: string,
   +'tap-redshift': TapRedshift,
   +'tap-salesforce': TapSalesforce,
   +'tap-postgres': TapPostgres,
   +'tap-adwords': TapAdwords,
-  +'tap-mysql': {
-    fieldValue: {
-      host: string,
-      port: number,
-      user: string,
-      password: string,
-      database: string
-    }
-  },
+  +'tap-mysql': TapMySQL,
   +'tap-facebook': {
     fieldValues: {
       access_token: string,
@@ -138,6 +131,7 @@ const defaultState = {
     }
   },
   'tap-mysql': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -463,6 +457,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-mysql': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,

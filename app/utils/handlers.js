@@ -25,7 +25,8 @@ import type {
   RedshiftState,
   PostgresState,
   SalesforceState,
-  AdwordsState
+  AdwordsState,
+  MySQLState
 } from './sharedTypes';
 
 // $FlowFixMe
@@ -72,7 +73,12 @@ export const showValidation = (field: string, state: {}) => {
 
 export const validateFields = (
   fieldValues: {},
-  state: SalesforceState | RedshiftState | PostgresState | AdwordsState
+  state:
+    | SalesforceState
+    | RedshiftState
+    | PostgresState
+    | AdwordsState
+    | MySQLState
 ) => {
   const fieldNames = Object.keys(fieldValues);
 
