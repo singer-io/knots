@@ -20,6 +20,9 @@
  */
 // @flow
 
+/**
+ * TAPS
+ */
 export type TapRedshiftFields = {
   host: string,
   dbname: string,
@@ -47,6 +50,16 @@ export type TapPostgresFields = {
   password: string
 };
 
+export type TapAdwordsFields = {
+  developer_token: string,
+  oauth_client_id: string,
+  oauth_client_secret: string,
+  refresh_token: string,
+  start_date: string,
+  user_agent: string,
+  customer_ids: string
+};
+
 export type TapRedshift = {
   valid: boolean,
   fieldValues: TapRedshiftFields
@@ -61,6 +74,15 @@ export type TapPostgres = {
   valid: boolean,
   fieldValues: TapPostgresFields
 };
+
+export type TapAdwords = {
+  valid: boolean,
+  fieldValues: TapAdwordsFields
+};
+
+/**
+ * ACTIONS
+ */
 
 export type UpdateTapField = (
   tap: string,
@@ -88,6 +110,10 @@ export type TapPropertiesType = {
   specImplementation?: SpecImplementationPropType
 };
 
+/**
+ * STATE
+ */
+
 export type RedshiftState = {
   host: FieldState,
   port: FieldState,
@@ -113,4 +139,14 @@ export type SalesforceState = {
   start_date: FieldState,
   api_type: FieldState,
   select_fields_by_default: FieldState
+};
+
+export type AdwordsState = {
+  developer_token: FieldState,
+  oauth_client_id: FieldState,
+  oauth_client_secret: FieldState,
+  refresh_token: FieldState,
+  start_date: FieldState,
+  customer_ids: FieldState,
+  user_agent: FieldState
 };

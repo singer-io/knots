@@ -38,7 +38,8 @@ import type {
   TapPropertiesType,
   TapRedshift,
   TapSalesforce,
-  TapPostgres
+  TapPostgres,
+  TapAdwords
 } from '../utils/sharedTypes';
 
 export type tapsStateType = {
@@ -55,17 +56,7 @@ export type tapsStateType = {
   +'tap-redshift': TapRedshift,
   +'tap-salesforce': TapSalesforce,
   +'tap-postgres': TapPostgres,
-  +'tap-adwords': {
-    fieldValues: {
-      developer_token: string,
-      oauth_client_id: string,
-      oauth_client_secret: string,
-      refresh_token: string,
-      start_date: string,
-      user_agent: string,
-      customer_ids: string
-    }
-  },
+  +'tap-adwords': TapAdwords,
   +'tap-mysql': {
     fieldValue: {
       host: string,
@@ -135,6 +126,7 @@ const defaultState = {
     }
   },
   'tap-adwords': {
+    valid: false,
     fieldValues: {
       developer_token: '',
       oauth_client_id: '',
@@ -459,6 +451,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-adwords': {
+          valid: false,
           fieldValues: {
             developer_token: '',
             oauth_client_id: '',

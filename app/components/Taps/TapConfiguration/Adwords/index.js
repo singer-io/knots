@@ -41,42 +41,30 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import type { TapPropertiesType } from '../../../../utils/sharedTypes';
+import type {
+  TapAdwords,
+  UpdateTapField,
+  AdwordsState,
+  UpdateFormValidation
+} from '../../../../utils/sharedTypes';
 import {
   openLink,
   toISODateString,
-  formatDate
+  formatDate,
+  validateFields,
+  formValid,
+  showValidation
 } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    selectedTap: TapPropertiesType,
-    'tap-adwords': {
-      fieldValues: {
-        developer_token: string,
-        oauth_client_id: string,
-        oauth_client_secret: string,
-        refresh_token: string,
-        start_date: string,
-        user_agent: string,
-        customer_ids: string
-      }
-    }
+    'tap-adwords': TapAdwords
   },
-  updateTapField: (tap: string, field: string, value: string) => void
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-type State = {
-  developer_token: {},
-  oauth_client_id: {},
-  oauth_client_secret: {},
-  refresh_token: {},
-  start_date: {},
-  user_agent: {},
-  customer_ids: {}
-};
-
-export default class Adwords extends Component<Props, State> {
+export default class Adwords extends Component<Props, AdwordsState> {
   constructor() {
     super();
 
@@ -90,21 +78,19 @@ export default class Adwords extends Component<Props, State> {
   }
 
   state = {
-    developer_token: {},
-    oauth_client_id: {},
-    oauth_client_secret: {},
-    refresh_token: {},
-    start_date: {},
-    customer_ids: {}
+    developer_token: { validation: {}, errorMessage: 'Required' },
+    oauth_client_id: { validation: {}, errorMessage: 'Required' },
+    oauth_client_secret: { validation: {}, errorMessage: 'Required' },
+    refresh_token: { validation: {}, errorMessage: 'Required' },
+    start_date: { validation: {}, errorMessage: 'Required' },
+    customer_ids: { validation: {}, errorMessage: 'Required' },
+    user_agent: { validation: {}, errorMessage: '' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
-  };
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-adwords'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -133,6 +119,12 @@ export default class Adwords extends Component<Props, State> {
       start_date,
       customer_ids
     } = this.props.tapsStore['tap-adwords'].fieldValues;
+    const { valid } = this.props.tapsStore['tap-adwords'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-adwords', validationState);
+    }
 
     return (
       <Container>
@@ -181,16 +173,26 @@ export default class Adwords extends Component<Props, State> {
                   id="developer_token"
                   value={developer_token}
                   onFocus={() => {
-                    this.setState({ developer_token: {} });
+                    this.setState({
+                      developer_token: Object.assign(
+                        this.state.developer_token,
+                        {
+                          validation: {}
+                        }
+                      )
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('developer_token', value);
+                  onBlur={() => {
+                    this.setState(
+                      showValidation('developer_token', this.state)
+                    );
                   }}
                   onChange={this.handleChange}
-                  {...this.state.developer_token}
+                  {...this.state.developer_token.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.developer_token.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -202,19 +204,24 @@ export default class Adwords extends Component<Props, State> {
                   id="customer_ids"
                   value={customer_ids}
                   onFocus={() => {
-                    this.setState({ customer_ids: {} });
+                    this.setState({
+                      customer_ids: Object.assign(this.state.customer_ids, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('customer_ids', value);
+                  onBlur={() => {
+                    this.setState(showValidation('customer_ids', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.customer_ids}
+                  {...this.state.customer_ids.validation}
                 />
                 <FormText>
                   Comma separated AdWords account IDs to replicate data from.
                 </FormText>
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.customer_ids.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -228,16 +235,26 @@ export default class Adwords extends Component<Props, State> {
                   id="oauth_client_id"
                   value={oauth_client_id}
                   onFocus={() => {
-                    this.setState({ oauth_client_id: {} });
+                    this.setState({
+                      oauth_client_id: Object.assign(
+                        this.state.oauth_client_id,
+                        {
+                          validation: {}
+                        }
+                      )
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('oauth_client_id', value);
+                  onBlur={() => {
+                    this.setState(
+                      showValidation('oauth_client_id', this.state)
+                    );
                   }}
                   onChange={this.handleChange}
-                  {...this.state.oauth_client_id}
+                  {...this.state.oauth_client_id.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.oauth_client_id.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -249,16 +266,26 @@ export default class Adwords extends Component<Props, State> {
                   id="oauth_client_secret"
                   value={oauth_client_secret}
                   onFocus={() => {
-                    this.setState({ oauth_client_secret: {} });
+                    this.setState({
+                      oauth_client_secret: Object.assign(
+                        this.state.oauth_client_secret,
+                        {
+                          validation: {}
+                        }
+                      )
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('oauth_client_secret', value);
+                  onBlur={() => {
+                    this.setState(
+                      showValidation('oauth_client_secret', this.state)
+                    );
                   }}
                   onChange={this.handleChange}
-                  {...this.state.oauth_client_secret}
+                  {...this.state.oauth_client_secret.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.oauth_client_secret.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -275,7 +302,7 @@ export default class Adwords extends Component<Props, State> {
                       value={refresh_token}
                       id="refresh_token"
                       onChange={this.handleChange}
-                      {...this.state.refresh_token}
+                      {...this.state.refresh_token.validation}
                     />
                     <InputGroupAddon addonType="append">
                       <Button
@@ -301,18 +328,26 @@ export default class Adwords extends Component<Props, State> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
+                  onFocus={() => {
+                    this.setState({
+                      start_date: Object.assign(this.state.start_date, {
+                        validation: {}
+                      })
+                    });
+                  }}
+                  onBlur={() => {
+                    this.setState(showValidation('start_date', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.start_date}
+                  {...this.state.start_date.validation}
                 />
                 <FormText>
                   Applies to objects with a defined timestamp field and limits
                   how much historical data will be replicated.
                 </FormText>
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.start_date.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>

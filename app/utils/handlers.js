@@ -24,7 +24,8 @@ import { shell } from 'electron';
 import type {
   RedshiftState,
   PostgresState,
-  SalesforceState
+  SalesforceState,
+  AdwordsState
 } from './sharedTypes';
 
 // $FlowFixMe
@@ -71,7 +72,7 @@ export const showValidation = (field: string, state: {}) => {
 
 export const validateFields = (
   fieldValues: {},
-  state: SalesforceState | RedshiftState | PostgresState
+  state: SalesforceState | RedshiftState | PostgresState | AdwordsState
 ) => {
   const fieldNames = Object.keys(fieldValues);
 
