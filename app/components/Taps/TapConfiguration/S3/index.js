@@ -38,12 +38,14 @@ import {
   Alert,
   Table
 } from 'reactstrap';
+import { WithContext as ReactTags } from 'react-tag-input';
+import styles from './S3.css';
 
-import CreatableSelect from 'react-select/lib/Creatable';
-
-const components = {
-  DropdownIndicator: null
+const KeyCodes = {
+  comma: 188,
+  enter: 13
 };
+const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
 type Props = {
   tapsStore: {
@@ -60,7 +62,8 @@ type Props = {
 type State = {
   bucket: '',
   start_date: '',
-  tables: [{ table_name: '', key_properties: [], search_pattern: '' }]
+  tables: [{ table_name: '', key_properties: [], search_pattern: '' }],
+  tags: []
 };
 
 export default class S3 extends Component<Props, State> {
@@ -69,21 +72,30 @@ export default class S3 extends Component<Props, State> {
     this.state = {
       bucket: '',
       start_date: '',
-      tables: [{ table_name: '', key_properties: [], search_pattern: '' }]
+      tables: [{ table_name: '', key_properties: [], search_pattern: '' }],
+      tags: []
     };
   }
 
   componentWillMount = () => {
+    const tagObj = {};
+    const tagsArr = [];
     const { tables } = this.props.tapsStore['tap-s3-csv'].fieldValues;
     const tableValue = tables
       ? JSON.parse(tables)
       : [{ table_name: '', key_properties: [], search_pattern: '' }];
-    this.setState({ tables: tableValue });
-  };
-
-  updateStringifiedFieldValue = (value) => {
-    const tableValue = JSON.stringify(value);
-    this.props.updateTapField('tap-s3-csv', 'tables', tableValue);
+    tableValue.forEach((key) => {
+      const keyProperties = key.key_properties;
+      if (keyProperties.length !== 0) {
+        tagObj.id = keyProperties;
+        tagObj.text = keyProperties;
+        tagsArr.push(tagObj);
+      }
+    });
+    this.setState({
+      tables: tableValue,
+      tags: tagsArr
+    });
   };
 
   validate = (field: string, value: string) => {
@@ -126,6 +138,13 @@ export default class S3 extends Component<Props, State> {
     }`;
   };
 
+  updateTable = (newTable) => {
+    this.setState({ tables: newTable }, () => {
+      const tableValue = JSON.stringify(this.state.tables);
+      this.props.updateTapField('tap-s3-csv', 'tables', tableValue);
+    });
+  };
+
   handleAddTable = () => {
     this.setState({
       tables: this.state.tables.concat([
@@ -139,14 +158,8 @@ export default class S3 extends Component<Props, State> {
   };
 
   handleRemoveTable = (idx) => () => {
-    this.setState(
-      {
-        tables: this.state.tables.filter((s, sidx) => idx !== sidx)
-      },
-      () => {
-        this.updateStringifiedFieldValue(this.state.tables);
-      }
-    );
+    const newTable = this.state.tables.filter((s, sidx) => idx !== sidx);
+    this.updateTable(newTable);
   };
 
   handleTableChange = (idx) => (evt) => {
@@ -154,25 +167,28 @@ export default class S3 extends Component<Props, State> {
       if (idx !== sidx) return table;
       return { ...table, table_name: evt.target.value };
     });
-
-    this.setState({ tables: newTable }, () => {
-      this.updateStringifiedFieldValue(this.state.tables);
-    });
+    this.updateTable(newTable);
   };
 
   handleKeyFieldChange = (idx) => (option) => {
-    const keyProperties = option.map((elem) => {
-      const values = elem.value;
-      return values;
-    });
-
-    const newTable = this.state.tables.map((table, sidx) => {
+    const { tables, tags } = this.state;
+    const newTable = tables.map((table, sidx) => {
       if (idx !== sidx) return table;
+      const updatedTag = [...tags, option];
+      this.setState({ tags: updatedTag });
+      const keyProperties = updatedTag.map((elem) => {
+        const values = elem.text;
+        return values;
+      });
+
       return { ...table, key_properties: keyProperties.toString() };
     });
+    this.updateTable(newTable);
+  };
 
-    this.setState({ tables: newTable }, () => {
-      this.updateStringifiedFieldValue(this.state.tables);
+  handleDelete = (idx) => {
+    this.setState({
+      tags: this.state.tags.filter((tag, index) => index !== idx)
     });
   };
 
@@ -181,10 +197,7 @@ export default class S3 extends Component<Props, State> {
       if (idx !== sidx) return table;
       return { ...table, search_pattern: evt.target.value };
     });
-
-    this.setState({ tables: newTable }, () => {
-      this.updateStringifiedFieldValue(this.state.tables);
-    });
+    this.updateTable(newTable);
   };
 
   render() {
@@ -261,8 +274,8 @@ export default class S3 extends Component<Props, State> {
               <thead>
                 <tr>
                   <th className="font-weight-normal">Table name</th>
-                  <th className="font-weight-normal">Key field(s)</th>
                   <th className="font-weight-normal">S3 key pattern</th>
+                  <th className="font-weight-normal">Key field(s)</th>
                 </tr>
               </thead>
               <tbody>
@@ -279,14 +292,6 @@ export default class S3 extends Component<Props, State> {
                       />
                     </td>
                     <td>
-                      <CreatableSelect
-                        components={components}
-                        isClearable
-                        isMulti
-                        onChange={this.handleKeyFieldChange(idx)}
-                      />
-                    </td>
-                    <td>
                       <Input
                         type="text"
                         name="search_pattern"
@@ -294,6 +299,23 @@ export default class S3 extends Component<Props, State> {
                         value={table.search_pattern}
                         onChange={this.handleSearchPatternChange(idx)}
                         {...this.state.tables.search_pattern}
+                      />
+                    </td>
+                    <td>
+                      <ReactTags
+                        name="key_properties"
+                        id="key_properties"
+                        tags={this.state.tags}
+                        handleAddition={this.handleKeyFieldChange(idx)}
+                        handleDelete={this.handleDelete}
+                        delimiters={delimiters}
+                        placeholder="Add new key field"
+                        autofocus={false}
+                        classNames={{
+                          tag: styles.inputTagValue,
+                          tagInputField: 'form-control',
+                          tagInput: 'd-inline-block'
+                        }}
                       />
                     </td>
                     <td>
