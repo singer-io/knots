@@ -37,6 +37,8 @@ const {
 } = require('./util');
 const { commands } = require('./constants');
 
+const isWindows = process.platform === 'win32';
+
 let applicationFolder;
 let runningProcess;
 if (process.env.NODE_ENV === 'production') {
@@ -153,8 +155,9 @@ const sync = (req) =>
           )}`;
 
           // Get tap and target from the knot object
-          const shellOptions =
-            process.platform !== 'win32' ? 'set -o pipefail;' : '';
+          const shellOptions = !isWindows ? 'set -o pipefail;' : '';
+          const commandOptions = { detached: true };
+          if (!isWindows) commandOptions.shell = '/bin/bash';
           const syncData = exec(
             shellOptions +
               commands.runSync(
@@ -162,7 +165,7 @@ const sync = (req) =>
                 knotObject.tap,
                 knotObject.target
               ),
-            { detached: true }
+            commandOptions
           );
 
           runningProcess = syncData;
@@ -327,8 +330,9 @@ const partialSync = (req) =>
           )}`;
 
           // Get tap and target from the knot object
-          const shellOptions =
-            process.platform !== 'win32' ? 'set -o pipefail;' : '';
+          const shellOptions = !isWindows ? 'set -o pipefail;' : '';
+          const commandOptions = { detached: true };
+          if (!isWindows) commandOptions.shell = '/bin/bash';
           const syncData = exec(
             shellOptions +
               commands.runPartialSync(
@@ -336,7 +340,7 @@ const partialSync = (req) =>
                 knotObject.tap,
                 knotObject.target
               ),
-            { detached: true }
+            commandOptions
           );
 
           runningProcess = syncData;

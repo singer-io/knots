@@ -11,7 +11,7 @@ jobs:
           command: brew install rpm
       - run:
           name: Build and run tests
-          command: yarn && yarn test && yarn package
+          command: yarn && yarn test && yarn package-all
       - store_artifacts:
           path: release
 
