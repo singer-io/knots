@@ -21,6 +21,11 @@
 // @flow
 
 import { shell } from 'electron';
+import type {
+  RedshiftState,
+  PostgresState,
+  SalesforceState
+} from './sharedTypes';
 
 // $FlowFixMe
 /* eslint-disable */
@@ -62,4 +67,58 @@ export const showValidation = (field: string, state: {}) => {
       })
     };
   }
+};
+
+export const validateFields = (
+  fieldValues: {},
+  state: SalesforceState | RedshiftState | PostgresState
+) => {
+  const fieldNames = Object.keys(fieldValues);
+
+  fieldNames.forEach((field) => {
+    const fieldValue = fieldValues[field];
+
+    if (field === 'host') {
+      if (fieldValue) {
+        // Ensure a loopback address hasn't been provided
+        const loopBackAddresses = /^localhost$|^127(?:\.[0-9]+){0,2}\.[0-9]+$|^(?:0*:)*?:?0*1$/;
+        if (loopBackAddresses.test(fieldValue.toString())) {
+          return {
+            // $FlowFixMe
+            host: Object.assign(state.host, {
+              errorMessage: 'KNOTS does not support loopback addresses'
+            })
+          };
+        } else {
+          // All checks pass
+          return {
+            // $FlowFixMe
+            host: Object.assign(state.host, {
+              errorMessage: ''
+            })
+          };
+        }
+      } else {
+        // If no value is provided let the user know the field is required
+        return {
+          // $FlowFixMe
+          host: Object.assign(state.host, {
+            errorMessage: 'Must be a valid server hostname or IP address'
+          })
+        };
+      }
+    } else if (fieldValue) {
+      return {
+        [field]: Object.assign(state[field], {
+          errorMessage: ''
+        })
+      };
+    } else {
+      return {
+        [field]: Object.assign(state[field], {
+          errorMessage: 'Required'
+        })
+      };
+    }
+  });
 };

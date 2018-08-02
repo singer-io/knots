@@ -34,10 +34,11 @@ import {
   UPDATE_FORM_VALIDATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-import {
-  tapPropertiesType,
-  tapRedshift,
-  tapSalesforce
+import type {
+  TapPropertiesType,
+  TapRedshift,
+  TapSalesforce,
+  TapPostgres
 } from '../utils/sharedTypes';
 
 export type tapsStateType = {
@@ -46,22 +47,14 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: tapPropertiesType,
+  +selectedTap: TapPropertiesType,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
   +schemaUpdated: false,
   +error: string,
-  +'tap-redshift': tapRedshift,
-  +'tap-salesforce': tapSalesforce,
-  +'tap-postgres': {
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      user: string,
-      password: string
-    }
-  },
+  +'tap-redshift': TapRedshift,
+  +'tap-salesforce': TapSalesforce,
+  +'tap-postgres': TapPostgres,
   +'tap-adwords': {
     fieldValues: {
       developer_token: string,
@@ -132,6 +125,7 @@ const defaultState = {
     }
   },
   'tap-postgres': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -455,6 +449,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-postgres': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,

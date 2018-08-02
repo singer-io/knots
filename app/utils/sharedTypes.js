@@ -20,17 +20,17 @@
  */
 // @flow
 
-export type tapRedshiftFields = {
+export type TapRedshiftFields = {
   host: string,
   dbname: string,
-  port?: number,
+  port: ?number,
   schema: string,
   user: string,
   password: string,
   start_date: string
 };
 
-export type tapSalesforceFields = {
+export type TapSalesforceFields = {
   client_id: string,
   client_secret: string,
   refresh_token: string,
@@ -39,37 +39,78 @@ export type tapSalesforceFields = {
   start_date: string
 };
 
-export type tapRedshift = {
-  valid: boolean,
-  fieldValues: tapRedshiftFields
+export type TapPostgresFields = {
+  host: string,
+  port: ?number,
+  dbname: string,
+  user: string,
+  password: string
 };
 
-export type tapSalesforce = {
+export type TapRedshift = {
   valid: boolean,
-  fieldValues: tapSalesforceFields
+  fieldValues: TapRedshiftFields
 };
 
-export type updateTapField = (
+export type TapSalesforce = {
+  valid: boolean,
+  fieldValues: TapSalesforceFields
+};
+
+export type TapPostgres = {
+  valid: boolean,
+  fieldValues: TapPostgresFields
+};
+
+export type UpdateTapField = (
   tap: string,
   field: string,
   value: string | number
 ) => void;
 
-export type updateFormValidation = (tap: string, value: boolean) => void;
+export type UpdateFormValidation = (tap: string, value: boolean) => void;
 
-export type fieldState = { validation: {}, errorMessage: string };
+export type FieldState = { validation: {}, errorMessage: string };
 
-export type specImplementationPropType = {
+export type SpecImplementationPropType = {
   usesMetadata?: {
     selected?: boolean,
     replicationKey?: boolean,
-    replicationMethod?: boolean
+    replicationMethod?: boolean,
+    usesReplication?: boolean
   },
   usesCatalogArg?: boolean
 };
 
-export type tapPropertiesType = {
+export type TapPropertiesType = {
   name: string,
   image: string,
-  specImplementation?: specImplementationPropType
+  specImplementation?: SpecImplementationPropType
+};
+
+export type RedshiftState = {
+  host: FieldState,
+  port: FieldState,
+  dbname: FieldState,
+  schema: FieldState,
+  user: FieldState,
+  password: FieldState,
+  start_date: FieldState
+};
+
+export type PostgresState = {
+  host: FieldState,
+  port: FieldState,
+  dbname: FieldState,
+  user: FieldState,
+  password: FieldState
+};
+
+export type SalesforceState = {
+  client_id: FieldState,
+  client_secret: FieldState,
+  refresh_token: FieldState,
+  start_date: FieldState,
+  api_type: FieldState,
+  select_fields_by_default: FieldState
 };

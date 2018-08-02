@@ -42,38 +42,29 @@ import {
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
 import type {
-  tapSalesforceFields,
-  tapSalesforce,
-  fieldState,
-  updateTapField,
-  updateFormValidation
+  SalesforceState,
+  TapSalesforce,
+  UpdateTapField,
+  UpdateFormValidation
 } from '../../../../utils/sharedTypes';
 import {
   openLink,
   toISODateString,
   formatDate,
   formValid,
-  showValidation
+  showValidation,
+  validateFields
 } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    'tap-salesforce': tapSalesforce
+    'tap-salesforce': TapSalesforce
   },
-  updateTapField: updateTapField,
-  updateFormValidation: updateFormValidation
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-type State = {
-  client_id: fieldState,
-  client_secret: fieldState,
-  refresh_token: fieldState,
-  start_date: fieldState,
-  api_type: fieldState,
-  select_fields_by_default: fieldState
-};
-
-export default class Salesforce extends Component<Props, State> {
+export default class Salesforce extends Component<Props, SalesforceState> {
   constructor() {
     super();
 
@@ -97,29 +88,7 @@ export default class Salesforce extends Component<Props, State> {
 
   componentWillReceiveProps(nextProps: Props) {
     const { fieldValues } = nextProps.tapsStore['tap-salesforce'];
-    this.validateFields(fieldValues);
-  }
-
-  validateFields(fieldValues: tapSalesforceFields) {
-    const fieldNames = Object.keys(fieldValues);
-
-    fieldNames.forEach((field) => {
-      const fieldValue = fieldValues[field];
-
-      if (fieldValue) {
-        this.setState({
-          [field]: Object.assign(this.state[field], {
-            errorMessage: ''
-          })
-        });
-      } else {
-        this.setState({
-          [field]: Object.assign(this.state[field], {
-            errorMessage: 'Required'
-          })
-        });
-      }
-    });
+    this.setState(validateFields(fieldValues, this.state));
   }
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {

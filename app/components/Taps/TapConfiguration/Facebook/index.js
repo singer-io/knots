@@ -41,12 +41,12 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import type { tapPropertiesType } from '../../../../utils/sharedTypes';
+import type { TapPropertiesType } from '../../../../utils/sharedTypes';
 import { openLink } from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    selectedTap: tapPropertiesType,
+    selectedTap: TapPropertiesType,
     'tap-facebook': {
       fieldValues: {
         account_id: string,

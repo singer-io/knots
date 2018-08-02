@@ -41,7 +41,7 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import type { tapPropertiesType } from '../../../../utils/sharedTypes';
+import type { TapPropertiesType } from '../../../../utils/sharedTypes';
 import {
   openLink,
   toISODateString,
@@ -50,7 +50,7 @@ import {
 
 type Props = {
   tapsStore: {
-    selectedTap: tapPropertiesType,
+    selectedTap: TapPropertiesType,
     'tap-adwords': {
       fieldValues: {
         developer_token: string,

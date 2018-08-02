@@ -35,13 +35,13 @@ import moment from 'moment';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
-import type { tapPropertiesType } from '../../../../utils/sharedTypes';
+import type { TapPropertiesType } from '../../../../utils/sharedTypes';
 
 type Props = {
   knot: {
     name: string,
     lastRun: string,
-    tap: tapPropertiesType,
+    tap: TapPropertiesType,
     target: { name: string }
   },
   delete: ({ name: string }) => void,
@@ -53,7 +53,8 @@ type Props = {
 };
 
 type State = {
-  showDelete: boolean
+  showDelete: boolean,
+  showDownloadDisclaimer: boolean
 };
 
 class Knot extends Component<Props, State> {
