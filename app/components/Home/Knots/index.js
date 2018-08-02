@@ -24,6 +24,7 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Alert, Button, Container, Table } from 'reactstrap';
+import type { TapPropertiesType } from '../../../utils/sharedTypes';
 
 import Knot from './Knot';
 
@@ -32,7 +33,7 @@ type Props = {
     knots: Array<{
       name: string,
       lastRun: string,
-      tap: { name: string },
+      tap: TapPropertiesType,
       target: { name: string }
     }>,
     knotDeleted: boolean,

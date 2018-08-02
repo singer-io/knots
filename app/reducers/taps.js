@@ -40,7 +40,8 @@ import type {
   TapSalesforce,
   TapPostgres,
   TapAdwords,
-  TapMySQL
+  TapMySQL,
+  TapFacebook
 } from '../utils/sharedTypes';
 
 export type tapsStateType = {
@@ -59,15 +60,7 @@ export type tapsStateType = {
   +'tap-postgres': TapPostgres,
   +'tap-adwords': TapAdwords,
   +'tap-mysql': TapMySQL,
-  +'tap-facebook': {
-    fieldValues: {
-      access_token: string,
-      account_id: string,
-      app_id: string,
-      app_secret: string,
-      start_date: string
-    }
-  }
+  +'tap-facebook': TapFacebook
 };
 
 const defaultState = {
@@ -75,7 +68,8 @@ const defaultState = {
   tapSelected: false,
   selectedTap: {
     name: '',
-    image: ''
+    image: '',
+    specImplementation: {}
   },
   schemaLoading: false,
   schemaLoaded: false,
@@ -141,6 +135,7 @@ const defaultState = {
     }
   },
   'tap-facebook': {
+    valid: false,
     fieldValues: {
       access_token: '',
       account_id: '',
@@ -467,6 +462,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-facebook': {
+          valid: false,
           fieldValues: {
             access_token: '',
             account_id: '',

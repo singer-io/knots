@@ -41,32 +41,30 @@ import {
   Row
 } from 'reactstrap';
 import { ipcRenderer } from 'electron';
-import type { TapPropertiesType } from '../../../../utils/sharedTypes';
-import { openLink } from '../../../../utils/handlers';
+import {
+  toISODateString,
+  formatDate,
+  openLink,
+  formValid,
+  showValidation,
+  validateFields
+} from '../../../../utils/handlers';
+import type {
+  TapFacebook,
+  UpdateTapField,
+  UpdateFormValidation,
+  FacebookState
+} from '../../../../utils/sharedTypes';
 
 type Props = {
   tapsStore: {
-    selectedTap: TapPropertiesType,
-    'tap-facebook': {
-      fieldValues: {
-        account_id: string,
-        access_token: string,
-        app_secret: string,
-        start_date: string
-      }
-    }
+    'tap-facebook': TapFacebook
   },
-  updateTapField: (tap: string, field: string, value: string) => void
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-type State = {
-  account_id: {},
-  access_token: {},
-  app_secret: {},
-  start_date: {}
-};
-
-export default class Facebook extends Component<Props, State> {
+export default class Facebook extends Component<Props, FacebookState> {
   constructor() {
     super();
 
@@ -80,53 +78,27 @@ export default class Facebook extends Component<Props, State> {
   }
 
   state = {
-    access_token: '',
-    account_id: '',
-    app_id: '',
-    app_secret: '',
-    start_date: ''
+    access_token: { validation: {}, errorMessage: 'Required' },
+    account_id: { validation: {}, errorMessage: 'Required' },
+    app_id: { validation: {}, errorMessage: 'Required' },
+    app_secret: { validation: {}, errorMessage: 'Required' },
+    start_date: { validation: {}, errorMessage: 'Required' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
-  };
-
-  // TODO DRY
-  toISODateString = (date: Date) => {
-    const pad = (number) => (number < 10 ? `0${number}` : number);
-
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-      date.getUTCSeconds()
-    )}Z`;
-  };
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-facebook'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = this.toISODateString(new Date(value));
+      value = toISODateString(new Date(value));
     }
 
     this.props.updateTapField('tap-facebook', name, value);
-  };
-
-  // TODO DRY
-  formatDate = (ISODate: string) => {
-    const date = new Date(ISODate);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}-${month < 10 ? `0${month}` : month}-${
-      day < 10 ? `0${day}` : day
-    }`;
   };
 
   authorize = () => {
@@ -144,6 +116,12 @@ export default class Facebook extends Component<Props, State> {
       app_secret,
       start_date
     } = this.props.tapsStore['tap-facebook'].fieldValues;
+    const { valid } = this.props.tapsStore['tap-facebook'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-facebook', validationState);
+    }
 
     return (
       <Container>
@@ -197,16 +175,19 @@ export default class Facebook extends Component<Props, State> {
                   id="app_id"
                   value={app_id}
                   onFocus={() => {
-                    this.setState({ app_id: {} });
+                    this.setState({
+                      app_id: Object.assign(this.state.app_id, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('app_id', value);
+                  onBlur={() => {
+                    this.setState(showValidation('app_id', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.app_id}
+                  {...this.state.app_id.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.app_id.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -218,16 +199,21 @@ export default class Facebook extends Component<Props, State> {
                   id="app_secret"
                   value={app_secret}
                   onFocus={() => {
-                    this.setState({ app_secret: {} });
+                    this.setState({
+                      app_secret: Object.assign(this.state.app_secret, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('app_secret', value);
+                  onBlur={() => {
+                    this.setState(showValidation('app_secret', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.app_secret}
+                  {...this.state.app_secret.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.app_secret.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -244,7 +230,7 @@ export default class Facebook extends Component<Props, State> {
                       value={access_token}
                       id="access_token"
                       onChange={this.handleChange}
-                      {...this.state.access_token}
+                      {...this.state.access_token.validation}
                     />
                     <InputGroupAddon addonType="append">
                       <Button
@@ -271,14 +257,17 @@ export default class Facebook extends Component<Props, State> {
                   id="account_id"
                   value={account_id}
                   onFocus={() => {
-                    this.setState({ account_id: {} });
+                    this.setState({
+                      account_id: Object.assign(this.state.account_id, {
+                        validation: {}
+                      })
+                    });
                   }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('account_id', value);
+                  onBlur={() => {
+                    this.setState(showValidation('account_id', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.account_id}
+                  {...this.state.account_id.validation}
                 />
                 <FormText>
                   Learn how to find your Ad account ID&nbsp;
@@ -289,7 +278,9 @@ export default class Facebook extends Component<Props, State> {
                     here
                   </a>
                 </FormText>
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.account_id.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -301,19 +292,27 @@ export default class Facebook extends Component<Props, State> {
                   type="date"
                   name="start_date"
                   id="start_date"
-                  value={start_date ? this.formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
+                  value={start_date ? formatDate(start_date) : ''}
+                  onFocus={() => {
+                    this.setState({
+                      start_date: Object.assign(this.state.start_date, {
+                        validation: {}
+                      })
+                    });
+                  }}
+                  onBlur={() => {
+                    this.setState(showValidation('start_date', this.state));
                   }}
                   onChange={this.handleChange}
-                  {...this.state.start_date}
+                  {...this.state.start_date.validation}
                 />
                 <FormText>
                   Applies to objects with a defined timestamp field and limits
                   how much historical data will be replicated.
                 </FormText>
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>
+                  {this.state.start_date.errorMessage}
+                </FormFeedback>
               </FormGroup>
             </Col>
           </Row>

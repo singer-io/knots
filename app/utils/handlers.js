@@ -26,7 +26,8 @@ import type {
   PostgresState,
   SalesforceState,
   AdwordsState,
-  MySQLState
+  MySQLState,
+  FacebookState
 } from './sharedTypes';
 
 // $FlowFixMe
@@ -79,6 +80,7 @@ export const validateFields = (
     | PostgresState
     | AdwordsState
     | MySQLState
+    | FacebookState
 ) => {
   const fieldNames = Object.keys(fieldValues);
 

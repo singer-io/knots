@@ -68,6 +68,14 @@ type TapMySQLFields = {
   database: string
 };
 
+type TapFacebookFields = {
+  access_token: string,
+  account_id: string,
+  app_id: string,
+  app_secret: string,
+  start_date: string
+};
+
 export type TapRedshift = {
   valid: boolean,
   fieldValues: TapRedshiftFields
@@ -93,6 +101,11 @@ export type TapMySQL = {
   fieldValues: TapMySQLFields
 };
 
+export type TapFacebook = {
+  valid: boolean,
+  fieldValues: TapFacebookFields
+};
+
 /**
  * ACTIONS
  */
@@ -111,10 +124,10 @@ export type SpecImplementationPropType = {
   usesMetadata?: {
     selected?: boolean,
     replicationKey?: boolean,
-    replicationMethod?: boolean,
-    usesReplication?: boolean
+    replicationMethod?: boolean
   },
-  usesCatalogArg?: boolean
+  usesCatalogArg?: boolean,
+  usesReplication?: boolean
 };
 
 export type TapPropertiesType = {
@@ -170,4 +183,12 @@ export type MySQLState = {
   user: FieldState,
   password: FieldState,
   database: FieldState
+};
+
+export type FacebookState = {
+  app_id: FieldState,
+  account_id: FieldState,
+  access_token: FieldState,
+  app_secret: FieldState,
+  start_date: FieldState
 };
