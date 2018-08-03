@@ -89,7 +89,8 @@ type Props = {
   partialSync: (knot: string) => void,
   history: { push: (path: string) => void },
   syncPageLoaded: () => void,
-  cancel: (name: string) => void
+  cancel: (name: string) => void,
+  resetKnotError: () => void
 };
 
 type State = {
@@ -310,6 +311,9 @@ export default class Sync extends Component<Props, State> {
             <Link
               to="/taps"
               className="btn btn-outline-danger align-self-center"
+              onClick={() => {
+                this.props.resetKnotError();
+              }}
             >
               Re-configure
             </Link>

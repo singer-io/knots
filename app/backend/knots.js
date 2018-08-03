@@ -166,17 +166,15 @@ const saveKnot = (name, currentName) =>
           .then((knotObjectString) => {
             try {
               const knotObject = JSON.parse(knotObjectString);
-              if (!currentName) {
-                // Create knots folder if it doesn't exist
-                shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
-
-                // Move knot from temp file to knots folder
-                shell.mv(
-                  path.resolve(getTemporaryKnotFolder(), '*'),
-                  path.resolve(getKnotsFolder(), name)
-                );
+              shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
+              shell.mv(
+                path.resolve(getTemporaryKnotFolder(), '*'),
+                path.resolve(getKnotsFolder(), name)
+              );
+              if (currentName) {
+                // Remove the knot that has been edited
+                shell.rm('-rf', path.resolve(getKnotsFolder(), currentName));
               }
-
               // Add a make file to the folder
               writeFile(
                 path.resolve(getKnotsFolder(), name, 'Makefile'),
@@ -256,7 +254,7 @@ const loadValues = (knot) =>
       path.resolve(getTemporaryKnotFolder())
     );
 
-    const knotPath = path.resolve(getTemporaryKnotFolder());
+    const knotPath = getTemporaryKnotFolder();
 
     const promises = [
       readFile(`${knotPath}/knot.json`),

@@ -45,6 +45,7 @@ export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
 export const RESET_STORE = 'RESET_STORE';
+export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
 
 type actionType = {
   +type: string
@@ -301,4 +302,12 @@ export function cancel(knot: string) {
       .post(`${baseUrl}/knots/cancel/`, { knot })
       .then(() => {})
       .catch(() => {});
+}
+
+export function resetKnotError() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: RESET_KNOT_ERROR
+    });
+  };
 }

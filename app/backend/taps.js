@@ -80,6 +80,7 @@ const getSchema = (req, mockSpawn) =>
     const spawnFunction = mockSpawn || spawn;
     const knotPath = getTemporaryKnotFolder();
 
+    shell.rm('-rf', path.resolve(knotPath, 'tap', 'catalog.json'));
     shell.mkdir('-p', path.resolve(knotPath, 'tap'));
     const stdoutStream = fs.createWriteStream(
       path.resolve(knotPath, 'tap', 'catalog.json'),
@@ -100,6 +101,13 @@ const getSchema = (req, mockSpawn) =>
         detached: true
       }
     );
+
+    const failError = `${commands.runDiscovery(
+      knotPath,
+      req.body.tap.name,
+      req.body.tap.image
+    )} command failed`;
+
     runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
@@ -112,17 +120,13 @@ const getSchema = (req, mockSpawn) =>
 
     runDiscovery.on('exit', (code) => {
       if (code > 0) {
-        reject(
-          new Error(
-            `${commands.runDiscovery(
-              knotPath,
-              req.body.tap.name,
-              req.body.tap.image
-            )} command failed`
-          )
-        );
+        reject(new Error(failError));
       }
       resolve();
+    });
+
+    runDiscovery.on('error', () => {
+      reject(new Error(failError));
     });
   });
 
