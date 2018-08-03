@@ -28,7 +28,6 @@ const {
   deleteKnot,
   packageKnot,
   downloadKnot,
-  partialSync,
   loadValues,
   cancel
 } = require('../knots');
@@ -46,14 +45,13 @@ router.post('/save/', (req, res) => {
 
   saveKnot(knotName, currentName)
     .then(() => {
-      res.json({});
-      // sync(req)
-      //   .then(() => {
-      //     res.json({});
-      //   })
-      //   .catch((error) => {
-      //     res.status(500).json({ message: error.message });
-      //   });
+      sync(req)
+        .then(() => {
+          res.json({});
+        })
+        .catch((error) => {
+          res.status(500).json({ message: error.message });
+        });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });
@@ -101,7 +99,7 @@ router.post('/full-sync/', (req, res) => {
 });
 
 router.post('/partial-sync/', (req, res) => {
-  partialSync(req)
+  sync(req, 'partial')
     .then(() => {
       res.json({});
     })

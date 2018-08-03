@@ -22,7 +22,7 @@
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
-const { spawn, execFile } = require('child_process');
+const { exec, execFile } = require('child_process');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
 
@@ -109,35 +109,46 @@ const sync = (req, mode) =>
           const tapLogPath = path.resolve(pathToKnot, 'tap.log');
           const targetLogPath = path.resolve(pathToKnot, 'target.log');
 
-          const syncCommand =
-            mode === 'partial'
-              ? commands.runPartialSync(
-                  pathToKnot,
-                  knotObject.tap,
-                  knotObject.target
-                )
-              : commands.runSync(pathToKnot, knotObject.tap, knotObject.target);
+          addKnotAttribute(
+            { field: ['lastRun'], value: new Date().toISOString() },
+            path.resolve(pathToKnot, 'knot.json')
+          )
+            .then(() => {
+              const syncCommand =
+                mode === 'partial'
+                  ? commands.runPartialSync(
+                      pathToKnot,
+                      knotObject.tap,
+                      knotObject.target
+                    )
+                  : commands.runSync(
+                      pathToKnot,
+                      knotObject.tap,
+                      knotObject.target
+                    );
 
-          const runSync = spawn(`set -o pipefail;${syncCommand}`);
-          runningProcess = runSync;
-          emitLogs(req, tapLogPath, targetLogPath);
+              const runSync = exec(`set -o pipefail;${syncCommand}`, {
+                detached: true,
+                shell: '/bin/bash'
+              });
+              runningProcess = runSync;
+              emitLogs(req, tapLogPath, targetLogPath);
 
-          runSync.on('exit', (code) => {
-            if (code > 0) {
-              reject(new Error('Sync failed'));
-            } else {
-              addKnotAttribute(
-                { field: ['lastRun'], value: new Date().toISOString() },
-                path.resolve(pathToKnot, 'knot.json')
-              )
-                .then(() => {
+              runSync.on('exit', (code) => {
+                if (code > 0) {
+                  reject(new Error('Sync failed'));
+                } else {
                   resolve();
-                })
-                .catch((error) => {
-                  reject(error);
-                });
-            }
-          });
+                }
+              });
+
+              runSync.on('error', () => {
+                reject(new Error('Sync failed'));
+              });
+            })
+            .catch((error) => {
+              reject(error);
+            });
         } catch (error) {
           reject(error);
         }
