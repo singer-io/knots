@@ -295,7 +295,7 @@ export default class Adwords extends Component<Props, State> {
           <Row>
             <Col xs="6">
               <FormGroup>
-                <Label for="start_date">Start date</Label>
+                <Label for="start_date">Start date (for backfilling)</Label>
                 <Input
                   type="date"
                   name="start_date"
