@@ -120,7 +120,7 @@ export default class Salesforce extends Component<Props, SalesforceState> {
     const validationState = formValid(this.state);
 
     if (valid !== validationState) {
-      this.props.updateFormValidation('tap-redshift', validationState);
+      this.props.updateFormValidation('tap-salesforce', validationState);
     }
 
     return (
