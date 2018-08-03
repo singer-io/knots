@@ -21,28 +21,9 @@
 
 const path = require('path');
 
+const homePath = process.env.HOME;
+
 const taps = [
-  {
-    name: 'Redshift',
-    tapKey: 'tap-redshift',
-    tapImage: 'dataworld/tap-redshift:1.0.0b8',
-    repo: 'https://github.com/datadotworld/tap-redshift'
-  },
-  {
-    name: 'Salesforce',
-    tapKey: 'tap-salesforce',
-    tapImage: 'dataworld/tap-salesforce:1.4.14',
-    repo: 'https://github.com/singer-io/tap-salesforce',
-    specImplementation: {
-      usesCatalogArg: false
-    }
-  },
-  {
-    name: 'Postgres',
-    tapKey: 'tap-postgres',
-    tapImage: 'dataworld/tap-postgres:0.0.16',
-    repo: 'https://github.com/singer-io/tap-postgres'
-  },
   {
     name: 'Adwords',
     tapKey: 'tap-adwords',
@@ -54,14 +35,13 @@ const taps = [
     }
   },
   {
-    name: 'MySQL',
-    tapKey: 'tap-mysql',
-    tapImage: 'dataworld/tap-mysql:1.9.10',
-    repo: 'https://github.com/singer-io/tap-mysql',
+    name: 'Amazon S3',
+    tapKey: 'tap-s3-csv',
+    tapImage: 'dataworld/tap-s3-csv:0.0.3',
+    repo: 'https://github.com/singer-io/tap-s3-csv',
     specImplementation: {
-      usesMetadata: {
-        selected: false
-      }
+      usesCatalogArg: false,
+      dockerParameters: `-v ${homePath}/.aws:/root/.aws`
     }
   },
   {
@@ -80,10 +60,33 @@ const taps = [
     }
   },
   {
-    name: 'Amazon S3',
-    tapKey: 'tap-s3-csv',
-    tapImage: 'dataworld/tap-s3-csv:0.0.3',
-    repo: 'https://github.com/singer-io/tap-s3-csv',
+    name: 'MySQL',
+    tapKey: 'tap-mysql',
+    tapImage: 'dataworld/tap-mysql:1.9.10',
+    repo: 'https://github.com/singer-io/tap-mysql',
+    specImplementation: {
+      usesMetadata: {
+        selected: false
+      }
+    }
+  },
+  {
+    name: 'Postgres',
+    tapKey: 'tap-postgres',
+    tapImage: 'dataworld/tap-postgres:0.0.16',
+    repo: 'https://github.com/singer-io/tap-postgres'
+  },
+  {
+    name: 'Redshift',
+    tapKey: 'tap-redshift',
+    tapImage: 'dataworld/tap-redshift:1.0.0b8',
+    repo: 'https://github.com/datadotworld/tap-redshift'
+  },
+  {
+    name: 'Salesforce',
+    tapKey: 'tap-salesforce',
+    tapImage: 'dataworld/tap-salesforce:1.4.14',
+    repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
       usesCatalogArg: false
     }
@@ -106,21 +109,24 @@ const targets = [
 ];
 
 const commands = {
-  runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${path.resolve(folderPath)}/tap:/app/${tap}/data" ${
-      tap === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
-    } ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
-      folderPath
-    )}/tap/catalog.json"`,
-  runSync: (folderPath, tap, target) => {
-    const { usesCatalogArg = true } = tap.specImplementation || {};
+  runDiscovery: (folderPath, tap) => {
+    const { dockerParameters = '' } = tap.specImplementation || {};
     return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
-    }/data" ${
-      tap.name === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
-    } --interactive ${tap.image} ${tap.name} -c ${tap.name}/data/config.json ${
-      usesCatalogArg ? '--catalog' : '--properties'
-    } ${tap.name}/data/catalog.json 2> "${path.resolve(
+    }/data" ${dockerParameters} ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json -d > "${path.resolve(folderPath)}/tap/catalog.json"`;
+  },
+  runSync: (folderPath, tap, target) => {
+    const { usesCatalogArg = true, dockerParameters = '' } =
+      tap.specImplementation || {};
+    return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
+      tap.name
+    }/data" ${dockerParameters} --interactive ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
+      tap.name
+    }/data/catalog.json 2> "${path.resolve(
       folderPath,
       'tap.log'
     )}" | docker run -v "${path.resolve(folderPath)}/target:/app/${
@@ -133,15 +139,18 @@ const commands = {
     )}" > "${path.resolve(folderPath)}/tap/state.json"`;
   },
   runPartialSync: (folderPath, tap, target) => {
-    const { usesCatalogArg = true } = tap.specImplementation || {};
+    const { usesCatalogArg = true, dockerParameters = '' } =
+      tap.specImplementation || {};
     return `tail -1 "${path.resolve(
       folderPath
     )}/tap/state.json" > "${path.resolve(folderPath)}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(folderPath)}/tap:/app/${tap.name}/data" ${
-      tap.name === 'tap-s3-csv' ? `-v /${process.env.HOME}/.aws:/root/.aws` : ''
-    } --interactive ${tap.image} ${tap.name} -c ${tap.name}/data/config.json ${
-      usesCatalogArg ? '--catalog' : '--properties'
-    } ${tap.name}/data/catalog.json --state ${
+    docker run -v "${path.resolve(folderPath)}/tap:/app/${
+      tap.name
+    }/data" ${dockerParameters} --interactive ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
+      tap.name
+    }/data/catalog.json --state ${
       tap.name
     }/data/latest-state.json 2> "${path.resolve(
       folderPath,
