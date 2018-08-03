@@ -102,11 +102,9 @@ const getSchema = (req, knot) =>
     const knotPath = knot
       ? path.resolve(applicationFolder, knot)
       : path.resolve(applicationFolder, 'configs');
-
-    const runDiscovery = exec(
-      commands.runDiscovery(knotPath, req.body.tap.name, req.body.tap.image),
-      { detached: true }
-    );
+    const runDiscovery = exec(commands.runDiscovery(knotPath, req.body.tap), {
+      detached: true
+    });
     runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
@@ -119,8 +117,7 @@ const getSchema = (req, knot) =>
           new Error(
             `${commands.runDiscovery(
               applicationFolder,
-              req.body.tap.name,
-              req.body.tap.image
+              req.body.tap
             )} command failed`
           )
         );
