@@ -45,12 +45,6 @@ const getApplicationFolder = () => {
   return applicationFolder;
 };
 
-const getKnotsFolder = () => {
-  const applicationFolder = getApplicationFolder();
-
-  return path.resolve(applicationFolder, 'knots');
-};
-
 const createTemporaryKnotFolder = () => {
   shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
 
@@ -62,6 +56,7 @@ const createTemporaryKnotFolder = () => {
   );
 };
 
+const getKnotsFolder = () => path.resolve(getApplicationFolder(), 'knots');
 const getTemporaryKnotFolder = () =>
   path.resolve(getApplicationFolder(), 'tmp', 'knot');
 
@@ -115,7 +110,7 @@ const addKnotAttribute = (content, knotPath) =>
       .catch(reject);
   });
 
-const createMakeFileCommand = ({ knot }) =>
+const createMakeFileCommands = (knot) =>
   /* eslint-disable no-template-curly-in-string */
   `SHELL=/bin/bash -o pipefail\n\nfullSync:${
     os.EOL
@@ -150,5 +145,5 @@ module.exports = {
   addKnotAttribute,
   createTemporaryKnotFolder,
   getTemporaryKnotFolder,
-  createMakeFileCommand
+  createMakeFileCommands
 };

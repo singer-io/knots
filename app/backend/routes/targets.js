@@ -52,7 +52,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  addKnotAttribute(req.body.target)
+  addKnotAttribute({ field: 'target', value: req.body.target })
     .then(() => {
       res.json({});
     })

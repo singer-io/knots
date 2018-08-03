@@ -25,29 +25,20 @@ const path = require('path');
 const { spawn, execFile } = require('child_process');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
-const { app } = require('electron');
 
 const {
   getKnotsFolder,
   readFile,
   addKnotAttribute,
   writeFile,
-  createMakeFileCommand,
+  createMakeFileCommands,
   getApplicationFolder,
   getTemporaryKnotFolder,
   createTemporaryKnotFolder
 } = require('./util');
 const { commands } = require('./constants');
 
-let applicationFolder;
 let runningProcess;
-if (process.env.NODE_ENV === 'production') {
-  // Knots stored on user's home path on packaged app
-  applicationFolder = path.resolve(app.getPath('home'), '.knots');
-} else {
-  // Use the repo during development
-  applicationFolder = path.resolve(__dirname, '../..');
-}
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
@@ -156,19 +147,7 @@ const sync = (req, mode) =>
 
 const saveKnot = (name, currentName) =>
   new Promise((resolve, reject) => {
-    // Rename knot folder if editing
-    if (currentName) {
-      shell.rm('-rf', path.resolve(applicationFolder, 'knots', currentName));
-
-      shell.mv(
-        path.resolve(applicationFolder, currentName),
-        path.resolve(applicationFolder, 'knots', name)
-      );
-    }
-
-    const pathToKnot = currentName
-      ? path.resolve(`${applicationFolder}/knots/${name}`, 'knot.json')
-      : path.resolve(applicationFolder, 'knot.json');
+    const pathToKnot = path.resolve(getTemporaryKnotFolder(), 'knot.json');
 
     addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
       .then(() => {
@@ -178,34 +157,19 @@ const saveKnot = (name, currentName) =>
               const knotObject = JSON.parse(knotObjectString);
               if (!currentName) {
                 // Create knots folder if it doesn't exist
-                shell.mkdir(
-                  '-p',
-                  path.resolve(applicationFolder, 'knots', name)
-                );
+                shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
 
-                // Move tap config to knot's folder
+                // Move knot from temp file to knots folder
                 shell.mv(
-                  path.resolve(applicationFolder, 'configs', 'tap'),
-                  path.resolve(applicationFolder, 'knots', name, 'tap')
-                );
-
-                // Move target config to knot's folder
-                shell.mv(
-                  path.resolve(applicationFolder, 'configs', 'target'),
-                  path.resolve(applicationFolder, 'knots', name, 'target')
-                );
-
-                // Move knot.json to knot's folder
-                shell.mv(
-                  path.resolve(applicationFolder, 'knot.json'),
-                  path.resolve(applicationFolder, 'knots', name, 'knot.json')
+                  path.resolve(getTemporaryKnotFolder(), '*'),
+                  path.resolve(getKnotsFolder(), name)
                 );
               }
 
-              // Add the make file to the folder
+              // Add a make file to the folder
               writeFile(
                 path.resolve(getKnotsFolder(), name, 'Makefile'),
-                createMakeFileCommand(knotObject)
+                createMakeFileCommands(knotObject)
               )
                 .then(resolve)
                 .catch(reject);

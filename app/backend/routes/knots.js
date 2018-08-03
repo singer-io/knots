@@ -42,19 +42,18 @@ router.get('/', (req, res) => {
 });
 
 router.post('/save/', (req, res) => {
-  // eslint-disable-next-line
-  const { knotName } = req.body;
-  const { currentName } = req.body;
+  const { knotName, currentName } = req.body;
 
   saveKnot(knotName, currentName)
     .then(() => {
-      sync(req)
-        .then(() => {
-          res.json({});
-        })
-        .catch((error) => {
-          res.status(500).json({ message: error.message });
-        });
+      res.json({});
+      // sync(req)
+      //   .then(() => {
+      //     res.json({});
+      //   })
+      //   .catch((error) => {
+      //     res.status(500).json({ message: error.message });
+      //   });
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });

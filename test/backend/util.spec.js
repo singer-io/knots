@@ -10,7 +10,8 @@ import {
   getTemporaryKnotFolder,
   readFile,
   writeFile,
-  addKnotAttribute
+  addKnotAttribute,
+  createMakeFileCommands
 } from '../../app/backend/util';
 import { sampleKnotJsons, cleanfs } from '../util';
 
@@ -294,6 +295,37 @@ describe('util functions', () => {
           }
         }
       );
+    });
+  });
+
+  describe('createMakefileCommands', () => {
+    it('should create valid makefile commands', () => {
+      /* eslint-disable no-tabs */
+      const expected = `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+        os.EOL
+      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-redshift:1.0.0b8'} ${'tap-redshift'} -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json${
+        os.EOL
+      }sync:${
+        os.EOL
+      }\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${
+        os.EOL
+      }\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${
+        os.EOL
+      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-redshift:1.0.0b8'} ${'tap-redshift'} -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json`;
+
+      const actual = createMakeFileCommands({
+        tap: {
+          name: 'tap-redshift',
+          image: 'dataworld/tap-redshift:1.0.0b8',
+          specImplementation: {}
+        },
+        target: {
+          name: 'target-datadotworld',
+          image: 'dataworld/target-datadotworld:1.0.1'
+        }
+      });
+
+      expect(actual).toEqual(expected);
     });
   });
 });
