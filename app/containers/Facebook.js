@@ -18,19 +18,22 @@
  * This product includes software developed at
  * data.world, Inc.(http://data.world/).
  */
-// @flow
 
-import { shell } from 'electron';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-// $FlowFixMe
-/* eslint-disable */
-export function openLink(e: SyntheticEvent<HTMLAnchorElement>) {
-  e.preventDefault();
-  // $FlowFixMe
-  shell.openExternal(e.target.href);
+import * as TapActions from '../actions/taps';
+import Facebook from '../components/Taps/TapConfiguration/Facebook';
+
+function mapStateToProps(state) {
+  return { tapsStore: state.taps };
 }
 
-export const toISODateString = (date: Date) =>
-  `${date.toISOString().split('.')[0]}Z`;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(TapActions, dispatch);
+}
 
-export const formatDate = (ISODate: string) => ISODate.split('T')[0];
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Facebook);
