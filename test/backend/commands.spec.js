@@ -9,11 +9,13 @@ describe('commands', () => {
       'applicationFolder'
     )}/tap/catalog.json"`;
 
-    const actual = commands.runDiscovery(
-      'applicationFolder',
-      'tap-redshift',
-      'dataworld/tap-redshift:1.0.0b8'
-    );
+    const actual = commands.runDiscovery('applicationFolder', {
+      name: 'tap-redshift',
+      image: 'dataworld/tap-redshift:1.0.0b8',
+      specImplementation: {
+        usesCatalogArg: false
+      }
+    });
 
     expect(actual).toEqual(expected);
   });

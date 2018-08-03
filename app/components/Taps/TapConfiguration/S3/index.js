@@ -39,6 +39,11 @@ import {
   Table
 } from 'reactstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
+import {
+  openLink,
+  toISODateString,
+  formatDate
+} from '../../../../utils/handlers';
 import styles from './S3.css';
 
 const KeyCodes = {
@@ -61,10 +66,16 @@ type Props = {
   updateTapField: (tap: string, field: string, value: string | number) => void
 };
 type State = {
-  bucket: '',
-  start_date: '',
-  tables: [{ table_name: '', key_properties: [], search_pattern: '' }],
-  tags: []
+  bucket: string,
+  start_date: string,
+  tables: [
+    {
+      table_name: string,
+      key_properties: string,
+      search_pattern: string,
+      tags: Array
+    }
+  ]
 };
 
 export default class S3 extends Component<Props, State> {
@@ -73,29 +84,36 @@ export default class S3 extends Component<Props, State> {
     this.state = {
       bucket: '',
       start_date: '',
-      tables: [{ table_name: '', key_properties: [], search_pattern: '' }],
-      tags: []
+      tables: [
+        { table_name: '', key_properties: '', search_pattern: '', tags: [] }
+      ]
     };
   }
 
   componentWillMount = () => {
-    const tagObj = {};
-    const tagsArr = [];
     const { tables } = this.props.tapsStore['tap-s3-csv'].fieldValues;
-    const tableValue = tables
+    const tableValues = tables
       ? JSON.parse(tables)
-      : [{ table_name: '', key_properties: [], search_pattern: '' }];
-    tableValue.forEach((key) => {
-      const keyProperties = key.key_properties;
-      if (keyProperties.length !== 0) {
-        tagObj.id = keyProperties;
-        tagObj.text = keyProperties;
-        tagsArr.push(tagObj);
+      : [{ table_name: '', key_properties: '', search_pattern: '', tags: [] }];
+
+    let tagsArr = [];
+    tableValues.map((tableValue) => {
+      const tableRow = tableValue;
+      const { key_properties } = tableRow;
+      const keyPropsArray = key_properties.split(',');
+      if (keyPropsArray.length > 1) {
+        tagsArr = keyPropsArray.map((val) => ({
+          id: val,
+          text: val
+        }));
       }
+
+      tableRow.tags = tagsArr;
+      return tableRow;
     });
+
     this.setState({
-      tables: tableValue,
-      tags: tagsArr
+      tables: tableValues
     });
   };
 
@@ -107,43 +125,28 @@ export default class S3 extends Component<Props, State> {
     }
   };
 
-  toISODateString = (date: Date) => {
-    const pad = (number) => (number < 10 ? `0${number}` : number);
-
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(
-      date.getUTCDate()
-    )}T${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(
-      date.getUTCSeconds()
-    )}Z`;
-  };
-
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
 
     if (name === 'start_date') {
-      value = this.toISODateString(new Date(value));
+      value = toISODateString(new Date(value));
     }
 
     this.props.updateTapField('tap-s3-csv', name, value);
   };
 
-  formatDate = (ISODate: string) => {
-    const date = new Date(ISODate);
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
-
-    return `${year}-${month < 10 ? `0${month}` : month}-${
-      day < 10 ? `0${day}` : day
-    }`;
-  };
-
   updateTable = (newTable) => {
-    this.setState({ tables: newTable }, () => {
-      const tableValue = JSON.stringify(this.state.tables);
-      this.props.updateTapField('tap-s3-csv', 'tables', tableValue);
+    this.setState({ tables: newTable });
+    let { tables } = this.state;
+    tables = tables.map((table) => {
+      const tableCopy = table;
+      delete tableCopy.tags;
+      return tableCopy;
     });
+
+    const tableValue = JSON.stringify(tables);
+    this.props.updateTapField('tap-s3-csv', 'tables', tableValue);
   };
 
   handleAddTable = () => {
@@ -151,8 +154,9 @@ export default class S3 extends Component<Props, State> {
       tables: this.state.tables.concat([
         {
           table_name: '',
-          key_properties: [],
-          search_pattern: ''
+          key_properties: '',
+          search_pattern: '',
+          tags: []
         }
       ])
     });
@@ -163,7 +167,7 @@ export default class S3 extends Component<Props, State> {
     this.updateTable(newTable);
   };
 
-  handleTableChange = (idx) => (evt) => {
+  handleTableNameChange = (idx) => (evt) => {
     const newTable = this.state.tables.map((table, sidx) => {
       if (idx !== sidx) return table;
       return { ...table, table_name: evt.target.value };
@@ -172,25 +176,32 @@ export default class S3 extends Component<Props, State> {
   };
 
   handleKeyFieldChange = (idx) => (option) => {
-    const { tables, tags } = this.state;
+    const { tables } = this.state;
     const newTable = tables.map((table, sidx) => {
       if (idx !== sidx) return table;
-      const updatedTag = [...tags, option];
-      this.setState({ tags: updatedTag });
+      const updatedTag = [...table.tags, option];
       const keyProperties = updatedTag.map((elem) => {
         const values = elem.text;
         return values;
       });
-
-      return { ...table, key_properties: keyProperties.toString() };
+      return {
+        ...table,
+        key_properties: keyProperties.toString(),
+        tags: updatedTag
+      };
     });
+
     this.updateTable(newTable);
   };
 
   handleDelete = (idx) => {
-    this.setState({
-      tags: this.state.tags.filter((tag, index) => index !== idx)
+    let { tables } = this.state;
+    tables = tables.filter((tableObj) => {
+      const tableObjCopy = tableObj;
+      tableObjCopy.tags = tableObj.tags.filter((el, index) => index !== idx);
+      return tableObjCopy.tags;
     });
+    this.updateTable(tables);
   };
 
   handleSearchPatternChange = (idx) => (evt) => {
@@ -209,17 +220,34 @@ export default class S3 extends Component<Props, State> {
     return (
       <Container>
         <Alert color="primary">
-          <h4>Shhh... Here is a secret!</h4>
+          <h4>What you need to know</h4>
           <p>
             This tap will process sets of CSV files whose S3 keys match a
             pattern (regular expression). Those files will be converted into a
             table and the provided key field(s) used as its primary key.
           </p>
           <p>
-            Also, make sure to configure aws by running;{' '}
-            <code>aws configure</code> you will be prompted for configuration
-            values such as your AWS Access Key Id and you AWS Secret Access Key
-            needed to connect to the desired s3.
+            <strong>IMPORTANT</strong>: This tap requires the{' '}
+            <a
+              href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-welcome.html"
+              onClick={openLink}
+            >
+              AWS Command Line Interface
+            </a>{' '}
+            to be{' '}
+            <a
+              href="https://docs.aws.amazon.com/cli/latest/userguide/installing.html"
+              onClick={openLink}
+            >
+              installed
+            </a>{' '}
+            and{' '}
+            <a
+              href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html"
+              onClick={openLink}
+            >
+              configured
+            </a>.
           </p>
         </Alert>
         <Form>
@@ -247,30 +275,6 @@ export default class S3 extends Component<Props, State> {
             </Col>
           </Row>
           <Row>
-            <Col>
-              <FormGroup>
-                <Label for="start_date">Start date</Label>
-                <Input
-                  type="date"
-                  name="start_date"
-                  id="start_date"
-                  value={start_date ? this.formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
-                  }}
-                  onChange={this.handleChange}
-                  {...this.state.start_date}
-                />
-                <FormText>
-                  Applies to tables with a defined timestamp field and limits
-                  how much historical data will be replicated.
-                </FormText>
-                <FormFeedback>Required</FormFeedback>
-              </FormGroup>
-            </Col>
-          </Row>
-          <Row>
             <Table className="table-borderless">
               <thead>
                 <tr>
@@ -284,16 +288,19 @@ export default class S3 extends Component<Props, State> {
                   <tr>
                     <td>
                       <Input
+                        bsSize="sm"
                         type="text"
                         name="table_name"
                         id="table_name"
                         value={table.table_name}
-                        onChange={this.handleTableChange(idx)}
+                        onChange={this.handleTableNameChange(idx)}
                         {...this.state.tables.table_name}
+                        placeholder="myfile\.csv"
                       />
                     </td>
                     <td>
                       <Input
+                        bsSize="sm"
                         type="text"
                         name="search_pattern"
                         id="search_pattern"
@@ -306,33 +313,37 @@ export default class S3 extends Component<Props, State> {
                       <ReactTags
                         name="key_properties"
                         id="key_properties"
-                        tags={this.state.tags}
+                        tags={table.tags}
                         handleAddition={this.handleKeyFieldChange(idx)}
                         handleDelete={this.handleDelete}
                         delimiters={delimiters}
-                        placeholder="Add new key field"
+                        placeholder="Press [enter] after each"
                         autofocus={false}
                         classNames={{
                           tag: styles.inputTagValue,
-                          tagInputField: 'form-control',
+                          tagInputField: 'form-control form-control-sm',
                           tagInput: 'd-inline-block'
                         }}
+                        inline
                       />
                     </td>
                     <td>
                       <Button
-                        outline
-                        color="danger"
+                        size="sm"
                         onClick={this.handleRemoveTable(idx)}
+                        outline
+                        class="close"
+                        color="danger"
+                        aria-label="Delete"
                       >
-                        Remove
+                        <span aria-hidden="true">&times;</span>
                       </Button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </Table>
-            <Col>
+            <Col xs="2" className="mb-3">
               <Button
                 className="mb-1"
                 outline
@@ -341,6 +352,30 @@ export default class S3 extends Component<Props, State> {
               >
                 Add Table
               </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col xs="6">
+              <FormGroup>
+                <Label for="start_date">Start date (for backfilling)</Label>
+                <Input
+                  type="date"
+                  name="start_date"
+                  id="start_date"
+                  value={start_date ? formatDate(start_date) : ''}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('start_date', value);
+                  }}
+                  onChange={this.handleChange}
+                  {...this.state.start_date}
+                />
+                <FormText>
+                  Applies to tables with a defined timestamp field and limits
+                  how much historical data will be replicated.
+                </FormText>
+                <FormFeedback>Required</FormFeedback>
+              </FormGroup>
             </Col>
           </Row>
         </Form>
