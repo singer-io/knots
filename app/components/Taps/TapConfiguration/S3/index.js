@@ -101,7 +101,7 @@ export default class S3 extends Component<Props, State> {
       const tableRow = tableValue;
       const { key_properties } = tableRow;
       const keyPropsArray = key_properties.split(',');
-      if (keyPropsArray.length > 1) {
+      if (keyPropsArray.length > 0) {
         tagsArr = keyPropsArray.map((val) => ({
           id: val,
           text: val
@@ -136,17 +136,23 @@ export default class S3 extends Component<Props, State> {
     this.props.updateTapField('tap-s3-csv', name, value);
   };
 
-  updateTable = (newTable) => {
-    this.setState({ tables: newTable });
-    let { tables } = this.state;
-    tables = tables.map((table) => {
-      const tableCopy = table;
-      delete tableCopy.tags;
-      return tableCopy;
+  removeTagsFromTablesArr = (tables) => {
+    const updatedTable = tables.map((table) => {
+      const { tags, ...withoutTags } = table;
+      return withoutTags;
     });
+    return updatedTable;
+  };
 
-    const tableValue = JSON.stringify(tables);
-    this.props.updateTapField('tap-s3-csv', 'tables', tableValue);
+  updateTable = (newTable) => {
+    this.setState({ tables: newTable }, () => {
+      const tableToStore = this.removeTagsFromTablesArr(this.state.tables);
+      this.props.updateTapField(
+        'tap-s3-csv',
+        'tables',
+        JSON.stringify(tableToStore)
+      );
+    });
   };
 
   handleAddTable = () => {
@@ -175,18 +181,23 @@ export default class S3 extends Component<Props, State> {
     this.updateTable(newTable);
   };
 
+  updateKeyProperties = (tags) => {
+    const keyProperties = tags.map((elem) => {
+      const values = elem.text;
+      return values;
+    });
+    return keyProperties.toString();
+  };
+
   handleKeyFieldChange = (idx) => (option) => {
     const { tables } = this.state;
     const newTable = tables.map((table, sidx) => {
       if (idx !== sidx) return table;
       const updatedTag = [...table.tags, option];
-      const keyProperties = updatedTag.map((elem) => {
-        const values = elem.text;
-        return values;
-      });
+      const keyProperties = this.updateKeyProperties(updatedTag);
       return {
         ...table,
-        key_properties: keyProperties.toString(),
+        key_properties: keyProperties,
         tags: updatedTag
       };
     });
@@ -195,13 +206,14 @@ export default class S3 extends Component<Props, State> {
   };
 
   handleDelete = (idx) => {
-    let { tables } = this.state;
-    tables = tables.filter((tableObj) => {
-      const tableObjCopy = tableObj;
-      tableObjCopy.tags = tableObj.tags.filter((el, index) => index !== idx);
-      return tableObjCopy.tags;
+    const { tables } = this.state;
+    const newTable = tables.filter((table) => {
+      const tableCopy = table;
+      tableCopy.tags = tableCopy.tags.filter((el, index) => index !== idx);
+      tableCopy.key_properties = this.updateKeyProperties(tableCopy.tags);
+      return tableCopy;
     });
-    this.updateTable(tables);
+    this.updateTable(newTable);
   };
 
   handleSearchPatternChange = (idx) => (evt) => {
@@ -285,7 +297,7 @@ export default class S3 extends Component<Props, State> {
               </thead>
               <tbody>
                 {this.state.tables.map((table, idx) => (
-                  <tr>
+                  <tr key={table.name}>
                     <td>
                       <Input
                         bsSize="sm"
