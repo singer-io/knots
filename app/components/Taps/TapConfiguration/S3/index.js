@@ -145,6 +145,18 @@ export default class S3 extends Component<Props, State> {
     }
   };
 
+  validateTables = (field: string, value: string, idx: number) => {
+    console.log(idx, field, 'called', value);
+    const { tables } = this.state;
+    if (value) {
+      this.setState({ [field]: { valid: true } });
+    } else {
+      const x = { ...tables[idx], [field]: { invalid: true } };
+      this.setState({ tables: (tables[idx] = x) });
+    }
+    console.log(this.state.tables);
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -316,6 +328,10 @@ export default class S3 extends Component<Props, State> {
                         id="table_name"
                         value={table.table_name}
                         onChange={this.handleTableChange(idx, 'table_name')}
+                        onBlur={(event) => {
+                          const { value } = event.currentTarget;
+                          this.validateTables('table_name', value, idx);
+                        }}
                         {...this.state.tables.table_name}
                         placeholder="myfile\.csv"
                       />
