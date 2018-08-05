@@ -35,8 +35,7 @@ import {
   Label,
   Row,
   Button,
-  Alert,
-  Table
+  Alert
 } from 'reactstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
 import {
@@ -85,7 +84,13 @@ export default class S3 extends Component<Props, State> {
       bucket: '',
       start_date: '',
       tables: [
-        { table_name: '', key_properties: '', search_pattern: '', tags: [] }
+        {
+          table_name: '',
+          key_properties: '',
+          search_pattern: '',
+          tags: [],
+          preCommittedTags: ''
+        }
       ]
     };
   }
@@ -117,6 +122,21 @@ export default class S3 extends Component<Props, State> {
     });
   };
 
+  componentWillUnmount = () => {
+    const newTable = this.state.tables.map((table) => {
+      const { preCommittedTags } = table;
+      const tagObj = {};
+      tagObj.id = preCommittedTags;
+      tagObj.text = preCommittedTags;
+      const updatedTag = [...table.tags, tagObj];
+      const keyProperties = this.updateKeyProperties(updatedTag);
+      return { ...table, key_properties: keyProperties, tags: updatedTag };
+    });
+
+    const tableToStore = JSON.stringify(this.removeTagsFromTablesArr(newTable));
+    this.props.updateTapField('tap-s3-csv', 'tables', tableToStore);
+  };
+
   validate = (field: string, value: string) => {
     if (value) {
       this.setState({ [field]: { valid: true } });
@@ -136,9 +156,27 @@ export default class S3 extends Component<Props, State> {
     this.props.updateTapField('tap-s3-csv', name, value);
   };
 
+  handleAddTable = () => {
+    this.setState({
+      tables: this.state.tables.concat([
+        {
+          table_name: '',
+          key_properties: '',
+          search_pattern: '',
+          tags: []
+        }
+      ])
+    });
+  };
+
+  handleRemoveTable = (idx) => () => {
+    const newTable = this.state.tables.filter((table, sidx) => idx !== sidx);
+    this.updateTable(newTable);
+  };
+
   removeTagsFromTablesArr = (tables) => {
     const updatedTable = tables.map((table) => {
-      const { tags, ...withoutTags } = table;
+      const { tags, preCommittedTags, ...withoutTags } = table;
       return withoutTags;
     });
     return updatedTable;
@@ -155,32 +193,6 @@ export default class S3 extends Component<Props, State> {
     });
   };
 
-  handleAddTable = () => {
-    this.setState({
-      tables: this.state.tables.concat([
-        {
-          table_name: '',
-          key_properties: '',
-          search_pattern: '',
-          tags: []
-        }
-      ])
-    });
-  };
-
-  handleRemoveTable = (idx) => () => {
-    const newTable = this.state.tables.filter((s, sidx) => idx !== sidx);
-    this.updateTable(newTable);
-  };
-
-  handleTableNameChange = (idx) => (evt) => {
-    const newTable = this.state.tables.map((table, sidx) => {
-      if (idx !== sidx) return table;
-      return { ...table, table_name: evt.target.value };
-    });
-    this.updateTable(newTable);
-  };
-
   updateKeyProperties = (tags) => {
     const keyProperties = tags.map((elem) => {
       const values = elem.text;
@@ -189,25 +201,27 @@ export default class S3 extends Component<Props, State> {
     return keyProperties.toString();
   };
 
-  handleKeyFieldChange = (idx) => (option) => {
-    const { tables } = this.state;
-    const newTable = tables.map((table, sidx) => {
+  handleTableChange = (idx, field) => (evt) => {
+    const newTable = this.state.tables.map((table, sidx) => {
       if (idx !== sidx) return table;
-      const updatedTag = [...table.tags, option];
-      const keyProperties = this.updateKeyProperties(updatedTag);
-      return {
-        ...table,
-        key_properties: keyProperties,
-        tags: updatedTag
-      };
+      if (field === 'table_name') {
+        return { ...table, table_name: evt.target.value };
+      } else if (field === 'key_properties') {
+        const updatedTag = [...table.tags, evt];
+        const keyProperties = this.updateKeyProperties(updatedTag);
+        return {
+          ...table,
+          key_properties: keyProperties,
+          tags: updatedTag
+        };
+      }
+      return { ...table, search_pattern: evt.target.value };
     });
-
     this.updateTable(newTable);
   };
 
-  handleDelete = (idx) => {
-    const { tables } = this.state;
-    const newTable = tables.filter((table) => {
+  handleTagsDelete = (idx) => {
+    const newTable = this.state.tables.filter((table) => {
       const tableCopy = table;
       tableCopy.tags = tableCopy.tags.filter((el, index) => index !== idx);
       tableCopy.key_properties = this.updateKeyProperties(tableCopy.tags);
@@ -216,12 +230,14 @@ export default class S3 extends Component<Props, State> {
     this.updateTable(newTable);
   };
 
-  handleSearchPatternChange = (idx) => (evt) => {
-    const newTable = this.state.tables.map((table, sidx) => {
-      if (idx !== sidx) return table;
-      return { ...table, search_pattern: evt.target.value };
+  handleTagInputChange = (idx) => (option) => {
+    const newTable = this.state.tables.map((table, index) => {
+      if (idx !== index) return table;
+      const cloneTable = table;
+      cloneTable.preCommittedTags = option;
+      return cloneTable;
     });
-    this.updateTable(newTable);
+    this.setState({ tables: newTable });
   };
 
   render() {
@@ -287,60 +303,62 @@ export default class S3 extends Component<Props, State> {
             </Col>
           </Row>
           <Row>
-            <Table className="table-borderless">
-              <thead>
-                <tr>
-                  <th className="font-weight-normal">Table name</th>
-                  <th className="font-weight-normal">S3 key pattern</th>
-                  <th className="font-weight-normal">Key field(s)</th>
-                </tr>
-              </thead>
-              <tbody>
+            <Col xs="12">
+              <FormGroup>
                 {this.state.tables.map((table, idx) => (
-                  <tr key={table.name}>
-                    <td>
+                  <Row key={table.name} className="mt-3">
+                    <Col xs="3">
+                      <Label for="table_name">Table name</Label>
                       <Input
                         bsSize="sm"
                         type="text"
                         name="table_name"
                         id="table_name"
                         value={table.table_name}
-                        onChange={this.handleTableNameChange(idx)}
+                        onChange={this.handleTableChange(idx, 'table_name')}
                         {...this.state.tables.table_name}
                         placeholder="myfile\.csv"
                       />
-                    </td>
-                    <td>
+                    </Col>
+                    <Col xs="3">
+                      <Label for="search_pattern">S3 key pattern</Label>
                       <Input
                         bsSize="sm"
                         type="text"
                         name="search_pattern"
                         id="search_pattern"
                         value={table.search_pattern}
-                        onChange={this.handleSearchPatternChange(idx)}
+                        onChange={this.handleTableChange(idx)}
                         {...this.state.tables.search_pattern}
                       />
-                    </td>
-                    <td>
+                    </Col>
+                    <Col xs="3">
+                      <Label for="key_properties">Key field(s)</Label>
                       <ReactTags
                         name="key_properties"
                         id="key_properties"
                         tags={table.tags}
-                        handleAddition={this.handleKeyFieldChange(idx)}
-                        handleDelete={this.handleDelete}
+                        handleAddition={this.handleTableChange(
+                          idx,
+                          'key_properties'
+                        )}
+                        handleDelete={this.handleTagsDelete}
+                        handleInputChange={this.handleTagInputChange(idx)}
                         delimiters={delimiters}
                         placeholder="Press [enter] after each"
                         autofocus={false}
                         classNames={{
                           tag: styles.inputTagValue,
                           tagInputField: 'form-control form-control-sm',
-                          tagInput: 'd-inline-block'
+                          tagInput: 'd-inline-block',
+                          remove: styles.removeTag
                         }}
                         inline
                       />
-                    </td>
-                    <td>
+                    </Col>
+                    <Col xs="1">
                       <Button
+                        className="mt-4"
                         size="sm"
                         onClick={this.handleRemoveTable(idx)}
                         outline
@@ -350,11 +368,11 @@ export default class S3 extends Component<Props, State> {
                       >
                         <span aria-hidden="true">&times;</span>
                       </Button>
-                    </td>
-                  </tr>
+                    </Col>
+                  </Row>
                 ))}
-              </tbody>
-            </Table>
+              </FormGroup>
+            </Col>
             <Col xs="2" className="mb-3">
               <Button
                 className="mb-1"
