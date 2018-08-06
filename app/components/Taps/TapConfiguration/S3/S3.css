@@ -35,4 +35,5 @@
 
 .removeTag {
   cursor: pointer;
+  padding-left: 6px;
 }
