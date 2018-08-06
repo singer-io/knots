@@ -76,7 +76,7 @@ export function fetchTaps() {
       type: TAPS_LOADING
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/taps/`)
       .then((response) => {
         dispatch({
@@ -94,8 +94,8 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: TapPropertiesType, knotName: string) {
-  return (dispatch: (action: actionType) => void) => {
+export function selectTap(tap: tapPropertiesType, knotName: string) {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
@@ -114,7 +114,6 @@ export function selectTap(tap: TapPropertiesType, knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateTapConfig(tap: string, tapConfig: TapConfigType) {
@@ -161,7 +160,7 @@ export function submitConfig(
       skipDiscovery
     };
 
-    axios
+    return axios
       .post(`${baseUrl}/taps/config/`, payload)
       .then((response) => {
         dispatch({
@@ -197,7 +196,7 @@ export function editSchemaField(
 }
 
 export function submitSchema(schema: {}, knot: string) {
-  return (dispatch: (action: actionType) => void) => {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .put(`${baseUrl}/taps/schema/`, {
         schema: { streams: schema },
@@ -214,7 +213,6 @@ export function submitSchema(schema: {}, knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateSchemaLogs(newLog: string) {
