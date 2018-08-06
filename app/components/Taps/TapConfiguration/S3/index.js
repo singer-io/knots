@@ -25,6 +25,9 @@
 
 import React, { Component } from 'react';
 import {
+  Alert,
+  Button,
+  Card,
   Col,
   Container,
   Form,
@@ -33,9 +36,7 @@ import {
   FormText,
   Input,
   Label,
-  Row,
-  Button,
-  Alert
+  Row
 } from 'reactstrap';
 import { WithContext as ReactTags } from 'react-tag-input';
 import {
@@ -72,7 +73,8 @@ type State = {
       table_name: string,
       key_properties: string,
       search_pattern: string,
-      tags: Array
+      tags: Array,
+      preCommittedTags: string
     }
   ]
 };
@@ -99,7 +101,16 @@ export default class S3 extends Component<Props, State> {
     const { tables } = this.props.tapsStore['tap-s3-csv'].fieldValues;
     const tableValues = tables
       ? JSON.parse(tables)
-      : [{ table_name: '', key_properties: '', search_pattern: '', tags: [] }];
+      : [
+          {
+            table_name: '',
+            key_properties: '',
+            search_pattern: '',
+            tags: [],
+            preCommittedTags: '',
+            validation: {}
+          }
+        ];
 
     let tagsArr = [];
     tableValues.map((tableValue) => {
@@ -114,6 +125,7 @@ export default class S3 extends Component<Props, State> {
       }
 
       tableRow.tags = tagsArr;
+      tableRow.validation = {};
       return tableRow;
     });
 
@@ -133,7 +145,7 @@ export default class S3 extends Component<Props, State> {
       return { ...table, key_properties: keyProperties, tags: updatedTag };
     });
 
-    const tableToStore = JSON.stringify(this.removeTagsFromTablesArr(newTable));
+    const tableToStore = JSON.stringify(this.removeKeysFromTable(newTable));
     this.props.updateTapField('tap-s3-csv', 'tables', tableToStore);
   };
 
@@ -145,19 +157,32 @@ export default class S3 extends Component<Props, State> {
     }
   };
 
-  validateTables = (field: string, value: string, idx: number) => {
-    if (value) {
-      this.setState((prevState) => {
-        const newTable = [...prevState.tables];
-        newTable[idx][field] = { valid: true };
-        return { tables: newTable };
-      });
-    } else {
-      this.setState((prevState) => {
-        const newTable = [...prevState.tables];
-        newTable[idx][field] = { invalid: true };
-        return { tables: newTable };
-      });
+  setValidatedTableField = (idx, field, fieldState) => {
+    this.setState((prevState) => {
+      const newTable = [...prevState.tables];
+      newTable[idx].validation[field] = { [fieldState]: true };
+      return { tables: newTable };
+    });
+  };
+
+  validateTableFields = (field: string, value: string, idx: number) => {
+    if (field === 'table_name') {
+      if (value.length >= 3) {
+        this.setValidatedTableField(idx, field, 'valid');
+      } else {
+        this.setValidatedTableField(idx, field, 'invalid');
+      }
+    }
+
+    if (field === 'search_pattern') {
+      // Match input value for special characters
+      // \, ^, `, >, <, {, }, [, ], #, %, ", ~, |
+      const valid = !value.match(/\^|\\|`|>|<|{|}|]|\[|#|%|""|~|\|/);
+      if (value.length !== 0 && valid) {
+        this.setValidatedTableField(idx, field, 'valid');
+      } else {
+        this.setValidatedTableField(idx, field, 'invalid');
+      }
     }
   };
 
@@ -179,7 +204,8 @@ export default class S3 extends Component<Props, State> {
           table_name: '',
           key_properties: '',
           search_pattern: '',
-          tags: []
+          tags: [],
+          validation: {}
         }
       ])
     });
@@ -190,9 +216,9 @@ export default class S3 extends Component<Props, State> {
     this.updateTable(newTable);
   };
 
-  removeTagsFromTablesArr = (tables) => {
+  removeKeysFromTable = (tables) => {
     const updatedTable = tables.map((table) => {
-      const { tags, preCommittedTags, ...withoutTags } = table;
+      const { tags, preCommittedTags, validation, ...withoutTags } = table;
       return withoutTags;
     });
     return updatedTable;
@@ -200,7 +226,7 @@ export default class S3 extends Component<Props, State> {
 
   updateTable = (newTable) => {
     this.setState({ tables: newTable }, () => {
-      const tableToStore = this.removeTagsFromTablesArr(this.state.tables);
+      const tableToStore = this.removeKeysFromTable(this.state.tables);
       this.props.updateTapField(
         'tap-s3-csv',
         'tables',
@@ -260,6 +286,8 @@ export default class S3 extends Component<Props, State> {
     const { bucket, start_date } = this.props.tapsStore[
       'tap-s3-csv'
     ].fieldValues;
+    const patternErrorMessage =
+      'Pattern cannot empty and cannot contain the characters ^, `, >, <, {, }, [, ], #, %, ", ~, |';
 
     return (
       <Container>
@@ -296,7 +324,7 @@ export default class S3 extends Component<Props, State> {
         </Alert>
         <Form>
           <Row>
-            <Col>
+            <Col xs="11">
               <FormGroup>
                 <Label for="bucket">Bucket name</Label>
                 <Input
@@ -319,78 +347,101 @@ export default class S3 extends Component<Props, State> {
             </Col>
           </Row>
           <Row>
-            <Col xs="12">
+            <Col xs="12" className="mt-3">
               <FormGroup>
+                <Label for="bucket">Tables</Label>
                 {this.state.tables.map((table, idx) => (
-                  <Row key={table.name} className="mt-3">
-                    <Col xs="3">
-                      <FormGroup>
-                        <Label for="table_name">Table name</Label>
-                        <Input
-                          bsSize="sm"
-                          type="text"
-                          name="table_name"
-                          id="table_name"
-                          placeholder="myfile\.csv"
-                          value={table.table_name}
-                          onChange={this.handleTableChange(idx, 'table_name')}
-                          onBlur={(event) => {
-                            const { value } = event.currentTarget;
-                            this.validateTables('table_name', value, idx);
-                          }}
-                          {...this.state.tables[idx].table_name}
-                        />
-                        <FormFeedback>
-                          Minimum length for table names - 3 characters
-                        </FormFeedback>
-                      </FormGroup>
+                  <Row key={table.name}>
+                    <Col xs="11">
+                      <Card className="mt-3">
+                        <Row className="p-3">
+                          <Col xs="6">
+                            <FormGroup>
+                              <Label for="table_name">Table name</Label>
+                              <Input
+                                bsSize="sm"
+                                type="text"
+                                name="table_name"
+                                id="table_name"
+                                placeholder="myfile.csv"
+                                value={table.table_name}
+                                onChange={this.handleTableChange(
+                                  idx,
+                                  'table_name'
+                                )}
+                                onBlur={(event) => {
+                                  const { value } = event.currentTarget;
+                                  this.validateTableFields(
+                                    'table_name',
+                                    value,
+                                    idx
+                                  );
+                                }}
+                                {...this.state.tables[idx].validation
+                                  .table_name}
+                              />
+                              <FormFeedback>
+                                Must have a minimum of 3 characters
+                              </FormFeedback>
+                            </FormGroup>
+                          </Col>
+                          <Col xs="6">
+                            <FormGroup>
+                              <Label for="search_pattern">S3 key pattern</Label>
+                              <Input
+                                bsSize="sm"
+                                type="text"
+                                name="search_pattern"
+                                id="search_pattern"
+                                value={table.search_pattern}
+                                onChange={this.handleTableChange(
+                                  idx,
+                                  'search_pattern'
+                                )}
+                                onBlur={(event) => {
+                                  const { value } = event.currentTarget;
+                                  this.validateTableFields(
+                                    'search_pattern',
+                                    value,
+                                    idx
+                                  );
+                                }}
+                                {...this.state.tables[idx].validation
+                                  .search_pattern}
+                              />
+                              <FormFeedback>{patternErrorMessage}</FormFeedback>
+                            </FormGroup>
+                          </Col>
+                          <Col>
+                            <Label for="key_properties">Key field(s)</Label>
+                            <ReactTags
+                              name="key_properties"
+                              id="key_properties"
+                              tags={table.tags}
+                              handleAddition={this.handleTableChange(
+                                idx,
+                                'key_properties'
+                              )}
+                              handleDelete={this.handleTagsDelete}
+                              handleInputChange={this.handleTagInputChange(idx)}
+                              delimiters={delimiters}
+                              placeholder="Press [enter] after each"
+                              autofocus={false}
+                              classNames={{
+                                tag: styles.inputTagValue,
+                                tagInputField: 'form-control form-control-sm',
+                                tagInput: 'd-inline-block',
+                                remove: styles.removeTag
+                              }}
+                              inline
+                            />
+                          </Col>
+                        </Row>
+                      </Card>
                     </Col>
-                    <Col xs="3">
-                      <FormGroup>
-                        <Label for="search_pattern">S3 key pattern</Label>
-                        <Input
-                          bsSize="sm"
-                          type="text"
-                          name="search_pattern"
-                          id="search_pattern"
-                          value={table.search_pattern}
-                          onChange={this.handleTableChange(idx)}
-                          onBlur={(event) => {
-                            const { value } = event.currentTarget;
-                            this.validateTables('search_pattern', value, idx);
-                          }}
-                          {...this.state.tables[idx].search_pattern}
-                        />
-                        <FormFeedback>Must valid regex patterns</FormFeedback>
-                      </FormGroup>
-                    </Col>
-                    <Col xs="3">
-                      <Label for="key_properties">Key field(s)</Label>
-                      <ReactTags
-                        name="key_properties"
-                        id="key_properties"
-                        tags={table.tags}
-                        handleAddition={this.handleTableChange(
-                          idx,
-                          'key_properties'
-                        )}
-                        handleDelete={this.handleTagsDelete}
-                        handleInputChange={this.handleTagInputChange(idx)}
-                        delimiters={delimiters}
-                        placeholder="Press [enter] after each"
-                        autofocus={false}
-                        classNames={{
-                          tag: styles.inputTagValue,
-                          tagInputField: 'form-control form-control-sm',
-                          tagInput: 'd-inline-block',
-                          remove: styles.removeTag
-                        }}
-                        inline
-                      />
-                    </Col>
-                    <Col xs="1">
+                    <Col>
                       <Button
-                        className="mt-4"
+                        className="mt-3"
                         size="sm"
                         onClick={this.handleRemoveTable(idx)}
                         outline
