@@ -106,7 +106,7 @@ export default class S3 extends Component<Props, State> {
       const tableRow = tableValue;
       const { key_properties } = tableRow;
       const keyPropsArray = key_properties.split(',');
-      if (keyPropsArray.length > 0) {
+      if (keyPropsArray.length > 0 && keyPropsArray[0] !== '') {
         tagsArr = keyPropsArray.map((val) => ({
           id: val,
           text: val
@@ -146,15 +146,19 @@ export default class S3 extends Component<Props, State> {
   };
 
   validateTables = (field: string, value: string, idx: number) => {
-    console.log(idx, field, 'called', value);
-    const { tables } = this.state;
     if (value) {
-      this.setState({ [field]: { valid: true } });
+      this.setState((prevState) => {
+        const newTable = [...prevState.tables];
+        newTable[idx][field] = { valid: true };
+        return { tables: newTable };
+      });
     } else {
-      const x = { ...tables[idx], [field]: { invalid: true } };
-      this.setState({ tables: (tables[idx] = x) });
+      this.setState((prevState) => {
+        const newTable = [...prevState.tables];
+        newTable[idx][field] = { invalid: true };
+        return { tables: newTable };
+      });
     }
-    console.log(this.state.tables);
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
@@ -320,33 +324,45 @@ export default class S3 extends Component<Props, State> {
                 {this.state.tables.map((table, idx) => (
                   <Row key={table.name} className="mt-3">
                     <Col xs="3">
-                      <Label for="table_name">Table name</Label>
-                      <Input
-                        bsSize="sm"
-                        type="text"
-                        name="table_name"
-                        id="table_name"
-                        value={table.table_name}
-                        onChange={this.handleTableChange(idx, 'table_name')}
-                        onBlur={(event) => {
-                          const { value } = event.currentTarget;
-                          this.validateTables('table_name', value, idx);
-                        }}
-                        {...this.state.tables.table_name}
-                        placeholder="myfile\.csv"
-                      />
+                      <FormGroup>
+                        <Label for="table_name">Table name</Label>
+                        <Input
+                          bsSize="sm"
+                          type="text"
+                          name="table_name"
+                          id="table_name"
+                          placeholder="myfile\.csv"
+                          value={table.table_name}
+                          onChange={this.handleTableChange(idx, 'table_name')}
+                          onBlur={(event) => {
+                            const { value } = event.currentTarget;
+                            this.validateTables('table_name', value, idx);
+                          }}
+                          {...this.state.tables[idx].table_name}
+                        />
+                        <FormFeedback>
+                          Minimum length for table names - 3 characters
+                        </FormFeedback>
+                      </FormGroup>
                     </Col>
                     <Col xs="3">
-                      <Label for="search_pattern">S3 key pattern</Label>
-                      <Input
-                        bsSize="sm"
-                        type="text"
-                        name="search_pattern"
-                        id="search_pattern"
-                        value={table.search_pattern}
-                        onChange={this.handleTableChange(idx)}
-                        {...this.state.tables.search_pattern}
-                      />
+                      <FormGroup>
+                        <Label for="search_pattern">S3 key pattern</Label>
+                        <Input
+                          bsSize="sm"
+                          type="text"
+                          name="search_pattern"
+                          id="search_pattern"
+                          value={table.search_pattern}
+                          onChange={this.handleTableChange(idx)}
+                          onBlur={(event) => {
+                            const { value } = event.currentTarget;
+                            this.validateTables('search_pattern', value, idx);
+                          }}
+                          {...this.state.tables[idx].search_pattern}
+                        />
+                        <FormFeedback>Must valid regex patterns</FormFeedback>
+                      </FormGroup>
                     </Col>
                     <Col xs="3">
                       <Label for="key_properties">Key field(s)</Label>
