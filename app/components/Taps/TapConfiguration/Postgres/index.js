@@ -34,53 +34,52 @@ import {
   Label,
   Row
 } from 'reactstrap';
+import type {
+  PostgresState,
+  TapPostgres,
+  UpdateTapField,
+  UpdateFormValidation
+} from '../../../../utils/sharedTypes';
+import {
+  formValid,
+  showValidation,
+  validateFields
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    'tap-postgres': {
-      fieldValues: {
-        host: string,
-        dbname: string,
-        port?: number,
-        user: string,
-        password: string
-      }
-    }
+    'tap-postgres': TapPostgres
   },
-  updateTapField: (tap: string, field: string, value: string | number) => void
-};
-type State = {
-  host: {},
-  port: {},
-  dbname: {},
-  user: {},
-  password: {}
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-export default class Postgres extends Component<Props, State> {
+export default class Postgres extends Component<Props, PostgresState> {
   state = {
-    host: {},
-    port: {},
-    dbname: {},
-    user: {},
-    password: {}
+    host: { validation: {}, errorMessage: 'Required' },
+    port: { validation: {}, errorMessage: 'Required' },
+    dbname: { validation: {}, errorMessage: 'Required' },
+    user: { validation: {}, errorMessage: 'Required' },
+    password: { validation: {}, errorMessage: 'Required' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-postgres'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
+
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
   };
 
-  validateHostName = (value: string) => {
-    const unsupportedHost = /^(localhost|127(\.\d{1,3}){3}|::1)$/g;
-    if (!value.match(unsupportedHost)) {
-      this.setState({ host: { valid: true } });
-    } else {
-      this.setState({ host: { invalid: true } });
-    }
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
@@ -98,6 +97,12 @@ export default class Postgres extends Component<Props, State> {
     const { host, dbname, port, user, password } = this.props.tapsStore[
       'tap-postgres'
     ].fieldValues;
+    const { valid } = this.props.tapsStore['tap-postgres'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-postgres', validationState);
+    }
 
     return (
       <Container>
@@ -111,18 +116,12 @@ export default class Postgres extends Component<Props, State> {
                   name="host"
                   id="host"
                   value={host}
-                  onFocus={() => {
-                    this.setState({ host: {} });
-                  }}
-                  onBlur={() => {
-                    this.validateHostName(host);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.host}
+                  {...this.state.host.validation}
                 />
-                <FormFeedback>
-                  KNOTS does not support loopback addresses
-                </FormFeedback>
+                <FormFeedback>{this.state.host.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="4">
@@ -133,16 +132,12 @@ export default class Postgres extends Component<Props, State> {
                   name="port"
                   id="port"
                   value={port || ''}
-                  onFocus={() => {
-                    this.setState({ port: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('port', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.port}
+                  {...this.state.port.validation}
                 />
+                <FormFeedback>{this.state.port.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -155,17 +150,12 @@ export default class Postgres extends Component<Props, State> {
                   name="dbname"
                   id="dbname"
                   value={dbname}
-                  onFocus={() => {
-                    this.setState({ dbname: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('dbname', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.dbname}
+                  {...this.state.dbname.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.dbname.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -178,17 +168,12 @@ export default class Postgres extends Component<Props, State> {
                   name="user"
                   id="user"
                   value={user}
-                  onFocus={() => {
-                    this.setState({ user: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('user', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.user}
+                  {...this.state.user.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.user.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="6">
@@ -199,17 +184,12 @@ export default class Postgres extends Component<Props, State> {
                   name="password"
                   id="password"
                   value={password}
-                  onFocus={() => {
-                    this.setState({ password: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('password', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.password}
+                  {...this.state.password.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.password.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>

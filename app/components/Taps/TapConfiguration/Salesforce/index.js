@@ -40,32 +40,31 @@ import {
   Label,
   Row
 } from 'reactstrap';
-import { ipcRenderer, shell } from 'electron';
-import { toISODateString, formatDate } from '../../../../utils/handlers';
+import { ipcRenderer } from 'electron';
+import type {
+  SalesforceState,
+  TapSalesforce,
+  UpdateTapField,
+  UpdateFormValidation
+} from '../../../../utils/sharedTypes';
+import {
+  openLink,
+  toISODateString,
+  formatDate,
+  formValid,
+  showValidation,
+  validateFields
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    selectedTap: { name: string, image: string },
-    'tap-salesforce': {
-      fieldValues: {
-        client_id: string,
-        client_secret: string,
-        refresh_token: string,
-        start_date: string
-      }
-    }
+    'tap-salesforce': TapSalesforce
   },
-  updateTapField: (tap: string, field: string, value: string) => void
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-type State = {
-  client_id: {},
-  client_secret: {},
-  refresh_token: {},
-  start_date: {}
-};
-
-export default class Salesforce extends Component<Props, State> {
+export default class Salesforce extends Component<Props, SalesforceState> {
   constructor() {
     super();
 
@@ -79,18 +78,31 @@ export default class Salesforce extends Component<Props, State> {
   }
 
   state = {
-    client_id: {},
-    client_secret: {},
-    refresh_token: {},
-    start_date: {}
+    client_id: { validation: {}, errorMessage: 'Required' },
+    client_secret: { validation: {}, errorMessage: 'Required' },
+    refresh_token: { validation: {}, errorMessage: 'Required' },
+    start_date: { validation: {}, errorMessage: 'Required' },
+    api_type: { validation: {}, errorMessage: '' },
+    select_fields_by_default: { validation: {}, errorMessage: '' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-salesforce'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
+
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
@@ -111,11 +123,6 @@ export default class Salesforce extends Component<Props, State> {
     ipcRenderer.send('sf-oauth', client_id, client_secret);
   };
 
-  openLink = (e: SyntheticEvent<HTMLButtonElement>, url: string) => {
-    e.preventDefault();
-    shell.openExternal(url);
-  };
-
   render() {
     const {
       client_id,
@@ -123,6 +130,12 @@ export default class Salesforce extends Component<Props, State> {
       refresh_token,
       start_date
     } = this.props.tapsStore['tap-salesforce'].fieldValues;
+    const { valid } = this.props.tapsStore['tap-salesforce'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-salesforce', validationState);
+    }
 
     return (
       <Container>
@@ -133,13 +146,8 @@ export default class Salesforce extends Component<Props, State> {
             App. That will give you access to the consumer key and secret
             required below. To do so, please follow&nbsp;
             <a
-              href="#"
-              onClick={(e) =>
-                this.openLink(
-                  e,
-                  'https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5'
-                )
-              }
+              href="https://help.salesforce.com/articleView?id=connected_app_create.htm&type=5"
+              onClick={openLink}
             >
               this guide
             </a>.
@@ -179,15 +187,10 @@ export default class Salesforce extends Component<Props, State> {
                   name="client_id"
                   id="client_id"
                   value={client_id}
-                  onFocus={() => {
-                    this.setState({ client_id: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('client_id', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.client_id}
+                  {...this.state.client_id.validation}
                 />
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
@@ -202,15 +205,10 @@ export default class Salesforce extends Component<Props, State> {
                   name="client_secret"
                   id="client_secret"
                   value={client_secret}
-                  onFocus={() => {
-                    this.setState({ client_secret: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('client_secret', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.client_secret}
+                  {...this.state.client_secret.validation}
                 />
                 <FormFeedback>Required</FormFeedback>
               </FormGroup>
@@ -229,7 +227,7 @@ export default class Salesforce extends Component<Props, State> {
                       value={refresh_token}
                       id="refresh_token"
                       onChange={this.handleChange}
-                      {...this.state.refresh_token}
+                      {...this.state.refresh_token.validation}
                     />
                     <InputGroupAddon addonType="append">
                       <Button
@@ -255,12 +253,10 @@ export default class Salesforce extends Component<Props, State> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('start_date', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.start_date}
+                  {...this.state.start_date.validation}
                 />
                 <FormText>
                   Applies to objects with a defined timestamp field and limits
