@@ -5,12 +5,18 @@ import { LOADED_KNOT, RESET_STORE } from '../../app/actions/knots';
 const selectedTarget = {
   name: 'target-datadotworld'
 };
-const updatedTarget = {
+const updatedDataWorldTarget = {
   fieldValues: {
     dataset_id: 'testing',
     dataset_owner: '',
     dataset_url: '',
     api_token: ''
+  }
+};
+const updatedStitchTarget = {
+  fieldValues: {
+    client_id: 'testing',
+    token: ''
   }
 };
 const targetConfig = {
@@ -32,7 +38,20 @@ describe('user reducer', () => {
       })
     ).toEqual(
       Object.assign({}, defaultState, {
-        'target-datadotworld': updatedTarget
+        'target-datadotworld': updatedDataWorldTarget
+      })
+    );
+
+    expect(
+      userReducer(undefined, {
+        type: userActions.UPDATE_TARGET_FIELD,
+        target: 'target-stitch',
+        field: 'client_id',
+        value: 'testing'
+      })
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        'target-stitch': updatedStitchTarget
       })
     );
   });
@@ -69,6 +88,12 @@ describe('user reducer', () => {
             dataset_owner: '',
             dataset_url: '',
             api_token: ''
+          }
+        },
+        'target-stitch': {
+          fieldValues: {
+            client_id: '',
+            token: ''
           }
         }
       })
