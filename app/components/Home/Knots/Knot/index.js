@@ -23,62 +23,24 @@
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import {
-  Modal,
-  ModalBody,
-  ModalHeader,
-  ModalFooter,
-  Button,
-  ButtonGroup
-} from 'reactstrap';
+import { Button, ButtonGroup } from 'reactstrap';
 import moment from 'moment';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
-import type { TapPropertiesType } from '../../../../utils/sharedTypes';
+import type { KnotType } from '../../../../utils/sharedTypes';
 
 type Props = {
-  knot: {
-    name: string,
-    lastRun: string,
-    tap: TapPropertiesType,
-    target: { name: string }
-  },
-  delete: ({ name: string }) => void,
+  knot: KnotType,
   dockerInstalled: boolean,
   dockerRunning: boolean,
-  download: ({ name: string }) => void,
   history: { push: (path: string) => void },
-  loadValues: (name: string) => void
+  loadValues: (name: string) => void,
+  toggleDelete: (knot: KnotType) => void,
+  toggleDownloadDisclaimer: (knot: KnotType) => void
 };
 
-type State = {
-  showDelete: boolean,
-  showDownloadDisclaimer: boolean
-};
-
-class Knot extends Component<Props, State> {
-  state = {
-    showDelete: false,
-    showDownloadDisclaimer: false
-  };
-
-  toggleDelete = () => {
-    this.setState({
-      showDelete: !this.state.showDelete
-    });
-  };
-
-  toggleDownloadDisclaimer = () => {
-    this.setState({
-      showDownloadDisclaimer: !this.state.showDownloadDisclaimer
-    });
-  };
-
-  download = () => {
-    this.props.download(this.props.knot);
-  };
-
+class Knot extends Component<Props> {
   fullSync = () => {
     const { knot } = this.props;
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
@@ -162,7 +124,9 @@ class Knot extends Component<Props, State> {
             <Button
               color="link-secondary"
               style={{ background: 'white' }}
-              onClick={this.toggleDownloadDisclaimer}
+              onClick={() => {
+                this.props.toggleDownloadDisclaimer(knot);
+              }}
               title="Export"
             >
               <span className="oi oi-cloud-download" />
@@ -170,66 +134,15 @@ class Knot extends Component<Props, State> {
             <Button
               color="link-secondary"
               style={{ background: 'white' }}
-              onClick={this.toggleDelete}
+              onClick={() => {
+                this.props.toggleDelete(knot);
+              }}
               title="Delete"
             >
               <span className="oi oi-trash" />
             </Button>
           </ButtonGroup>
         </td>
-        <Modal isOpen={this.state.showDelete} toggle={this.toggleDelete}>
-          <ModalHeader toggle={this.toggleDelete}>
-            Delete <strong>{knot.name}</strong>?
-          </ModalHeader>
-          <ModalBody>
-            Are you sure you want to delete <strong>{knot.name}</strong>? Once
-            you delete a knot, there is no going back.
-          </ModalBody>
-          <ModalFooter>
-            <Button color="secondary" outline onClick={this.toggleDelete}>
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => {
-                this.props.delete(this.props.knot);
-              }}
-            >
-              Delete
-            </Button>
-          </ModalFooter>
-        </Modal>
-        <Modal
-          isOpen={this.state.showDownloadDisclaimer}
-          toggle={this.toggleDownloadDisclaimer}
-        >
-          <ModalHeader toggle={this.toggleDownloadDisclaimer}>
-            Download <strong>{knot.name}</strong>?
-          </ModalHeader>
-          <ModalBody>
-            The file you are downloading may contain personal information, like
-            your name and password. By continuing to download, you agree it is
-            your sole responsibility to protect and secure that information.
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color="secondary"
-              outline
-              onClick={this.toggleDownloadDisclaimer}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => {
-                this.props.download(this.props.knot);
-                this.toggleDownloadDisclaimer();
-              }}
-            >
-              Download
-            </Button>
-          </ModalFooter>
-        </Modal>
       </tr>
     );
   }

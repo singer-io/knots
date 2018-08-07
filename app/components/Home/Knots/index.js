@@ -24,29 +24,26 @@
 import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { Alert, Button, Container, Table } from 'reactstrap';
-import type { TapPropertiesType } from '../../../utils/sharedTypes';
+import type { KnotType } from '../../../utils/sharedTypes';
 
 import Knot from './Knot';
 
 type Props = {
   knotsStore: {
-    knots: Array<{
-      name: string,
-      lastRun: string,
-      tap: TapPropertiesType,
-      target: { name: string }
-    }>,
+    knots: Array<KnotType>,
     knotDeleted: boolean,
     knotError: string,
     knotLoaded: boolean
   },
   dockerInstalled: boolean,
   dockerRunning: boolean,
+  history: { push: (path: string) => void },
   deleteKnot: (knot: string) => void,
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
   loadValues: (knot: string) => void,
-  history: { push: (path: string) => void }
+  toggleDelete: (knot: KnotType) => void,
+  toggleDownloadDisclaimer: (knot: KnotType) => void
 };
 
 class Knots extends Component<Props> {
@@ -123,6 +120,8 @@ class Knots extends Component<Props> {
                 loadValues={this.loadValues}
                 dockerInstalled={dockerInstalled}
                 dockerRunning={dockerRunning}
+                toggleDelete={this.props.toggleDelete}
+                toggleDownloadDisclaimer={this.props.toggleDownloadDisclaimer}
               />
             ))}
           </tbody>

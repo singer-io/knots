@@ -21,6 +21,28 @@
 // @flow
 
 /**
+ * KNOT
+ */
+
+export type TapPropertiesType = {
+  name: string,
+  image: string,
+  specImplementation?: SpecImplementationPropType
+};
+
+export type TargetPropertiesType = {
+  name: string,
+  image: string
+};
+
+export type KnotType = {
+  name: string,
+  lastRun: string,
+  tap: TapPropertiesType,
+  target: TargetPropertiesType
+};
+
+/**
  * TAPS
  */
 type TapRedshiftFields = {
@@ -128,12 +150,6 @@ export type SpecImplementationPropType = {
   },
   usesCatalogArg?: boolean,
   usesReplication?: boolean
-};
-
-export type TapPropertiesType = {
-  name: string,
-  image: string,
-  specImplementation?: SpecImplementationPropType
 };
 
 /**
