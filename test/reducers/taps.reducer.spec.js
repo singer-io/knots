@@ -15,13 +15,24 @@ const taps = [
   }
 ];
 const selectedTap = { name: 'tap-salesforce' };
-const updatedTap = {
+const updatedSFTap = {
   fieldValues: {
     api_type: 'BULK',
     client_id: '12090',
     client_secret: '',
     refresh_token: '',
     select_fields_by_default: true,
+    start_date: ''
+  }
+};
+const updatedRedshiftTap = {
+  fieldValues: {
+    host: 'testing',
+    port: undefined,
+    dbname: '',
+    schema: 'public',
+    user: '',
+    password: '',
     start_date: ''
   }
 };
@@ -85,7 +96,20 @@ describe('taps reducer', () => {
       })
     ).toEqual(
       Object.assign({}, defaultState, {
-        'tap-salesforce': updatedTap
+        'tap-salesforce': updatedSFTap
+      })
+    );
+
+    expect(
+      tapReducer(undefined, {
+        type: tapActions.UPDATE_TAP_FIELD,
+        tap: 'tap-redshift',
+        field: 'host',
+        value: 'testing'
+      })
+    ).toEqual(
+      Object.assign({}, defaultState, {
+        'tap-redshift': updatedRedshiftTap
       })
     );
   });
@@ -192,6 +216,17 @@ describe('taps reducer', () => {
             refresh_token: '',
             api_type: 'BULK',
             select_fields_by_default: true,
+            start_date: ''
+          }
+        },
+        'tap-redshift': {
+          fieldValues: {
+            host: '',
+            port: undefined,
+            dbname: '',
+            schema: 'public',
+            user: '',
+            password: '',
             start_date: ''
           }
         }
