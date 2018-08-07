@@ -90,6 +90,20 @@ export default class Facebook extends Component<Props, FacebookState> {
     this.setState(validateFields(fieldValues, this.state));
   }
 
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -174,16 +188,8 @@ export default class Facebook extends Component<Props, FacebookState> {
                   name="app_id"
                   id="app_id"
                   value={app_id}
-                  onFocus={() => {
-                    this.setState({
-                      app_id: Object.assign(this.state.app_id, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('app_id', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.app_id.validation}
                 />
@@ -198,16 +204,8 @@ export default class Facebook extends Component<Props, FacebookState> {
                   name="app_secret"
                   id="app_secret"
                   value={app_secret}
-                  onFocus={() => {
-                    this.setState({
-                      app_secret: Object.assign(this.state.app_secret, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('app_secret', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.app_secret.validation}
                 />
@@ -256,16 +254,8 @@ export default class Facebook extends Component<Props, FacebookState> {
                   name="account_id"
                   id="account_id"
                   value={account_id}
-                  onFocus={() => {
-                    this.setState({
-                      account_id: Object.assign(this.state.account_id, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('account_id', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.account_id.validation}
                 />
@@ -293,16 +283,8 @@ export default class Facebook extends Component<Props, FacebookState> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onFocus={() => {
-                    this.setState({
-                      start_date: Object.assign(this.state.start_date, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('start_date', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.start_date.validation}
                 />

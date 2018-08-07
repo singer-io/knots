@@ -73,6 +73,20 @@ export default class Redshift extends Component<Props, RedshiftState> {
     this.setState(validateFields(fieldValues, this.state));
   }
 
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -115,16 +129,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="host"
                   id="host"
                   value={host}
-                  onFocus={() => {
-                    this.setState({
-                      host: Object.assign(this.state.host, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('host', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.host.validation}
                 />
@@ -139,16 +145,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="port"
                   id="port"
                   value={port || ''}
-                  onFocus={() => {
-                    this.setState({
-                      port: Object.assign(this.state.port, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('port', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.port.validation}
                 />
@@ -165,16 +163,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="dbname"
                   id="dbname"
                   value={dbname}
-                  onFocus={() => {
-                    this.setState({
-                      dbname: Object.assign(this.state.dbname, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('dbname', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.dbname.validation}
                 />
@@ -207,16 +197,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="user"
                   id="user"
                   value={user}
-                  onFocus={() => {
-                    this.setState({
-                      user: Object.assign(this.state.user, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('user', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.user.validation}
                 />
@@ -231,16 +213,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="password"
                   id="password"
                   value={password}
-                  onFocus={() => {
-                    this.setState({
-                      password: Object.assign(this.state.password, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('password', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.password.validation}
                 />
@@ -257,16 +231,8 @@ export default class Redshift extends Component<Props, RedshiftState> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onFocus={() => {
-                    this.setState({
-                      start_date: Object.assign(this.state.start_date, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('start_date', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.start_date.validation}
                 />

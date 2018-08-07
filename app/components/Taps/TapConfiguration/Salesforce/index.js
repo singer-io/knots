@@ -91,6 +91,20 @@ export default class Salesforce extends Component<Props, SalesforceState> {
     this.setState(validateFields(fieldValues, this.state));
   }
 
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -173,16 +187,8 @@ export default class Salesforce extends Component<Props, SalesforceState> {
                   name="client_id"
                   id="client_id"
                   value={client_id}
-                  onFocus={() => {
-                    this.setState({
-                      client_id: Object.assign(this.state.client_id, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('client_id', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.client_id.validation}
                 />
@@ -199,16 +205,8 @@ export default class Salesforce extends Component<Props, SalesforceState> {
                   name="client_secret"
                   id="client_secret"
                   value={client_secret}
-                  onFocus={() => {
-                    this.setState({
-                      client_secret: Object.assign(this.state.client_secret, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('client_secret', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.client_secret.validation}
                 />
@@ -255,16 +253,8 @@ export default class Salesforce extends Component<Props, SalesforceState> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onFocus={() => {
-                    this.setState({
-                      start_date: Object.assign(this.state.start_date, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('start_date', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.start_date.validation}
                 />

@@ -92,6 +92,20 @@ export default class Adwords extends Component<Props, AdwordsState> {
     this.setState(validateFields(fieldValues, this.state));
   }
 
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
+  };
+
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     let { value } = e.currentTarget;
@@ -172,21 +186,8 @@ export default class Adwords extends Component<Props, AdwordsState> {
                   name="developer_token"
                   id="developer_token"
                   value={developer_token}
-                  onFocus={() => {
-                    this.setState({
-                      developer_token: Object.assign(
-                        this.state.developer_token,
-                        {
-                          validation: {}
-                        }
-                      )
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(
-                      showValidation('developer_token', this.state)
-                    );
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.developer_token.validation}
                 />
@@ -203,16 +204,8 @@ export default class Adwords extends Component<Props, AdwordsState> {
                   name="customer_ids"
                   id="customer_ids"
                   value={customer_ids}
-                  onFocus={() => {
-                    this.setState({
-                      customer_ids: Object.assign(this.state.customer_ids, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('customer_ids', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.customer_ids.validation}
                 />
@@ -234,21 +227,8 @@ export default class Adwords extends Component<Props, AdwordsState> {
                   name="oauth_client_id"
                   id="oauth_client_id"
                   value={oauth_client_id}
-                  onFocus={() => {
-                    this.setState({
-                      oauth_client_id: Object.assign(
-                        this.state.oauth_client_id,
-                        {
-                          validation: {}
-                        }
-                      )
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(
-                      showValidation('oauth_client_id', this.state)
-                    );
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.oauth_client_id.validation}
                 />
@@ -265,21 +245,8 @@ export default class Adwords extends Component<Props, AdwordsState> {
                   name="oauth_client_secret"
                   id="oauth_client_secret"
                   value={oauth_client_secret}
-                  onFocus={() => {
-                    this.setState({
-                      oauth_client_secret: Object.assign(
-                        this.state.oauth_client_secret,
-                        {
-                          validation: {}
-                        }
-                      )
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(
-                      showValidation('oauth_client_secret', this.state)
-                    );
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.oauth_client_secret.validation}
                 />
@@ -328,16 +295,8 @@ export default class Adwords extends Component<Props, AdwordsState> {
                   name="start_date"
                   id="start_date"
                   value={start_date ? formatDate(start_date) : ''}
-                  onFocus={() => {
-                    this.setState({
-                      start_date: Object.assign(this.state.start_date, {
-                        validation: {}
-                      })
-                    });
-                  }}
-                  onBlur={() => {
-                    this.setState(showValidation('start_date', this.state));
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
                   {...this.state.start_date.validation}
                 />
