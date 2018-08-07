@@ -100,15 +100,17 @@ export default class Taps extends Component<Props, State> {
       return false;
     }
 
-    const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    let valid = true;
+    let { valid } = this.props.tapsStore[selectedTap.name];
+    if (typeof valid === 'undefined') {
+      const { fieldValues } = this.props.tapsStore[selectedTap.name];
 
-    Object.keys(fieldValues).forEach((field) => {
-      if (!fieldValues[field]) {
-        valid = false;
-      }
-    });
-
+      valid = true;
+      Object.keys(fieldValues).forEach((field) => {
+        if (!fieldValues[field]) {
+          valid = false;
+        }
+      });
+    }
     return valid;
   };
 
@@ -216,7 +218,7 @@ export default class Taps extends Component<Props, State> {
                   show: !showTaps && selectedTap
                 })}
               >
-                <TapConfiguration />
+                <TapConfiguration done={this.configDoneHandler} />
               </CardBody>
             </Card>
           </div>

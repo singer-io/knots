@@ -26,6 +26,7 @@ import type {
   specImplementationPropType,
   tapPropertiesType
 } from '../utils/shared-types';
+import type { TapConfigType } from '../components/Taps/TapConfiguration';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -38,6 +39,7 @@ export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 
+export const UPDATE_TAP_CONFIG = 'UPDATE_TAP_CONFIG';
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
 
@@ -111,6 +113,16 @@ export function selectTap(tap: tapPropertiesType, knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
+  };
+}
+
+export function updateTapConfig(tap: string, tapConfig: TapConfigType) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TAP_CONFIG,
+      tap,
+      tapConfig
+    });
   };
 }
 
