@@ -94,7 +94,7 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: tapPropertiesType, knotName: string) {
+export function selectTap(tap: TapPropertiesType, knotName: string) {
   return (dispatch: (action: actionType) => void) =>
     axios
       .post(`${baseUrl}/taps/select/`, {

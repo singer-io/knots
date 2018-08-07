@@ -16,6 +16,7 @@ const taps = [
 ];
 const selectedTap = { name: 'tap-salesforce' };
 const updatedSFTap = {
+  valid: false,
   fieldValues: {
     api_type: 'BULK',
     client_id: '12090',
@@ -26,6 +27,7 @@ const updatedSFTap = {
   }
 };
 const updatedRedshiftTap = {
+  valid: false,
   fieldValues: {
     host: 'testing',
     port: undefined,
@@ -194,11 +196,25 @@ describe('taps reducer', () => {
         schema
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
-        selectedTap,
-        schema,
-        schemaLoaded: true
-      })
+      Object.assign(
+        {},
+        defaultState,
+        {
+          selectedTap,
+          schema,
+          schemaLoaded: true
+        },
+        {
+          [selectedTap.name]: Object.assign(
+            {},
+            defaultState[selectedTap.name],
+            {
+              fieldValues: tapConfig,
+              valid: true
+            }
+          )
+        }
+      )
     );
   });
 
@@ -210,6 +226,7 @@ describe('taps reducer', () => {
     ).toEqual(
       Object.assign({}, defaultState, {
         'tap-salesforce': {
+          valid: false,
           fieldValues: {
             client_id: '',
             client_secret: '',
@@ -220,6 +237,7 @@ describe('taps reducer', () => {
           }
         },
         'tap-redshift': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,
