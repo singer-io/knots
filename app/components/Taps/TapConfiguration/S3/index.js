@@ -38,7 +38,6 @@ import {
 } from 'reactstrap';
 import classNames from 'classnames';
 import TagsInput from 'react-tagsinput';
-import shortid from 'shortid';
 import { formatDate, openLink } from '../../../../utils/handlers';
 import styles from './S3.css';
 
@@ -78,10 +77,20 @@ type StateType = {
 class S3 extends Component<PropsType, StateType> {
   constructor(props) {
     super(props);
+
     const { tables } = props.tap.fieldValues;
+    let newTables;
+
+    if (tables !== '' && JSON.parse(tables)) {
+      newTables = JSON.parse(tables).map((item) => ({
+        ...item,
+        key_properties: item.key_properties.split(',')
+      }));
+    }
+
     this.state = {
       ...props.tap.fieldValues,
-      tables: (tables !== '' && JSON.parse(tables)) || [
+      tables: newTables || [
         {
           table_name: '',
           search_pattern: '',
@@ -238,10 +247,15 @@ class S3 extends Component<PropsType, StateType> {
     });
 
     const { bucket, tables, start_date } = this.state;
+    const newTables = tables.map((item) => ({
+      ...item,
+      key_properties: item.key_properties.toString()
+    }));
+
     this.props.updateTapConfig('tap-s3-csv', {
       fieldValues: {
         bucket,
-        tables: JSON.stringify(tables),
+        tables: JSON.stringify(newTables),
         start_date
       },
       valid: this.validate().valid
@@ -338,16 +352,13 @@ class S3 extends Component<PropsType, StateType> {
                 </Col>
               </Row>
               {this.state.tables.map((table, idx) => (
-                <Row className="mb-1" key={shortid.generate()}>
+                <Row className="mb-1">
                   <Col xs="3" className="pr-1">
-                    <Label for="table_name" className="sr-only">
-                      Table name
-                    </Label>
                     <Input
                       bsSize="sm"
                       type="text"
                       name="table_name"
-                      placeholder="myfile.csv"
+                      placeholder="my_table"
                       value={table.table_name}
                       onChange={(e) => this.handleTableNameChange(e, idx)}
                       onBlur={(e) => this.handleTableNameChange(e, idx, true)}
@@ -364,9 +375,6 @@ class S3 extends Component<PropsType, StateType> {
                     </FormFeedback>
                   </Col>
                   <Col xs="3" className="px-1">
-                    <Label for="search_pattern" className="sr-only">
-                      S3 key pattern
-                    </Label>
                     <Input
                       bsSize="sm"
                       type="text"
@@ -390,7 +398,6 @@ class S3 extends Component<PropsType, StateType> {
                     </FormFeedback>
                   </Col>
                   <Col className="px-1">
-                    {/* <Label for="key_properties" className="sr-only">S3 key pattern</Label> */}
                     <TagsInput
                       addOnBlur="true"
                       className="form-control form-control-sm"

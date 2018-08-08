@@ -62,8 +62,8 @@ export type tapsStateType = {
   +'tap-postgres': TapPostgres,
   +'tap-adwords': TapAdwords,
   +'tap-mysql': TapMySQL,
-  +'tap-facebook': TapFacebook
-  'tap-s3-csv': TapS3ConfigType
+  +'tap-facebook': TapFacebook,
+  +'tap-s3-csv': TapS3ConfigType
 };
 
 function defaultState() {
@@ -104,6 +104,7 @@ function defaultState() {
         api_type: 'BULK',
         select_fields_by_default: true,
         start_date: ''
+      }
     },
     'tap-postgres': {
       fieldValues: {
