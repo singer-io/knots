@@ -22,8 +22,19 @@
 // @flow
 
 import React, { Component } from 'react';
-import { Alert, Button, Container, Progress } from 'reactstrap';
+import {
+  Alert,
+  Button,
+  Container,
+  Progress,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap';
 import { shell } from 'electron';
+
+import type { KnotType } from '../../utils/sharedTypes';
 
 import Knots from '../../containers/Knots';
 import Header from '../Header';
@@ -40,18 +51,26 @@ type Props = {
     fetchingKnots: boolean,
     knots: Array<{}>
   },
-  resetStore: () => void
+  resetStore: () => void,
+  deleteKnot: (knot: string) => void,
+  downloadKnot: (knot: string) => void
 };
 
 type State = {
   dockerInstalled: boolean,
-  dockerRunning: boolean
+  dockerRunning: boolean,
+  knot: KnotType,
+  showDelete: boolean,
+  showDownloadDisclaimer: boolean
 };
 
 export default class Home extends Component<Props, State> {
   state = {
     dockerInstalled: !!this.props.knotsStore.dockerVersion,
-    dockerRunning: this.props.knotsStore.dockerRunning
+    dockerRunning: this.props.knotsStore.dockerRunning,
+    knot: {},
+    showDelete: false,
+    showDownloadDisclaimer: false
   };
 
   componentWillMount() {
@@ -83,6 +102,20 @@ export default class Home extends Component<Props, State> {
     shell.openExternal(url);
   };
 
+  toggleDelete = (knot?: KnotType) => {
+    this.setState({
+      showDelete: !this.state.showDelete,
+      knot: knot || {}
+    });
+  };
+
+  toggleDownloadDisclaimer = (knot?: KnotType) => {
+    this.setState({
+      showDownloadDisclaimer: !this.state.showDownloadDisclaimer,
+      knot: knot || {}
+    });
+  };
+
   render() {
     const {
       detectingDocker,
@@ -91,7 +124,7 @@ export default class Home extends Component<Props, State> {
       knots
     } = this.props.knotsStore;
 
-    const { dockerInstalled, dockerRunning } = this.state;
+    const { dockerInstalled, dockerRunning, knot } = this.state;
 
     return (
       <div>
@@ -175,12 +208,75 @@ export default class Home extends Component<Props, State> {
                 <Knots
                   dockerInstalled={dockerInstalled}
                   dockerRunning={dockerRunning}
+                  toggleDelete={this.toggleDelete}
+                  toggleDownloadDisclaimer={this.toggleDownloadDisclaimer}
                 />
               )}
               {knots.length === 0 && <Create {...this.state} />}
             </div>
           )}
         </Container>
+        <Modal
+          isOpen={this.state.showDelete}
+          toggle={() => this.toggleDelete()}
+        >
+          <ModalHeader toggle={() => this.toggleDelete()}>
+            Delete <strong>{knot.name}</strong>?
+          </ModalHeader>
+          <ModalBody>
+            Are you sure you want to delete <strong>{knot.name}</strong>? Once
+            you delete a knot, there is no going back.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="secondary"
+              outline
+              onClick={() => this.toggleDelete()}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                this.props.deleteKnot(this.state.knot.name);
+                this.toggleDelete();
+              }}
+            >
+              Delete
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal
+          isOpen={this.state.showDownloadDisclaimer}
+          toggle={() => this.toggleDownloadDisclaimer()}
+        >
+          <ModalHeader toggle={() => this.toggleDownloadDisclaimer()}>
+            Download <strong>{knot.name}</strong>?
+          </ModalHeader>
+          <ModalBody>
+            The file you are downloading may contain personal information, like
+            your name and password. By continuing to download, you agree it is
+            your sole responsibility to protect and secure that information.
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              color="secondary"
+              outline
+              onClick={this.toggleDownloadDisclaimer}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => {
+                this.props.downloadKnot(this.state.knot.name);
+                this.toggleDownloadDisclaimer();
+              }}
+            >
+              Download
+            </Button>
+          </ModalFooter>
+        </Modal>
       </div>
     );
   }

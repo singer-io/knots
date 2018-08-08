@@ -35,44 +35,52 @@ import {
   Row,
   Alert
 } from 'reactstrap';
+import type {
+  TapMySQL,
+  UpdateTapField,
+  UpdateFormValidation,
+  MySQLState
+} from '../../../../utils/sharedTypes';
+import {
+  validateFields,
+  formValid,
+  showValidation
+} from '../../../../utils/handlers';
 
 type Props = {
   tapsStore: {
-    'tap-mysql': {
-      fieldValues: {
-        host: string,
-        port?: number,
-        user: string,
-        password: string,
-        database: string
-      }
-    }
+    'tap-mysql': TapMySQL
   },
-  updateTapField: (tap: string, field: string, value: string | number) => void
-};
-type State = {
-  host: {},
-  port: {},
-  user: {},
-  password: {},
-  database: {}
+  updateTapField: UpdateTapField,
+  updateFormValidation: UpdateFormValidation
 };
 
-export default class MySQL extends Component<Props, State> {
+export default class MySQL extends Component<Props, MySQLState> {
   state = {
-    host: {},
-    port: {},
-    user: {},
-    password: {},
-    database: {}
+    host: { validation: {}, errorMessage: 'Required' },
+    port: { validation: {}, errorMessage: 'Required' },
+    user: { validation: {}, errorMessage: 'Required' },
+    password: { validation: {}, errorMessage: 'Required' },
+    database: { validation: {}, errorMessage: 'Required' }
   };
 
-  validate = (field: string, value: string) => {
-    if (value) {
-      this.setState({ [field]: { valid: true } });
-    } else {
-      this.setState({ [field]: { invalid: true } });
-    }
+  componentWillReceiveProps(nextProps: Props) {
+    const { fieldValues } = nextProps.tapsStore['tap-mysql'];
+    this.setState(validateFields(fieldValues, this.state));
+  }
+
+  handleBlur = (e) => {
+    const { name } = e.currentTarget;
+    this.setState(showValidation(name, this.state));
+  };
+
+  handleFocus = (e) => {
+    const { name } = e.currentTarget;
+    this.setState({
+      [name]: Object.assign(this.state[name], {
+        validation: {}
+      })
+    });
   };
 
   handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
@@ -90,6 +98,12 @@ export default class MySQL extends Component<Props, State> {
     const { host, port, user, password, database } = this.props.tapsStore[
       'tap-mysql'
     ].fieldValues;
+    const { valid } = this.props.tapsStore['tap-mysql'];
+    const validationState = formValid(this.state);
+
+    if (valid !== validationState) {
+      this.props.updateFormValidation('tap-mysql', validationState);
+    }
 
     return (
       <Container>
@@ -107,19 +121,12 @@ export default class MySQL extends Component<Props, State> {
                   name="host"
                   id="host"
                   value={host}
-                  onFocus={() => {
-                    this.setState({ host: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('host', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.host}
+                  {...this.state.host.validation}
                 />
-                <FormFeedback>
-                  Must be a valid server hostname or IP address
-                </FormFeedback>
+                <FormFeedback>{this.state.host.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col xs="4">
@@ -130,16 +137,12 @@ export default class MySQL extends Component<Props, State> {
                   name="port"
                   id="port"
                   value={port || ''}
-                  onFocus={() => {
-                    this.setState({ port: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('port', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.port}
+                  {...this.state.port.validation}
                 />
+                <FormFeedback>{this.state.port.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -152,17 +155,12 @@ export default class MySQL extends Component<Props, State> {
                   name="database"
                   id="database"
                   value={database}
-                  onFocus={() => {
-                    this.setState({ database: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('database', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.database}
+                  {...this.state.database.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.database.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>
@@ -175,17 +173,12 @@ export default class MySQL extends Component<Props, State> {
                   name="user"
                   id="user"
                   value={user}
-                  onFocus={() => {
-                    this.setState({ user: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('user', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.user}
+                  {...this.state.user.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.user.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
             <Col>
@@ -196,17 +189,12 @@ export default class MySQL extends Component<Props, State> {
                   name="password"
                   id="password"
                   value={password}
-                  onFocus={() => {
-                    this.setState({ password: {} });
-                  }}
-                  onBlur={(event) => {
-                    const { value } = event.currentTarget;
-                    this.validate('password', value);
-                  }}
+                  onFocus={this.handleFocus}
+                  onBlur={this.handleBlur}
                   onChange={this.handleChange}
-                  {...this.state.password}
+                  {...this.state.password.validation}
                 />
-                <FormFeedback>Required</FormFeedback>
+                <FormFeedback>{this.state.password.errorMessage}</FormFeedback>
               </FormGroup>
             </Col>
           </Row>

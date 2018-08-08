@@ -44,7 +44,7 @@ import Log from '../Log';
 import type {
   specImplementationPropType,
   tapPropertiesType
-} from '../../utils/shared-types';
+} from '../../utils/sharedTypes';
 
 const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
