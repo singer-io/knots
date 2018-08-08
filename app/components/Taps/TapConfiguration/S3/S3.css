@@ -19,21 +19,25 @@
  * data.world, Inc.(http://data.world/).
  */
 
-.inputTagValue {
-  background-color: #eef2f6;
-  border-radius: 2px;
-  border: 1px solid #aca9d2;
-  color: #495057;
-  display: inline-block;
-  font-family: sans-serif;
-  font-size: 13px;
-  font-weight: 400;
-  margin-bottom: 5px;
-  margin-right: 5px;
-  padding: 5px;
+.tag-badge {
+  margin-right: 2px;
 }
 
-.removeTag {
+.tag-badge a::before {
+  content: ' ×';
+}
+
+.tag-remove {
   cursor: pointer;
-  padding-left: 6px;
+  font-weight: bold;
+}
+
+.transparent-input {
+  background: transparent;
+  border: 0;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  font-size: 0.75rem;
 }

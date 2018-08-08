@@ -26,7 +26,7 @@ import * as TapsActions from '../actions/taps';
 import S3 from '../components/Taps/TapConfiguration/S3';
 
 function mapStateToProps(state) {
-  return { tapsStore: state.taps };
+  return { tap: state.taps['tap-s3-csv'] };
 }
 
 function mapDispatchToProps(dispatch) {

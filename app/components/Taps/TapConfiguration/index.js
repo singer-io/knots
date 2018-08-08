@@ -32,13 +32,20 @@ import MySQL from '../../../containers/MySQL';
 import Facebook from '../../../containers/Facebook';
 import S3 from '../../../containers/S3';
 
+type TapConfigType<T> = {
+  fieldValues: T & {
+    start_date: string
+  },
+  valid?: boolean
+};
+
 type Props = {
   tapsStore: {
     selectedTap: { name: string, image: string }
   }
 };
 
-export default class Tap extends Component<Props> {
+class Tap extends Component<Props> {
   selectedTarget = () => {
     const { selectedTap } = this.props.tapsStore;
     switch (selectedTap.name) {
@@ -68,3 +75,6 @@ export default class Tap extends Component<Props> {
     );
   }
 }
+
+export default Tap;
+export type { TapConfigType };
