@@ -23,9 +23,9 @@
 
 import axios from 'axios';
 import type {
-  specImplementationPropType,
-  tapPropertiesType
-} from '../utils/shared-types';
+  SpecImplementationPropType,
+  TapPropertiesType
+} from '../utils/sharedTypes';
 import type { TapConfigType } from '../components/Taps/TapConfiguration';
 
 const baseUrl = 'http://localhost:4321';
@@ -48,6 +48,7 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 export const TAP_SELECTED = 'TAP_SELECTED';
+export const UPDATE_FORM_VALIDATION = 'UPDATE_FORM_VALIDATION';
 
 type actionType = {
   +type: string
@@ -93,7 +94,7 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: tapPropertiesType, knotName: string) {
+export function selectTap(tap: TapPropertiesType, knotName: string) {
   return (dispatch: (action: actionType) => void) => {
     axios
       .post(`${baseUrl}/taps/select/`, {
@@ -182,7 +183,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation?: specImplementationPropType = {}
+  specImplementation?: SpecImplementationPropType = {}
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -221,6 +222,16 @@ export function updateSchemaLogs(newLog: string) {
     dispatch({
       type: UPDATE_SCHEMA_LOGS,
       newLog
+    });
+  };
+}
+
+export function updateFormValidation(tap: string, value: boolean) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_FORM_VALIDATION,
+      tap,
+      value
     });
   };
 }
