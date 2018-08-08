@@ -30,10 +30,19 @@ import {
   SCHEMA_LOADING,
   SCHEMA_UPDATED,
   UPDATE_SCHEMA_LOGS,
-  TAP_SELECTED
+  TAP_SELECTED,
+  UPDATE_FORM_VALIDATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-import { tapPropertiesType } from '../utils/shared-types';
+import type {
+  TapPropertiesType,
+  TapRedshift,
+  TapSalesforce,
+  TapPostgres,
+  TapAdwords,
+  TapMySQL,
+  TapFacebook
+} from '../utils/sharedTypes';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -41,69 +50,17 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: tapPropertiesType,
+  +selectedTap: TapPropertiesType,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
-  +schemaUpdated: false,
+  +schemaUpdated: boolean,
   +error: string,
-  +'tap-redshift': {
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      schema: string,
-      user: string,
-      password: string
-    }
-  },
-  'tap-salesforce': {
-    fieldValues: {
-      client_id: string,
-      client_secret: string,
-      refresh_token: string,
-      api_type: string,
-      select_fields_by_default: string,
-      start_date: string
-    }
-  },
-  'tap-postgres': {
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      user: string,
-      password: string
-    }
-  },
-  'tap-adwords': {
-    fieldValues: {
-      developer_token: string,
-      oauth_client_id: string,
-      oauth_client_secret: string,
-      refresh_token: string,
-      start_date: string,
-      user_agent: string,
-      customer_ids: string
-    }
-  },
-  'tap-mysql': {
-    fieldValue: {
-      host: string,
-      port: number,
-      user: string,
-      password: string,
-      database: string
-    }
-  },
-  'tap-facebook': {
-    fieldValues: {
-      access_token: string,
-      account_id: string,
-      app_id: string,
-      app_secret: string,
-      start_date: string
-    }
-  }
+  +'tap-redshift': TapRedshift,
+  +'tap-salesforce': TapSalesforce,
+  +'tap-postgres': TapPostgres,
+  +'tap-adwords': TapAdwords,
+  +'tap-mysql': TapMySQL,
+  +'tap-facebook': TapFacebook
 };
 
 const defaultState = {
@@ -111,7 +68,8 @@ const defaultState = {
   tapSelected: false,
   selectedTap: {
     name: '',
-    image: ''
+    image: '',
+    specImplementation: {}
   },
   schemaLoading: false,
   schemaLoaded: false,
@@ -122,6 +80,7 @@ const defaultState = {
   schemaUpdated: false,
   error: '',
   'tap-redshift': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -133,6 +92,7 @@ const defaultState = {
     }
   },
   'tap-salesforce': {
+    valid: false,
     fieldValues: {
       client_id: '',
       client_secret: '',
@@ -143,6 +103,7 @@ const defaultState = {
     }
   },
   'tap-postgres': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -152,6 +113,7 @@ const defaultState = {
     }
   },
   'tap-adwords': {
+    valid: false,
     fieldValues: {
       developer_token: '',
       oauth_client_id: '',
@@ -163,6 +125,7 @@ const defaultState = {
     }
   },
   'tap-mysql': {
+    valid: false,
     fieldValues: {
       host: '',
       port: undefined,
@@ -172,6 +135,7 @@ const defaultState = {
     }
   },
   'tap-facebook': {
+    valid: false,
     fieldValues: {
       access_token: '',
       account_id: '',
@@ -405,9 +369,6 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case LOADED_KNOT:
-      const savedTap = state[action.tap.name];
-      savedTap.fieldValues = action.tapConfig;
-
       return Object.assign(
         {},
         state,
@@ -416,8 +377,19 @@ export default function taps(state = defaultState, action) {
           schema: action.schema,
           schemaLoaded: true
         },
-        { [action.tap.name]: savedTap }
+        {
+          [action.tap.name]: Object.assign({}, state[action.tap.name], {
+            fieldValues: action.tapConfig,
+            valid: true
+          })
+        }
       );
+    case UPDATE_FORM_VALIDATION:
+      return Object.assign({}, state, {
+        [action.tap]: Object.assign({}, state[action.tap], {
+          valid: action.value
+        })
+      });
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
@@ -435,6 +407,7 @@ export default function taps(state = defaultState, action) {
         schemaUpdated: false,
         error: '',
         'tap-redshift': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,
@@ -446,6 +419,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-salesforce': {
+          valid: false,
           fieldValues: {
             client_id: '',
             client_secret: '',
@@ -456,6 +430,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-postgres': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,
@@ -465,6 +440,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-adwords': {
+          valid: false,
           fieldValues: {
             developer_token: '',
             oauth_client_id: '',
@@ -476,6 +452,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-mysql': {
+          valid: false,
           fieldValues: {
             host: '',
             port: undefined,
@@ -485,6 +462,7 @@ export default function taps(state = defaultState, action) {
           }
         },
         'tap-facebook': {
+          valid: false,
           fieldValues: {
             access_token: '',
             account_id: '',

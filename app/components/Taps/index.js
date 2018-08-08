@@ -40,13 +40,13 @@ import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
-import type { tapPropertiesType } from '../../utils/shared-types';
+import type { TapPropertiesType } from '../../utils/sharedTypes';
 
 type Props = {
   fetchTaps: () => void,
   tapsStore: {
     tapSelected: boolean,
-    selectedTap: tapPropertiesType,
+    selectedTap: TapPropertiesType,
     tapsLoading: boolean,
     taps: Array<{
       name: string,
@@ -57,9 +57,9 @@ type Props = {
   },
   knotsStore: { knotName: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
-  selectTap: (tap: tapPropertiesType) => void,
+  selectTap: (tap: TapPropertiesType) => void,
   submitConfig: (
-    selectedTap: tapPropertiesType,
+    selectedTap: TapPropertiesType,
     fieldValues: {},
     knotName: string,
     skipDiscovery: ?boolean
@@ -100,15 +100,7 @@ export default class Taps extends Component<Props, State> {
       return false;
     }
 
-    const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    let valid = true;
-
-    Object.keys(fieldValues).forEach((field) => {
-      if (!fieldValues[field]) {
-        valid = false;
-      }
-    });
-
+    const { valid } = this.props.tapsStore[selectedTap.name];
     return valid;
   };
 

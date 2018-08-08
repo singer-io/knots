@@ -21,7 +21,7 @@
 
 import React, { Component } from 'react';
 import { FormGroup, Input } from 'reactstrap';
-import type { specImplementationPropType } from '../../../utils/shared-types';
+import type { specImplementationPropType } from '../../../utils/sharedTypes';
 
 type Props = {
   index: string,
