@@ -250,9 +250,7 @@ export function downloadKnot(knot: string) {
     axios
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
-        if (process.env.NODE_ENV === 'test') {
-          // console.log('Opening url via external browser');
-        } else {
+        if (process.env.NODE_ENV !== 'test') {
           shell.openExternal(
             `http://localhost:4321/knots/download?knot=${knot}`
           );

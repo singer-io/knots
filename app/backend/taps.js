@@ -87,11 +87,7 @@ const getSchema = (req, mockSpawn) =>
       { flags: 'a' }
     );
 
-    const discoveryCommand = commands.runDiscovery(
-      knotPath,
-      req.body.tap.name,
-      req.body.tap.image
-    );
+    const discoveryCommand = commands.runDiscovery(knotPath, req.body.tap);
 
     const runDiscovery = spawnFunction(
       discoveryCommand.split(' ')[0],
@@ -102,11 +98,7 @@ const getSchema = (req, mockSpawn) =>
       }
     );
 
-    const failError = `${commands.runDiscovery(
-      knotPath,
-      req.body.tap.name,
-      req.body.tap.image
-    )} command failed`;
+    const failError = `${discoveryCommand} command failed`;
 
     runningProcess = runDiscovery;
 

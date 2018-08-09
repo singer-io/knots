@@ -109,10 +109,14 @@ const targets = [
 ];
 
 const commands = {
-  runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${path.resolve(
-      folderPath
-    )}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d`,
+  runDiscovery: (folderPath, tap) => {
+    const { dockerParameters = '' } = tap.specImplementation || {};
+    return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
+      tap.name
+    }/data" ${dockerParameters} ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json -d`;
+  },
   runSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true, dockerParameters = '' } =
       tap.specImplementation || {};

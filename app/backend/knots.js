@@ -171,7 +171,7 @@ const saveKnot = (name, currentName) =>
                 path.resolve(getTemporaryKnotFolder(), '*'),
                 path.resolve(getKnotsFolder(), name)
               );
-              if (currentName) {
+              if (currentName && currentName !== name) {
                 // Remove the knot that has been edited
                 shell.rm('-rf', path.resolve(getKnotsFolder(), currentName));
               }
