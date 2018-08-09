@@ -26,9 +26,9 @@ import { Card, CardBody, CardTitle, Col } from 'reactstrap';
 
 import getLogo from '../../../logos';
 import type {
-  specImplementationPropType,
-  tapPropertiesType
-} from '../../../utils/shared-types';
+  SpecImplementationPropType,
+  TapPropertiesType
+} from '../../../utils/sharedTypes';
 
 type Props = {
   name: string,
@@ -36,8 +36,8 @@ type Props = {
   tapImage: string,
   selected: string,
   repo: string,
-  specImplementation?: specImplementationPropType,
-  selectTap: (tap: tapPropertiesType, knotName: string) => void,
+  specImplementation?: SpecImplementationPropType,
+  selectTap: (tap: TapPropertiesType, knotName: string) => void,
   knotName: string
 };
 

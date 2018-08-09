@@ -19,25 +19,25 @@
  * data.world, Inc.(http://data.world/).
  */
 
-// @flow
+.tag-badge {
+  margin-right: 2px;
+}
 
-export const UPDATE_TARGET_FIELD = 'UPDATE_TARGET_FIELD';
+.tag-badge a::before {
+  content: ' ×';
+}
 
-type actionType = {
-  +type: string
-};
+.tag-remove {
+  cursor: pointer;
+  font-weight: bold;
+}
 
-export function updateTargetField(
-  target: string,
-  field: string,
-  value: string
-) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: UPDATE_TARGET_FIELD,
-      target,
-      field,
-      value
-    });
-  };
+.transparent-input {
+  background: transparent;
+  border: 0;
+  width: 50%;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  font-size: 0.75rem;
 }

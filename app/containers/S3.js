@@ -18,19 +18,22 @@
  * This product includes software developed at
  * data.world, Inc.(http://data.world/).
  */
-// @flow
 
-export type specImplementationPropType = {
-  usesMetadata?: {
-    selected?: boolean,
-    replicationKey?: boolean,
-    replicationMethod?: boolean
-  },
-  usesCatalogArg?: boolean
-};
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 
-export type tapPropertiesType = {
-  name: string,
-  image: string,
-  specImplementation?: specImplementationPropType
-};
+import * as TapsActions from '../actions/taps';
+import S3 from '../components/Taps/TapConfiguration/S3';
+
+function mapStateToProps(state) {
+  return { tap: state.taps['tap-s3-csv'] };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(TapsActions, dispatch);
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(S3);

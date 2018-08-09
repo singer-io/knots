@@ -23,9 +23,10 @@
 
 import axios from 'axios';
 import type {
-  specImplementationPropType,
-  tapPropertiesType
-} from '../utils/shared-types';
+  SpecImplementationPropType,
+  TapPropertiesType
+} from '../utils/sharedTypes';
+import type { TapConfigType } from '../components/Taps/TapConfiguration';
 
 const baseUrl = 'http://localhost:4321';
 
@@ -38,6 +39,7 @@ export const UPDATE_TAPS = 'UPDATE_TAPS';
 export const SCHEMA_LOADING = 'SCHEMA_LOADING';
 export const SCHEMA_RECEIVED = 'SCHEMA_RECEIVED';
 
+export const UPDATE_TAP_CONFIG = 'UPDATE_TAP_CONFIG';
 export const UPDATE_TAP_FIELD = 'UPDATE_TAP_FIELD';
 export const UPDATE_SCHEMA_FIELD = 'UPDATE_SCHEMA_FIELD';
 
@@ -46,6 +48,7 @@ export const SCHEMA_UPDATED = 'SCHEMA_UPDATED';
 export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 export const TAP_SELECTED = 'TAP_SELECTED';
+export const UPDATE_FORM_VALIDATION = 'UPDATE_FORM_VALIDATION';
 
 type actionType = {
   +type: string
@@ -73,7 +76,7 @@ export function fetchTaps() {
       type: TAPS_LOADING
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/taps/`)
       .then((response) => {
         dispatch({
@@ -91,8 +94,8 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: tapPropertiesType, knotName: string) {
-  return (dispatch: (action: actionType) => void) => {
+export function selectTap(tap: TapPropertiesType, knotName: string) {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
@@ -111,6 +114,15 @@ export function selectTap(tap: tapPropertiesType, knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
+}
+
+export function updateTapConfig(tap: string, tapConfig: TapConfigType) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TAP_CONFIG,
+      tap,
+      tapConfig
+    });
   };
 }
 
@@ -148,7 +160,7 @@ export function submitConfig(
       skipDiscovery
     };
 
-    axios
+    return axios
       .post(`${baseUrl}/taps/config/`, payload)
       .then((response) => {
         dispatch({
@@ -170,7 +182,7 @@ export function editSchemaField(
   field: string,
   index: string,
   value: boolean | string,
-  specImplementation?: specImplementationPropType = {}
+  specImplementation?: SpecImplementationPropType = {}
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -184,7 +196,7 @@ export function editSchemaField(
 }
 
 export function submitSchema(schema: {}, knot: string) {
-  return (dispatch: (action: actionType) => void) => {
+  return (dispatch: (action: actionType) => void) =>
     axios
       .put(`${baseUrl}/taps/schema/`, {
         schema: { streams: schema },
@@ -201,7 +213,6 @@ export function submitSchema(schema: {}, knot: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateSchemaLogs(newLog: string) {
@@ -209,6 +220,16 @@ export function updateSchemaLogs(newLog: string) {
     dispatch({
       type: UPDATE_SCHEMA_LOGS,
       newLog
+    });
+  };
+}
+
+export function updateFormValidation(tap: string, value: boolean) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_FORM_VALIDATION,
+      tap,
+      value
     });
   };
 }

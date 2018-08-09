@@ -22,18 +22,29 @@
 /* eslint-disable no-case-declarations */
 
 import {
-  TAPS_LOADING,
-  UPDATE_TAPS,
-  UPDATE_TAP_FIELD,
-  SCHEMA_RECEIVED,
-  UPDATE_SCHEMA_FIELD,
   SCHEMA_LOADING,
+  SCHEMA_RECEIVED,
   SCHEMA_UPDATED,
+  TAP_SELECTED,
+  TAPS_LOADING,
+  UPDATE_SCHEMA_FIELD,
   UPDATE_SCHEMA_LOGS,
-  TAP_SELECTED
+  UPDATE_TAP_CONFIG,
+  UPDATE_TAP_FIELD,
+  UPDATE_TAPS,
+  UPDATE_FORM_VALIDATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
-import { tapPropertiesType } from '../utils/shared-types';
+import type {
+  TapPropertiesType,
+  TapRedshift,
+  TapSalesforce,
+  TapS3ConfigType,
+  TapPostgres,
+  TapAdwords,
+  TapMySQL,
+  TapFacebook
+} from '../utils/sharedTypes';
 
 export type tapsStateType = {
   +tapsLoading: boolean,
@@ -41,148 +52,109 @@ export type tapsStateType = {
   +schemaLoading: boolean,
   +schemaLoaded: boolean,
   +taps: Array<string>,
-  +selectedTap: tapPropertiesType,
+  +selectedTap: TapPropertiesType,
   +schema: Array<{}>,
   +schemaLogs: Array<string>,
-  +schemaUpdated: false,
+  +schemaUpdated: boolean,
   +error: string,
-  +'tap-redshift': {
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      schema: string,
-      user: string,
-      password: string
-    }
-  },
-  'tap-salesforce': {
-    fieldValues: {
-      client_id: string,
-      client_secret: string,
-      refresh_token: string,
-      api_type: string,
-      select_fields_by_default: string,
-      start_date: string
-    }
-  },
-  'tap-postgres': {
-    fieldValues: {
-      host: string,
-      port: number,
-      dbname: string,
-      user: string,
-      password: string
-    }
-  },
-  'tap-adwords': {
-    fieldValues: {
-      developer_token: string,
-      oauth_client_id: string,
-      oauth_client_secret: string,
-      refresh_token: string,
-      start_date: string,
-      user_agent: string,
-      customer_ids: string
-    }
-  },
-  'tap-mysql': {
-    fieldValue: {
-      host: string,
-      port: number,
-      user: string,
-      password: string,
-      database: string
-    }
-  },
-  'tap-facebook': {
-    fieldValues: {
-      access_token: string,
-      account_id: string,
-      app_id: string,
-      app_secret: string,
-      start_date: string
-    }
-  }
+  +'tap-redshift': TapRedshift,
+  +'tap-salesforce': TapSalesforce,
+  +'tap-postgres': TapPostgres,
+  +'tap-adwords': TapAdwords,
+  +'tap-mysql': TapMySQL,
+  +'tap-facebook': TapFacebook,
+  +'tap-s3-csv': TapS3ConfigType
 };
 
-const defaultState = {
-  tapsLoading: false,
-  tapSelected: false,
-  selectedTap: {
-    name: '',
-    image: ''
-  },
-  schemaLoading: false,
-  schemaLoaded: false,
-  schemaLogs: [],
-  taps: [],
+export function defaultState() {
+  return {
+    tapsLoading: false,
+    tapSelected: false,
+    selectedTap: {
+      name: '',
+      image: '',
+      specImplementation: {}
+    },
+    schemaLoading: false,
+    schemaLoaded: false,
+    schemaLogs: [],
+    taps: [],
 
-  schema: [],
-  schemaUpdated: false,
-  error: '',
-  'tap-redshift': {
-    fieldValues: {
-      host: '',
-      port: undefined,
-      dbname: '',
-      schema: 'public',
-      user: '',
-      password: '',
-      start_date: ''
+    schema: [],
+    schemaUpdated: false,
+    error: '',
+    'tap-redshift': {
+      valid: false,
+      fieldValues: {
+        host: '',
+        port: undefined,
+        dbname: '',
+        schema: 'public',
+        user: '',
+        password: '',
+        start_date: ''
+      }
+    },
+    'tap-salesforce': {
+      valid: false,
+      fieldValues: {
+        client_id: '',
+        client_secret: '',
+        refresh_token: '',
+        api_type: 'BULK',
+        select_fields_by_default: true,
+        start_date: ''
+      }
+    },
+    'tap-postgres': {
+      fieldValues: {
+        host: '',
+        port: undefined,
+        dbname: '',
+        user: '',
+        password: ''
+      }
+    },
+    'tap-adwords': {
+      fieldValues: {
+        developer_token: '',
+        oauth_client_id: '',
+        oauth_client_secret: '',
+        refresh_token: '',
+        start_date: '',
+        user_agent: 'knots',
+        customer_ids: ''
+      }
+    },
+    'tap-mysql': {
+      fieldValues: {
+        host: '',
+        port: undefined,
+        user: '',
+        password: '',
+        database: ''
+      }
+    },
+    'tap-facebook': {
+      fieldValues: {
+        access_token: '',
+        account_id: '',
+        app_id: '',
+        app_secret: '',
+        start_date: ''
+      }
+    },
+    'tap-s3-csv': {
+      fieldValues: {
+        bucket: '',
+        start_date: '',
+        tables: ''
+      }
     }
-  },
-  'tap-salesforce': {
-    fieldValues: {
-      client_id: '',
-      client_secret: '',
-      refresh_token: '',
-      api_type: 'BULK',
-      select_fields_by_default: true,
-      start_date: ''
-    }
-  },
-  'tap-postgres': {
-    fieldValues: {
-      host: '',
-      port: undefined,
-      dbname: '',
-      user: '',
-      password: ''
-    }
-  },
-  'tap-adwords': {
-    fieldValues: {
-      developer_token: '',
-      oauth_client_id: '',
-      oauth_client_secret: '',
-      refresh_token: '',
-      start_date: '',
-      user_agent: 'knots',
-      customer_ids: ''
-    }
-  },
-  'tap-mysql': {
-    fieldValues: {
-      host: '',
-      port: undefined,
-      user: '',
-      password: '',
-      database: ''
-    }
-  },
-  'tap-facebook': {
-    fieldValues: {
-      access_token: '',
-      account_id: '',
-      app_id: '',
-      app_secret: '',
-      start_date: ''
-    }
-  }
-};
+  };
+}
 
-export default function taps(state = defaultState, action) {
+export default function taps(state = defaultState(), action) {
   const { schema } = state;
 
   switch (action.type) {
@@ -200,6 +172,11 @@ export default function taps(state = defaultState, action) {
         selectedTap: action.tap,
         error: action.error
       });
+    case UPDATE_TAP_CONFIG:
+      return {
+        ...state,
+        [action.tap]: action.tapConfig
+      };
     case UPDATE_TAP_FIELD:
       const tap = state[action.tap];
       tap.fieldValues[action.field] = action.value;
@@ -405,9 +382,6 @@ export default function taps(state = defaultState, action) {
         error: action.error
       });
     case LOADED_KNOT:
-      const savedTap = state[action.tap.name];
-      savedTap.fieldValues = action.tapConfig;
-
       return Object.assign(
         {},
         state,
@@ -416,84 +390,23 @@ export default function taps(state = defaultState, action) {
           schema: action.schema,
           schemaLoaded: true
         },
-        { [action.tap.name]: savedTap }
+        {
+          [action.tap.name]: Object.assign({}, state[action.tap.name], {
+            fieldValues: action.tapConfig,
+            valid: true
+          })
+        }
       );
+    case UPDATE_FORM_VALIDATION:
+      return Object.assign({}, state, {
+        [action.tap]: Object.assign({}, state[action.tap], {
+          valid: action.value
+        })
+      });
 
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
-      // TODO DRY (Same as defaultState?)
-      return {
-        tapsLoading: false,
-        tapSelected: false,
-        selectedTap: { name: '', image: '' },
-        schemaLoading: false,
-        schemaLoaded: false,
-        schemaLogs: [],
-        taps: [],
-
-        schema: [],
-        schemaUpdated: false,
-        error: '',
-        'tap-redshift': {
-          fieldValues: {
-            host: '',
-            port: undefined,
-            dbname: '',
-            schema: 'public',
-            user: '',
-            password: '',
-            start_date: ''
-          }
-        },
-        'tap-salesforce': {
-          fieldValues: {
-            client_id: '',
-            client_secret: '',
-            refresh_token: '',
-            api_type: 'BULK',
-            select_fields_by_default: true,
-            start_date: ''
-          }
-        },
-        'tap-postgres': {
-          fieldValues: {
-            host: '',
-            port: undefined,
-            dbname: '',
-            user: '',
-            password: ''
-          }
-        },
-        'tap-adwords': {
-          fieldValues: {
-            developer_token: '',
-            oauth_client_id: '',
-            oauth_client_secret: '',
-            refresh_token: '',
-            start_date: '',
-            user_agent: 'knots',
-            customer_ids: ''
-          }
-        },
-        'tap-mysql': {
-          fieldValues: {
-            host: '',
-            port: undefined,
-            user: '',
-            password: '',
-            database: ''
-          }
-        },
-        'tap-facebook': {
-          fieldValues: {
-            access_token: '',
-            account_id: '',
-            app_id: '',
-            app_secret: '',
-            start_date: ''
-          }
-        }
-      };
+      return defaultState();
     default:
       return state;
   }
