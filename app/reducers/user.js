@@ -21,12 +21,7 @@
 
 /* eslint-disable no-case-declarations */
 
-import {
-  UPDATE_DATASET,
-  SET_TOKEN,
-  TARGET_CONFIGURED,
-  UPDATE_TARGET_FIELD
-} from '../actions/user';
+import { UPDATE_TARGET_FIELD } from '../actions/user';
 import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
 
 export type targetsStateType = {
@@ -42,7 +37,7 @@ export type targetsStateType = {
   +'target-stitch': { fieldValues: { client_id: string, token: string } }
 };
 
-const defaultState = {
+export const defaultState = {
   targetConfigured: false,
   'target-datadotworld': {
     fieldValues: {
@@ -57,18 +52,6 @@ const defaultState = {
 
 export default function targets(state = defaultState, action) {
   switch (action.type) {
-    case UPDATE_DATASET:
-      return Object.assign({}, state, {
-        selectedDataset: action.selectedDataset
-      });
-    case SET_TOKEN:
-      return Object.assign({}, state, {
-        token: action.token
-      });
-    case TARGET_CONFIGURED:
-      return Object.assign({}, state, {
-        targetConfigured: true
-      });
     case UPDATE_TARGET_FIELD:
       const target = state[action.target];
       target.fieldValues[action.field] = action.value;
