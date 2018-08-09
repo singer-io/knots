@@ -20,7 +20,7 @@
  */
 
 const path = require('path');
-const { spawn } = require('child_process');
+const { exec } = require('child_process');
 const fs = require('fs');
 const shell = require('shelljs');
 
@@ -74,9 +74,8 @@ const createKnot = (tap, uuid, modifyKnot) =>
     }
   });
 
-const getSchema = (req, mockSpawn) =>
+const getSchema = (req) =>
   new Promise((resolve, reject) => {
-    const spawnFunction = mockSpawn || spawn;
     const knotPath = getTemporaryKnotFolder(req.body.uuid);
 
     shell.rm('-rf', path.resolve(knotPath, 'tap', 'catalog.json'));
@@ -88,14 +87,9 @@ const getSchema = (req, mockSpawn) =>
 
     const discoveryCommand = commands.runDiscovery(knotPath, req.body.tap);
 
-    const runDiscovery = spawnFunction(
-      discoveryCommand.split(' ')[0],
-      discoveryCommand.split(' ').slice(1),
-      {
-        shell: true,
-        detached: true
-      }
-    );
+    const runDiscovery = exec(discoveryCommand, {
+      detached: true
+    });
 
     const failError = `${discoveryCommand} command failed`;
 

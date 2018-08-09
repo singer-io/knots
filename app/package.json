@@ -9,8 +9,7 @@
   },
   "license": "Apache-2.0",
   "author": {
-    "name": "data.world, Inc.",
-    "email": "help@data.world"
+    "name": "Stitch, Inc."
   },
   "dependencies": {
     "bufferutil": "^3.0.4",

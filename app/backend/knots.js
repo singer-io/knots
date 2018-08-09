@@ -119,6 +119,9 @@ const sync = (req, mode) => {
           path.resolve(pathToKnot, 'knot.json')
         )
           .then(() => {
+            const isWindows = process.platform === 'win32';
+            const shellOptions = !isWindows ? 'set -o pipefail;' : '';
+            const commandOptions = { detached: true };
             const syncCommand =
               mode === 'partial'
                 ? commands.runPartialSync(
@@ -132,10 +135,10 @@ const sync = (req, mode) => {
                     knotObject.target
                   );
 
-            const runSync = exec(`set -o pipefail;${syncCommand}`, {
-              detached: true,
-              shell: '/bin/bash'
-            });
+            const runSync = exec(
+              `${shellOptions}${syncCommand}`,
+              commandOptions
+            );
             runningProcess = runSync;
             emitLogs(req, tapLogPath, targetLogPath);
 
