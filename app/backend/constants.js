@@ -21,34 +21,40 @@
 
 const path = require('path');
 
+const homePath = process.env.HOME;
+
 const taps = [
-  {
-    name: 'Redshift',
-    tapKey: 'tap-redshift',
-    tapImage: 'dataworld/tap-redshift:1.0.0b8',
-    repo: 'https://github.com/datadotworld/tap-redshift'
-  },
-  {
-    name: 'Salesforce',
-    tapKey: 'tap-salesforce',
-    tapImage: 'dataworld/tap-salesforce:1.4.14',
-    repo: 'https://github.com/singer-io/tap-salesforce',
-    specImplementation: {
-      usesCatalogArg: false
-    }
-  },
-  {
-    name: 'Postgres',
-    tapKey: 'tap-postgres',
-    tapImage: 'dataworld/tap-postgres:0.0.16',
-    repo: 'https://github.com/singer-io/tap-postgres'
-  },
   {
     name: 'Adwords',
     tapKey: 'tap-adwords',
     tapImage: 'dataworld/tap-adwords:1.3.3',
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
+      usesCatalogArg: false,
+      usesReplication: false
+    }
+  },
+  {
+    name: 'Amazon S3',
+    tapKey: 'tap-s3-csv',
+    tapImage: 'dataworld/tap-s3-csv:0.0.3',
+    repo: 'https://github.com/singer-io/tap-s3-csv',
+    specImplementation: {
+      usesCatalogArg: false,
+      dockerParameters: `-v ${homePath}/.aws:/root/.aws`
+    }
+  },
+  {
+    name: 'Facebook',
+    tapKey: 'tap-facebook',
+    tapImage: 'dataworld/tap-facebook:1.5.1',
+    repo: 'https://github.com/singer-io/tap-facebook',
+    specImplementation: {
+      usesMetadata: {
+        selected: false,
+        replication_key: false,
+        replication_method: false
+      },
       usesCatalogArg: false,
       usesReplication: false
     }
@@ -65,18 +71,24 @@ const taps = [
     }
   },
   {
-    name: 'Facebook',
-    tapKey: 'tap-facebook',
-    tapImage: 'dataworld/tap-facebook:1.5.1',
-    repo: 'https://github.com/singer-io/tap-facebook',
+    name: 'Postgres',
+    tapKey: 'tap-postgres',
+    tapImage: 'dataworld/tap-postgres:0.0.16',
+    repo: 'https://github.com/singer-io/tap-postgres'
+  },
+  {
+    name: 'Redshift',
+    tapKey: 'tap-redshift',
+    tapImage: 'dataworld/tap-redshift:1.0.0b8',
+    repo: 'https://github.com/datadotworld/tap-redshift'
+  },
+  {
+    name: 'Salesforce',
+    tapKey: 'tap-salesforce',
+    tapImage: 'dataworld/tap-salesforce:1.4.14',
+    repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
-      usesMetadata: {
-        selected: false,
-        replication_key: false,
-        replication_method: false
-      },
-      usesCatalogArg: false,
-      usesReplication: false
+      usesCatalogArg: false
     }
   }
 ];
@@ -97,17 +109,20 @@ const targets = [
 ];
 
 const commands = {
-  runDiscovery: (folderPath, tap, image) =>
-    `docker run -v "${path.resolve(
-      folderPath
-    )}/tap:/app/${tap}/data" ${image} ${tap} -c ${tap}/data/config.json -d > "${path.resolve(
-      folderPath
-    )}/tap/catalog.json"`,
-  runSync: (folderPath, tap, target) => {
-    const { usesCatalogArg = true } = tap.specImplementation || {};
+  runDiscovery: (folderPath, tap) => {
+    const { dockerParameters = '' } = tap.specImplementation || {};
     return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
-    }/data" --interactive ${tap.image} ${tap.name} -c ${
+    }/data" ${dockerParameters} ${tap.image} ${tap.name} -c ${
+      tap.name
+    }/data/config.json -d > "${path.resolve(folderPath)}/tap/catalog.json"`;
+  },
+  runSync: (folderPath, tap, target) => {
+    const { usesCatalogArg = true, dockerParameters = '' } =
+      tap.specImplementation || {};
+    return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
+      tap.name
+    }/data" ${dockerParameters} --interactive ${tap.image} ${tap.name} -c ${
       tap.name
     }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
       tap.name
@@ -124,13 +139,14 @@ const commands = {
     )}" > "${path.resolve(folderPath)}/tap/state.json"`;
   },
   runPartialSync: (folderPath, tap, target) => {
-    const { usesCatalogArg = true } = tap.specImplementation || {};
+    const { usesCatalogArg = true, dockerParameters = '' } =
+      tap.specImplementation || {};
     return `tail -1 "${path.resolve(
       folderPath
     )}/tap/state.json" > "${path.resolve(folderPath)}/tap/latest-state.json"; \\
     docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
-    }/data" --interactive ${tap.image} ${tap.name} -c ${
+    }/data" ${dockerParameters} --interactive ${tap.image} ${tap.name} -c ${
       tap.name
     }/data/config.json ${usesCatalogArg ? '--catalog' : '--properties'} ${
       tap.name
