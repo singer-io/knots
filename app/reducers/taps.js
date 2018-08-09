@@ -66,7 +66,7 @@ export type tapsStateType = {
   +'tap-s3-csv': TapS3ConfigType
 };
 
-function defaultState() {
+export function defaultState() {
   return {
     tapsLoading: false,
     tapSelected: false,

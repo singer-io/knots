@@ -43,7 +43,7 @@ const schema = [{ tap_stream_id: 'testing' }];
 
 describe('taps reducer', () => {
   it('should return the initial state', () => {
-    expect(tapReducer(undefined, {})).toEqual(defaultState);
+    expect(tapReducer(undefined, {})).toEqual(defaultState());
   });
 
   it('should handle TAPS_LOADING', () => {
@@ -52,7 +52,7 @@ describe('taps reducer', () => {
         type: tapActions.TAPS_LOADING
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         tapsLoading: true
       })
     );
@@ -66,7 +66,7 @@ describe('taps reducer', () => {
         error: ''
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         tapsLoading: false,
         taps
       })
@@ -81,7 +81,7 @@ describe('taps reducer', () => {
         error: ''
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         tapSelected: true,
         selectedTap
       })
@@ -97,7 +97,7 @@ describe('taps reducer', () => {
         value: '12090'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         'tap-salesforce': updatedSFTap
       })
     );
@@ -110,7 +110,7 @@ describe('taps reducer', () => {
         value: 'testing'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         'tap-redshift': updatedRedshiftTap
       })
     );
@@ -122,7 +122,7 @@ describe('taps reducer', () => {
         type: tapActions.SCHEMA_LOADING
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         schemaLoaded: false,
         schemaLoading: true,
         schemaLogs: [],
@@ -138,7 +138,7 @@ describe('taps reducer', () => {
         newLog: 'logs'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         schemaLogs: ['logs']
       })
     );
@@ -152,7 +152,7 @@ describe('taps reducer', () => {
         error: ''
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         schema,
         schemaLoading: false,
         schemaLoaded: true
@@ -167,7 +167,7 @@ describe('taps reducer', () => {
         type: tapActions.UPDATE_SCHEMA_FIELD
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         schema: []
       })
     );
@@ -180,7 +180,7 @@ describe('taps reducer', () => {
         error: ''
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         tapsLoading: false,
         schemaUpdated: true
       })
@@ -198,7 +198,7 @@ describe('taps reducer', () => {
     ).toEqual(
       Object.assign(
         {},
-        defaultState,
+        defaultState(),
         {
           selectedTap,
           schema,
@@ -224,7 +224,7 @@ describe('taps reducer', () => {
         type: RESET_STORE
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         'tap-salesforce': {
           valid: false,
           fieldValues: {
