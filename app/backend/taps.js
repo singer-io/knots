@@ -20,24 +20,25 @@
  */
 
 const path = require('path');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
+const fs = require('fs');
 const shell = require('shelljs');
-const { app } = require('electron');
 
-const { writeFile, readFile, addKnotAttribute } = require('./util');
+const {
+  writeFile,
+  readFile,
+  addKnotAttribute,
+  getKnotsFolder,
+  createTemporaryKnotFolder,
+  getTemporaryKnotFolder
+} = require('./util');
 const { taps, commands } = require('./constants');
 
-let applicationFolder;
 let runningProcess;
-if (process.env.NODE_ENV === 'production') {
-  applicationFolder = path.resolve(app.getPath('home'), '.knots');
-} else {
-  applicationFolder = path.resolve(__dirname, '../../');
-}
 
-const createKnot = (tap, knotPath) =>
+const createKnot = (tap, modifyKnot) =>
   new Promise((resolve, reject) => {
-    if (knotPath) {
+    if (modifyKnot) {
       addKnotAttribute(
         {
           field: ['tap'],
@@ -47,18 +48,18 @@ const createKnot = (tap, knotPath) =>
             specImplementation: tap.specImplementation
           }
         },
-        knotPath
+        path.resolve(getTemporaryKnotFolder(), 'knot.json')
       )
         .then(() => {
           resolve();
         })
         .catch(reject);
     } else {
-      // Create knots folder if it doesn't exist
-      shell.mkdir('-p', applicationFolder);
+      // Create new temporary knot folder
+      createTemporaryKnotFolder();
 
       writeFile(
-        path.resolve(applicationFolder, 'knot.json'),
+        path.resolve(getTemporaryKnotFolder(), 'knot.json'),
         JSON.stringify({
           tap: {
             name: tap.name,
@@ -74,63 +75,58 @@ const createKnot = (tap, knotPath) =>
     }
   });
 
-const writeConfig = (config, configPath, knot) =>
+const getSchema = (req, mockSpawn) =>
   new Promise((resolve, reject) => {
-    writeFile(configPath, JSON.stringify(config))
-      .then(() => {
-        if (knot) {
-          // Config file already written to file, no further action required
-          resolve();
-        } else {
-          // Remove any previously saved temp config
-          shell.rm('-rf', path.resolve(applicationFolder, 'configs', 'tap'));
-          shell.mkdir('-p', path.resolve(applicationFolder, 'configs', 'tap'));
+    const spawnFunction = mockSpawn || spawn;
+    const knotPath = getTemporaryKnotFolder();
 
-          // Move written config file from root of directory to configs folder
-          shell.mv(
-            path.resolve(applicationFolder, 'config.json'),
-            path.resolve(applicationFolder, 'configs', 'tap')
-          );
-          resolve();
-        }
-      })
-      .catch(reject);
-  });
+    shell.rm('-rf', path.resolve(knotPath, 'tap', 'catalog.json'));
+    shell.mkdir('-p', path.resolve(knotPath, 'tap'));
+    const stdoutStream = fs.createWriteStream(
+      path.resolve(knotPath, 'tap', 'catalog.json'),
+      { flags: 'a' }
+    );
 
-const getSchema = (req, knot) =>
-  new Promise((resolve, reject) => {
-    const knotPath = knot
-      ? path.resolve(applicationFolder, knot)
-      : path.resolve(applicationFolder, 'configs');
-    const runDiscovery = exec(commands.runDiscovery(knotPath, req.body.tap), {
-      detached: true
-    });
+    const discoveryCommand = commands.runDiscovery(knotPath, req.body.tap);
+
+    const runDiscovery = spawnFunction(
+      discoveryCommand.split(' ')[0],
+      discoveryCommand.split(' ').slice(1),
+      {
+        shell: true,
+        detached: true
+      }
+    );
+
+    const failError = `${discoveryCommand} command failed`;
+
     runningProcess = runDiscovery;
 
     runDiscovery.stderr.on('data', (data) => {
-      req.io.emit('schemaLog', data.toString());
+      if (!process.env.NODE_ENV !== 'test') {
+        req.io.emit('schemaLog', data.toString());
+      }
     });
+
+    runDiscovery.stdout.pipe(stdoutStream);
 
     runDiscovery.on('exit', (code) => {
       if (code > 0) {
-        reject(
-          new Error(
-            `${commands.runDiscovery(
-              applicationFolder,
-              req.body.tap
-            )} command failed`
-          )
-        );
+        reject(new Error(failError));
       }
       resolve();
+    });
+
+    runDiscovery.on('error', () => {
+      reject(new Error(failError));
     });
   });
 
 const readSchema = (knot) =>
   new Promise((resolve, reject) => {
     const schemaPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
-      : path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json');
+      ? path.resolve(getKnotsFolder(), knot, 'tap', 'catalog.json')
+      : path.resolve(getTemporaryKnotFolder(), 'tap', 'catalog.json');
     readFile(schemaPath)
       .then((schemaString) => {
         try {
@@ -149,27 +145,30 @@ const readSchema = (knot) =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
-    const { knot, tapConfig, skipDiscovery } = req.body;
+    const { tapConfig, skipDiscovery } = req.body;
 
-    const configPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'config.json')
-      : path.resolve(applicationFolder, 'config.json');
+    const configPath = path.resolve(
+      getTemporaryKnotFolder(),
+      'tap',
+      'config.json'
+    );
 
-    // Write the config to configs/tap/
-    writeConfig(tapConfig, configPath, knot)
+    writeFile(configPath, JSON.stringify(tapConfig))
       .then(() => {
         if (skipDiscovery) {
           resolve({});
-        } else {
+        } else if (process.env.NODE_ENV !== 'test') {
           // Get tap schema by running discovery mode
-          getSchema(req, knot)
+          getSchema(req)
             .then(() => {
               // Schema now on file, read it and return the result
-              readSchema(knot)
+              readSchema()
                 .then(resolve)
                 .catch(reject);
             })
             .catch(reject);
+        } else {
+          resolve();
         }
       })
       .catch(reject);
@@ -184,31 +183,18 @@ const getTaps = () =>
     }
   });
 
-const writeSchema = (schemaObject, knot) =>
+const writeSchema = (schemaObject) =>
   new Promise((resolve, reject) => {
-    const catalogPath = knot
-      ? path.resolve(applicationFolder, knot, 'tap', 'catalog.json')
-      : path.resolve(applicationFolder, 'catalog.json');
+    shell.mkdir('-p', path.resolve(getTemporaryKnotFolder(), 'tap'));
+    const catalogPath = path.resolve(
+      getTemporaryKnotFolder(),
+      'tap',
+      'catalog.json'
+    );
 
     writeFile(catalogPath, JSON.stringify(schemaObject))
       .then(() => {
-        if (knot) {
-          // Catalog file already written to file, no further action required
-          resolve();
-        } else {
-          // Remove previous catalog file if any
-          shell.rm(
-            '-f',
-            path.resolve(applicationFolder, 'configs', 'tap', 'catalog.json')
-          );
-
-          // Move catalog file from root of directory to configs folder
-          shell.mv(
-            path.resolve(applicationFolder, 'catalog.json'),
-            path.resolve(applicationFolder, 'configs', 'tap')
-          );
-          resolve();
-        }
+        resolve();
       })
       .catch(reject);
   });
@@ -219,23 +205,13 @@ const terminateDiscovery = () => {
   }
 };
 
-const addTap = (tap, knot) =>
-  new Promise((resolve, reject) => {
-    const knotPath = knot
-      ? path.resolve(applicationFolder, 'knots', knot, 'knot.json')
-      : '';
-    createKnot(tap, knotPath)
-      .then(() => {
-        resolve();
-      })
-      .catch(reject);
-  });
-
 module.exports = {
   getTaps,
-  addTap,
   addConfig,
   writeSchema,
   runningProcess,
-  terminateDiscovery
+  terminateDiscovery,
+  createKnot,
+  getSchema,
+  readSchema
 };

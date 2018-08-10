@@ -22,6 +22,7 @@
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const shell = require('shelljs');
 const { set } = require('lodash');
 const { app } = require('electron');
 
@@ -44,11 +45,20 @@ const getApplicationFolder = () => {
   return applicationFolder;
 };
 
-const getKnotsFolder = () => {
-  const applicationFolder = getApplicationFolder();
+const createTemporaryKnotFolder = () => {
+  shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
 
-  return path.resolve(applicationFolder, 'knots');
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot', 'tap'));
+  shell.mkdir(
+    '-p',
+    path.resolve(getApplicationFolder(), 'tmp', 'knot', 'target')
+  );
 };
+
+const getKnotsFolder = () => path.resolve(getApplicationFolder(), 'knots');
+const getTemporaryKnotFolder = () =>
+  path.resolve(getApplicationFolder(), 'tmp', 'knot');
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {
@@ -73,8 +83,10 @@ const writeFile = (filePath, content) =>
     });
   });
 
-const addKnotAttribute = (content, pathToKnot) =>
+const addKnotAttribute = (content, knotPath) =>
   new Promise((resolve, reject) => {
+    const pathToKnot =
+      knotPath || path.resolve(getTemporaryKnotFolder(), 'knot.json');
     readFile(pathToKnot)
       .then((knotObjectString) => {
         try {
@@ -98,10 +110,40 @@ const addKnotAttribute = (content, pathToKnot) =>
       .catch(reject);
   });
 
+const createMakeFileCommands = (knot) =>
+  /* eslint-disable no-template-curly-in-string */
+  `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+    os.EOL
+  }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
+    knot.tap.image
+  } ${
+    knot.tap.name
+  } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
+    knot.target.image
+  } ${knot.target.name} -c target/data/config.json > ./tap/state.json${
+    os.EOL
+  }sync:${
+    os.EOL
+  }\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${
+    os.EOL
+  }\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${
+    os.EOL
+  }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
+    knot.tap.image
+  } ${
+    knot.tap.name
+  } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
+    knot.target.image
+  } ${knot.target.name} -c target/data/config.json > ./tap/state.json`;
+/* eslint-disable no-template-curly-in-string */
+
 module.exports = {
   getApplicationFolder,
   getKnotsFolder,
   readFile,
   writeFile,
-  addKnotAttribute
+  addKnotAttribute,
+  createTemporaryKnotFolder,
+  getTemporaryKnotFolder,
+  createMakeFileCommands
 };

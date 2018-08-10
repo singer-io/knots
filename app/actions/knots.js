@@ -45,6 +45,7 @@ export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
 export const RESET_STORE = 'RESET_STORE';
+export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
 
 type actionType = {
   +type: string
@@ -249,9 +250,7 @@ export function downloadKnot(knot: string) {
     axios
       .post(`${baseUrl}/knots/download/`, { knot })
       .then(() => {
-        if (process.env.NODE_ENV === 'test') {
-          console.log('Opening url via external browser');
-        } else {
+        if (process.env.NODE_ENV !== 'test') {
           shell.openExternal(
             `http://localhost:4321/knots/download?knot=${knot}`
           );
@@ -301,4 +300,12 @@ export function cancel(knot: string) {
       .post(`${baseUrl}/knots/cancel/`, { knot })
       .then(() => {})
       .catch(() => {});
+}
+
+export function resetKnotError() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: RESET_KNOT_ERROR
+    });
+  };
 }

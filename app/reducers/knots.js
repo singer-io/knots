@@ -33,7 +33,8 @@ import {
   LOADED_KNOT,
   LOADING_KNOT,
   DOCKER_RUNNING,
-  RESET_STORE
+  RESET_STORE,
+  RESET_KNOT_ERROR
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -86,13 +87,15 @@ export default function knots(state = defaultState, action) {
       return Object.assign({}, state, {
         dockerVersion: action.version,
         dockerError: action.error,
-        dockerVerified: !!action.error
+        dockerVerified: !!action.error,
+        detectingDocker: false
       });
     case DOCKER_RUNNING:
       return Object.assign({}, state, {
         dockerRunning: action.running,
         dockerError: action.error,
-        dockerVerified: true
+        dockerVerified: true,
+        detectingDocker: false
       });
     case FETCHING_KNOTS:
       return Object.assign({}, state, {
@@ -143,6 +146,12 @@ export default function knots(state = defaultState, action) {
         knotLoaded: true,
         knotName: action.knotName,
         knotError: action.error || ''
+      });
+    case RESET_KNOT_ERROR:
+      return Object.assign({}, state, {
+        knotError: '',
+        knotSyncing: false,
+        knotSynced: false
       });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
