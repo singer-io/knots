@@ -136,7 +136,6 @@ describe('taps reducer', () => {
     );
   });
 
-  // TODO: Needs a more comprehensive test
   it('should handle UPDATE_SCHEMA_FIELD', () => {
     expect(
       tapReducer(undefined, {
