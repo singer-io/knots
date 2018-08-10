@@ -19,9 +19,15 @@
  * data.world, Inc.(http://data.world/).
  */
 
+const path = require('path');
 const router = require('express').Router();
 
-const { getTargets, addTarget, addTargetConfig } = require('../targets');
+const { getTargets } = require('../targets');
+const {
+  addKnotAttribute,
+  getTemporaryKnotFolder,
+  writeFile
+} = require('../util');
 
 router.get('/', (req, res) => {
   getTargets()
@@ -32,7 +38,13 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  addTargetConfig(req.body.fieldValues, req.body.knot)
+  const configPath = path.resolve(
+    getTemporaryKnotFolder(),
+    'target',
+    'config.json'
+  );
+
+  writeFile(configPath, JSON.stringify(req.body.fieldValues))
     .then(() => res.json({}))
     .catch((error) => {
       res.status(500).json({ message: error.message });
@@ -40,7 +52,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  addTarget(req.body.target, req.body.knot)
+  addKnotAttribute({ field: 'target', value: req.body.target })
     .then(() => {
       res.json({});
     })

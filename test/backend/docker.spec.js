@@ -14,7 +14,7 @@ describe('docker commands', () => {
           expect(res).toEqual('Docker version 18.03.1-ce, build 9ee9f40');
         })
         .catch((err) => {
-          expect(err).toBe(undefined);
+          expect(err).toBeUndefined();
         });
     });
 
@@ -22,7 +22,7 @@ describe('docker commands', () => {
       mySpawn.setDefault(mySpawn.simple(1));
       dockerInstalled(mySpawn)
         .then((res) => {
-          expect(res).toBe(undefined);
+          expect(res).toBeUndefined();
         })
         .catch((err) => {
           expect(err).toEqual(new Error('Unable to run Docker'));
@@ -38,7 +38,7 @@ describe('docker commands', () => {
           expect(res).toEqual('DRIVER              VOLUME NAME');
         })
         .catch((err) => {
-          expect(err).toBe(undefined);
+          expect(err).toBeUndefined();
         });
     });
 
@@ -46,7 +46,7 @@ describe('docker commands', () => {
       mySpawn.setDefault(mySpawn.simple(1));
       dockerRunning(mySpawn)
         .then((res) => {
-          expect(res).toBe(undefined);
+          expect(res).toBeUndefined();
         })
         .catch((err) => {
           expect(err).toEqual(new Error('Unable to get Docker volumes'));
