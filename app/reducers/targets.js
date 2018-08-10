@@ -33,15 +33,17 @@ export type targetsStateType = {
   +selectedTarget: { name: sring, image: string }
 };
 
-const defaultState = {
-  targets: [],
-  targetsLoading: false,
-  targetInstalled: false,
-  targetSelected: false,
-  selectedTarget: { name: '', image: '' }
-};
+export function defaultState() {
+  return {
+    targets: [],
+    targetsLoading: false,
+    targetInstalled: false,
+    targetSelected: false,
+    selectedTarget: { name: '', image: '' }
+  };
+}
 
-export default function targets(state = defaultState, action) {
+export default function targets(state = defaultState(), action) {
   switch (action.type) {
     case TARGETS_LOADING:
       return Object.assign({}, state, {
@@ -62,14 +64,7 @@ export default function targets(state = defaultState, action) {
         selectedTarget: action.target
       });
     case RESET_STORE:
-      // Fact that objects are passed by reference makes this necessary, open to other suggestions
-      return {
-        targets: [],
-        targetsLoading: false,
-        targetInstalled: false,
-        targetSelected: false,
-        selectedTarget: { name: '', image: '' }
-      };
+      return defaultState();
     default:
       return state;
   }

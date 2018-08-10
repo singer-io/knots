@@ -3,30 +3,22 @@ import configureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
 import * as tapActions from '../../app/actions/taps';
+import { sampleTaps, sampleTapConfig, sampleSchema } from '../utils';
 
 const baseUrl = 'http://localhost:4321';
 const middlewares = [thunk];
 const mockStore = configureStore(middlewares);
 
-const taps = [
-  {
-    name: 'sampleTap',
-    image: ''
-  },
-  {
-    name: 'sampleTap2',
-    image: ''
-  }
-];
+const taps = sampleTaps;
 const newLog = '';
 const tap = 'sampleTap';
 const field = 'name';
 const value = '';
 const knot = '';
 const index = 1;
-const tapConfig = { start_date: '01-01-2017' };
+const tapConfig = sampleTapConfig;
 const skipDiscovery = false;
-const schema = [{ tap_stream_id: 'testing' }];
+const schema = sampleSchema;
 const specImplementation = {};
 
 describe('taps actions', () => {
@@ -249,8 +241,6 @@ describe('taps actions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
-
-  // TODO: Test case for SCHEMA_UPDATED action
 
   describe('update schema logs', () => {
     it('should dispatch UPDATE_SCHEMA_LOGS', () => {

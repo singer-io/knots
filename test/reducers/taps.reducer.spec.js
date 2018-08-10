@@ -1,45 +1,21 @@
 import tapReducer, { defaultState } from '../../app/reducers/taps';
 import * as tapActions from '../../app/actions/taps';
 import { LOADED_KNOT, RESET_STORE } from '../../app/actions/knots';
+import {
+  sampleTaps,
+  sampleSelectedTap,
+  sampleUpdatedSFTap,
+  sampleUpdatedRedshiftTap,
+  sampleTapConfig,
+  sampleSchema
+} from '../utils';
 
-const taps = [
-  {
-    name: 'sampleTap1',
-    tapImage: 'sampleTap1',
-    tapKey: 'tap-sampleTap1'
-  },
-  {
-    name: 'sampleTap2',
-    tapImage: 'sampleTap2',
-    tapKey: 'tap-sampleTap2'
-  }
-];
-const selectedTap = { name: 'tap-salesforce' };
-const updatedSFTap = {
-  valid: false,
-  fieldValues: {
-    api_type: 'BULK',
-    client_id: '12090',
-    client_secret: '',
-    refresh_token: '',
-    select_fields_by_default: true,
-    start_date: ''
-  }
-};
-const updatedRedshiftTap = {
-  valid: false,
-  fieldValues: {
-    host: 'testing',
-    port: undefined,
-    dbname: '',
-    schema: 'public',
-    user: '',
-    password: '',
-    start_date: ''
-  }
-};
-const tapConfig = { start_date: '01-01-2017' };
-const schema = [{ tap_stream_id: 'testing' }];
+const taps = sampleTaps;
+const selectedTap = sampleSelectedTap;
+const updatedSFTap = sampleUpdatedSFTap;
+const updatedRedshiftTap = sampleUpdatedRedshiftTap;
+const tapConfig = sampleTapConfig;
+const schema = sampleSchema;
 
 describe('taps reducer', () => {
   it('should return the initial state', () => {
@@ -160,7 +136,6 @@ describe('taps reducer', () => {
     );
   });
 
-  // TODO: Needs a more comprehensive test
   it('should handle UPDATE_SCHEMA_FIELD', () => {
     expect(
       tapReducer(undefined, {

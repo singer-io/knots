@@ -52,7 +52,7 @@ export function getTargets() {
       type: TARGETS_LOADING
     });
 
-    axios
+    return axios
       .get(`${baseUrl}/targets/`)
       .then((response) => {
         dispatch({
@@ -80,7 +80,7 @@ export function selectTarget(
       target
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/targets/select`, { target, knot })
       .then(() => {
         dispatch({
@@ -102,7 +102,7 @@ export function submitFields(fieldValues: {}, knot: string) {
       type: TARGET_CONFIGURING
     });
 
-    axios
+    return axios
       .post(`${baseUrl}/targets/`, { fieldValues, knot })
       .then(() => {
         dispatch({
