@@ -64,7 +64,6 @@ export default function targets(state = defaultState(), action) {
         selectedTarget: action.target
       });
     case RESET_STORE:
-      // Fact that objects are passed by reference makes this necessary, open to other suggestions
       return defaultState();
     default:
       return state;
