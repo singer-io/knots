@@ -48,7 +48,7 @@ describe('knots functions', () => {
           );
         })
         .catch((err) => {
-          expect(err).toBe(null);
+          expect(err).toBeUndefined();
         });
     });
 
@@ -90,8 +90,8 @@ describe('knots functions', () => {
 
   describe('cancel', () => {
     beforeAll((done) => {
-      shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
-      shell.mkdir('-p', path.resolve('tmp', 'knot', 'target'));
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'tap'));
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'target'));
       done();
     });
 
@@ -100,7 +100,7 @@ describe('knots functions', () => {
     });
 
     it('should delete the temporary knot', () => {
-      cancel()
+      cancel('cancelUUID')
         .then(() => {
           const getDirectories = (source) =>
             fs
@@ -111,7 +111,7 @@ describe('knots functions', () => {
               .map((folderPath) => path.basename(folderPath));
 
           // Array of knot names
-          const knots = getDirectories(path.resolve('tmp'));
+          const knots = getDirectories(path.resolve('tmp', 'cancelUUID'));
 
           expect(knots.length).toEqual(0);
         })
@@ -145,7 +145,8 @@ describe('knots functions', () => {
     });
 
     it('should load values of a saved knot', (done) => {
-      loadValues('savedKnot')
+      const uuid = Math.random().toString();
+      loadValues('savedKnot', uuid)
         .then((res) => {
           expect(res.name).toEqual(sampleSavedKnot.knotJson.name);
           expect(res.tap).toEqual(sampleSavedKnot.knotJson.tap);
@@ -163,7 +164,8 @@ describe('knots functions', () => {
     });
 
     it('should reject promise when there is an invalid file', (done) => {
-      loadValues('invalidSavedKnot')
+      const uuid = Math.random().toString();
+      loadValues('invalidSavedKnot', uuid)
         .then((res) => {
           expect(res).toBeUndefined();
           done();

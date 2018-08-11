@@ -180,10 +180,10 @@ export const seedInvalidKnot = () =>
 
 export const seedTapCatalog = () =>
   new Promise((resolve, reject) => {
-    shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
+    shell.mkdir('-p', path.resolve('tmp', 'uuid', 'knot', 'tap'));
 
     fs.writeFile(
-      path.resolve('tmp', 'knot', 'tap', 'catalog.json'),
+      path.resolve('tmp', 'uuid', 'knot', 'tap', 'catalog.json'),
       JSON.stringify(sampleTapCatalog),
       (error) => {
         if (!error) {
@@ -219,10 +219,10 @@ export const seedTapCatalog = () =>
 
 export const seedTapConfig = () =>
   new Promise((resolve, reject) => {
-    shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
+    shell.mkdir('-p', path.resolve('tmp', 'configUUID', 'knot', 'tap'));
 
     fs.writeFile(
-      path.resolve('tmp', 'knot', 'tap', 'config.json'),
+      path.resolve('tmp', 'configUUID', 'knot', 'tap', 'config.json'),
       JSON.stringify(sampleTapConfig),
       (error) => {
         if (!error) {

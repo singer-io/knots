@@ -36,7 +36,7 @@ const { taps, commands } = require('./constants');
 
 let runningProcess;
 
-const createKnot = (tap, modifyKnot) =>
+const createKnot = (tap, uuid, modifyKnot) =>
   new Promise((resolve, reject) => {
     if (modifyKnot) {
       addKnotAttribute(
@@ -48,7 +48,7 @@ const createKnot = (tap, modifyKnot) =>
             specImplementation: tap.specImplementation
           }
         },
-        path.resolve(getTemporaryKnotFolder(), 'knot.json')
+        path.resolve(getTemporaryKnotFolder(uuid), 'knot.json')
       )
         .then(() => {
           resolve();
@@ -56,10 +56,10 @@ const createKnot = (tap, modifyKnot) =>
         .catch(reject);
     } else {
       // Create new temporary knot folder
-      createTemporaryKnotFolder();
+      createTemporaryKnotFolder(uuid);
 
       writeFile(
-        path.resolve(getTemporaryKnotFolder(), 'knot.json'),
+        path.resolve(getTemporaryKnotFolder(uuid), 'knot.json'),
         JSON.stringify({
           tap: {
             name: tap.name,
@@ -78,7 +78,7 @@ const createKnot = (tap, modifyKnot) =>
 const getSchema = (req, mockSpawn) =>
   new Promise((resolve, reject) => {
     const spawnFunction = mockSpawn || spawn;
-    const knotPath = getTemporaryKnotFolder();
+    const knotPath = getTemporaryKnotFolder(req.body.uuid);
 
     shell.rm('-rf', path.resolve(knotPath, 'tap', 'catalog.json'));
     shell.mkdir('-p', path.resolve(knotPath, 'tap'));
@@ -122,11 +122,11 @@ const getSchema = (req, mockSpawn) =>
     });
   });
 
-const readSchema = (knot) =>
+const readSchema = (knot, uuid) =>
   new Promise((resolve, reject) => {
     const schemaPath = knot
       ? path.resolve(getKnotsFolder(), knot, 'tap', 'catalog.json')
-      : path.resolve(getTemporaryKnotFolder(), 'tap', 'catalog.json');
+      : path.resolve(getTemporaryKnotFolder(uuid), 'tap', 'catalog.json');
     readFile(schemaPath)
       .then((schemaString) => {
         try {
@@ -145,10 +145,10 @@ const readSchema = (knot) =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
-    const { tapConfig, skipDiscovery } = req.body;
+    const { tapConfig, uuid, skipDiscovery } = req.body;
 
     const configPath = path.resolve(
-      getTemporaryKnotFolder(),
+      getTemporaryKnotFolder(uuid),
       'tap',
       'config.json'
     );
@@ -183,11 +183,11 @@ const getTaps = () =>
     }
   });
 
-const writeSchema = (schemaObject) =>
+const writeSchema = (schemaObject, uuid) =>
   new Promise((resolve, reject) => {
-    shell.mkdir('-p', path.resolve(getTemporaryKnotFolder(), 'tap'));
+    shell.mkdir('-p', path.resolve(getTemporaryKnotFolder(uuid), 'tap'));
     const catalogPath = path.resolve(
-      getTemporaryKnotFolder(),
+      getTemporaryKnotFolder(uuid),
       'tap',
       'catalog.json'
     );

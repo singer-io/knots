@@ -41,10 +41,11 @@ describe('taps functions', () => {
     });
 
     it('should update saved knot', (done) => {
-      shell.mkdir('-p', path.resolve('tmp', 'knot'));
+      const uuid = Math.random().toString();
+      shell.mkdir('-p', path.resolve('tmp', uuid, 'knot'));
 
       fs.writeFile(
-        path.resolve('tmp', 'knot', 'knot.json'),
+        path.resolve('tmp', uuid, 'knot', 'knot.json'),
         JSON.stringify({}),
         (err) => {
           if (!err) {
@@ -54,11 +55,12 @@ describe('taps functions', () => {
                 image: 'new-tap-image',
                 specImplementation: {}
               },
+              uuid,
               true
             )
               .then(() => {
                 fs.readFile(
-                  path.resolve('tmp', 'knot', 'knot.json'),
+                  path.resolve('tmp', uuid, 'knot', 'knot.json'),
                   'utf8',
                   (er, data) => {
                     if (!er) {
@@ -95,14 +97,18 @@ describe('taps functions', () => {
     });
 
     it('should create a new knot json in a temp folder', (done) => {
-      createKnot({
-        name: 'new-tap',
-        image: 'new-tap-image',
-        specImplementation: {}
-      })
+      const uuid = Math.random().toString();
+      createKnot(
+        {
+          name: 'new-tap',
+          image: 'new-tap-image',
+          specImplementation: {}
+        },
+        uuid
+      )
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'knot', 'knot.json'),
+            path.resolve('tmp', uuid, 'knot', 'knot.json'),
             'utf8',
             (err, data) => {
               if (!err) {
@@ -139,7 +145,8 @@ describe('taps functions', () => {
       getSchema(
         {
           body: {
-            tap: { name: 'tap-adwords', image: 'dataworld/tap-adwords:1.3.3' }
+            tap: { name: 'tap-adwords', image: 'dataworld/tap-adwords:1.3.3' },
+            uuid: 'schemaUUID'
           }
         },
         mySpawn
@@ -157,7 +164,11 @@ describe('taps functions', () => {
       getSchema(
         {
           body: {
-            tap: { name: 'tap-adwords', image: 'dataworld/tap-adwords:1.3.3' }
+            tap: {
+              name: 'tap-adwords',
+              image: 'dataworld/tap-adwords:1.3.3',
+              uuid: 'schemaUUID'
+            }
           }
         },
         mySpawn
@@ -188,7 +199,7 @@ describe('taps functions', () => {
     });
 
     it('should read a temporary knot schema', (done) => {
-      readSchema()
+      readSchema(null, 'uuid')
         .then((res) => {
           expect(res).toEqual(sampleTapCatalog);
           done();
@@ -241,10 +252,16 @@ describe('taps functions', () => {
     });
 
     it("should save a temp knot's tap config", (done) => {
-      addConfig({ body: { tapConfig: sampleTapConfig, skipDiscovery: false } })
+      addConfig({
+        body: {
+          tapConfig: sampleTapConfig,
+          skipDiscovery: false,
+          uuid: 'configUUID'
+        }
+      })
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'knot', 'tap', 'config.json'),
+            path.resolve('tmp', 'configUUID', 'knot', 'tap', 'config.json'),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();
@@ -270,12 +287,13 @@ describe('taps functions', () => {
           tapConfig: Object.assign({}, sampleTapConfig, {
             skipDiscovery: true
           }),
-          skipDiscovery: true
+          skipDiscovery: true,
+          uuid: 'configUUID'
         }
       })
         .then((res) => {
           fs.readFile(
-            path.resolve('tmp', 'knot', 'tap', 'config.json'),
+            path.resolve('tmp', 'configUUID', 'knot', 'tap', 'config.json'),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();
@@ -314,11 +332,16 @@ describe('taps functions', () => {
   });
 
   describe('write schema', () => {
+    afterAll(() => {
+      cleanfs();
+    });
+
     it('should write tap catalog to file', (done) => {
-      writeSchema(sampleTapCatalog)
+      const uuid = Math.random().toString();
+      writeSchema(sampleTapCatalog, uuid)
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'knot', 'tap', 'catalog.json'),
+            path.resolve('tmp', uuid, 'knot', 'tap', 'catalog.json'),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();

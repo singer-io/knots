@@ -248,17 +248,17 @@ const downloadKnot = (req, res) => {
   res.download(`${path.resolve(getApplicationFolder(), 'tmp')}/${knot}.zip`);
 };
 
-const loadValues = (knot) =>
+const loadValues = (knot, uuid) =>
   new Promise((resolve, reject) => {
-    createTemporaryKnotFolder();
+    createTemporaryKnotFolder(uuid);
     // Make a clone of the knot to be edited
     shell.cp(
       '-R',
       path.resolve(getKnotsFolder(), knot, '*'),
-      path.resolve(getTemporaryKnotFolder())
+      path.resolve(getTemporaryKnotFolder(uuid))
     );
 
-    const knotPath = getTemporaryKnotFolder();
+    const knotPath = getTemporaryKnotFolder(uuid);
 
     const promises = [
       readFile(`${knotPath}/knot.json`),
@@ -304,10 +304,10 @@ const terminateSync = () => {
   }
 };
 
-const cancel = () =>
+const cancel = (uuid) =>
   new Promise((resolve, reject) => {
     try {
-      shell.rm('-rf', getTemporaryKnotFolder());
+      shell.rm('-rf', getTemporaryKnotFolder(uuid));
       resolve();
     } catch (error) {
       reject(error);
