@@ -28,7 +28,8 @@ import { shell } from 'electron';
 
 type Props = {
   dockerInstalled: boolean,
-  dockerRunning: boolean
+  dockerRunning: boolean,
+  generateUUID: () => void
 };
 
 class Create extends Component<Props> {
@@ -38,7 +39,7 @@ class Create extends Component<Props> {
   };
 
   render() {
-    const { dockerInstalled, dockerRunning } = this.props;
+    const { dockerInstalled, dockerRunning, generateUUID } = this.props;
 
     return (
       <Jumbotron>
@@ -57,6 +58,7 @@ class Create extends Component<Props> {
             color="primary"
             disabled={!dockerInstalled || !dockerRunning}
             className="mt-3"
+            onClick={generateUUID}
           >
             Get Started
           </Button>

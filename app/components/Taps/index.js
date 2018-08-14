@@ -55,7 +55,7 @@ type Props = {
       repo: string
     }>
   },
-  knotsStore: { knotName: string, knotLoaded: boolean },
+  knotsStore: { knotName: string, uuid: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
   selectTap: (tap: TapPropertiesType) => void,
   submitConfig: (
@@ -162,6 +162,7 @@ export default class Taps extends Component<Props, State> {
           selectTap={this.props.selectTap}
           selected={selectedTap.name}
           knotName={knotName}
+          uuid={this.props.knotsStore.uuid}
         />
       );
       const lastTapInRow = (i + 1) % 3 === 0;

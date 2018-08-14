@@ -32,9 +32,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  const { tap, knot } = req.body;
+  const { tap, knot, uuid } = req.body;
 
-  createKnot(tap, !!knot)
+  createKnot(tap, uuid, !!knot)
     .then(() => {
       res.json({});
     })

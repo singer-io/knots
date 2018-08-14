@@ -53,7 +53,8 @@ type Props = {
   },
   resetStore: () => void,
   deleteKnot: (knot: string) => void,
-  downloadKnot: (knot: string) => void
+  downloadKnot: (knot: string) => void,
+  generateUUID: () => void
 };
 
 type State = {
@@ -212,7 +213,12 @@ export default class Home extends Component<Props, State> {
                   toggleDownloadDisclaimer={this.toggleDownloadDisclaimer}
                 />
               )}
-              {knots.length === 0 && <Create {...this.state} />}
+              {knots.length === 0 && (
+                <Create
+                  {...this.state}
+                  generateUUID={this.props.generateUUID}
+                />
+              )}
             </div>
           )}
         </Container>

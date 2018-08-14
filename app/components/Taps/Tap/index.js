@@ -37,8 +37,9 @@ type Props = {
   selected: string,
   repo: string,
   specImplementation?: SpecImplementationPropType,
-  selectTap: (tap: TapPropertiesType, knotName: string) => void,
-  knotName: string
+  selectTap: (tap: TapPropertiesType, knotName: string, uuid: string) => void,
+  knotName: string,
+  uuid: string
 };
 
 type State = {
@@ -92,6 +93,7 @@ export default class Tap extends Component<Props, State> {
                 repo,
                 specImplementation
               },
+              this.props.uuid,
               knotName
             );
           }}

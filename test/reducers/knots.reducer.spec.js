@@ -3,7 +3,7 @@ import * as knotActions from '../../app/actions/knots';
 
 describe('knots reducer', () => {
   it('should return the initial state', () => {
-    expect(knotReducer(undefined, {})).toEqual(defaultState);
+    expect(knotReducer(undefined, {})).toEqual(defaultState());
   });
 
   it('should handle DETECTING_DOCKER', () => {
@@ -12,7 +12,7 @@ describe('knots reducer', () => {
         type: knotActions.DETECTING_DOCKER
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         detectingDocker: true
       })
     );
@@ -26,7 +26,7 @@ describe('knots reducer', () => {
         error: false
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         dockerError: false,
         dockerVerified: false
       })
@@ -41,7 +41,7 @@ describe('knots reducer', () => {
         error: false
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         dockerRunning: true,
         dockerError: false,
         dockerVerified: true
@@ -55,7 +55,7 @@ describe('knots reducer', () => {
         type: knotActions.FETCHING_KNOTS
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         fetchingKnots: true,
         knotDeleted: false
       })
@@ -69,7 +69,7 @@ describe('knots reducer', () => {
         knots: []
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         fetchingKnots: false,
         knots: []
       })
@@ -83,7 +83,7 @@ describe('knots reducer', () => {
         newLog: 'showing tap logs'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         tapLogs: ['showing tap logs']
       })
     );
@@ -96,7 +96,7 @@ describe('knots reducer', () => {
         newLog: 'showing target logs'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         targetLogs: ['showing target logs']
       })
     );
@@ -109,7 +109,7 @@ describe('knots reducer', () => {
         name: 'knotname'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotName: 'knotname'
       })
     );
@@ -121,7 +121,7 @@ describe('knots reducer', () => {
         type: knotActions.KNOT_SYNCING
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotSyncing: true,
         knotSynced: false,
         tapLogs: [],
@@ -136,7 +136,7 @@ describe('knots reducer', () => {
         type: knotActions.KNOT_SYNCED
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotSyncing: false,
         knotSynced: true
       })
@@ -149,7 +149,7 @@ describe('knots reducer', () => {
         type: knotActions.KNOT_DELETED
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotDeleted: true
       })
     );
@@ -161,7 +161,7 @@ describe('knots reducer', () => {
         type: knotActions.LOADING_KNOT
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotLoading: true
       })
     );
@@ -174,7 +174,7 @@ describe('knots reducer', () => {
         knotName: 'knotname'
       })
     ).toEqual(
-      Object.assign({}, defaultState, {
+      Object.assign({}, defaultState(), {
         knotLoading: false,
         knotLoaded: true,
         knotName: 'knotname'
@@ -187,6 +187,6 @@ describe('knots reducer', () => {
       knotReducer(undefined, {
         type: knotActions.RESET_STORE
       })
-    ).toEqual(Object.assign({}, defaultState));
+    ).toEqual(Object.assign({}, defaultState()));
   });
 });

@@ -94,11 +94,16 @@ export function fetchTaps() {
   };
 }
 
-export function selectTap(tap: TapPropertiesType, knotName: string) {
+export function selectTap(
+  tap: TapPropertiesType,
+  uuid: string,
+  knotName: string
+) {
   return (dispatch: (action: actionType) => void) =>
     axios
       .post(`${baseUrl}/taps/select/`, {
         tap,
+        uuid,
         knot: knotName
       })
       .then(() => {

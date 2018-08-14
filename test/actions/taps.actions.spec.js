@@ -103,6 +103,7 @@ describe('taps actions', () => {
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/select/', {
           tap: taps[0],
+          uuid: 'qwertyui',
           knot: 'tap'
         })
         .reply(200, {});
@@ -114,9 +115,11 @@ describe('taps actions', () => {
         }
       ];
 
-      return store.dispatch(tapActions.selectTap(taps[0], 'tap')).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+      return store
+        .dispatch(tapActions.selectTap(taps[0], 'qwertyui', 'tap'))
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
     });
 
     it('should dispatch TAP_SELECTED with errors', () => {

@@ -23,6 +23,8 @@
 
 import axios from 'axios';
 import { shell } from 'electron';
+import shortid from 'shortid';
+
 import type { TapPropertiesType } from '../utils/sharedTypes';
 
 const baseUrl = 'http://localhost:4321';
@@ -46,6 +48,7 @@ export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
 export const RESET_STORE = 'RESET_STORE';
 export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
+export const GENERATED_UUID = 'GENERATED_UUID';
 
 type actionType = {
   +type: string
@@ -306,6 +309,15 @@ export function resetKnotError() {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: RESET_KNOT_ERROR
+    });
+  };
+}
+
+export function generateUUID() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: GENERATED_UUID,
+      uuid: shortid.generate()
     });
   };
 }
