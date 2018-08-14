@@ -9,7 +9,6 @@ import {
   seedTapConfig,
   sampleTapCatalog,
   sampleTapConfig,
-  savedSampleTapCatalog,
   cleanfs
 } from '../util';
 import {
@@ -199,37 +198,13 @@ describe('taps functions', () => {
     });
 
     it('should read a temporary knot schema', (done) => {
-      readSchema(null, 'uuid')
+      readSchema('uuid')
         .then((res) => {
           expect(res).toEqual(sampleTapCatalog);
           done();
         })
         .catch((err) => {
           expect(err).toBeUndefined();
-          done();
-        });
-    });
-
-    it('should read a saved knot schema', (done) => {
-      readSchema('savedKnot')
-        .then((res) => {
-          expect(res).toEqual(savedSampleTapCatalog);
-          done();
-        })
-        .catch((err) => {
-          expect(err).toBeUndefined();
-          done();
-        });
-    });
-
-    it('should reject promise for invalid jsons', (done) => {
-      readSchema('invalidKnot')
-        .then(() => {
-          expect(true).toBe(false);
-          done();
-        })
-        .catch((err) => {
-          expect(err).toBeDefined();
           done();
         });
     });

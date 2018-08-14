@@ -149,6 +149,7 @@ export function updateTapField(
 export function submitConfig(
   tap: { name: string, image: string },
   config: { start_date?: string },
+  uuid: string,
   knotName: string,
   skipDiscovery: ?boolean
 ) {
@@ -161,6 +162,7 @@ export function submitConfig(
     const payload = {
       tap,
       tapConfig,
+      uuid,
       knot: knotName,
       skipDiscovery
     };

@@ -126,6 +126,7 @@ export default class Taps extends Component<Props, State> {
       this.props.submitConfig(
         selectedTap,
         fieldValues,
+        this.props.knotsStore.uuid,
         knotName,
         skipDiscovery
       );

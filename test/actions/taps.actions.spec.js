@@ -172,8 +172,9 @@ describe('taps actions', () => {
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/config/', {
           tap: taps[0],
-          knot,
           tapConfig,
+          uuid: 'asdfgjk',
+          knot,
           skipDiscovery
         })
         .reply(200, { schema });
@@ -190,7 +191,13 @@ describe('taps actions', () => {
 
       return store
         .dispatch(
-          tapActions.submitConfig(taps[0], tapConfig, knot, skipDiscovery)
+          tapActions.submitConfig(
+            taps[0],
+            tapConfig,
+            'asdfgjk',
+            knot,
+            skipDiscovery
+          )
         )
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);

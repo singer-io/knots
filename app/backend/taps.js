@@ -28,7 +28,6 @@ const {
   writeFile,
   readFile,
   addKnotAttribute,
-  getKnotsFolder,
   createTemporaryKnotFolder,
   getTemporaryKnotFolder
 } = require('./util');
@@ -122,11 +121,13 @@ const getSchema = (req, mockSpawn) =>
     });
   });
 
-const readSchema = (knot, uuid) =>
+const readSchema = (uuid) =>
   new Promise((resolve, reject) => {
-    const schemaPath = knot
-      ? path.resolve(getKnotsFolder(), knot, 'tap', 'catalog.json')
-      : path.resolve(getTemporaryKnotFolder(uuid), 'tap', 'catalog.json');
+    const schemaPath = path.resolve(
+      getTemporaryKnotFolder(uuid),
+      'tap',
+      'catalog.json'
+    );
     readFile(schemaPath)
       .then((schemaString) => {
         try {
@@ -162,7 +163,7 @@ const addConfig = (req) =>
           getSchema(req)
             .then(() => {
               // Schema now on file, read it and return the result
-              readSchema()
+              readSchema(req.body.uuid)
                 .then(resolve)
                 .catch(reject);
             })
