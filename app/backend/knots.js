@@ -181,6 +181,11 @@ const saveKnot = (name, uuid, currentName) =>
                 path.resolve(getKnotsFolder(), name)
               );
 
+              shell.rm(
+                '-rf',
+                path.resolve(getApplicationFolder(), 'tmp', uuid)
+              );
+
               // Add a make file to the folder
               writeFile(
                 path.resolve(getKnotsFolder(), name, 'Makefile'),
