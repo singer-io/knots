@@ -46,6 +46,7 @@ export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
+export const LOADED_KNOT_JSON = 'LOADED_KNOT_JSON';
 export const RESET_STORE = 'RESET_STORE';
 export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
 export const GENERATED_UUID = 'GENERATED_UUID';
@@ -321,5 +322,28 @@ export function generateUUID() {
       type: GENERATED_UUID,
       uuid: shortid.generate()
     });
+  };
+}
+
+export function loadKnot(knot: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: LOADING_KNOT
+    });
+    return axios
+      .post(`${baseUrl}/knots/loadknot`, { knot })
+      .then((response) => {
+        dispatch({
+          type: LOADED_KNOT_JSON,
+          tap: response.data.tap,
+          target: response.data.target
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: LOADED_KNOT_JSON,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }

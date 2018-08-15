@@ -42,6 +42,7 @@ type Props = {
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
   loadValues: (knot: string) => void,
+  loadKnot: (knot: string) => void,
   generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void
@@ -64,6 +65,10 @@ class Knots extends Component<Props> {
 
   loadValues = (knot: string) => {
     this.props.loadValues(knot);
+  };
+
+  loadKnot = (knot: string) => {
+    this.props.loadKnot(knot);
   };
 
   render() {
@@ -120,6 +125,7 @@ class Knots extends Component<Props> {
                 delete={this.delete}
                 download={this.download}
                 loadValues={this.loadValues}
+                loadKnot={this.loadKnot}
                 dockerInstalled={dockerInstalled}
                 dockerRunning={dockerRunning}
                 toggleDelete={this.props.toggleDelete}

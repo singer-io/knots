@@ -305,6 +305,26 @@ const loadValues = (knot, uuid) =>
       .catch(reject);
   });
 
+const loadKnot = (knot) =>
+  new Promise((resolve, reject) => {
+    const knotPath = path.resolve(getKnotsFolder(), knot, 'knot.json');
+
+    readFile(knotPath)
+      .then((knotString) => {
+        try {
+          const knotJson = JSON.parse(knotString);
+
+          resolve({
+            tap: knotJson.tap,
+            target: knotJson.target
+          });
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .catch(reject);
+  });
+
 const terminateSync = () => {
   if (runningProcess) {
     return runningProcess.pid;
@@ -329,6 +349,7 @@ module.exports = {
   packageKnot,
   downloadKnot,
   loadValues,
+  loadKnot,
   terminateSync,
   cancel
 };

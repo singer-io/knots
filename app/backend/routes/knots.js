@@ -29,6 +29,7 @@ const {
   packageKnot,
   downloadKnot,
   loadValues,
+  loadKnot,
   cancel
 } = require('../knots');
 
@@ -109,10 +110,21 @@ router.post('/partial-sync/', (req, res) => {
 });
 
 router.post('/load/', (req, res) => {
-  // eslint-disable-next-line
   const { knot, uuid } = req.body;
 
   loadValues(knot, uuid)
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.post('/loadknot/', (req, res) => {
+  const { knot } = req.body;
+
+  loadKnot(knot)
     .then((result) => {
       res.json(result);
     })

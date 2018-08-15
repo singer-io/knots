@@ -35,7 +35,7 @@ type Props = {
   dockerInstalled: boolean,
   dockerRunning: boolean,
   history: { push: (path: string) => void },
-  loadValues: (name: string) => void,
+  loadKnot: (name: string) => void,
   generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void
@@ -45,13 +45,13 @@ class Knot extends Component<Props> {
   fullSync = () => {
     const { knot } = this.props;
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
-    this.props.loadValues(knot.name);
+    this.props.loadKnot(knot.name);
   };
 
   partialSync = () => {
     const { knot } = this.props;
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
-    this.props.loadValues(knot.name);
+    this.props.loadKnot(knot.name);
   };
 
   edit = () => {
