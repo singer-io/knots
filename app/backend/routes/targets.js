@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
   const configPath = path.resolve(
-    getTemporaryKnotFolder(),
+    getTemporaryKnotFolder(req.body.uuid),
     'target',
     'config.json'
   );
@@ -52,7 +52,11 @@ router.post('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  addKnotAttribute({ field: 'target', value: req.body.target })
+  addKnotAttribute(
+    { field: 'target', value: req.body.target },
+    null,
+    req.body.uuid
+  )
     .then(() => {
       res.json({});
     })

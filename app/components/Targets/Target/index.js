@@ -33,8 +33,10 @@ type Props = {
   selected: string,
   selectTarget: (
     tap: { name: string, image: string },
+    uuid: string,
     knotName: string
   ) => void,
+  uuid: string,
   knotName: string
 };
 
@@ -61,7 +63,7 @@ export default class Target extends Component<Props, State> {
   };
 
   render() {
-    const { targetKey, knotName, name } = this.props;
+    const { targetKey, targetImage, uuid, knotName, name } = this.props;
     return (
       <Col sm="12" md={{ size: 4 }}>
         <Card
@@ -73,8 +75,9 @@ export default class Target extends Component<Props, State> {
             this.props.selectTarget(
               {
                 name: targetKey,
-                image: this.props.targetImage
+                image: targetImage
               },
+              uuid,
               knotName
             );
           }}

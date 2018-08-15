@@ -59,14 +59,14 @@ type Props = {
     selectedTap: tapPropertiesType,
     error?: string
   },
-  knotsStore: { knotName: string, knotName: string },
+  knotsStore: { knotName: string, uuid: string },
   editSchemaField: (
     field: string,
     index: string,
     value: boolean | string,
     specImplementation: specImplementationPropType
   ) => void,
-  submitSchema: (schema: Array<Stream>, knotName: string) => void,
+  submitSchema: (schema: Array<Stream>, uuid: string) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
     fieldValues: {},
@@ -150,9 +150,9 @@ export default class Schema extends Component<Props, State> {
 
   submit = () => {
     // TODO Ask for confirmation if no timestamp fields are selected when they are available
-    const { knotName } = this.props.knotsStore;
+    const { uuid } = this.props.knotsStore;
     if (this.validSchema()) {
-      this.props.submitSchema(this.props.tapsStore.schema, knotName);
+      this.props.submitSchema(this.props.tapsStore.schema, uuid);
       this.props.history.push('/targets');
     } else {
       this.setState({ streamSelected: !this.validSchema() });

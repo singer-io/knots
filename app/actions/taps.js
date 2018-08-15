@@ -202,12 +202,12 @@ export function editSchemaField(
   };
 }
 
-export function submitSchema(schema: {}, knot: string) {
+export function submitSchema(schema: {}, uuid: string) {
   return (dispatch: (action: actionType) => void) =>
     axios
       .put(`${baseUrl}/taps/schema/`, {
         schema: { streams: schema },
-        knot
+        uuid
       })
       .then(() => {
         dispatch({

@@ -72,7 +72,8 @@ export function getTargets() {
 
 export function selectTarget(
   target: { name: string, image: string },
-  knot: string
+  uuid: string,
+  knot: ?string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -81,7 +82,7 @@ export function selectTarget(
     });
 
     return axios
-      .post(`${baseUrl}/targets/select`, { target, knot })
+      .post(`${baseUrl}/targets/select`, { target, uuid, knot })
       .then(() => {
         dispatch({
           type: TARGET_INSTALLED
@@ -96,14 +97,14 @@ export function selectTarget(
   };
 }
 
-export function submitFields(fieldValues: {}, knot: string) {
+export function submitFields(fieldValues: {}, uuid: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: TARGET_CONFIGURING
     });
 
     return axios
-      .post(`${baseUrl}/targets/`, { fieldValues, knot })
+      .post(`${baseUrl}/targets/`, { fieldValues, uuid })
       .then(() => {
         dispatch({
           type: TARGET_CONFIGURED

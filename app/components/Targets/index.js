@@ -47,10 +47,10 @@ type Props = {
     'target-stitch': { fieldValues: {} },
     'target-datadotworld': { fieldValues: {} }
   },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, uuid: string },
   history: { push: (path: string) => void },
-  selectTarget: (target: { name: string, image: string }) => void,
-  submitFields: (fielsValues: {}, knotName: string) => void,
+  selectTarget: (target: { name: string, image: string }, uuid: string) => void,
+  submitFields: (fielsValues: {}, uuid: string, knotName: string) => void,
   targetsPageLoaded: () => void,
   cancel: (knot: string) => void
 };
@@ -109,9 +109,9 @@ export default class Targets extends Component<Props, State> {
   submit = () => {
     const { name } = this.props.targetsStore.selectedTarget;
     const { fieldValues } = this.props.userStore[name];
-    const { knotName } = this.props.knotsStore;
+    const { uuid } = this.props.knotsStore;
 
-    this.props.submitFields(fieldValues, knotName);
+    this.props.submitFields(fieldValues, uuid);
 
     this.props.history.push('/sync');
   };
@@ -119,7 +119,7 @@ export default class Targets extends Component<Props, State> {
   render() {
     const { showTargets } = this.state;
     const { targets, selectedTarget } = this.props.targetsStore;
-    const { knotName } = this.props.knotsStore;
+    const { knotName, uuid } = this.props.knotsStore;
 
     return (
       <div>
@@ -151,6 +151,7 @@ export default class Targets extends Component<Props, State> {
                       selectTarget={this.props.selectTarget}
                       selected={selectedTarget.name}
                       knotName={knotName}
+                      uuid={uuid}
                     />
                   ))}
                 </Row>
