@@ -67,7 +67,8 @@ type Props = {
     tapLogs: Array<string>,
     targetLogs: Array<string>,
     knotError: string,
-    knotLoaded: boolean
+    knotLoaded: boolean,
+    uuid: string
   },
   tapStore: {
     selectedTap: TapPropertiesType
@@ -80,7 +81,8 @@ type Props = {
     knotName: string,
     selectedTap: TapPropertiesType,
     selectedTarget: { name: string, image: string },
-    currentName: string
+    currentName: string,
+    uuid: string
   ) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
@@ -206,13 +208,14 @@ export default class Sync extends Component<Props, State> {
   submit = () => {
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
-    const { knotName } = this.props.knotsStore;
+    const { knotName, uuid } = this.props.knotsStore;
 
     this.props.save(
       knotName,
       selectedTap,
       selectedTarget,
-      this.state.currentKnotName
+      this.state.currentKnotName,
+      uuid
     );
   };
 

@@ -160,25 +160,27 @@ const sync = (req, mode) =>
       .catch(reject);
   });
 
-const saveKnot = (name, currentName) =>
+const saveKnot = (name, uuid, currentName) =>
   new Promise((resolve, reject) => {
-    const pathToKnot = path.resolve(getTemporaryKnotFolder(), 'knot.json');
+    const pathToKnot = path.resolve(getTemporaryKnotFolder(uuid), 'knot.json');
 
     addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
       .then(() => {
         readFile(pathToKnot)
           .then((knotObjectString) => {
             try {
-              const knotObject = JSON.parse(knotObjectString);
-              shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
-              shell.mv(
-                path.resolve(getTemporaryKnotFolder(), '*'),
-                path.resolve(getKnotsFolder(), name)
-              );
-              if (currentName && currentName !== name) {
+              if (currentName) {
                 // Remove the knot that has been edited
                 shell.rm('-rf', path.resolve(getKnotsFolder(), currentName));
               }
+
+              const knotObject = JSON.parse(knotObjectString);
+              shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
+              shell.mv(
+                path.resolve(getTemporaryKnotFolder(uuid), '*'),
+                path.resolve(getKnotsFolder(), name)
+              );
+
               // Add a make file to the folder
               writeFile(
                 path.resolve(getKnotsFolder(), name, 'Makefile'),

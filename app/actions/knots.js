@@ -141,7 +141,8 @@ export function save(
   knotName: string,
   selectedTap: TapPropertiesType,
   selectedTarget: { name: string, image: string },
-  currentName: string
+  currentName: string,
+  uuid: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -153,7 +154,8 @@ export function save(
         knotName,
         tap: selectedTap,
         target: selectedTarget,
-        currentName
+        currentName,
+        uuid
       })
       .then(() =>
         dispatch({

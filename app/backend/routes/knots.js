@@ -41,9 +41,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/save/', (req, res) => {
-  const { knotName, currentName } = req.body;
+  const { knotName, currentName, uuid } = req.body;
 
-  saveKnot(knotName, currentName)
+  saveKnot(knotName, uuid, currentName)
     .then(() => {
       sync(req)
         .then(() => {
