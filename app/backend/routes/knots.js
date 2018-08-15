@@ -110,9 +110,9 @@ router.post('/partial-sync/', (req, res) => {
 
 router.post('/load/', (req, res) => {
   // eslint-disable-next-line
-  const { knot } = req.body;
+  const { knot, uuid } = req.body;
 
-  loadValues(knot)
+  loadValues(knot, uuid)
     .then((result) => {
       res.json(result);
     })

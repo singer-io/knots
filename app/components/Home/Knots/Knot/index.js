@@ -36,6 +36,7 @@ type Props = {
   dockerRunning: boolean,
   history: { push: (path: string) => void },
   loadValues: (name: string) => void,
+  generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void
 };
@@ -54,9 +55,13 @@ class Knot extends Component<Props> {
   };
 
   edit = () => {
+    this.props.generateUUID();
     const { name } = this.props.knot;
-    this.props.history.push('/taps');
-    this.props.loadValues(name);
+    this.props.history.push(`/taps?knot=${name}`);
+    this.props.history.push({
+      pathname: '/taps',
+      state: { name }
+    });
   };
 
   render() {

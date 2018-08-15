@@ -42,6 +42,7 @@ type Props = {
   downloadKnot: (knot: string) => void,
   getKnots: () => void,
   loadValues: (knot: string) => void,
+  generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void
 };
@@ -67,7 +68,7 @@ class Knots extends Component<Props> {
 
   render() {
     const { knots, knotError, knotLoaded } = this.props.knotsStore;
-    const { dockerInstalled, dockerRunning } = this.props;
+    const { dockerInstalled, dockerRunning, generateUUID } = this.props;
 
     if (knotLoaded && !knotError) {
       this.props.history.push('/taps');
@@ -83,6 +84,7 @@ class Knots extends Component<Props> {
               disabled={!dockerInstalled || !dockerRunning}
               size="sm"
               className="float-right"
+              onClick={generateUUID}
             >
               New knot
             </Button>
@@ -122,6 +124,7 @@ class Knots extends Component<Props> {
                 dockerRunning={dockerRunning}
                 toggleDelete={this.props.toggleDelete}
                 toggleDownloadDisclaimer={this.props.toggleDownloadDisclaimer}
+                generateUUID={this.props.generateUUID}
               />
             ))}
           </tbody>

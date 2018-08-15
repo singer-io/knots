@@ -264,13 +264,13 @@ export function downloadKnot(knot: string) {
       .catch();
 }
 
-export function loadValues(knot: string) {
+export function loadValues(knot: string, uuid: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: LOADING_KNOT
     });
     return axios
-      .post(`${baseUrl}/knots/load`, { knot })
+      .post(`${baseUrl}/knots/load`, { knot, uuid })
       .then((response) => {
         dispatch({
           type: LOADED_KNOT,

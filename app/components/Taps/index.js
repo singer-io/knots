@@ -57,6 +57,7 @@ type Props = {
   },
   knotsStore: { knotName: string, uuid: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
+  location: { state?: {} },
   selectTap: (tap: TapPropertiesType) => void,
   submitConfig: (
     selectedTap: TapPropertiesType,
@@ -65,6 +66,7 @@ type Props = {
     skipDiscovery: ?boolean
   ) => void,
   tapsPageLoaded: () => void,
+  loadValues: (knot: string, uuid: string) => void,
   cancel: (name: string) => void
 };
 
@@ -80,8 +82,14 @@ export default class Taps extends Component<Props, State> {
   };
 
   componentWillMount() {
+    const { name } = this.props.location.state || {};
     this.props.tapsPageLoaded();
     this.props.fetchTaps();
+
+    if (name) {
+      const { uuid } = this.props.knotsStore;
+      this.props.loadValues(name, uuid);
+    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
