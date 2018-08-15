@@ -92,7 +92,8 @@ type Props = {
   history: { push: (path: string) => void },
   syncPageLoaded: () => void,
   cancel: (name: string) => void,
-  resetKnotError: () => void
+  resetKnotError: () => void,
+  loadValues: (name: string, uuid: string) => void
 };
 
 type State = {
@@ -230,7 +231,8 @@ export default class Sync extends Component<Props, State> {
       knotName,
       tapLogs,
       targetLogs,
-      knotError
+      knotError,
+      uuid
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
@@ -315,6 +317,7 @@ export default class Sync extends Component<Props, State> {
               to="/taps"
               className="btn btn-outline-danger align-self-center"
               onClick={() => {
+                this.props.loadValues(knotName, uuid);
                 this.props.resetKnotError();
               }}
             >
