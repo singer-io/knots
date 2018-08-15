@@ -212,7 +212,7 @@ export default class Sync extends Component<Props, State> {
     const { knotName, uuid } = this.props.knotsStore;
 
     this.props.save(
-      knotName,
+      knotName.trim(),
       selectedTap,
       selectedTarget,
       this.state.currentKnotName,
