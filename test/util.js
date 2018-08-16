@@ -150,6 +150,34 @@ export const seedKnot = () =>
       .catch(reject);
   });
 
+export const seedTempKnot = () =>
+  new Promise((resolve, reject) => {
+    shell.mkdir('-p', path.resolve('tmp', 'tempUUID', 'knot', 'tap'));
+    shell.mkdir('-p', path.resolve('tmp', 'tempUUID', 'knot', 'target'));
+    const promises = [
+      writeFile(
+        path.resolve('tmp', 'tempUUID', 'knot', 'knot.json'),
+        JSON.stringify(sampleSavedKnot.knotJson)
+      ),
+      writeFile(
+        path.resolve('tmp', 'tempUUID', 'knot', 'tap', 'config.json'),
+        JSON.stringify(sampleSavedKnot.tapConfig)
+      ),
+      writeFile(
+        path.resolve('tmp', 'tempUUID', 'knot', 'tap', 'catalog.json'),
+        JSON.stringify(sampleSavedKnot.tapCatalog)
+      ),
+      writeFile(
+        path.resolve('tmp', 'tempUUID', 'knot', 'target', 'config.json'),
+        JSON.stringify(sampleSavedKnot.targetConfig)
+      )
+    ];
+
+    Promise.all(promises)
+      .then(resolve)
+      .catch(reject);
+  });
+
 export const seedInvalidKnot = () =>
   new Promise((resolve, reject) => {
     shell.mkdir('-p', path.resolve('knots', 'invalidSavedKnot', 'tap'));
@@ -157,7 +185,7 @@ export const seedInvalidKnot = () =>
     const promises = [
       writeFile(
         path.resolve('knots', 'invalidSavedKnot', 'knot.json'),
-        JSON.stringify(sampleSavedKnot.knotJson)
+        '{name: "invalidKnot}'
       ),
       writeFile(
         path.resolve('knots', 'invalidSavedKnot', 'tap', 'config.json'),

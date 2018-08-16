@@ -42,6 +42,8 @@ let runningProcess;
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
+    // App starting up, clear all temp files
+    shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp'));
     const knotsFolder = getKnotsFolder();
 
     try {
