@@ -24,7 +24,7 @@ import {
   TARGETS_LOADING,
   TARGET_SELECTED
 } from '../actions/targets';
-import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE, LOADED_KNOT_JSON } from '../actions/knots';
 
 export type targetsStateType = {
   +targets: Array<{}>,
@@ -60,6 +60,10 @@ export default function targets(state = defaultState(), action) {
         selectedTarget: action.target
       });
     case LOADED_KNOT:
+      return Object.assign({}, state, {
+        selectedTarget: action.target
+      });
+    case LOADED_KNOT_JSON:
       return Object.assign({}, state, {
         selectedTarget: action.target
       });

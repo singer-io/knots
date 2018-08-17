@@ -59,12 +59,13 @@ describe('util functions', () => {
   describe('createTemporaryKnotFolder', () => {
     it('creates a temporary knots folder in production', () => {
       process.env.NODE_ENV = 'production';
-      createTemporaryKnotFolder();
+      createTemporaryKnotFolder('prodUUID');
 
       const tempFolderPath = path.resolve(
         os.homedir(),
         '.knots',
         'tmp',
+        'prodUUID',
         'knot'
       );
 
@@ -92,9 +93,9 @@ describe('util functions', () => {
 
     it('creates a temporary knots folder when not in production', () => {
       process.env.NODE_ENV = 'test';
-      createTemporaryKnotFolder();
+      createTemporaryKnotFolder('devUUID');
 
-      const tempFolderPath = path.resolve('tmp', 'knot');
+      const tempFolderPath = path.resolve('tmp', 'devUUID', 'knot');
 
       fs.readdir(tempFolderPath, (err) => {
         if (err) {
@@ -122,16 +123,24 @@ describe('util functions', () => {
   describe('getTemporaryKnotsFolder', () => {
     it('should return folder based on home path when in production', () => {
       process.env.NODE_ENV = 'production';
-      const actual = getTemporaryKnotFolder();
-      const expected = path.resolve(os.homedir(), '.knots', 'tmp', 'knot');
+      const uuid = Math.random().toString();
+      const actual = getTemporaryKnotFolder(uuid);
+      const expected = path.resolve(
+        os.homedir(),
+        '.knots',
+        'tmp',
+        uuid,
+        'knot'
+      );
 
       expect(actual).toEqual(expected);
     });
 
     it('should return folder based on repo when not in production', () => {
       process.env.NODE_ENV = 'test';
-      const actual = getTemporaryKnotFolder();
-      const expected = path.resolve(__dirname, '../..', 'tmp', 'knot');
+      const uuid = Math.random().toString();
+      const actual = getTemporaryKnotFolder(uuid);
+      const expected = path.resolve(__dirname, '../..', 'tmp', uuid, 'knot');
 
       expect(actual).toEqual(expected);
     });
@@ -226,14 +235,15 @@ describe('util functions', () => {
 
   describe('addKnotAttribute', () => {
     beforeAll((done) => {
+      shell.mkdir('-p', path.resolve('tmp', 'knotUUID', 'knot'));
       fs.writeFile(
-        path.resolve('tmp', 'knot', 'knot.json'),
+        path.resolve('tmp', 'knotUUID', 'knot', 'knot.json'),
         JSON.stringify({}),
         (error) => {
           if (!error) {
             done();
           } else {
-            expect(true).toBe(false);
+            expect(error).toBeUndefined();
             done();
           }
         }
@@ -243,16 +253,17 @@ describe('util functions', () => {
     afterAll(() => {
       shell.rm('-f', path.resolve('sampleKnot.json'));
       shell.rm('-f', path.resolve('broken.json'));
+      cleanfs();
     });
 
     it('should add an attribute to a knot json file', (done) => {
       addKnotAttribute(
         { field: 'foo', value: 'bar' },
-        path.resolve('tmp', 'knot', 'knot.json')
+        path.resolve('tmp', 'knotUUID', 'knot', 'knot.json')
       )
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'knot', 'knot.json'),
+            path.resolve('tmp', 'knotUUID', 'knot', 'knot.json'),
             'utf8',
             (err, data) => {
               const updatedKnot = {
@@ -275,12 +286,17 @@ describe('util functions', () => {
     });
 
     it('should reject promise if json file is invalid', (done) => {
+      shell.mkdir('-p', path.resolve('tmp', 'brokenKnotUUID', 'knot'));
       fs.writeFile(
-        path.resolve('tmp', 'knot', 'knot.json'),
+        path.resolve('tmp', 'brokenKnotUUID', 'knot', 'knot.json'),
         '{"ab":"cd"',
         (error) => {
           if (!error) {
-            addKnotAttribute({ field: 'foo', value: 'bar' })
+            addKnotAttribute(
+              { field: 'foo', value: 'bar' },
+              null,
+              'brokenKnotUUID'
+            )
               .then(() => {
                 expect(true).toBe(false);
                 done();
@@ -290,7 +306,7 @@ describe('util functions', () => {
                 done();
               });
           } else {
-            expect(true).toBe(false);
+            expect(error).toBeUndefined();
             done();
           }
         }

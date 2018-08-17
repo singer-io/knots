@@ -103,6 +103,7 @@ describe('taps actions', () => {
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/select/', {
           tap: taps[0],
+          uuid: 'qwertyui',
           knot: 'tap'
         })
         .reply(200, {});
@@ -114,9 +115,11 @@ describe('taps actions', () => {
         }
       ];
 
-      return store.dispatch(tapActions.selectTap(taps[0], 'tap')).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
+      return store
+        .dispatch(tapActions.selectTap(taps[0], 'qwertyui', 'tap'))
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
     });
 
     it('should dispatch TAP_SELECTED with errors', () => {
@@ -169,8 +172,9 @@ describe('taps actions', () => {
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/config/', {
           tap: taps[0],
-          knot,
           tapConfig,
+          uuid: 'asdfgjk',
+          knot,
           skipDiscovery
         })
         .reply(200, { schema });
@@ -187,7 +191,13 @@ describe('taps actions', () => {
 
       return store
         .dispatch(
-          tapActions.submitConfig(taps[0], tapConfig, knot, skipDiscovery)
+          tapActions.submitConfig(
+            taps[0],
+            tapConfig,
+            'asdfgjk',
+            knot,
+            skipDiscovery
+          )
         )
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);

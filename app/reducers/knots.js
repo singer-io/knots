@@ -34,7 +34,8 @@ import {
   LOADING_KNOT,
   DOCKER_RUNNING,
   RESET_STORE,
-  RESET_KNOT_ERROR
+  RESET_KNOT_ERROR,
+  GENERATED_UUID
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -54,10 +55,12 @@ export type knotsStateType = {
   +knotDeleted: boolean,
   +knotError: string,
   +knotLoading: boolean,
-  +knotLoaded: boolean
+  +knotLoaded: boolean,
+
+  +uuid: string
 };
 
-export const defaultState = {
+export const defaultState = () => ({
   detectingDocker: false,
   dockerVersion: '',
   dockerRunning: false,
@@ -74,10 +77,12 @@ export const defaultState = {
   knotDeleted: false,
   knotError: '',
   knotLoading: false,
-  knotLoaded: false
-};
+  knotLoaded: false,
 
-export default function knots(state = defaultState, action) {
+  uuid: ''
+});
+
+export default function knots(state = defaultState(), action) {
   switch (action.type) {
     case DETECTING_DOCKER:
       return Object.assign({}, state, {
@@ -153,27 +158,13 @@ export default function knots(state = defaultState, action) {
         knotSyncing: false,
         knotSynced: false
       });
+    case GENERATED_UUID:
+      return Object.assign({}, state, {
+        uuid: action.uuid
+      });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
-      return {
-        detectingDocker: false,
-        dockerVersion: '',
-        dockerRunning: false,
-        dockerError: '',
-        dockerVerified: false,
-
-        fetchingKnots: false,
-        knots: [],
-        tapLogs: [],
-        targetLogs: [],
-        knotName: '',
-        knotSyncing: false,
-        knotSynced: false,
-        knotDeleted: false,
-        knotError: '',
-        knotLoading: false,
-        knotLoaded: false
-      };
+      return defaultState();
     default:
       return state;
   }

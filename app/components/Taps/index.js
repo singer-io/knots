@@ -55,8 +55,9 @@ type Props = {
       repo: string
     }>
   },
-  knotsStore: { knotName: string, knotLoaded: boolean },
+  knotsStore: { knotName: string, uuid: string, knotLoaded: boolean },
   history: { push: (path: string) => void },
+  location: { state?: {} },
   selectTap: (tap: TapPropertiesType) => void,
   submitConfig: (
     selectedTap: TapPropertiesType,
@@ -65,6 +66,7 @@ type Props = {
     skipDiscovery: ?boolean
   ) => void,
   tapsPageLoaded: () => void,
+  loadValues: (knot: string, uuid: string) => void,
   cancel: (name: string) => void
 };
 
@@ -80,8 +82,14 @@ export default class Taps extends Component<Props, State> {
   };
 
   componentWillMount() {
+    const { name } = this.props.location.state || {};
     this.props.tapsPageLoaded();
     this.props.fetchTaps();
+
+    if (name) {
+      const { uuid } = this.props.knotsStore;
+      this.props.loadValues(name, uuid);
+    }
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -126,6 +134,7 @@ export default class Taps extends Component<Props, State> {
       this.props.submitConfig(
         selectedTap,
         fieldValues,
+        this.props.knotsStore.uuid,
         knotName,
         skipDiscovery
       );
@@ -162,6 +171,7 @@ export default class Taps extends Component<Props, State> {
           selectTap={this.props.selectTap}
           selected={selectedTap.name}
           knotName={knotName}
+          uuid={this.props.knotsStore.uuid}
         />
       );
       const lastTapInRow = (i + 1) % 3 === 0;

@@ -42,6 +42,8 @@ let runningProcess;
 
 const getKnots = () =>
   new Promise((resolve, reject) => {
+    // App starting up, clear all temp files
+    shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp'));
     const knotsFolder = getKnotsFolder();
 
     try {
@@ -160,25 +162,32 @@ const sync = (req, mode) =>
       .catch(reject);
   });
 
-const saveKnot = (name, currentName) =>
+const saveKnot = (name, uuid, currentName) =>
   new Promise((resolve, reject) => {
-    const pathToKnot = path.resolve(getTemporaryKnotFolder(), 'knot.json');
+    const pathToKnot = path.resolve(getTemporaryKnotFolder(uuid), 'knot.json');
 
     addKnotAttribute({ field: ['name'], value: name }, pathToKnot)
       .then(() => {
         readFile(pathToKnot)
           .then((knotObjectString) => {
             try {
-              const knotObject = JSON.parse(knotObjectString);
-              shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
-              shell.mv(
-                path.resolve(getTemporaryKnotFolder(), '*'),
-                path.resolve(getKnotsFolder(), name)
-              );
-              if (currentName && currentName !== name) {
+              if (currentName) {
                 // Remove the knot that has been edited
                 shell.rm('-rf', path.resolve(getKnotsFolder(), currentName));
               }
+
+              const knotObject = JSON.parse(knotObjectString);
+              shell.mkdir('-p', path.resolve(getKnotsFolder(), name));
+              shell.mv(
+                path.resolve(getTemporaryKnotFolder(uuid), '*'),
+                path.resolve(getKnotsFolder(), name)
+              );
+
+              shell.rm(
+                '-rf',
+                path.resolve(getApplicationFolder(), 'tmp', uuid)
+              );
+
               // Add a make file to the folder
               writeFile(
                 path.resolve(getKnotsFolder(), name, 'Makefile'),
@@ -248,17 +257,17 @@ const downloadKnot = (req, res) => {
   res.download(`${path.resolve(getApplicationFolder(), 'tmp')}/${knot}.zip`);
 };
 
-const loadValues = (knot) =>
+const loadValues = (knot, uuid) =>
   new Promise((resolve, reject) => {
-    createTemporaryKnotFolder();
+    createTemporaryKnotFolder(uuid);
     // Make a clone of the knot to be edited
     shell.cp(
       '-R',
       path.resolve(getKnotsFolder(), knot, '*'),
-      path.resolve(getTemporaryKnotFolder())
+      path.resolve(getTemporaryKnotFolder(uuid))
     );
 
-    const knotPath = getTemporaryKnotFolder();
+    const knotPath = getTemporaryKnotFolder(uuid);
 
     const promises = [
       readFile(`${knotPath}/knot.json`),
@@ -298,16 +307,36 @@ const loadValues = (knot) =>
       .catch(reject);
   });
 
+const loadKnot = (knot) =>
+  new Promise((resolve, reject) => {
+    const knotPath = path.resolve(getKnotsFolder(), knot, 'knot.json');
+
+    readFile(knotPath)
+      .then((knotString) => {
+        try {
+          const knotJson = JSON.parse(knotString);
+
+          resolve({
+            tap: knotJson.tap,
+            target: knotJson.target
+          });
+        } catch (error) {
+          reject(error);
+        }
+      })
+      .catch(reject);
+  });
+
 const terminateSync = () => {
   if (runningProcess) {
     return runningProcess.pid;
   }
 };
 
-const cancel = () =>
+const cancel = (uuid) =>
   new Promise((resolve, reject) => {
     try {
-      shell.rm('-rf', getTemporaryKnotFolder());
+      shell.rm('-rf', getTemporaryKnotFolder(uuid));
       resolve();
     } catch (error) {
       reject(error);
@@ -322,6 +351,7 @@ module.exports = {
   packageKnot,
   downloadKnot,
   loadValues,
+  loadKnot,
   terminateSync,
   cancel
 };

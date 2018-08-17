@@ -32,9 +32,9 @@ router.get('/', (req, res) => {
 });
 
 router.post('/select', (req, res) => {
-  const { tap, knot } = req.body;
+  const { tap, knot, uuid } = req.body;
 
-  createKnot(tap, !!knot)
+  createKnot(tap, uuid, !!knot)
     .then(() => {
       res.json({});
     })
@@ -54,7 +54,7 @@ router.post('/config/', (req, res) => {
 });
 
 router.put('/schema/', (req, res) => {
-  writeSchema(req.body.schema, req.body.knot)
+  writeSchema(req.body.schema, req.body.uuid)
     .then(() => {
       res.json({});
     })

@@ -79,7 +79,8 @@ describe('target actions', () => {
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/select', {
           target: sampleTargets[0],
-          knot: 'target'
+          knot: 'target',
+          uuid: 'targetUUID'
         })
         .reply(200, {});
 
@@ -94,7 +95,9 @@ describe('target actions', () => {
       ];
 
       return store
-        .dispatch(targetActions.selectTarget(sampleTargets[0], 'target'))
+        .dispatch(
+          targetActions.selectTarget(sampleTargets[0], 'targetUUID', 'target')
+        )
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);
         });
@@ -130,14 +133,13 @@ describe('target actions', () => {
   describe('submit fields', () => {
     it('should dispatch TARGET_CONFIGURING', () => {
       const store = mockStore({});
-      const knot = '';
       const fieldValues = { id: '1234' };
 
       nock(`${baseUrl}/targets/`)
         .defaultReplyHeaders({ 'Access-Control-Allow-Origin': '*' })
         .post('/', {
           fieldValues,
-          knot
+          uuid: 'uniqueUUID'
         })
         .reply(200, {});
 
@@ -151,7 +153,7 @@ describe('target actions', () => {
       ];
 
       return store
-        .dispatch(targetActions.submitFields(fieldValues, knot))
+        .dispatch(targetActions.submitFields(fieldValues, 'uniqueUUID'))
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);
         });

@@ -45,20 +45,23 @@ const getApplicationFolder = () => {
   return applicationFolder;
 };
 
-const createTemporaryKnotFolder = () => {
-  shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
+const createTemporaryKnotFolder = (uuid) => {
+  shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp'));
 
-  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot'));
-  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', 'knot', 'tap'));
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot'));
   shell.mkdir(
     '-p',
-    path.resolve(getApplicationFolder(), 'tmp', 'knot', 'target')
+    path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'tap')
+  );
+  shell.mkdir(
+    '-p',
+    path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'target')
   );
 };
 
 const getKnotsFolder = () => path.resolve(getApplicationFolder(), 'knots');
-const getTemporaryKnotFolder = () =>
-  path.resolve(getApplicationFolder(), 'tmp', 'knot');
+const getTemporaryKnotFolder = (uuid) =>
+  path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot');
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {
@@ -83,10 +86,10 @@ const writeFile = (filePath, content) =>
     });
   });
 
-const addKnotAttribute = (content, knotPath) =>
+const addKnotAttribute = (content, knotPath, uuid) =>
   new Promise((resolve, reject) => {
     const pathToKnot =
-      knotPath || path.resolve(getTemporaryKnotFolder(), 'knot.json');
+      knotPath || path.resolve(getTemporaryKnotFolder(uuid), 'knot.json');
     readFile(pathToKnot)
       .then((knotObjectString) => {
         try {

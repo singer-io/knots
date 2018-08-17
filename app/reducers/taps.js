@@ -34,7 +34,7 @@ import {
   UPDATE_TAPS,
   UPDATE_FORM_VALIDATION
 } from '../actions/taps';
-import { LOADED_KNOT, RESET_STORE } from '../actions/knots';
+import { LOADED_KNOT, RESET_STORE, LOADED_KNOT_JSON } from '../actions/knots';
 import type {
   TapPropertiesType,
   TapRedshift,
@@ -107,6 +107,7 @@ export function defaultState() {
       }
     },
     'tap-postgres': {
+      valid: false,
       fieldValues: {
         host: '',
         port: undefined,
@@ -116,6 +117,7 @@ export function defaultState() {
       }
     },
     'tap-adwords': {
+      valid: false,
       fieldValues: {
         developer_token: '',
         oauth_client_id: '',
@@ -127,6 +129,7 @@ export function defaultState() {
       }
     },
     'tap-mysql': {
+      valid: false,
       fieldValues: {
         host: '',
         port: undefined,
@@ -136,6 +139,7 @@ export function defaultState() {
       }
     },
     'tap-facebook': {
+      valid: false,
       fieldValues: {
         access_token: '',
         account_id: '',
@@ -145,6 +149,7 @@ export function defaultState() {
       }
     },
     'tap-s3-csv': {
+      valid: false,
       fieldValues: {
         bucket: '',
         start_date: '',
@@ -397,6 +402,10 @@ export default function taps(state = defaultState(), action) {
           })
         }
       );
+    case LOADED_KNOT_JSON:
+      return Object.assign({}, state, {
+        selectedTap: action.tap
+      });
     case UPDATE_FORM_VALIDATION:
       return Object.assign({}, state, {
         [action.tap]: Object.assign({}, state[action.tap], {

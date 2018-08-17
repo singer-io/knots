@@ -4,7 +4,9 @@ import shell from 'shelljs';
 
 import {
   getKnots,
+  loadKnot,
   loadValues,
+  saveKnot,
   deleteKnot,
   cancel,
   packageKnot
@@ -16,6 +18,7 @@ import {
   invalidKnotString,
   seedKnots,
   seedKnot,
+  seedTempKnot,
   seedInvalidKnot,
   cleanfs
 } from '../util';
@@ -48,7 +51,7 @@ describe('knots functions', () => {
           );
         })
         .catch((err) => {
-          expect(err).toBe(null);
+          expect(err).toBeUndefined();
         });
     });
 
@@ -90,8 +93,8 @@ describe('knots functions', () => {
 
   describe('cancel', () => {
     beforeAll((done) => {
-      shell.mkdir('-p', path.resolve('tmp', 'knot', 'tap'));
-      shell.mkdir('-p', path.resolve('tmp', 'knot', 'target'));
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'tap'));
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'target'));
       done();
     });
 
@@ -100,7 +103,7 @@ describe('knots functions', () => {
     });
 
     it('should delete the temporary knot', () => {
-      cancel()
+      cancel('cancelUUID')
         .then(() => {
           const getDirectories = (source) =>
             fs
@@ -111,12 +114,64 @@ describe('knots functions', () => {
               .map((folderPath) => path.basename(folderPath));
 
           // Array of knot names
-          const knots = getDirectories(path.resolve('tmp'));
+          const knots = getDirectories(path.resolve('tmp', 'cancelUUID'));
 
           expect(knots.length).toEqual(0);
         })
         .catch((err) => {
           expect(err).toBeUndefined();
+        });
+    });
+  });
+
+  describe('load knot', () => {
+    beforeAll((done) => {
+      seedKnot()
+        .then(() => {
+          seedInvalidKnot()
+            .then(() => {
+              done();
+            })
+            .catch((error) => {
+              expect(error).toBeUndefined();
+              done();
+            });
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should load knot.json values of a saved knot', (done) => {
+      const uuid = Math.random().toString();
+      loadKnot('savedKnot', uuid)
+        .then((res) => {
+          expect(res.tap).toEqual(sampleSavedKnot.knotJson.tap);
+          expect(res.target).toEqual(sampleSavedKnot.knotJson.target);
+
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should reject promise when there is an invalid file', (done) => {
+      const uuid = Math.random().toString();
+      loadKnot('invalidSavedKnot', uuid)
+        .then((res) => {
+          expect(res).toBeUndefined();
+          done();
+        })
+        .catch((err) => {
+          expect(err).toBeDefined();
+          done();
         });
     });
   });
@@ -145,7 +200,8 @@ describe('knots functions', () => {
     });
 
     it('should load values of a saved knot', (done) => {
-      loadValues('savedKnot')
+      const uuid = Math.random().toString();
+      loadValues('savedKnot', uuid)
         .then((res) => {
           expect(res.name).toEqual(sampleSavedKnot.knotJson.name);
           expect(res.tap).toEqual(sampleSavedKnot.knotJson.tap);
@@ -163,13 +219,74 @@ describe('knots functions', () => {
     });
 
     it('should reject promise when there is an invalid file', (done) => {
-      loadValues('invalidSavedKnot')
+      const uuid = Math.random().toString();
+      loadValues('invalidSavedKnot', uuid)
         .then((res) => {
           expect(res).toBeUndefined();
           done();
         })
         .catch((err) => {
           expect(err).toBeDefined();
+          done();
+        });
+    });
+  });
+
+  describe('save knot', () => {
+    beforeEach((done) => {
+      seedTempKnot()
+        .then(() => {
+          seedKnot()
+            .then(() => {
+              done();
+            })
+            .catch((error) => {
+              expect(error).toBeUndefined();
+              done();
+            });
+        })
+        .catch((error) => {
+          expect(error).toBeUndefined();
+          done();
+        });
+    });
+
+    afterAll(() => {
+      cleanfs();
+    });
+
+    it('should save specified knot inside knots folder', (done) => {
+      saveKnot('knotName', 'tempUUID')
+        .then(() => {
+          fs.access(
+            path.resolve('knots', 'knotName'),
+            fs.constants.F_OK,
+            (err) => {
+              expect(err).toBeNull();
+              done();
+            }
+          );
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
+          done();
+        });
+    });
+
+    it('should delete edited knot', (done) => {
+      saveKnot('knotName', 'tempUUID', 'savedKnot')
+        .then(() => {
+          fs.access(
+            path.resolve('knots', 'savedKnot'),
+            fs.constants.F_OK,
+            (err) => {
+              expect(err).toBeDefined();
+              done();
+            }
+          );
+        })
+        .catch((err) => {
+          expect(err).toBeUndefined();
           done();
         });
     });

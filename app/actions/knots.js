@@ -23,6 +23,8 @@
 
 import axios from 'axios';
 import { shell } from 'electron';
+import shortid from 'shortid';
+
 import type { TapPropertiesType } from '../utils/sharedTypes';
 
 const baseUrl = 'http://localhost:4321';
@@ -44,8 +46,10 @@ export const KNOT_DELETED = 'KNOT_DELETED';
 export const FINAL_STEP = 'FINAL_STEP';
 export const LOADING_KNOT = 'LOADING_KNOT';
 export const LOADED_KNOT = 'LOADED_KNOT';
+export const LOADED_KNOT_JSON = 'LOADED_KNOT_JSON';
 export const RESET_STORE = 'RESET_STORE';
 export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
+export const GENERATED_UUID = 'GENERATED_UUID';
 
 type actionType = {
   +type: string
@@ -138,7 +142,8 @@ export function save(
   knotName: string,
   selectedTap: TapPropertiesType,
   selectedTarget: { name: string, image: string },
-  currentName: string
+  currentName: string,
+  uuid: string
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -150,7 +155,8 @@ export function save(
         knotName,
         tap: selectedTap,
         target: selectedTarget,
-        currentName
+        currentName,
+        uuid
       })
       .then(() =>
         dispatch({
@@ -259,13 +265,13 @@ export function downloadKnot(knot: string) {
       .catch();
 }
 
-export function loadValues(knot: string) {
+export function loadValues(knot: string, uuid: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: LOADING_KNOT
     });
     return axios
-      .post(`${baseUrl}/knots/load`, { knot })
+      .post(`${baseUrl}/knots/load`, { knot, uuid })
       .then((response) => {
         dispatch({
           type: LOADED_KNOT,
@@ -307,5 +313,37 @@ export function resetKnotError() {
     dispatch({
       type: RESET_KNOT_ERROR
     });
+  };
+}
+
+export function generateUUID() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: GENERATED_UUID,
+      uuid: shortid.generate()
+    });
+  };
+}
+
+export function loadKnot(knot: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: LOADING_KNOT
+    });
+    return axios
+      .post(`${baseUrl}/knots/loadknot`, { knot })
+      .then((response) => {
+        dispatch({
+          type: LOADED_KNOT_JSON,
+          tap: response.data.tap,
+          target: response.data.target
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: LOADED_KNOT_JSON,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
   };
 }

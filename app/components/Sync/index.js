@@ -67,7 +67,8 @@ type Props = {
     tapLogs: Array<string>,
     targetLogs: Array<string>,
     knotError: string,
-    knotLoaded: boolean
+    knotLoaded: boolean,
+    uuid: string
   },
   tapStore: {
     selectedTap: TapPropertiesType
@@ -80,7 +81,8 @@ type Props = {
     knotName: string,
     selectedTap: TapPropertiesType,
     selectedTarget: { name: string, image: string },
-    currentName: string
+    currentName: string,
+    uuid: string
   ) => void,
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
@@ -90,7 +92,8 @@ type Props = {
   history: { push: (path: string) => void },
   syncPageLoaded: () => void,
   cancel: (name: string) => void,
-  resetKnotError: () => void
+  resetKnotError: () => void,
+  loadValues: (name: string, uuid: string) => void
 };
 
 type State = {
@@ -206,13 +209,14 @@ export default class Sync extends Component<Props, State> {
   submit = () => {
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
-    const { knotName } = this.props.knotsStore;
+    const { knotName, uuid } = this.props.knotsStore;
 
     this.props.save(
-      knotName,
+      knotName.trim(),
       selectedTap,
       selectedTarget,
-      this.state.currentKnotName
+      this.state.currentKnotName,
+      uuid
     );
   };
 
@@ -227,7 +231,8 @@ export default class Sync extends Component<Props, State> {
       knotName,
       tapLogs,
       targetLogs,
-      knotError
+      knotError,
+      uuid
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
@@ -312,6 +317,7 @@ export default class Sync extends Component<Props, State> {
               to="/taps"
               className="btn btn-outline-danger align-self-center"
               onClick={() => {
+                this.props.loadValues(knotName, uuid);
                 this.props.resetKnotError();
               }}
             >
