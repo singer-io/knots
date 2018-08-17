@@ -106,8 +106,12 @@ const sync = (req, mode) =>
       .then((knotObjectString) => {
         try {
           const knotObject = JSON.parse(knotObjectString);
-          const tapLogPath = path.resolve(pathToKnot, 'tap.log');
-          const targetLogPath = path.resolve(pathToKnot, 'target.log');
+          /* eslint-disable prefer-const */
+          // "Assignment to constant variable" error when const is used
+          // TODO: Investigate further
+          let tapLogPath = path.resolve(pathToKnot, 'tap.log');
+          let targetLogPath = path.resolve(pathToKnot, 'target.log');
+          /* eslint-disable prefer-const */
 
           addKnotAttribute(
             { field: ['lastRun'], value: new Date().toISOString() },
