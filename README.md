@@ -1,7 +1,7 @@
 # KNOTS
 
 KNOTS is a quick and intuitive visual ETL tool that allows you to do complex data replication with ease. Using the
-visual interface, you can now bring your data projects into data.world with the power of Singer taps, but without
+visual interface, you can now bring your data together with the power of Singer taps and targets, without
 the complexity.
 
 Using KNOTS, you can import data from a number of datastores on an ad-hoc basis or you can download knots and run
@@ -12,7 +12,7 @@ _KNOTS is currently only available on MacOS._
 
 ### Getting Started
 
-Download and install the latest [release](https://github.com/datadotworld/knots/releases). For Mac, you'll
+Download and install the latest [release](https://github.com/singer-io/knots/releases). For Mac, you'll
 want to use the DMG installer.
 
 IMPORTANT: Presently, Mac will warn users that KNOTS is from an "unidentified developer". Follow the instructions
