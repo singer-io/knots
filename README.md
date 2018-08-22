@@ -68,4 +68,4 @@ If you'd like to contribute, please follow the [Contributing Guidelines](CONTRIB
 
 ### Support
 
-If you run into any problems, please create a [new issue](https://github.com/datadotworld/knots/issues/new).
+If you run into any problems, please create a [new issue](https://github.com/singer-io/knots/issues/new).
