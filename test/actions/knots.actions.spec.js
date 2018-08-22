@@ -551,4 +551,21 @@ describe('knots actions', () => {
       });
     });
   });
+
+  describe('sync complete', () => {
+    it('should dispatch KNOT_SYNCED when sync complete successfully', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.syncComplete('success'));
+      expect(store.getActions()[0].type).toEqual('KNOT_SYNCED');
+    });
+
+    it('should dispatch KNOT_SYNCED with error when sync fails', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.syncComplete('fail', 'error message'));
+      expect(store.getActions()[0].type).toEqual('KNOT_SYNCED');
+      expect(store.getActions()[0].error).toEqual('error message');
+    });
+  });
 });
