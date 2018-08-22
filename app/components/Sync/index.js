@@ -94,7 +94,8 @@ type Props = {
   cancel: (name: string) => void,
   resetKnotError: () => void,
   loadValues: (name: string, uuid: string) => void,
-  syncComplete: (status: sting, error?: string) => void
+  syncComplete: (status: sting, error?: string) => void,
+  generateUUID: () => void
 };
 
 type State = {
@@ -240,8 +241,7 @@ export default class Sync extends Component<Props, State> {
       knotName,
       tapLogs,
       targetLogs,
-      knotError,
-      uuid
+      knotError
     } = this.props.knotsStore;
     const { selectedTap } = this.props.tapStore;
     const { selectedTarget } = this.props.targetsStore;
@@ -322,16 +322,22 @@ export default class Sync extends Component<Props, State> {
               The error message was: &quot;{knotError}&quot;, but make sure to
               review the logs too!
             </p>
-            <Link
-              to="/taps"
-              className="btn btn-outline-danger align-self-center"
+            <Button
+              outline
+              color="danger"
+              className="align-self-center"
               onClick={() => {
-                this.props.loadValues(knotName, uuid);
+                this.props.generateUUID();
                 this.props.resetKnotError();
+
+                this.props.history.push({
+                  pathname: '/taps',
+                  state: { name: knotName }
+                });
               }}
             >
               Re-configure
-            </Link>
+            </Button>
           </Alert>
           <Row>
             {!knotSyncing &&

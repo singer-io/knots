@@ -64,11 +64,14 @@ type Props = {
     selectedTarget: { name: string, image: string }
   },
   location: { search: string },
+  history: { push: (path: string) => void },
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
   sync: (knot: string) => void,
   partialSync: (knot: string) => void,
-  syncComplete: (status: sting, error?: string) => void
+  syncComplete: (status: sting, error?: string) => void,
+  resetKnotError: () => void,
+  generateUUID: () => void
 };
 
 export default class Sync extends Component<Props> {
@@ -186,12 +189,22 @@ export default class Sync extends Component<Props> {
               The error message was: &quot;{knotError}&quot;, but make sure to
               review the logs too!
             </p>
-            <Link
-              to="/taps"
-              className="btn btn-outline-danger align-self-center"
+            <Button
+              outline
+              color="danger"
+              className="align-self-center"
+              onClick={() => {
+                this.props.generateUUID();
+                this.props.resetKnotError();
+
+                this.props.history.push({
+                  pathname: '/taps',
+                  state: { name: knot }
+                });
+              }}
             >
               Re-configure
-            </Link>
+            </Button>
           </Alert>
 
           <Collapse isOpen={knotSyncing || (knotSynced && knotError)}>
