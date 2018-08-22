@@ -384,4 +384,14 @@ describe('knots actions', () => {
       });
     });
   });
+
+  describe('generate uuid', () => {
+    it('should dispatch generated uuid action with a uuid', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.generateUUID());
+      expect(store.getActions()[0].type).toEqual('GENERATED_UUID');
+      expect(store.getActions()[0].uuid).toBeTruthy();
+    });
+  });
 });
