@@ -506,4 +506,49 @@ describe('knots actions', () => {
       });
     });
   });
+
+  describe('full sync', () => {
+    it('should dispatch KNOT_SYNCING', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/full-sync', { knotName: 'knot' })
+        .reply(200, {});
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCING
+        }
+      ];
+
+      return store.dispatch(knotActions.sync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+    it('should dispatch KNOT_SYNCED with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/full-sync', { knotName: 'knot' })
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCED,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.sync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+  });
 });
