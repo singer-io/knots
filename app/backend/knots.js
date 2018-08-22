@@ -99,68 +99,69 @@ const emitLogs = (req, tapLogPath, targetLogPath) => {
   });
 };
 
-const sync = (req, mode) =>
-  new Promise((resolve, reject) => {
-    const { knotName } = req.body;
-    const pathToKnot = path.resolve(getKnotsFolder(), knotName);
+const sync = (req, mode) => {
+  const { knotName } = req.body;
+  const pathToKnot = path.resolve(getKnotsFolder(), knotName);
 
-    readFile(path.resolve(pathToKnot, 'knot.json'))
-      .then((knotObjectString) => {
-        try {
-          const knotObject = JSON.parse(knotObjectString);
-          /* eslint-disable prefer-const */
-          // "Assignment to constant variable" error when const is used
-          // TODO: Investigate further
-          let tapLogPath = path.resolve(pathToKnot, 'tap.log');
-          let targetLogPath = path.resolve(pathToKnot, 'target.log');
-          /* eslint-disable prefer-const */
+  readFile(path.resolve(pathToKnot, 'knot.json'))
+    .then((knotObjectString) => {
+      try {
+        const knotObject = JSON.parse(knotObjectString);
+        /* eslint-disable prefer-const */
+        // "Assignment to constant variable" error when const is used
+        // TODO: Investigate further
+        let tapLogPath = path.resolve(pathToKnot, 'tap.log');
+        let targetLogPath = path.resolve(pathToKnot, 'target.log');
+        /* eslint-disable prefer-const */
 
-          addKnotAttribute(
-            { field: ['lastRun'], value: new Date().toISOString() },
-            path.resolve(pathToKnot, 'knot.json')
-          )
-            .then(() => {
-              const syncCommand =
-                mode === 'partial'
-                  ? commands.runPartialSync(
-                      pathToKnot,
-                      knotObject.tap,
-                      knotObject.target
-                    )
-                  : commands.runSync(
-                      pathToKnot,
-                      knotObject.tap,
-                      knotObject.target
-                    );
+        addKnotAttribute(
+          { field: ['lastRun'], value: new Date().toISOString() },
+          path.resolve(pathToKnot, 'knot.json')
+        )
+          .then(() => {
+            const syncCommand =
+              mode === 'partial'
+                ? commands.runPartialSync(
+                    pathToKnot,
+                    knotObject.tap,
+                    knotObject.target
+                  )
+                : commands.runSync(
+                    pathToKnot,
+                    knotObject.tap,
+                    knotObject.target
+                  );
 
-              const runSync = exec(`set -o pipefail;${syncCommand}`, {
-                detached: true,
-                shell: '/bin/bash'
-              });
-              runningProcess = runSync;
-              emitLogs(req, tapLogPath, targetLogPath);
-
-              runSync.on('exit', (code) => {
-                if (code > 0) {
-                  reject(new Error('Sync failed'));
-                } else {
-                  resolve();
-                }
-              });
-
-              runSync.on('error', () => {
-                reject(new Error('Sync failed'));
-              });
-            })
-            .catch((error) => {
-              reject(error);
+            const runSync = exec(`set -o pipefail;${syncCommand}`, {
+              detached: true,
+              shell: '/bin/bash'
             });
-        } catch (error) {
-          reject(error);
-        }
-      })
-      .catch(reject);
-  });
+            runningProcess = runSync;
+            emitLogs(req, tapLogPath, targetLogPath);
+
+            runSync.on('exit', (code) => {
+              if (code > 0) {
+                req.io.emit('syncFail', 'Sync failed');
+              } else {
+                req.io.emit('syncSuccess', 'Sync succeeded');
+              }
+            });
+
+            runSync.on('error', () => {
+              req.io.emit('syncFail', 'Sync failed');
+            });
+          })
+          .catch((error) => {
+            req.io.emit('syncFail', error.message);
+          });
+      } catch (error) {
+        req.io.emit('syncFail', error.message);
+      }
+    })
+    .catch((error) => {
+      req.io.emit('syncFail', error.message);
+    });
+};
 
 const saveKnot = (name, uuid, currentName) =>
   new Promise((resolve, reject) => {

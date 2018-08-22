@@ -46,13 +46,8 @@ router.post('/save/', (req, res) => {
 
   saveKnot(knotName, uuid, currentName)
     .then(() => {
-      sync(req)
-        .then(() => {
-          res.json({});
-        })
-        .catch((error) => {
-          res.status(500).json({ message: error.message });
-        });
+      sync(req);
+      res.json({});
     })
     .catch((error) => {
       res.status(500).json({ message: error.message });
@@ -90,23 +85,13 @@ router.get('/download/', (req, res) => {
 });
 
 router.post('/full-sync/', (req, res) => {
-  sync(req)
-    .then(() => {
-      res.json({});
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
-    });
+  sync(req);
+  res.json({});
 });
 
 router.post('/partial-sync/', (req, res) => {
-  sync(req, 'partial')
-    .then(() => {
-      res.json({});
-    })
-    .catch((error) => {
-      res.status(500).json({ message: error.message });
-    });
+  sync(req, 'partial');
+  res.json({});
 });
 
 router.post('/load/', (req, res) => {

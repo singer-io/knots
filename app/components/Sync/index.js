@@ -93,7 +93,8 @@ type Props = {
   syncPageLoaded: () => void,
   cancel: (name: string) => void,
   resetKnotError: () => void,
-  loadValues: (name: string, uuid: string) => void
+  loadValues: (name: string, uuid: string) => void,
+  syncComplete: (status: sting, error?: string) => void
 };
 
 type State = {
@@ -122,6 +123,14 @@ export default class Sync extends Component<Props, State> {
 
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
+    });
+
+    socket.on('syncFail', (error) => {
+      this.props.syncComplete('fail', error);
+    });
+
+    socket.on('syncSuccess', () => {
+      this.props.syncComplete('success');
     });
 
     // Check whether the current knotName is valid for when editing knot

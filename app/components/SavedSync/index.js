@@ -67,7 +67,8 @@ type Props = {
   updateTapLogs: (log: string) => void,
   updateTargetLogs: (log: string) => void,
   sync: (knot: string) => void,
-  partialSync: (knot: string) => void
+  partialSync: (knot: string) => void,
+  syncComplete: (status: sting, error?: string) => void
 };
 
 export default class Sync extends Component<Props> {
@@ -80,6 +81,14 @@ export default class Sync extends Component<Props> {
 
     socket.on('targetLog', (log) => {
       this.props.updateTargetLogs(log);
+    });
+
+    socket.on('syncFail', (error) => {
+      this.props.syncComplete('fail', error);
+    });
+
+    socket.on('syncSuccess', () => {
+      this.props.syncComplete('success');
     });
 
     if (mode === 'full') {
