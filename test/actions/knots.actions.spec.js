@@ -452,4 +452,13 @@ describe('knots actions', () => {
       });
     });
   });
+
+  describe('reset knot error', () => {
+    it('should dispatch RESET_KNOT_ERROR', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.resetKnotError());
+      expect(store.getActions()[0].type).toEqual('RESET_KNOT_ERROR');
+    });
+  });
 });
