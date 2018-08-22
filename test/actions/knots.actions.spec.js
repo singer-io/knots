@@ -19,9 +19,9 @@ const sampleSavedKnot = {
       tap_stream_id: 'testSample'
     }
   ],
-  tap: { name: 'sampleTap' },
+  tap: { name: 'sampleTap', image: 'sampleTapImage' },
   tapConfig: {},
-  target: { name: 'sampleTarget' },
+  target: { name: 'sampleTarget', image: 'sampleTargetImage' },
   targetConfig: {}
 };
 
@@ -566,6 +566,83 @@ describe('knots actions', () => {
       store.dispatch(knotActions.syncComplete('fail', 'error message'));
       expect(store.getActions()[0].type).toEqual('KNOT_SYNCED');
       expect(store.getActions()[0].error).toEqual('error message');
+    });
+  });
+
+  describe('save', () => {
+    it('should dispatch KNOT_SYNCING when knot has been saved', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/save', {
+          knotName: 'knot',
+          tap: sampleSavedKnot.tap,
+          target: sampleSavedKnot.target,
+          currentName: 'oldKnot',
+          uuid: 'asdfgh'
+        })
+        .reply(200, {});
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCING
+        }
+      ];
+
+      return store
+        .dispatch(
+          knotActions.save(
+            'knot',
+            sampleSavedKnot.tap,
+            sampleSavedKnot.target,
+            'oldKnot',
+            'asdfgh'
+          )
+        )
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
+    });
+
+    it('should dispatch KNOT_SYNCED with error when there is an error saving the knot', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/save', {
+          knotName: 'knot',
+          tap: sampleSavedKnot.tap,
+          target: sampleSavedKnot.target,
+          currentName: 'oldKnot',
+          uuid: 'asdfgh'
+        })
+        .reply(500, { message: 'error saving knot' });
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCED,
+          error: 'error saving knot'
+        }
+      ];
+
+      return store
+        .dispatch(
+          knotActions.save(
+            'knot',
+            sampleSavedKnot.tap,
+            sampleSavedKnot.target,
+            'oldKnot',
+            'asdfgh'
+          )
+        )
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
     });
   });
 });

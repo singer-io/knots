@@ -169,7 +169,7 @@ export function save(
 
 export function syncComplete(status: string, error?: string) {
   return (dispatch: (action: actionType) => void) => {
-    if (status === 'succeess') {
+    if (status === 'success') {
       dispatch({
         type: KNOT_SYNCED
       });
