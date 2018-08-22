@@ -25,6 +25,11 @@ const sampleSavedKnot = {
   targetConfig: {}
 };
 
+const sampleSavedKnotJson = {
+  tap: { name: 'sampleTap', image: 'sampleTapImage' },
+  target: { name: 'sampleTarget', image: 'sampleTargetImage' }
+};
+
 describe('knots actions', () => {
   describe('sync page', () => {
     it('should dispatch SYNC_PAGE_LOADED', () => {
@@ -392,6 +397,59 @@ describe('knots actions', () => {
       store.dispatch(knotActions.generateUUID());
       expect(store.getActions()[0].type).toEqual('GENERATED_UUID');
       expect(store.getActions()[0].uuid).toBeTruthy();
+    });
+  });
+
+  describe('load knot', () => {
+    it('should dispatch LOADED_KNOT_JSON with tap and target properties', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/loadknot', { knot })
+        .reply(200, sampleSavedKnotJson);
+
+      const expectedActions = [
+        {
+          type: knotActions.LOADING_KNOT
+        },
+        {
+          type: knotActions.LOADED_KNOT_JSON,
+          tap: sampleSavedKnotJson.tap,
+          target: sampleSavedKnotJson.target
+        }
+      ];
+
+      return store.dispatch(knotActions.loadKnot(knot)).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+    it('should dispatch LOADED_KNOT with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/loadknot', { knot: 'knot' })
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.LOADING_KNOT
+        },
+        {
+          type: knotActions.LOADED_KNOT_JSON,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.loadKnot('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
     });
   });
 });
