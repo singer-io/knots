@@ -8,12 +8,6 @@ Using KNOTS, you can import data from a number of datastores on an ad-hoc basis 
 with a job scheduler of your choice to make sure your data is always up to date. With the intuitive interface,
 you can configure robust data replication processes in minutes, and KNOTS is always free.
 
-With KNOTS and data.world, you can:
-
-- Leverage ETL without complex manual configuration
-- Quickly bring data from various datastores into data.world
-- Pause and resume replication without any loss of progress
-
 _KNOTS is currently only available on MacOS._
 
 ### Getting Started
@@ -74,5 +68,4 @@ If you'd like to contribute, please follow the [Contributing Guidelines](CONTRIB
 
 ### Support
 
-For support, either create a [new issue](https://github.com/datadotworld/knots/issues/new) here on GitHub, or
-send an email to help@data.world.
+If you run into any problems, please create a [new issue](https://github.com/datadotworld/knots/issues/new).
