@@ -56,17 +56,6 @@ describe('knots functions', () => {
         });
     });
 
-    it('should reject promise when exception is thrown', () => {
-      process.env.NODE_ENV = 'production';
-      getKnots()
-        .then(() => {
-          expect(true).toBe(false);
-        })
-        .catch((err) => {
-          expect(err).toBeDefined();
-        });
-    });
-
     it('should reject promise when there is an invalid knot', (done) => {
       process.env.NODE_ENV = 'test';
       shell.mkdir('-p', path.resolve('knots', 'sample 3'));
