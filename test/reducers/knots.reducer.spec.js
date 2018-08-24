@@ -189,4 +189,45 @@ describe('knots reducer', () => {
       })
     ).toEqual(Object.assign({}, defaultState()));
   });
+
+  it('should handle GENERATED_UUID', () => {
+    expect(
+      knotReducer(undefined, {
+        type: knotActions.GENERATED_UUID,
+        uuid: 'asdfgh'
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        uuid: 'asdfgh'
+      })
+    );
+  });
+
+  it('should handle RESET_KNOT_ERROR', () => {
+    expect(
+      knotReducer(undefined, {
+        type: knotActions.RESET_KNOT_ERROR
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        knotError: '',
+        knotSyncing: false,
+        knotSynced: false
+      })
+    );
+  });
+
+  it('should handle FETCHED_KNOTS', () => {
+    expect(
+      knotReducer(undefined, {
+        type: knotActions.FETCHED_KNOTS,
+        knots: ['knot1', 'knot2']
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        fetchingKnots: false,
+        knots: ['knot1', 'knot2']
+      })
+    );
+  });
 });

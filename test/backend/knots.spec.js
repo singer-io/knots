@@ -32,6 +32,7 @@ describe('knots functions', () => {
         })
         .catch((error) => {
           expect(error).toBeUndefined();
+          done();
         });
     });
 

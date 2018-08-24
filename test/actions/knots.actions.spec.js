@@ -19,10 +19,15 @@ const sampleSavedKnot = {
       tap_stream_id: 'testSample'
     }
   ],
-  tap: { name: 'sampleTap' },
+  tap: { name: 'sampleTap', image: 'sampleTapImage' },
   tapConfig: {},
-  target: { name: 'sampleTarget' },
+  target: { name: 'sampleTarget', image: 'sampleTargetImage' },
   targetConfig: {}
+};
+
+const sampleSavedKnotJson = {
+  tap: { name: 'sampleTap', image: 'sampleTapImage' },
+  target: { name: 'sampleTarget', image: 'sampleTargetImage' }
 };
 
 describe('knots actions', () => {
@@ -199,174 +204,6 @@ describe('knots actions', () => {
 
       store.dispatch(knotActions.updateName(name));
       expect(store.getActions()).toEqual(expectedActions);
-    });
-  });
-
-  describe('save knot', () => {
-    it('should dispatch KNOT_SYNCED on first save of knot', () => {
-      const store = mockStore({});
-      const knotName = 'testName';
-      const selectedTap = { name: 'sampleTap' };
-      const selectedTarget = { name: 'sampleTarget' };
-      const currentName = 'testName';
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/save', {
-          knotName,
-          tap: selectedTap,
-          target: selectedTarget,
-          currentName
-        })
-        .reply(200, {});
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED
-        }
-      ];
-
-      return store
-        .dispatch(
-          knotActions.save(knotName, selectedTap, selectedTarget, currentName)
-        )
-        .then(() => {
-          expect(store.getActions()).toEqual(expectedActions);
-        });
-    });
-
-    it('should dispatch KNOT_SYNCED on save with error', () => {
-      const store = mockStore({});
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/save', {})
-        .reply(500, { message: 'error message' });
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED,
-          error: 'error message'
-        }
-      ];
-
-      return store.dispatch(knotActions.save()).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-  });
-
-  describe('full sync', () => {
-    it('should dispatch KNOT_SYNCED for full sync action', () => {
-      const store = mockStore({});
-      const knotName = 'testName';
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/full-sync', { knotName })
-        .reply(200, {});
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED
-        }
-      ];
-
-      return store.dispatch(knotActions.sync(knotName)).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-
-    it('should dispatch KNOT_SYNCED for full sync with error', () => {
-      const store = mockStore({});
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/full-sync')
-        .reply(500, { message: 'error message' });
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED,
-          error: 'error message'
-        }
-      ];
-
-      return store.dispatch(knotActions.sync()).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-  });
-
-  describe('partial sync', () => {
-    it('should dispatch KNOT_SYNCED for partial sync action', () => {
-      const store = mockStore({});
-      const knotName = 'testName';
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/partial-sync', { knotName })
-        .reply(200, {});
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED
-        }
-      ];
-
-      return store.dispatch(knotActions.partialSync(knotName)).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
-    });
-
-    it('should dispatch KNOT_SYNCED for partial sync with error', () => {
-      const store = mockStore({});
-
-      nock(`${baseUrl}/knots/`)
-        .defaultReplyHeaders({
-          'Access-Control-Allow-Origin': '*'
-        })
-        .post('/partial-sync')
-        .reply(500, { message: 'error message' });
-
-      const expectedActions = [
-        {
-          type: knotActions.KNOT_SYNCING
-        },
-        {
-          type: knotActions.KNOT_SYNCED,
-          error: 'error message'
-        }
-      ];
-
-      return store.dispatch(knotActions.partialSync()).then(() => {
-        expect(store.getActions()).toEqual(expectedActions);
-      });
     });
   });
 
@@ -550,6 +387,262 @@ describe('knots actions', () => {
       return store.dispatch(knotActions.cancel(knot)).then(() => {
         expect(store.getActions()).toEqual([]);
       });
+    });
+  });
+
+  describe('generate uuid', () => {
+    it('should dispatch generated uuid action with a uuid', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.generateUUID());
+      expect(store.getActions()[0].type).toEqual('GENERATED_UUID');
+      expect(store.getActions()[0].uuid).toBeTruthy();
+    });
+  });
+
+  describe('load knot', () => {
+    it('should dispatch LOADED_KNOT_JSON with tap and target properties', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/loadknot', { knot })
+        .reply(200, sampleSavedKnotJson);
+
+      const expectedActions = [
+        {
+          type: knotActions.LOADING_KNOT
+        },
+        {
+          type: knotActions.LOADED_KNOT_JSON,
+          tap: sampleSavedKnotJson.tap,
+          target: sampleSavedKnotJson.target
+        }
+      ];
+
+      return store.dispatch(knotActions.loadKnot(knot)).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+    it('should dispatch LOADED_KNOT with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/loadknot', { knot: 'knot' })
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.LOADING_KNOT
+        },
+        {
+          type: knotActions.LOADED_KNOT_JSON,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.loadKnot('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+  });
+
+  describe('reset knot error', () => {
+    it('should dispatch RESET_KNOT_ERROR', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.resetKnotError());
+      expect(store.getActions()[0].type).toEqual('RESET_KNOT_ERROR');
+    });
+  });
+
+  describe('partial sync', () => {
+    it('should dispatch KNOT_SYNCING', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/partial-sync', { knotName: 'knot' })
+        .reply(200, {});
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCING
+        }
+      ];
+
+      return store.dispatch(knotActions.partialSync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+    it('should dispatch KNOT_SYNCED with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/partial-sync', { knotName: 'knot' })
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCED,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.partialSync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+  });
+
+  describe('full sync', () => {
+    it('should dispatch KNOT_SYNCING', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/full-sync', { knotName: 'knot' })
+        .reply(200, {});
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCING
+        }
+      ];
+
+      return store.dispatch(knotActions.sync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+
+    it('should dispatch KNOT_SYNCED with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/full-sync', { knotName: 'knot' })
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCED,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.sync('knot')).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
+    });
+  });
+
+  describe('sync complete', () => {
+    it('should dispatch KNOT_SYNCED when sync complete successfully', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.syncComplete('success'));
+      expect(store.getActions()[0].type).toEqual('KNOT_SYNCED');
+    });
+
+    it('should dispatch KNOT_SYNCED with error when sync fails', () => {
+      const store = mockStore({});
+
+      store.dispatch(knotActions.syncComplete('fail', 'error message'));
+      expect(store.getActions()[0].type).toEqual('KNOT_SYNCED');
+      expect(store.getActions()[0].error).toEqual('error message');
+    });
+  });
+
+  describe('save', () => {
+    it('should dispatch KNOT_SYNCING when knot has been saved', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/save', {
+          knotName: 'knot',
+          tap: sampleSavedKnot.tap,
+          target: sampleSavedKnot.target,
+          currentName: 'oldKnot',
+          uuid: 'asdfgh'
+        })
+        .reply(200, {});
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCING
+        }
+      ];
+
+      return store
+        .dispatch(
+          knotActions.save(
+            'knot',
+            sampleSavedKnot.tap,
+            sampleSavedKnot.target,
+            'oldKnot',
+            'asdfgh'
+          )
+        )
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
+    });
+
+    it('should dispatch KNOT_SYNCED with error when there is an error saving the knot', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/save', {
+          knotName: 'knot',
+          tap: sampleSavedKnot.tap,
+          target: sampleSavedKnot.target,
+          currentName: 'oldKnot',
+          uuid: 'asdfgh'
+        })
+        .reply(500, { message: 'error saving knot' });
+
+      const expectedActions = [
+        {
+          type: knotActions.KNOT_SYNCED,
+          error: 'error saving knot'
+        }
+      ];
+
+      return store
+        .dispatch(
+          knotActions.save(
+            'knot',
+            sampleSavedKnot.tap,
+            sampleSavedKnot.target,
+            'oldKnot',
+            'asdfgh'
+          )
+        )
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
     });
   });
 });

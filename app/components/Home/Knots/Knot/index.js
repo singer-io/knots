@@ -57,7 +57,6 @@ class Knot extends Component<Props> {
   edit = () => {
     this.props.generateUUID();
     const { name } = this.props.knot;
-    this.props.history.push(`/taps?knot=${name}`);
     this.props.history.push({
       pathname: '/taps',
       state: { name }

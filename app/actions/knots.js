@@ -145,12 +145,8 @@ export function save(
   currentName: string,
   uuid: string
 ) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: KNOT_SYNCING
-    });
-
-    return axios
+  return (dispatch: (action: actionType) => void) =>
+    axios
       .post(`${baseUrl}/knots/save`, {
         knotName,
         tap: selectedTap,
@@ -160,7 +156,7 @@ export function save(
       })
       .then(() =>
         dispatch({
-          type: KNOT_SYNCED
+          type: KNOT_SYNCING
         })
       )
       .catch((error) => {
@@ -169,20 +165,30 @@ export function save(
           error: error.response ? error.response.data.message : error.message
         });
       });
+}
+
+export function syncComplete(status: string, error?: string) {
+  return (dispatch: (action: actionType) => void) => {
+    if (status === 'success') {
+      dispatch({
+        type: KNOT_SYNCED
+      });
+    } else {
+      dispatch({
+        type: KNOT_SYNCED,
+        error
+      });
+    }
   };
 }
 
 export function sync(knotName: string) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: KNOT_SYNCING
-    });
-
-    return axios
+  return (dispatch: (action: actionType) => void) =>
+    axios
       .post(`${baseUrl}/knots/full-sync`, { knotName })
       .then(() =>
         dispatch({
-          type: KNOT_SYNCED
+          type: KNOT_SYNCING
         })
       )
       .catch((error) => {
@@ -191,20 +197,15 @@ export function sync(knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function partialSync(knotName: string) {
-  return (dispatch: (action: actionType) => void) => {
-    dispatch({
-      type: KNOT_SYNCING
-    });
-
-    return axios
+  return (dispatch: (action: actionType) => void) =>
+    axios
       .post(`${baseUrl}/knots/partial-sync`, { knotName })
       .then(() =>
         dispatch({
-          type: KNOT_SYNCED
+          type: KNOT_SYNCING
         })
       )
       .catch((error) => {
@@ -213,7 +214,6 @@ export function partialSync(knotName: string) {
           error: error.response ? error.response.data.message : error.message
         });
       });
-  };
 }
 
 export function updateTapLogs(newLog: string) {
