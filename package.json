@@ -1,6 +1,6 @@
 {
   "name": "knots",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "This app, allows you to configure and download an executable Singer pipeline",
   "keywords": [
     "knots"
