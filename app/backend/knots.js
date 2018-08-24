@@ -230,7 +230,12 @@ const packageKnot = (knotName) =>
         const tempFolder = path.resolve(getApplicationFolder(), 'tmp');
 
         // Make a clone of the knot to be downloaded
-        shell.cp('-R', path.resolve(knotPath), path.resolve(tempFolder));
+        shell.mkdir('-p', path.resolve(tempFolder, knotName));
+        shell.cp(
+          '-R',
+          path.resolve(knotPath),
+          path.resolve(tempFolder, knotName)
+        );
 
         // Remove log files
         shell.rm('-rf', path.resolve(tempFolder, knotName, 'tap.log'));
