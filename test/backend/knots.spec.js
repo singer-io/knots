@@ -167,7 +167,7 @@ describe('knots functions', () => {
   });
 
   describe('load values', () => {
-    beforeAll((done) => {
+    beforeEach((done) => {
       seedKnot()
         .then(() => {
           seedInvalidKnot()
@@ -185,7 +185,7 @@ describe('knots functions', () => {
         });
     });
 
-    afterAll(() => {
+    afterEach(() => {
       cleanfs();
     });
 
