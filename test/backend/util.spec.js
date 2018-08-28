@@ -50,7 +50,7 @@ describe('util functions', () => {
     it('should return folder based on repo when not in production', () => {
       process.env.NODE_ENV = 'test';
       const actual = getKnotsFolder();
-      const expected = path.resolve(__dirname, '../..', 'knots');
+      const expected = path.resolve(__dirname, '../..', 'knotsTestFolder');
 
       expect(actual).toEqual(expected);
     });
