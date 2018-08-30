@@ -9,9 +9,18 @@ jobs:
       - run:
           name: Install rpm
           command: brew install rpm
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
       - run:
-          name: Build and run tests
-          command: yarn && yarn test && yarn package
+          name: Install dependencies
+          command: yarn install --frozen-lockfile
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: Test and package
+          command: yarn test && yarn package
       - store_artifacts:
           path: release
 
