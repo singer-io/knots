@@ -1,23 +1,22 @@
 {
   "name": "knots",
-  "version": "1.0.0-beta.2",
-  "description": "This app, allows you to configure and download an executable Singer pipeline",
+  "version": "1.0.0-beta.3",
+  "description": "This app allows you to configure and download executable Singer pipelines",
   "keywords": [
     "knots"
   ],
-  "homepage": "https://github.com/datadotworld/knot#readme",
+  "homepage": "https://github.com/singer-io/knots#readme",
   "bugs": {
-    "url": "https://github.com/datadotworld/knot/issues"
+    "url": "https://github.com/singer-io/knots/issues"
   },
   "license": "Apache-2.0",
   "author": {
-    "name": "data.world, Inc.",
-    "email": "help@data.world"
+    "name": "Stitch, Inc."
   },
   "build": {
     "appId": "com.electron.${name}",
     "productName": "KNOTS",
-    "copyright": "Copyright © 2018 ${author}",
+    "copyright": "Copyright © 2018 Stitch, Inc",
     "directories": {
       "buildResources": "resources",
       "output": "release"
@@ -59,7 +58,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/datadotworld/knot.git"
+    "url": "git+https://github.com/singer-io/knots.git"
   },
   "scripts": {
     "build": "concurrently \"npm run build-main\" \"npm run build-renderer\"",
