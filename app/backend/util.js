@@ -46,60 +46,17 @@ const getApplicationFolder = () => {
 };
 
 const createTemporaryKnotFolder = (uuid) => {
-  if (process.env.NODE_ENV === 'test') {
-    shell.rm(
-      '-rf',
-      path.resolve(getApplicationFolder(), 'knotTestTmpFolder', 'tmp')
-    );
+  shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp'));
 
-    shell.mkdir(
-      '-p',
-      path.resolve(
-        getApplicationFolder(),
-        'knotTestTmpFolder',
-        'tmp',
-        uuid,
-        'knot'
-      )
-    );
-    shell.mkdir(
-      '-p',
-      path.resolve(
-        getApplicationFolder(),
-        'knotTestTmpFolder',
-        'tmp',
-        uuid,
-        'knot',
-        'tap'
-      )
-    );
-    shell.mkdir(
-      '-p',
-      path.resolve(
-        getApplicationFolder(),
-        'knotTestTmpFolder',
-        'tmp',
-        uuid,
-        'knot',
-        'target'
-      )
-    );
-  } else {
-    shell.rm('-rf', path.resolve(getApplicationFolder(), 'tmp'));
-
-    shell.mkdir(
-      '-p',
-      path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot')
-    );
-    shell.mkdir(
-      '-p',
-      path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'tap')
-    );
-    shell.mkdir(
-      '-p',
-      path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'target')
-    );
-  }
+  shell.mkdir('-p', path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot'));
+  shell.mkdir(
+    '-p',
+    path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'tap')
+  );
+  shell.mkdir(
+    '-p',
+    path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot', 'target')
+  );
 };
 
 const getKnotsFolder = () => {
@@ -109,18 +66,8 @@ const getKnotsFolder = () => {
   return path.resolve(getApplicationFolder(), 'knots');
 };
 
-const getTemporaryKnotFolder = (uuid) => {
-  if (process.env.NODE_ENV === 'test') {
-    return path.resolve(
-      getApplicationFolder(),
-      'knotTestTmpFolder',
-      'tmp',
-      uuid,
-      'knot'
-    );
-  }
-  return path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot');
-};
+const getTemporaryKnotFolder = (uuid) =>
+  path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot');
 
 const readFile = (filePath) =>
   new Promise((resolve, reject) => {

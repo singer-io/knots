@@ -83,14 +83,8 @@ describe('knots functions', () => {
 
   describe('cancel', () => {
     beforeAll((done) => {
-      shell.mkdir(
-        '-p',
-        path.resolve('knotTestTmpFolder', 'tmp', 'cancelUUID', 'knot', 'tap')
-      );
-      shell.mkdir(
-        '-p',
-        path.resolve('knotTestTmpFolder', 'tmp', 'cancelUUID', 'knot', 'target')
-      );
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'tap'));
+      shell.mkdir('-p', path.resolve('tmp', 'cancelUUID', 'knot', 'target'));
       done();
     });
 
@@ -110,9 +104,7 @@ describe('knots functions', () => {
               .map((folderPath) => path.basename(folderPath));
 
           // Array of knot names
-          const knots = getDirectories(
-            path.resolve('knotTestTmpFolder', 'tmp', 'cancelUUID')
-          );
+          const knots = getDirectories(path.resolve('tmp', 'cancelUUID'));
 
           expect(knots.length).toEqual(0);
         })
@@ -350,11 +342,7 @@ describe('knots functions', () => {
     it('should create a zip of the saved knot', (done) => {
       packageKnot('savedKnot')
         .then(() => {
-          const pathToZip = path.resolve(
-            'knotTestTmpFolder',
-            'tmp',
-            'savedKnot.zip'
-          );
+          const pathToZip = path.resolve('tmp', 'savedKnot.zip');
           fs.access(pathToZip, fs.constants.F_OK, (err) => {
             expect(err).toBeFalsy();
             done();
