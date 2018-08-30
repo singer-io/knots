@@ -58,9 +58,9 @@ describe('knots functions', () => {
 
     it('should reject promise when there is an invalid knot', (done) => {
       process.env.NODE_ENV = 'test';
-      shell.mkdir('-p', path.resolve('knots', 'sample 3'));
+      shell.mkdir('-p', path.resolve('knotsTestFolder', 'sample 3'));
       fs.writeFile(
-        path.resolve('knots', 'sample 3', 'knot.json'),
+        path.resolve('knotsTestFolder', 'sample 3', 'knot.json'),
         invalidKnotString,
         (err) => {
           if (!err) {
@@ -249,7 +249,7 @@ describe('knots functions', () => {
       saveKnot('knotName', 'tempUUID')
         .then(() => {
           fs.access(
-            path.resolve('knots', 'knotName'),
+            path.resolve('knotsTestFolder', 'knotName'),
             fs.constants.F_OK,
             (err) => {
               expect(err).toBeNull();
@@ -267,7 +267,7 @@ describe('knots functions', () => {
       saveKnot('knotName', 'tempUUID', 'savedKnot')
         .then(() => {
           fs.access(
-            path.resolve('knots', 'savedKnot'),
+            path.resolve('knotsTestFolder', 'savedKnot'),
             fs.constants.F_OK,
             (err) => {
               expect(err).toBeDefined();
@@ -302,7 +302,7 @@ describe('knots functions', () => {
       deleteKnot('savedKnot')
         .then(() => {
           fs.readFile(
-            path.resolve('knots', 'savedKnot', 'knot.json'),
+            path.resolve('knotsTestFolder', 'savedKnot', 'knot.json'),
             (err) => {
               if (!err) {
                 expect(true).toBe(false);
