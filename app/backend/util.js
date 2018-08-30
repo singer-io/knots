@@ -59,7 +59,13 @@ const createTemporaryKnotFolder = (uuid) => {
   );
 };
 
-const getKnotsFolder = () => path.resolve(getApplicationFolder(), 'knots');
+const getKnotsFolder = () => {
+  if (process.env.NODE_ENV === 'test') {
+    return path.resolve(getApplicationFolder(), 'knotsTestFolder');
+  }
+  return path.resolve(getApplicationFolder(), 'knots');
+};
+
 const getTemporaryKnotFolder = (uuid) =>
   path.resolve(getApplicationFolder(), 'tmp', uuid, 'knot');
 

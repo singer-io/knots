@@ -82,19 +82,19 @@ export const seedKnots = () =>
   new Promise((resolve, reject) => {
     const sampleKnotNames = ['sample 1', 'sample 2'];
 
-    shell.mkdir('-p', path.resolve('knots'));
+    shell.mkdir('-p', path.resolve('knotsTestFolder'));
 
     sampleKnotNames.forEach((knot) => {
-      shell.mkdir('-p', path.resolve('knots', knot));
+      shell.mkdir('-p', path.resolve('knotsTestFolder', knot));
     });
 
     fs.writeFile(
-      path.resolve('knots', 'sample 1', 'knot.json'),
+      path.resolve('knotsTestFolder', 'sample 1', 'knot.json'),
       JSON.stringify(sampleKnotJsons[0]),
       (error) => {
         if (!error) {
           fs.writeFile(
-            path.resolve('knots', 'sample 2', 'knot.json'),
+            path.resolve('knotsTestFolder', 'sample 2', 'knot.json'),
             JSON.stringify(sampleKnotJsons[1]),
             (err) => {
               if (!err) {
@@ -124,23 +124,23 @@ const writeFile = (filePath, content) =>
 
 export const seedKnot = () =>
   new Promise((resolve, reject) => {
-    shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'tap'));
-    shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'target'));
+    shell.mkdir('-p', path.resolve('knotsTestFolder', 'savedKnot', 'tap'));
+    shell.mkdir('-p', path.resolve('knotsTestFolder', 'savedKnot', 'target'));
     const promises = [
       writeFile(
-        path.resolve('knots', 'savedKnot', 'knot.json'),
+        path.resolve('knotsTestFolder', 'savedKnot', 'knot.json'),
         JSON.stringify(sampleSavedKnot.knotJson)
       ),
       writeFile(
-        path.resolve('knots', 'savedKnot', 'tap', 'config.json'),
+        path.resolve('knotsTestFolder', 'savedKnot', 'tap', 'config.json'),
         JSON.stringify(sampleSavedKnot.tapConfig)
       ),
       writeFile(
-        path.resolve('knots', 'savedKnot', 'tap', 'catalog.json'),
+        path.resolve('knotsTestFolder', 'savedKnot', 'tap', 'catalog.json'),
         JSON.stringify(sampleSavedKnot.tapCatalog)
       ),
       writeFile(
-        path.resolve('knots', 'savedKnot', 'target', 'config.json'),
+        path.resolve('knotsTestFolder', 'savedKnot', 'target', 'config.json'),
         JSON.stringify(sampleSavedKnot.targetConfig)
       )
     ];
@@ -180,23 +180,44 @@ export const seedTempKnot = () =>
 
 export const seedInvalidKnot = () =>
   new Promise((resolve, reject) => {
-    shell.mkdir('-p', path.resolve('knots', 'invalidSavedKnot', 'tap'));
-    shell.mkdir('-p', path.resolve('knots', 'invalidSavedKnot', 'target'));
+    shell.mkdir(
+      '-p',
+      path.resolve('knotsTestFolder', 'invalidSavedKnot', 'tap')
+    );
+    shell.mkdir(
+      '-p',
+      path.resolve('knotsTestFolder', 'invalidSavedKnot', 'target')
+    );
     const promises = [
       writeFile(
-        path.resolve('knots', 'invalidSavedKnot', 'knot.json'),
+        path.resolve('knotsTestFolder', 'invalidSavedKnot', 'knot.json'),
         '{name: "invalidKnot}'
       ),
       writeFile(
-        path.resolve('knots', 'invalidSavedKnot', 'tap', 'config.json'),
+        path.resolve(
+          'knotsTestFolder',
+          'invalidSavedKnot',
+          'tap',
+          'config.json'
+        ),
         JSON.stringify(sampleSavedKnot.tapConfig)
       ),
       writeFile(
-        path.resolve('knots', 'invalidSavedKnot', 'tap', 'catalog.json'),
+        path.resolve(
+          'knotsTestFolder',
+          'invalidSavedKnot',
+          'tap',
+          'catalog.json'
+        ),
         `${JSON.stringify(sampleSavedKnot.tapCatalog)}}`
       ),
       writeFile(
-        path.resolve('knots', 'invalidSavedKnot', 'target', 'config.json'),
+        path.resolve(
+          'knotsTestFolder',
+          'invalidSavedKnot',
+          'target',
+          'config.json'
+        ),
         JSON.stringify(sampleSavedKnot.targetConfig)
       )
     ];
@@ -215,15 +236,26 @@ export const seedTapCatalog = () =>
       JSON.stringify(sampleTapCatalog),
       (error) => {
         if (!error) {
-          shell.mkdir('-p', path.resolve('knots', 'savedKnot', 'tap'));
+          shell.mkdir(
+            '-p',
+            path.resolve('knotsTestFolder', 'savedKnot', 'tap')
+          );
           fs.writeFile(
-            path.resolve('knots', 'savedKnot', 'tap', 'catalog.json'),
+            path.resolve('knotsTestFolder', 'savedKnot', 'tap', 'catalog.json'),
             JSON.stringify(savedSampleTapCatalog),
             (err) => {
               if (!err) {
-                shell.mkdir('-p', path.resolve('knots', 'invalidKnot', 'tap'));
+                shell.mkdir(
+                  '-p',
+                  path.resolve('knotsTestFolder', 'invalidKnot', 'tap')
+                );
                 fs.writeFile(
-                  path.resolve('knots', 'invalidKnot', 'tap', 'catalog.json'),
+                  path.resolve(
+                    'knotsTestFolder',
+                    'invalidKnot',
+                    'tap',
+                    'catalog.json'
+                  ),
                   'invalid json',
                   (er) => {
                     if (!er) {
@@ -263,7 +295,7 @@ export const seedTapConfig = () =>
   });
 
 export const cleanfs = () => {
-  shell.rm('-rf', path.resolve('knots'));
+  shell.rm('-rf', path.resolve('knotsTestFolder'));
   shell.rm('-rf', path.resolve('tmp'));
   shell.rm('-rf', path.resolve(os.homedir(), '.knots', 'tmp'));
 };

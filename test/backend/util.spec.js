@@ -50,7 +50,7 @@ describe('util functions', () => {
     it('should return folder based on repo when not in production', () => {
       process.env.NODE_ENV = 'test';
       const actual = getKnotsFolder();
-      const expected = path.resolve(__dirname, '../..', 'knots');
+      const expected = path.resolve(__dirname, '../..', 'knotsTestFolder');
 
       expect(actual).toEqual(expected);
     });
@@ -234,7 +234,7 @@ describe('util functions', () => {
   });
 
   describe('addKnotAttribute', () => {
-    beforeAll((done) => {
+    beforeEach((done) => {
       shell.mkdir('-p', path.resolve('tmp', 'knotUUID', 'knot'));
       fs.writeFile(
         path.resolve('tmp', 'knotUUID', 'knot', 'knot.json'),
@@ -250,7 +250,7 @@ describe('util functions', () => {
       );
     });
 
-    afterAll(() => {
+    afterEach(() => {
       shell.rm('-f', path.resolve('sampleKnot.json'));
       shell.rm('-f', path.resolve('broken.json'));
       cleanfs();
