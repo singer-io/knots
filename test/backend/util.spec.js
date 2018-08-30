@@ -95,7 +95,12 @@ describe('util functions', () => {
       process.env.NODE_ENV = 'test';
       createTemporaryKnotFolder('devUUID');
 
-      const tempFolderPath = path.resolve('tmp', 'devUUID', 'knot');
+      const tempFolderPath = path.resolve(
+        'knotTestTmpFolder',
+        'tmp',
+        'devUUID',
+        'knot'
+      );
 
       fs.readdir(tempFolderPath, (err) => {
         if (err) {
@@ -140,7 +145,14 @@ describe('util functions', () => {
       process.env.NODE_ENV = 'test';
       const uuid = Math.random().toString();
       const actual = getTemporaryKnotFolder(uuid);
-      const expected = path.resolve(__dirname, '../..', 'tmp', uuid, 'knot');
+      const expected = path.resolve(
+        __dirname,
+        '../..',
+        'knotTestTmpFolder',
+        'tmp',
+        uuid,
+        'knot'
+      );
 
       expect(actual).toEqual(expected);
     });
@@ -235,9 +247,18 @@ describe('util functions', () => {
 
   describe('addKnotAttribute', () => {
     beforeEach((done) => {
-      shell.mkdir('-p', path.resolve('tmp', 'knotUUID', 'knot'));
+      shell.mkdir(
+        '-p',
+        path.resolve('knotTestTmpFolder', 'tmp', 'knotUUID', 'knot')
+      );
       fs.writeFile(
-        path.resolve('tmp', 'knotUUID', 'knot', 'knot.json'),
+        path.resolve(
+          'knotTestTmpFolder',
+          'tmp',
+          'knotUUID',
+          'knot',
+          'knot.json'
+        ),
         JSON.stringify({}),
         (error) => {
           if (!error) {
@@ -259,11 +280,23 @@ describe('util functions', () => {
     it('should add an attribute to a knot json file', (done) => {
       addKnotAttribute(
         { field: 'foo', value: 'bar' },
-        path.resolve('tmp', 'knotUUID', 'knot', 'knot.json')
+        path.resolve(
+          'knotTestTmpFolder',
+          'tmp',
+          'knotUUID',
+          'knot',
+          'knot.json'
+        )
       )
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'knotUUID', 'knot', 'knot.json'),
+            path.resolve(
+              'knotTestTmpFolder',
+              'tmp',
+              'knotUUID',
+              'knot',
+              'knot.json'
+            ),
             'utf8',
             (err, data) => {
               const updatedKnot = {
@@ -286,9 +319,18 @@ describe('util functions', () => {
     });
 
     it('should reject promise if json file is invalid', (done) => {
-      shell.mkdir('-p', path.resolve('tmp', 'brokenKnotUUID', 'knot'));
+      shell.mkdir(
+        '-p',
+        path.resolve('knotTestTmpFolder', 'tmp', 'brokenKnotUUID', 'knot')
+      );
       fs.writeFile(
-        path.resolve('tmp', 'brokenKnotUUID', 'knot', 'knot.json'),
+        path.resolve(
+          'knotTestTmpFolder',
+          'tmp',
+          'brokenKnotUUID',
+          'knot',
+          'knot.json'
+        ),
         '{"ab":"cd"',
         (error) => {
           if (!error) {
