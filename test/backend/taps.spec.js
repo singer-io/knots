@@ -41,10 +41,10 @@ describe('taps functions', () => {
 
     it('should update saved knot', (done) => {
       const uuid = Math.random().toString();
-      shell.mkdir('-p', path.resolve('tmp', uuid, 'knot'));
+      shell.mkdir('-p', path.resolve('knotTestTmpFolder', 'tmp', uuid, 'knot'));
 
       fs.writeFile(
-        path.resolve('tmp', uuid, 'knot', 'knot.json'),
+        path.resolve('knotTestTmpFolder', 'tmp', uuid, 'knot', 'knot.json'),
         JSON.stringify({}),
         (err) => {
           if (!err) {
@@ -59,7 +59,13 @@ describe('taps functions', () => {
             )
               .then(() => {
                 fs.readFile(
-                  path.resolve('tmp', uuid, 'knot', 'knot.json'),
+                  path.resolve(
+                    'knotTestTmpFolder',
+                    'tmp',
+                    uuid,
+                    'knot',
+                    'knot.json'
+                  ),
                   'utf8',
                   (er, data) => {
                     if (!er) {
@@ -107,7 +113,7 @@ describe('taps functions', () => {
       )
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', uuid, 'knot', 'knot.json'),
+            path.resolve('knotTestTmpFolder', 'tmp', uuid, 'knot', 'knot.json'),
             'utf8',
             (err, data) => {
               if (!err) {
@@ -236,7 +242,14 @@ describe('taps functions', () => {
       })
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', 'configUUID', 'knot', 'tap', 'config.json'),
+            path.resolve(
+              'knotTestTmpFolder',
+              'tmp',
+              'configUUID',
+              'knot',
+              'tap',
+              'config.json'
+            ),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();
@@ -268,7 +281,14 @@ describe('taps functions', () => {
       })
         .then((res) => {
           fs.readFile(
-            path.resolve('tmp', 'configUUID', 'knot', 'tap', 'config.json'),
+            path.resolve(
+              'knotTestTmpFolder',
+              'tmp',
+              'configUUID',
+              'knot',
+              'tap',
+              'config.json'
+            ),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();
@@ -316,7 +336,14 @@ describe('taps functions', () => {
       writeSchema(sampleTapCatalog, uuid)
         .then(() => {
           fs.readFile(
-            path.resolve('tmp', uuid, 'knot', 'tap', 'catalog.json'),
+            path.resolve(
+              'knotTestTmpFolder',
+              'tmp',
+              uuid,
+              'knot',
+              'tap',
+              'catalog.json'
+            ),
             (err, data) => {
               if (!err) {
                 const actual = data.toString();

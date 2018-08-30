@@ -227,7 +227,14 @@ const packageKnot = (knotName) =>
         }
 
         const zip = new EasyZip();
-        const tempFolder = path.resolve(getApplicationFolder(), 'tmp');
+        let tempFolder = path.resolve(getApplicationFolder(), 'tmp');
+        if (process.env.NODE_ENV === 'test') {
+          tempFolder = path.resolve(
+            getApplicationFolder(),
+            'knotTestTmpFolder',
+            'tmp'
+          );
+        }
 
         // Make a clone of the knot to be downloaded
         shell.mkdir('-p', path.resolve(tempFolder, knotName));
