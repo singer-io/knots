@@ -15,24 +15,20 @@ _KNOTS is currently only available on MacOS._
 Download and install the latest [release](https://github.com/singer-io/knots/releases). For Mac, you'll
 want to use the DMG installer.
 
-IMPORTANT: Presently, Mac will warn users that KNOTS is from an "unidentified developer". Follow the instructions
-[here](https://support.apple.com/kb/ph25088?locale=en_US) to open the app the first time. We're working on
-resolving this issue.
-
 ### Prerequisites
 
 KNOTS depends on Docker being installed and running. Docker is a tool designed to make it easier to create, deploy,
 and run containers. Containers allow us to package up an application or library with all of its dependencies. Each
 of the individual taps and targets are packaged into containers as they may have widely-different sets of dependencies.
 
-The installer for Docker for Mac is available[here](https://store.docker.com/editions/community/docker-ce-desktop-mac).
+The installer for Docker for Mac is available [here](https://store.docker.com/editions/community/docker-ce-desktop-mac).
 
 NOTE: Check Docker [file sharing preferences](https://docs.docker.com/docker-for-mac/osxfs/#namespaces) and
 make sure that `/Users` is a shared directory.
 
 ### Running the app
 
-1.  From the home screen, click on `New knot` on the upper right-hand corner.
+1.  From the home screen, click on `Getting Started` or on `New knot` on the upper right-hand corner.
 2.  Select a tap to use from the list of available taps.
 3.  Provide the configuration values required by the tap.
 4.  Click on `Continue` to run the tap in Discovery mode.
