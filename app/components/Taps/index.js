@@ -41,6 +41,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
 import type { TapPropertiesType } from '../../utils/sharedTypes';
+import { openLink } from '../../utils/handlers';
 
 type Props = {
   fetchTaps: () => void,
@@ -67,18 +68,21 @@ type Props = {
   ) => void,
   tapsPageLoaded: () => void,
   loadValues: (knot: string, uuid: string) => void,
-  cancel: (name: string) => void
+  cancel: (name: string) => void,
+  updateLogBaseRepMethod: (usesLogBaseRepMethod: boolean) => void
 };
 
 type State = {
   showTaps: boolean,
-  showModal: boolean
+  showModal: boolean,
+  showRecommendationModal: boolean
 };
 
 export default class Taps extends Component<Props, State> {
   state = {
     showTaps: true,
-    showModal: false
+    showModal: false,
+    showRecommendationModal: false
   };
 
   componentWillMount() {
@@ -123,23 +127,53 @@ export default class Taps extends Component<Props, State> {
   };
 
   submit = (showModal: boolean, skipDiscovery: ?boolean) => {
-    const { selectedTap } = this.props.tapsStore;
-    const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    const { knotName, knotLoaded } = this.props.knotsStore;
+    const {
+      tapsStore,
+      knotsStore: { knotName, knotLoaded, uuid }
+    } = this.props;
+    const { selectedTap } = tapsStore;
+    const { fieldValues } = tapsStore[selectedTap.name];
+    const { specImplementation } = selectedTap;
+    const { usesLogBased: usesLogBasedMethod = true } =
+      specImplementation || {};
 
     // When editing a knot show confirmation dialog
     if (knotLoaded && showModal) {
       this.setState({ showModal: true });
+    } else if (
+      (usesLogBasedMethod && showModal) ||
+      (usesLogBasedMethod && knotLoaded)
+    ) {
+      this.setState({ showRecommendationModal: true });
     } else {
       this.props.submitConfig(
         selectedTap,
         fieldValues,
-        this.props.knotsStore.uuid,
+        uuid,
         knotName,
         skipDiscovery
       );
       this.props.history.push('/schema');
     }
+  };
+
+  onSubmitRepMethodOption = (usesDefault: ?boolean) => {
+    const { tapsStore, knotsStore } = this.props;
+    const { selectedTap } = tapsStore;
+    const { fieldValues } = tapsStore[selectedTap.name];
+    const { knotName } = knotsStore;
+
+    if (!usesDefault) {
+      this.props.updateLogBaseRepMethod(!usesDefault);
+    }
+
+    this.props.submitConfig(
+      selectedTap,
+      fieldValues,
+      this.props.knotsStore.uuid,
+      knotName
+    );
+    this.props.history.push('/schema');
   };
 
   cancel = () => {
@@ -184,9 +218,45 @@ export default class Taps extends Component<Props, State> {
     return rows;
   };
 
+  specialConfigModalInfo = (tapName) => {
+    switch (tapName) {
+      case 'tap-mysql':
+        return (
+          <p>
+            Incremental syncs (recommended), require MySQL to be configured with
+            the following options:<br />
+            <code>log_bin</code> system variable set to <code>ON</code>{' '}
+            <a
+              href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html"
+              onClick={openLink}
+            >
+              learn more
+            </a>.
+          </p>
+        );
+      case 'tap-postgres':
+        return (
+          <p>
+            Incremental syncs (recommended), require Postgres to be configured
+            with the following options:<br />
+            <code>log_bin</code> system variable set to <code>ON</code>{' '}
+            <a
+              href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html"
+              onClick={openLink}
+            >
+              learn more
+            </a>.
+          </p>
+        );
+      default:
+        return <p>No special configuration</p>;
+    }
+  };
+
   render() {
-    const { taps, selectedTap } = this.props.tapsStore;
-    const { knotName } = this.props.knotsStore;
+    const { tapsStore, knotsStore } = this.props;
+    const { taps, selectedTap } = tapsStore;
+    const { knotName } = knotsStore;
     const { showTaps } = this.state;
 
     return (
@@ -272,6 +342,24 @@ export default class Taps extends Component<Props, State> {
             </Button>
             <Button color="primary" onClick={() => this.submit(false)}>
               Yes
+            </Button>
+          </ModalFooter>
+        </Modal>
+        <Modal isOpen={this.state.showRecommendationModal} size="lg">
+          <ModalHeader>Update schema information?</ModalHeader>
+          <ModalBody>{this.specialConfigModalInfo(selectedTap.name)}</ModalBody>
+          <ModalFooter>
+            <Button
+              color="link"
+              onClick={() => this.onSubmitRepMethodOption(true)}
+            >
+              Use a default replication instead
+            </Button>
+            <Button
+              color="primary"
+              onClick={() => this.onSubmitRepMethodOption()}
+            >
+              {selectedTap.identifier} is configured for incremental replication
             </Button>
           </ModalFooter>
         </Modal>

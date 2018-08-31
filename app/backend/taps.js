@@ -43,7 +43,8 @@ const createKnot = (tap, uuid, modifyKnot) =>
           value: {
             name: tap.name,
             image: tap.image,
-            specImplementation: tap.specImplementation
+            specImplementation: tap.specImplementation,
+            identifier: tap.identifier
           }
         },
         path.resolve(getTemporaryKnotFolder(uuid), 'knot.json')
@@ -62,7 +63,8 @@ const createKnot = (tap, uuid, modifyKnot) =>
           tap: {
             name: tap.name,
             image: tap.image,
-            specImplementation: tap.specImplementation
+            specImplementation: tap.specImplementation,
+            identifier: tap.identifier
           }
         })
       )

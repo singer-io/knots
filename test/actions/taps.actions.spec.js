@@ -286,4 +286,20 @@ describe('taps actions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
+  describe('update log base replication method', () => {
+    it('should dispatch UPDATE_REP_METHOD_OPTION', () => {
+      const store = mockStore({});
+
+      const expectedActions = [
+        {
+          type: tapActions.UPDATE_REP_METHOD_OPTION,
+          usesLogBaseRepMethod: false
+        }
+      ];
+
+      store.dispatch(tapActions.updateLogBaseRepMethod(false));
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
 });

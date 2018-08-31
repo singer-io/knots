@@ -27,7 +27,8 @@
 export type TapPropertiesType = {
   name: string,
   image: string,
-  specImplementation?: SpecImplementationPropType
+  specImplementation?: SpecImplementationPropType,
+  identifier?: string
 };
 
 export type TargetPropertiesType = {
@@ -149,7 +150,8 @@ export type SpecImplementationPropType = {
     replicationMethod?: boolean
   },
   usesCatalogArg?: boolean,
-  usesReplication?: boolean
+  usesReplication?: boolean,
+  usesLogBased?: boolean
 };
 
 /**

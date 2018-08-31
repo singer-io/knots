@@ -238,6 +238,19 @@ describe('taps reducer', () => {
     );
   });
 
+  it('should handle UPDATE_REP_METHOD_OPTION', () => {
+    expect(
+      tapReducer(undefined, {
+        type: tapActions.UPDATE_REP_METHOD_OPTION,
+        usesLogBaseRepMethod: false
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        usesLogBaseRepMethod: false
+      })
+    );
+  });
+
   it('should handle RESET_STORE', () => {
     expect(
       tapReducer(undefined, {
