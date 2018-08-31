@@ -28,7 +28,7 @@ make sure that `/Users` is a shared directory.
 
 ### Running the app
 
-1.  From the home screen, click on `Getting Started` or on `New knot` on the upper right-hand corner.
+1.  From the home screen, click on `Get Started`, or `New knot` on the upper right-hand corner.
 2.  Select a tap to use from the list of available taps.
 3.  Provide the configuration values required by the tap.
 4.  Click on `Continue` to run the tap in Discovery mode.
