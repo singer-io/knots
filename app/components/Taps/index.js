@@ -222,9 +222,7 @@ export default class Taps extends Component<Props, State> {
     switch (tapName) {
       case 'tap-mysql':
         return (
-          <p>
-            Incremental syncs (recommended), require MySQL to be configured with
-            the following options:<br />
+          <span>
             <code>log_bin</code> system variable set to <code>ON</code>{' '}
             <a
               href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html"
@@ -232,24 +230,22 @@ export default class Taps extends Component<Props, State> {
             >
               learn more
             </a>.
-          </p>
+          </span>
         );
       case 'tap-postgres':
         return (
-          <p>
-            Incremental syncs (recommended), require Postgres to be configured
-            with the following options:<br />
-            <code>log_bin</code> system variable set to <code>ON</code>{' '}
+          <span>
+            Set <code>rds.logical_replication</code> in parameter(reboot) to 1{' '}
             <a
-              href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html"
+              href="https://www.postgresql.org/docs/current/static/logicaldecoding-example.html"
               onClick={openLink}
             >
               learn more
             </a>.
-          </p>
+          </span>
         );
       default:
-        return <p>No special configuration</p>;
+        return <span>No special configuration needed</span>;
     }
   };
 
@@ -347,7 +343,13 @@ export default class Taps extends Component<Props, State> {
         </Modal>
         <Modal isOpen={this.state.showRecommendationModal} size="lg">
           <ModalHeader>Update schema information?</ModalHeader>
-          <ModalBody>{this.specialConfigModalInfo(selectedTap.name)}</ModalBody>
+          <ModalBody>
+            <p>
+              Incremental syncs (recommended), require {selectedTap.identifier}{' '}
+              to be configured with the following options:<br />
+              {this.specialConfigModalInfo(selectedTap.name)}
+            </p>
+          </ModalBody>
           <ModalFooter>
             <Button
               color="link"
