@@ -119,15 +119,17 @@ const addKnotAttribute = (content, knotPath, uuid) =>
       .catch(reject);
   });
 
-const createMakeFileCommands = (knot) =>
+const createMakeFileCommands = (knot) => {
+  const { tap } = knot;
+  const { usesCatalogArg = true } = tap.specImplementation || {};
   /* eslint-disable no-template-curly-in-string */
-  `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+  return `SHELL=/bin/bash -o pipefail\n\nfullSync:${
     os.EOL
   }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
     knot.tap.image
-  } ${
-    knot.tap.name
-  } -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
+  } ${knot.tap.name} -c tap/data/config.json ${
+    usesCatalogArg ? '--catalog' : '--properties'
+  } tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
     knot.target.image
   } ${knot.target.name} -c target/data/config.json > ./tap/state.json${
     os.EOL
@@ -139,11 +141,12 @@ const createMakeFileCommands = (knot) =>
     os.EOL
   }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
     knot.tap.image
-  } ${
-    knot.tap.name
-  } -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
+  } ${knot.tap.name} -c tap/data/config.json ${
+    usesCatalogArg ? '--catalog' : '--properties'
+  } tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
     knot.target.image
   } ${knot.target.name} -c target/data/config.json > ./tap/state.json`;
+};
 /* eslint-disable no-template-curly-in-string */
 
 module.exports = {
