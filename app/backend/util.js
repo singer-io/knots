@@ -122,7 +122,7 @@ const addKnotAttribute = (content, knotPath, uuid) =>
 const createMakeFileCommands = (knot) => {
   const tapVersion = knot.tap.image.split(':')[1];
   const targetVersion = knot.target.image.split(':')[1];
-  const { usesCatalogArg = true } = knot.specImplementation || {};
+  const { usesCatalogArg = true } = knot.tap.specImplementation || {};
   /* eslint-disable no-template-curly-in-string */
   return `SHELL=/bin/bash -o pipefail\n\nTAP=${
     knot.tap.name

@@ -372,7 +372,7 @@ describe('util functions', () => {
         os.EOL
       }full-sync:${
         os.EOL
-      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --catalog tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
+      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
         os.EOL
       }sync:${
         os.EOL
@@ -380,7 +380,7 @@ describe('util functions', () => {
         os.EOL
       }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
         os.EOL
-      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --catalog tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
+      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
         os.EOL
       }setup-py-envs:${os.EOL}\tpython3 -m venv venvs/tap${
         os.EOL
@@ -392,7 +392,7 @@ describe('util functions', () => {
         os.EOL
       }py-full-sync:${
         os.EOL
-      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --catalog tap/catalog.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json\n${
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --properties tap/catalog.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json\n${
         os.EOL
       }py-sync:${
         os.EOL
@@ -400,7 +400,7 @@ describe('util functions', () => {
         os.EOL
       }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
         os.EOL
-      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --catalog tap/catalog.json --state tap/latest-state.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json`;
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --properties tap/catalog.json --state tap/latest-state.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json`;
 
       const actual = createMakeFileCommands({
         tap: {
