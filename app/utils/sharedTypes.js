@@ -27,8 +27,7 @@
 export type TapPropertiesType = {
   name: string,
   image: string,
-  specImplementation?: SpecImplementationPropType,
-  identifier?: string
+  specImplementation?: SpecImplementationPropType
 };
 
 export type TargetPropertiesType = {

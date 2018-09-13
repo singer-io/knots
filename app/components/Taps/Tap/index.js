@@ -91,8 +91,7 @@ export default class Tap extends Component<Props, State> {
                 name: tapKey,
                 image: tapImage,
                 repo,
-                specImplementation,
-                identifier: name
+                specImplementation
               },
               this.props.uuid,
               knotName

@@ -249,11 +249,22 @@ export default class Taps extends Component<Props, State> {
     }
   };
 
+  getTapName = (taps, selectedTap) => {
+    let tapName = '';
+    taps.forEach((tap) => {
+      if (tap.tapKey === selectedTap.name) {
+        tapName = tap.name;
+      }
+    });
+    return tapName;
+  };
+
   render() {
     const { tapsStore, knotsStore } = this.props;
     const { taps, selectedTap } = tapsStore;
     const { knotName } = knotsStore;
-    const { showTaps } = this.state;
+    const { showTaps, showModal, showRecommendationModal } = this.state;
+    const tapSource = this.getTapName(taps, selectedTap);
 
     return (
       <div>
@@ -270,7 +281,7 @@ export default class Taps extends Component<Props, State> {
               </CardHeader>
               <CardBody
                 className={classNames('collapse', {
-                  show: this.state.showTaps
+                  show: showTaps
                 })}
               >
                 <p className="mb-4">
@@ -316,7 +327,7 @@ export default class Taps extends Component<Props, State> {
             </Button>
           </div>
         </Container>
-        <Modal isOpen={this.state.showModal}>
+        <Modal isOpen={showModal}>
           <ModalHeader>Update schema information?</ModalHeader>
           <ModalBody>
             <p>
@@ -341,12 +352,12 @@ export default class Taps extends Component<Props, State> {
             </Button>
           </ModalFooter>
         </Modal>
-        <Modal isOpen={this.state.showRecommendationModal} size="lg">
+        <Modal isOpen={showRecommendationModal} size="lg">
           <ModalHeader>Update schema information?</ModalHeader>
           <ModalBody>
             <p>
-              Incremental syncs (recommended), require {selectedTap.identifier}{' '}
-              to be configured with the following options:<br />
+              Incremental syncs (recommended), require {tapSource} to be
+              configured with the following options:<br />
               {this.specialConfigModalInfo(selectedTap.name)}
             </p>
           </ModalBody>
@@ -361,7 +372,7 @@ export default class Taps extends Component<Props, State> {
               color="primary"
               onClick={() => this.onSubmitRepMethodOption()}
             >
-              {selectedTap.identifier} is configured for incremental replication
+              {tapSource} is configured for incremental replication
             </Button>
           </ModalFooter>
         </Modal>

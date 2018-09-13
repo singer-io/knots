@@ -76,8 +76,7 @@ export function defaultState() {
     selectedTap: {
       name: '',
       image: '',
-      specImplementation: {},
-      identifier: ''
+      specImplementation: {}
     },
     schemaLoading: false,
     schemaLoaded: false,
