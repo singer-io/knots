@@ -353,7 +353,7 @@ export default class Taps extends Component<Props, State> {
           </ModalFooter>
         </Modal>
         <Modal isOpen={showRecommendationModal} size="lg">
-          <ModalHeader>Update schema information?</ModalHeader>
+          <ModalHeader>Incremental sync?</ModalHeader>
           <ModalBody>
             <p>
               Incremental syncs (recommended), require {tapSource} to be
