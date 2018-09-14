@@ -120,32 +120,53 @@ const addKnotAttribute = (content, knotPath, uuid) =>
   });
 
 const createMakeFileCommands = (knot) => {
-  const { tap } = knot;
-  const { usesCatalogArg = true } = tap.specImplementation || {};
+  const tapVersion = knot.tap.image.split(':')[1];
+  const targetVersion = knot.target.image.split(':')[1];
+  const { usesCatalogArg = true } = knot.tap.specImplementation || {};
   /* eslint-disable no-template-curly-in-string */
-  return `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+  return `SHELL=/bin/bash -o pipefail\n\nTAP=${
+    knot.tap.name
+  }\nTAP_VERSION=${tapVersion}\nTAP_IMAGE=${knot.tap.image}\nTARGET=${
+    knot.target.name
+  }\nTARGET_VERSION=${targetVersion}\nTARGET_IMAGE=${knot.target.image}\n${
     os.EOL
-  }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
-    knot.tap.image
-  } ${knot.tap.name} -c tap/data/config.json ${
+  }full-sync:${
+    os.EOL
+  }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json ${
     usesCatalogArg ? '--catalog' : '--properties'
-  } tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
-    knot.target.image
-  } ${knot.target.name} -c target/data/config.json > ./tap/state.json${
+  } tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
     os.EOL
   }sync:${
     os.EOL
-  }\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${
+  }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
     os.EOL
-  }\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${
+  }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
     os.EOL
-  }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${
-    knot.tap.image
-  } ${knot.tap.name} -c tap/data/config.json ${
+  }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json ${
     usesCatalogArg ? '--catalog' : '--properties'
-  } tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${
-    knot.target.image
-  } ${knot.target.name} -c target/data/config.json > ./tap/state.json`;
+  } tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
+    os.EOL
+  }setup-py-envs:${os.EOL}\tpython3 -m venv venvs/tap${
+    os.EOL
+  }\tpython3 -m venv venvs/target${
+    os.EOL
+  }\tvenvs/tap/bin/pip install $(TAP)==$(TAP_VERSION)${
+    os.EOL
+  }\tvenvs/target/bin/pip install $(TARGET)==$(TARGET_VERSION)\n${
+    os.EOL
+  }py-full-sync:${os.EOL}\tvenvs/tap/bin/$(TAP) -c tap/config.json ${
+    usesCatalogArg ? '--catalog' : '--properties'
+  } tap/catalog.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json\n${
+    os.EOL
+  }py-sync:${
+    os.EOL
+  }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
+    os.EOL
+  }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
+    os.EOL
+  }\tvenvs/tap/bin/$(TAP) -c tap/config.json ${
+    usesCatalogArg ? '--catalog' : '--properties'
+  } tap/catalog.json --state tap/latest-state.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json`;
 };
 /* eslint-disable no-template-curly-in-string */
 

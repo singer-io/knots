@@ -317,17 +317,39 @@ describe('util functions', () => {
   describe('createMakefileCommands', () => {
     it('should create valid makefile commands for taps with catalog command', () => {
       /* eslint-disable no-tabs */
-      const expected = `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+      const expected = `SHELL=/bin/bash -o pipefail\n\nTAP=tap-redshift\nTAP_VERSION=1.0.0b8\nTAP_IMAGE=dataworld/tap-redshift:1.0.0b8\nTARGET=target-datadotworld\nTARGET_VERSION=1.0.1\nTARGET_IMAGE=dataworld/target-datadotworld:1.0.1\n${
         os.EOL
-      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-redshift:1.0.0b8'} ${'tap-redshift'} -c tap/data/config.json --catalog tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json${
+      }full-sync:${
+        os.EOL
+      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --catalog tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
         os.EOL
       }sync:${
         os.EOL
-      }\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${
+      }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
         os.EOL
-      }\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${
+      }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
         os.EOL
-      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-redshift:1.0.0b8'} ${'tap-redshift'} -c tap/data/config.json --catalog tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json`;
+      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --catalog tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
+        os.EOL
+      }setup-py-envs:${os.EOL}\tpython3 -m venv venvs/tap${
+        os.EOL
+      }\tpython3 -m venv venvs/target${
+        os.EOL
+      }\tvenvs/tap/bin/pip install $(TAP)==$(TAP_VERSION)${
+        os.EOL
+      }\tvenvs/target/bin/pip install $(TARGET)==$(TARGET_VERSION)\n${
+        os.EOL
+      }py-full-sync:${
+        os.EOL
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --catalog tap/catalog.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json\n${
+        os.EOL
+      }py-sync:${
+        os.EOL
+      }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
+        os.EOL
+      }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
+        os.EOL
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --catalog tap/catalog.json --state tap/latest-state.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json`;
 
       const actual = createMakeFileCommands({
         tap: {
@@ -346,17 +368,39 @@ describe('util functions', () => {
 
     it('should create valid makefile commands for taps with properties command', () => {
       /* eslint-disable no-tabs */
-      const expected = `SHELL=/bin/bash -o pipefail\n\nfullSync:${
+      const expected = `SHELL=/bin/bash -o pipefail\n\nTAP=tap-facebook\nTAP_VERSION=1.5.1\nTAP_IMAGE=dataworld/tap-facebook:1.5.1\nTARGET=target-datadotworld\nTARGET_VERSION=1.0.1\nTARGET_IMAGE=dataworld/target-datadotworld:1.0.1\n${
         os.EOL
-      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-facebook:1.5.1'} ${'tap-facebook'} -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json${
+      }full-sync:${
+        os.EOL
+      }\t-\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --properties tap/data/catalog.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
         os.EOL
       }sync:${
         os.EOL
-      }\tif [ ! -f ./tap/latest-state.json ]; then touch ./tap/latest-state.json; fi${
+      }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
         os.EOL
-      }\ttail -1 "$(CURDIR)/tap/state.json" > "$(CURDIR)/tap/latest-state.json"; \\${
+      }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
         os.EOL
-      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive ${'dataworld/tap-facebook:1.5.1'} ${'tap-facebook'} -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive ${'dataworld/target-datadotworld:1.0.1'} ${'target-datadotworld'} -c target/data/config.json > ./tap/state.json`;
+      }\tdocker run -v "$(CURDIR)/tap:/app/tap/data" --interactive $(TAP_IMAGE) $(TAP) -c tap/data/config.json --properties tap/data/catalog.json --state tap/data/latest-state.json | docker run -v "$(CURDIR)/target:/app/target/data" --interactive $(TARGET_IMAGE) $(TARGET) -c target/data/config.json > tap/state.json\n${
+        os.EOL
+      }setup-py-envs:${os.EOL}\tpython3 -m venv venvs/tap${
+        os.EOL
+      }\tpython3 -m venv venvs/target${
+        os.EOL
+      }\tvenvs/tap/bin/pip install $(TAP)==$(TAP_VERSION)${
+        os.EOL
+      }\tvenvs/target/bin/pip install $(TARGET)==$(TARGET_VERSION)\n${
+        os.EOL
+      }py-full-sync:${
+        os.EOL
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --properties tap/catalog.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json\n${
+        os.EOL
+      }py-sync:${
+        os.EOL
+      }\tif [ ! -f tap/latest-state.json ]; then touch tap/latest-state.json; fi${
+        os.EOL
+      }\ttail -1 "tap/state.json" > "tap/latest-state.json"; \\${
+        os.EOL
+      }\tvenvs/tap/bin/$(TAP) -c tap/config.json --properties tap/catalog.json --state tap/latest-state.json | venvs/target/bin/$(TARGET) -c target/config.json > tap/state.json`;
 
       const actual = createMakeFileCommands({
         tap: {

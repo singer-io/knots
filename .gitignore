@@ -49,8 +49,11 @@ main.js
 main.js.map
 
 .env
-.idea
 npm-debug.log.*
+
+# IDE files
+*.iml
+.idea
 
 # Knot temp files
 tmp
