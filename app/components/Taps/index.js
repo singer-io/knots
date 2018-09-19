@@ -41,7 +41,6 @@ import KnotProgress from '../../containers/KnotProgress';
 import Tap from './Tap';
 import TapConfiguration from '../../containers/TapConfiguration';
 import type { TapPropertiesType } from '../../utils/sharedTypes';
-import { openLink } from '../../utils/handlers';
 
 type Props = {
   fetchTaps: () => void,
@@ -68,21 +67,18 @@ type Props = {
   ) => void,
   tapsPageLoaded: () => void,
   loadValues: (knot: string, uuid: string) => void,
-  cancel: (name: string) => void,
-  updateLogBaseRepMethod: (usesLogBaseRepMethod: boolean) => void
+  cancel: (name: string) => void
 };
 
 type State = {
   showTaps: boolean,
-  showModal: boolean,
-  showRecommendationModal: boolean
+  showModal: boolean
 };
 
 export default class Taps extends Component<Props, State> {
   state = {
     showTaps: true,
-    showModal: false,
-    showRecommendationModal: false
+    showModal: false
   };
 
   componentWillMount() {
@@ -133,18 +129,10 @@ export default class Taps extends Component<Props, State> {
     } = this.props;
     const { selectedTap } = tapsStore;
     const { fieldValues } = tapsStore[selectedTap.name];
-    const { specImplementation } = selectedTap;
-    const { usesLogBased: usesLogBasedMethod = true } =
-      specImplementation || {};
 
     // When editing a knot show confirmation dialog
     if (knotLoaded && showModal) {
       this.setState({ showModal: true });
-    } else if (
-      (usesLogBasedMethod && showModal) ||
-      (usesLogBasedMethod && knotLoaded)
-    ) {
-      this.setState({ showRecommendationModal: true });
     } else {
       this.props.submitConfig(
         selectedTap,
@@ -155,25 +143,6 @@ export default class Taps extends Component<Props, State> {
       );
       this.props.history.push('/schema');
     }
-  };
-
-  onSubmitRepMethodOption = (usesDefault: ?boolean) => {
-    const { tapsStore, knotsStore } = this.props;
-    const { selectedTap } = tapsStore;
-    const { fieldValues } = tapsStore[selectedTap.name];
-    const { knotName } = knotsStore;
-
-    if (!usesDefault) {
-      this.props.updateLogBaseRepMethod(!usesDefault);
-    }
-
-    this.props.submitConfig(
-      selectedTap,
-      fieldValues,
-      this.props.knotsStore.uuid,
-      knotName
-    );
-    this.props.history.push('/schema');
   };
 
   cancel = () => {
@@ -218,53 +187,11 @@ export default class Taps extends Component<Props, State> {
     return rows;
   };
 
-  specialConfigModalInfo = (tapName) => {
-    switch (tapName) {
-      case 'tap-mysql':
-        return (
-          <span>
-            <code>log_bin</code> system variable set to <code>ON</code>{' '}
-            <a
-              href="https://dev.mysql.com/doc/refman/8.0/en/binary-log.html"
-              onClick={openLink}
-            >
-              learn more
-            </a>.
-          </span>
-        );
-      case 'tap-postgres':
-        return (
-          <span>
-            Set <code>rds.logical_replication</code> in parameter(reboot) to 1{' '}
-            <a
-              href="https://www.postgresql.org/docs/current/static/logicaldecoding-example.html"
-              onClick={openLink}
-            >
-              learn more
-            </a>.
-          </span>
-        );
-      default:
-        return <span>No special configuration needed</span>;
-    }
-  };
-
-  getTapName = (taps, selectedTap) => {
-    let tapName = '';
-    taps.forEach((tap) => {
-      if (tap.tapKey === selectedTap.name) {
-        tapName = tap.name;
-      }
-    });
-    return tapName;
-  };
-
   render() {
     const { tapsStore, knotsStore } = this.props;
     const { taps, selectedTap } = tapsStore;
     const { knotName } = knotsStore;
-    const { showTaps, showModal, showRecommendationModal } = this.state;
-    const tapSource = this.getTapName(taps, selectedTap);
+    const { showTaps, showModal } = this.state;
 
     return (
       <div>
@@ -349,30 +276,6 @@ export default class Taps extends Component<Props, State> {
             </Button>
             <Button color="primary" onClick={() => this.submit(false)}>
               Yes
-            </Button>
-          </ModalFooter>
-        </Modal>
-        <Modal isOpen={showRecommendationModal} size="lg">
-          <ModalHeader>Incremental sync?</ModalHeader>
-          <ModalBody>
-            <p>
-              Incremental syncs (recommended), require {tapSource} to be
-              configured with the following options:<br />
-              {this.specialConfigModalInfo(selectedTap.name)}
-            </p>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color="link"
-              onClick={() => this.onSubmitRepMethodOption(true)}
-            >
-              Use a default replication instead
-            </Button>
-            <Button
-              color="primary"
-              onClick={() => this.onSubmitRepMethodOption()}
-            >
-              {tapSource} is configured for incremental replication
             </Button>
           </ModalFooter>
         </Modal>

@@ -172,7 +172,9 @@ export type PostgresState = {
   port: FieldState,
   dbname: FieldState,
   user: FieldState,
-  password: FieldState
+  password: FieldState,
+  showModal: boolean,
+  checked: boolean
 };
 
 export type SalesforceState = {
@@ -199,7 +201,9 @@ export type MySQLState = {
   port: FieldState,
   user: FieldState,
   password: FieldState,
-  database: FieldState
+  database: FieldState,
+  showModal: boolean,
+  checked: boolean
 };
 
 export type FacebookState = {
