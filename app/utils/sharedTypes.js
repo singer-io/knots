@@ -149,8 +149,7 @@ export type SpecImplementationPropType = {
     replicationMethod?: boolean
   },
   usesCatalogArg?: boolean,
-  usesReplication?: boolean,
-  usesLogBased?: boolean
+  usesReplication?: boolean
 };
 
 /**
