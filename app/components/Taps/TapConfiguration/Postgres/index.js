@@ -51,6 +51,7 @@ import {
   validateFields,
   openLink
 } from '../../../../utils/handlers';
+import Checkbox from '../Checkbox';
 
 type Props = {
   tapsStore: {
@@ -102,11 +103,7 @@ export default class Postgres extends Component<Props, PostgresState> {
     this.props.updateTapField('tap-postgres', name, value);
   };
 
-  toggleModal = (e) => {
-    const checkBoxState = e.target.checked;
-    if (!checkBoxState) {
-      this.props.updateLogBaseRepMethod(false);
-    }
+  toggleModal = (checkBoxState) => {
     this.setState({ showModal: checkBoxState, checked: !this.state.checked });
   };
 
@@ -224,16 +221,11 @@ export default class Postgres extends Component<Props, PostgresState> {
             </Row>
             <Row>
               <Col>
-                <FormGroup check>
-                  <Label check>
-                    <Input
-                      type="checkbox"
-                      onClick={this.toggleModal}
-                      checked={this.state.checked}
-                    />
-                    Use incremental sync?
-                  </Label>
-                </FormGroup>
+                <Checkbox
+                  checked={this.state.checked}
+                  toggleModal={this.toggleModal}
+                  updateLogBaseRepMethod={this.props.updateLogBaseRepMethod}
+                />
               </Col>
             </Row>
           </Form>
