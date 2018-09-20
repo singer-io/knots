@@ -2,9 +2,9 @@
 
 ## General
 
-* Contributions of all kinds (issues, ideas, proposals), not just code, are highly appreciated.
-* Pull requests are welcome with the understanding that major changes will be carefully evaluated and discussed, and may not always be accepted. Starting with a discussion is always best!
-* All contributions including documentation, filenames and discussions should be written in the English language.
+- Contributions of all kinds (issues, ideas, proposals), not just code, are highly appreciated.
+- Pull requests are welcome with the understanding that major changes will be carefully evaluated and discussed, and may not always be accepted. Starting with a discussion is always best!
+- All contributions including documentation, filenames and discussions should be written in the English language.
 
 ## Issues
 
@@ -24,6 +24,37 @@ Fork the project [on Github](https://github.com/datadotworld/knots.git) and chec
 $ git clone https://github.com/[YOUR_GITHUB_NAME]/knots.git
 $ cd knots
 $ git remote add upstream https://github.com/datadotworld/knots.git
+```
+
+### Run the app
+
+Install app dependancies
+
+```sh
+$ yarn
+```
+
+## Windows
+
+On Windows you'll need to first install Windows build tools and configure `yarn` to use the installed Visual Studio build tools. Open `cmd` or `PowerShell` as an administrator and run the following commands:
+
+```sh
+$ npm install --global --production windows-build-tools
+$ yarn config set msvs_version 2017 --global
+```
+
+If the `yarn` command fails with a `node-gyp` error follow the debug steps on the [node-gyp wiki](https://github.com/Microsoft/nodejs-guidelines/blob/master/windows-environment.md#compiling-native-addon-modules)
+
+Run the renderer server
+
+```sh
+$ yarn run start-renderer-dev
+```
+
+Run the main server
+
+```sh
+$ yarn run start-main-dev
 ```
 
 ### Write Tests

@@ -12,8 +12,8 @@
     "name": "Stitch, Inc."
   },
   "dependencies": {
-    "bufferutil": "^3.0.4",
-    "socket.io": "^2.1.0",
-    "utf-8-validate": "^4.0.1"
+    "bufferutil": "^4.0.0",
+    "socket.io": "^2.1.1",
+    "utf-8-validate": "^5.0.1"
   }
 }
