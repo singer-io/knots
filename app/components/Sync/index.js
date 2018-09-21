@@ -270,7 +270,8 @@ export default class Sync extends Component<Props, State> {
                   {knotSyncing && (
                     <p className="my-0">
                       <strong>{knotName}</strong> has been saved! Running your
-                      knot could take a while...<br />
+                      knot could take a while...
+                      <br />
                       <small>
                         You may cancel sync and resume any time. Progress will
                         not be lost!
@@ -279,7 +280,8 @@ export default class Sync extends Component<Props, State> {
                   )}
                   {knotSynced && (
                     <p className="my-0">
-                      <strong>{knotName}</strong> is done syncing. For now! :-)<br />
+                      <strong>{knotName}</strong> is done syncing. For now! :-)
+                      <br />
                       <small>
                         Come back and run it again any time to sync new data.
                       </small>
@@ -319,8 +321,9 @@ export default class Sync extends Component<Props, State> {
             <p>
               <strong>Bad news. Your knot failed to run.</strong>
               <br />
-              The error message was: &quot;{knotError}&quot;, but make sure to
-              review the logs too!
+              The error message was: &quot;
+              {knotError}
+              &quot;, but make sure to review the logs too!
             </p>
             <Button
               outline
@@ -362,6 +365,7 @@ export default class Sync extends Component<Props, State> {
                         </InputGroupText>
                       </InputGroupAddon>
                       <Input
+                        style={{ height: '54px' }}
                         type="text"
                         placeholder="Untitled knot"
                         value={knotName}
@@ -422,7 +426,9 @@ export default class Sync extends Component<Props, State> {
                         overflow: 'auto'
                       }}
                     >
-                      {tapLogs.map((log) => <Log key={log} log={log} />)}
+                      {tapLogs.map((log) => (
+                        <Log key={log} log={log} />
+                      ))}
                     </StayScrolled>
                   </CardBody>
                 </Card>
@@ -447,7 +453,9 @@ export default class Sync extends Component<Props, State> {
                         overflow: 'auto'
                       }}
                     >
-                      {targetLogs.map((log) => <Log key={log} log={log} />)}
+                      {targetLogs.map((log) => (
+                        <Log key={log} log={log} />
+                      ))}
                     </StayScrolled>
                   </CardBody>
                 </Card>
