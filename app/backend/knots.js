@@ -131,6 +131,18 @@ const sync = (req, mode) => {
                     knotObject.target
                   );
 
+            if (mode === 'partial') {
+              const lastState = shell.tail(
+                { '-n': 1 },
+                path.resolve(pathToKnot, 'tap', 'state.json')
+              ).stdout;
+
+              fs.writeFileSync(
+                path.resolve(pathToKnot, 'tap', 'latest-state.json'),
+                lastState
+              );
+            }
+
             const runSync = exec(
               `${shellOptions}${syncCommand}`,
               commandOptions
