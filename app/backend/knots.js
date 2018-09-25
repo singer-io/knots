@@ -22,7 +22,7 @@
 const fs = require('fs');
 const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
-const { exec, execFile } = require('child_process');
+const { exec } = require('child_process');
 const shell = require('shelljs');
 const { EasyZip } = require('easy-zip');
 
@@ -87,15 +87,11 @@ const getKnots = () =>
 
 const emitLogs = (req, tapLogPath, targetLogPath) => {
   fs.watchFile(tapLogPath, () => {
-    execFile('cat', [tapLogPath], (error, stdout) => {
-      req.io.emit('tapLog', stdout.toString());
-    });
+    req.io.emit('tapLog', shell.cat(tapLogPath));
   });
 
   fs.watchFile(targetLogPath, () => {
-    execFile('cat', [targetLogPath], (error, stdout) => {
-      req.io.emit('targetLog', stdout.toString());
-    });
+    req.io.emit('targetLog', shell.cat(targetLogPath));
   });
 };
 
@@ -119,6 +115,9 @@ const sync = (req, mode) => {
           path.resolve(pathToKnot, 'knot.json')
         )
           .then(() => {
+            const isWindows = process.platform === 'win32';
+            const shellOptions = !isWindows ? 'set -o pipefail;' : '';
+            const commandOptions = { detached: true };
             const syncCommand =
               mode === 'partial'
                 ? commands.runPartialSync(
@@ -132,10 +131,22 @@ const sync = (req, mode) => {
                     knotObject.target
                   );
 
-            const runSync = exec(`set -o pipefail;${syncCommand}`, {
-              detached: true,
-              shell: '/bin/bash'
-            });
+            if (mode === 'partial') {
+              const lastState = shell.tail(
+                { '-n': 1 },
+                path.resolve(pathToKnot, 'tap', 'state.json')
+              ).stdout;
+
+              fs.writeFileSync(
+                path.resolve(pathToKnot, 'tap', 'latest-state.json'),
+                lastState
+              );
+            }
+
+            const runSync = exec(
+              `${shellOptions}${syncCommand}`,
+              commandOptions
+            );
             runningProcess = runSync;
             emitLogs(req, tapLogPath, targetLogPath);
 

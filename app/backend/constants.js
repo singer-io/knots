@@ -141,10 +141,7 @@ const commands = {
   runPartialSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true, dockerParameters = '' } =
       tap.specImplementation || {};
-    return `tail -1 "${path.resolve(
-      folderPath
-    )}/tap/state.json" > "${path.resolve(folderPath)}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(folderPath)}/tap:/app/${
+    return `docker run -v "${path.resolve(folderPath)}/tap:/app/${
       tap.name
     }/data" ${dockerParameters} --interactive ${tap.image} ${tap.name} -c ${
       tap.name

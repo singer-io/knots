@@ -1,6 +1,5 @@
 import path from 'path';
 import fs from 'fs';
-import mockSpawn from 'mock-spawn';
 import shell from 'shelljs';
 
 import {
@@ -13,15 +12,12 @@ import {
 } from '../util';
 import {
   createKnot,
-  getSchema,
   readSchema,
   addConfig,
   getTaps,
   writeSchema
 } from '../../app/backend/taps';
 import { taps } from '../../app/backend/constants';
-
-const mySpawn = mockSpawn();
 
 describe('taps functions', () => {
   describe('create knot', () => {
@@ -134,49 +130,6 @@ describe('taps functions', () => {
         .catch((err) => {
           expect(err).toBeUndefined();
           done();
-        });
-    });
-  });
-
-  describe('get schema', () => {
-    it('should resolve when there is no error', () => {
-      mySpawn.setDefault(mySpawn.simple(0, ''));
-      getSchema(
-        {
-          body: {
-            tap: { name: 'tap-adwords', image: 'dataworld/tap-adwords:1.3.3' },
-            uuid: 'schemaUUID'
-          }
-        },
-        mySpawn
-      )
-        .then(() => {
-          expect(true).toBe(true);
-        })
-        .catch((err) => {
-          expect(err).toBeUndefined();
-        });
-    });
-
-    it('should reject promise when there is an error', () => {
-      mySpawn.setDefault(mySpawn.simple(1, 'Error'));
-      getSchema(
-        {
-          body: {
-            tap: {
-              name: 'tap-adwords',
-              image: 'dataworld/tap-adwords:1.3.3',
-              uuid: 'schemaUUID'
-            }
-          }
-        },
-        mySpawn
-      )
-        .then(() => {
-          expect(true).toBe(false);
-        })
-        .catch((err) => {
-          expect(err).toBeDefined();
         });
     });
   });

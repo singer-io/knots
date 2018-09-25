@@ -20,7 +20,7 @@ jobs:
             - ./node_modules
       - run:
           name: Test and package
-          command: yarn test && yarn package
+          command: yarn test && yarn package-all
       - store_artifacts:
           path: release
 

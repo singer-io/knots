@@ -120,12 +120,7 @@ describe('commands', () => {
   });
 
   it('returns the correct partial sync command (uses catalog)', () => {
-    const expected = `tail -1 "${path.resolve(
-      'applicationFolder'
-    )}/tap/state.json" > "${path.resolve(
-      'applicationFolder'
-    )}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(
+    const expected = `docker run -v "${path.resolve(
       'applicationFolder'
     )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --catalog tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
       'applicationFolder',
@@ -153,12 +148,7 @@ describe('commands', () => {
   });
 
   it('returns the correct partial sync command (uses properties)', () => {
-    const expected = `tail -1 "${path.resolve(
-      'applicationFolder'
-    )}/tap/state.json" > "${path.resolve(
-      'applicationFolder'
-    )}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(
+    const expected = `docker run -v "${path.resolve(
       'applicationFolder'
     )}/tap:/app/tap-redshift/data"  --interactive dataworld/tap-redshift:1.0.0b8 tap-redshift -c tap-redshift/data/config.json --properties tap-redshift/data/catalog.json --state tap-redshift/data/latest-state.json 2> "${path.resolve(
       'applicationFolder',
@@ -189,12 +179,7 @@ describe('commands', () => {
   });
 
   it('returns the correct partial sync command (with docker parameters)', () => {
-    const expected = `tail -1 "${path.resolve(
-      'applicationFolder'
-    )}/tap/state.json" > "${path.resolve(
-      'applicationFolder'
-    )}/tap/latest-state.json"; \\
-    docker run -v "${path.resolve(
+    const expected = `docker run -v "${path.resolve(
       'applicationFolder'
     )}/tap:/app/tap-s3-csv/data" -v ${homePath}/.aws:/root/.aws --interactive dataworld/tap-s3-csv:0.0.3 tap-s3-csv -c tap-s3-csv/data/config.json --properties tap-s3-csv/data/catalog.json --state tap-s3-csv/data/latest-state.json 2> "${path.resolve(
       'applicationFolder',
