@@ -11,7 +11,8 @@
   },
   "license": "Apache-2.0",
   "author": {
-    "name": "Stitch, Inc."
+    "name": "Stitch, Inc.",
+    "email": "hello@singer.io"
   },
   "build": {
     "appId": "com.electron.knots",

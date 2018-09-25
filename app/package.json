@@ -9,7 +9,8 @@
   },
   "license": "Apache-2.0",
   "author": {
-    "name": "Stitch, Inc."
+    "name": "Stitch, Inc.",
+    "email": "hello@singer.io"
   },
   "dependencies": {
     "bufferutil": "^3.0.4",
