@@ -23,25 +23,53 @@
 
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
-import { Button, ButtonGroup } from 'reactstrap';
+import {
+  Button,
+  ButtonGroup,
+  Form,
+  FormFeedback,
+  FormGroup,
+  FormText,
+  Input,
+  Label,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader
+} from 'reactstrap';
 import moment from 'moment';
 
 import getLogo from '../../../../logos';
 import styles from './Knot.css';
 import type { KnotType } from '../../../../utils/sharedTypes';
+import { toISODateString } from '../../../../utils/handlers';
 
 type Props = {
   knot: KnotType,
   dockerInstalled: boolean,
   dockerRunning: boolean,
+  tapSeededState: {},
   history: { push: (path: string) => void },
   loadKnot: (name: string) => void,
+  loadValues: (name: string, uuid: string, seedingState?: boolean) => void,
   generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
-  toggleDownloadDisclaimer: (knot: KnotType) => void
+  toggleDownloadDisclaimer: (knot: KnotType) => void,
+  submitStateDate: (selectedDate) => void,
+  seedState: () => void
 };
 
-class Knot extends Component<Props> {
+type State = {
+  showModal: boolean,
+  replication_date: {}
+};
+
+class Knot extends Component<Props, State> {
+  state = {
+    showModal: false,
+    replication_date: {}
+  };
+
   fullSync = () => {
     const { knot } = this.props;
     this.props.history.push(`/saved-sync?knot=${knot.name}&mode=full`);
@@ -50,8 +78,42 @@ class Knot extends Component<Props> {
 
   partialSync = () => {
     const { knot } = this.props;
-    this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
-    this.props.loadKnot(knot.name);
+    const { mustSeedState } = knot.tap.specImplementation || {};
+
+    if (mustSeedState) {
+      this.setState({ showModal: true });
+      this.props.loadValues(this.props.knot.name, '', true);
+    } else {
+      this.props.history.push(`/saved-sync?knot=${knot.name}&mode=partial`);
+      this.props.loadKnot(knot.name);
+    }
+  };
+
+  validate = (field: string, value: string) => {
+    if (value) {
+      this.setState({ [field]: { valid: true } });
+    } else {
+      this.setState({ [field]: { invalid: true } });
+    }
+  };
+
+  handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: { valid: true } });
+    const selectedDate = toISODateString(new Date(value));
+    this.props.submitStateDate(selectedDate);
+  };
+
+  handleSubmitStateForm = () => {
+    const { name } = this.props.knot;
+    const { tapSeededState } = this.props;
+    this.props.seedState(tapSeededState, name);
+    this.props.history.push(`/saved-sync?knot=${name}&mode=partial`);
+    this.props.loadKnot(name);
+  };
+
+  closeModal = () => {
+    this.setState({ showModal: !this.state.showModal });
   };
 
   edit = () => {
@@ -147,6 +209,42 @@ class Knot extends Component<Props> {
             </Button>
           </ButtonGroup>
         </td>
+        <Modal isOpen={this.state.showModal}>
+          <ModalHeader>Create the initial state file</ModalHeader>
+          <ModalBody>
+            <Form>
+              <FormGroup>
+                <Label for="replication_date">
+                  Date (for creating initial state file)
+                </Label>
+                <Input
+                  type="date"
+                  name="replication_date"
+                  id="replication_date"
+                  onChange={this.handleChange}
+                  onBlur={(event) => {
+                    const { value } = event.currentTarget;
+                    this.validate('replication_date', value);
+                  }}
+                  {...this.state.replication_date}
+                />
+                <FormFeedback>Required</FormFeedback>
+                <FormText>
+                  Date for the streams to force the application to only fetch
+                  data newer than this date.
+                </FormText>
+              </FormGroup>
+            </Form>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" outline onClick={this.closeModal}>
+              Cancel
+            </Button>
+            <Button color="primary" onClick={this.handleSubmitStateForm}>
+              Continue
+            </Button>
+          </ModalFooter>
+        </Modal>
       </tr>
     );
   }

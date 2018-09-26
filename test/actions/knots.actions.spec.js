@@ -30,6 +30,8 @@ const sampleSavedKnotJson = {
   target: { name: 'sampleTarget', image: 'sampleTargetImage' }
 };
 
+const sampleSeedState = { streamField: '2018-09-02T00:00:00Z' };
+
 describe('knots actions', () => {
   describe('sync page', () => {
     it('should dispatch SYNC_PAGE_LOADED', () => {
@@ -643,6 +645,52 @@ describe('knots actions', () => {
         .then(() => {
           expect(store.getActions()).toEqual(expectedActions);
         });
+    });
+  });
+
+  describe('seed state', () => {
+    it('should dispatch SEED_STATE', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/seed-state', {
+          stateObject: sampleSeedState,
+          knotName: knot
+        })
+        .reply(200, {});
+
+      const expectedActions = [{ type: knotActions.SEED_STATE }];
+
+      return store
+        .dispatch(knotActions.seedState(sampleSeedState, knot))
+        .then(() => {
+          expect(store.getActions()).toEqual(expectedActions);
+        });
+    });
+
+    it('should dispatch SEED_STATE with error', () => {
+      const store = mockStore({});
+
+      nock(`${baseUrl}/knots/`)
+        .defaultReplyHeaders({
+          'Access-Control-Allow-Origin': '*'
+        })
+        .post('/seed-state')
+        .reply(500, { message: 'error message' });
+
+      const expectedActions = [
+        {
+          type: knotActions.SEED_STATE,
+          error: 'error message'
+        }
+      ];
+
+      return store.dispatch(knotActions.seedState()).then(() => {
+        expect(store.getActions()).toEqual(expectedActions);
+      });
     });
   });
 });

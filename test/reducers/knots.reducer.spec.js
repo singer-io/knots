@@ -230,4 +230,34 @@ describe('knots reducer', () => {
       })
     );
   });
+
+  it('should handle UPDATE_TAP_STATE_VALUE', () => {
+    expect(
+      knotReducer(undefined, {
+        type: knotActions.UPDATE_TAP_STATE_VALUE,
+        tapSeededState: {}
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        tapSeededState: {}
+      })
+    );
+  });
+
+  it('should handle SEEDING_STATE', () => {
+    expect(
+      knotReducer(undefined, {
+        type: knotActions.SEEDING_STATE,
+        knotName: 'knot1',
+        knotError: '',
+        schema: []
+      })
+    ).toEqual(
+      Object.assign({}, defaultState(), {
+        knotName: 'knot1',
+        knotError: '',
+        schema: []
+      })
+    );
+  });
 });

@@ -50,6 +50,9 @@ export const LOADED_KNOT_JSON = 'LOADED_KNOT_JSON';
 export const RESET_STORE = 'RESET_STORE';
 export const RESET_KNOT_ERROR = 'RESET_KNOT_ERROR';
 export const GENERATED_UUID = 'GENERATED_UUID';
+export const SEED_STATE = 'SEED_STATE';
+export const UPDATE_TAP_STATE_VALUE = 'UPDATE_TAP_STATE_VALUE';
+export const SEEDING_STATE = 'SEEDING_STATE';
 
 type actionType = {
   +type: string
@@ -265,7 +268,7 @@ export function downloadKnot(knot: string) {
       .catch();
 }
 
-export function loadValues(knot: string, uuid: string) {
+export function loadValues(knot: string, uuid: string, seedingState?: boolean) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: LOADING_KNOT
@@ -273,15 +276,27 @@ export function loadValues(knot: string, uuid: string) {
     return axios
       .post(`${baseUrl}/knots/load`, { knot, uuid })
       .then((response) => {
-        dispatch({
-          type: LOADED_KNOT,
-          tap: response.data.tap,
-          target: response.data.target,
-          tapConfig: response.data.tapConfig,
-          targetConfig: response.data.targetConfig,
-          knotName: response.data.name,
-          schema: response.data.schema
-        });
+        if (seedingState) {
+          dispatch({
+            type: SEEDING_STATE,
+            tap: response.data.tap,
+            target: response.data.target,
+            tapConfig: response.data.tapConfig,
+            targetConfig: response.data.targetConfig,
+            knotName: response.data.name,
+            schema: response.data.schema
+          });
+        } else {
+          dispatch({
+            type: LOADED_KNOT,
+            tap: response.data.tap,
+            target: response.data.target,
+            tapConfig: response.data.tapConfig,
+            targetConfig: response.data.targetConfig,
+            knotName: response.data.name,
+            schema: response.data.schema
+          });
+        }
       })
       .catch((error) => {
         dispatch({
@@ -346,4 +361,30 @@ export function loadKnot(knot: string) {
         });
       });
   };
+}
+
+export function submitStateDate(selectedDate: string) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_TAP_STATE_VALUE,
+      date: selectedDate
+    });
+  };
+}
+
+export function seedState(stateObject: {}, knotName: string) {
+  return (dispatch: (action: actionType) => void) =>
+    axios
+      .post(`${baseUrl}/knots/seed-state`, { stateObject, knotName })
+      .then(() => {
+        dispatch({
+          type: SEED_STATE
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: SEED_STATE,
+          error: error.response ? error.response.data.message : error.message
+        });
+      });
 }

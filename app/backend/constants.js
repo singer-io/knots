@@ -31,7 +31,9 @@ const taps = [
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
       usesCatalogArg: false,
-      usesReplication: false
+      mustSeedState: {
+        usesOther: false
+      }
     }
   },
   {
@@ -56,7 +58,9 @@ const taps = [
         replication_method: false
       },
       usesCatalogArg: false,
-      usesReplication: false
+      mustSeedState: {
+        usesOther: false
+      }
     }
   },
   {

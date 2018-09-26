@@ -33,7 +33,9 @@ type Props = {
     knots: Array<KnotType>,
     knotDeleted: boolean,
     knotError: string,
-    knotLoaded: boolean
+    knotLoaded: boolean,
+    tapSeededState: {},
+    schema: Array<{}>
   },
   dockerInstalled: boolean,
   dockerRunning: boolean,
@@ -44,6 +46,8 @@ type Props = {
   loadValues: (knot: string) => void,
   loadKnot: (knot: string) => void,
   generateUUID: () => void,
+  submitStateDate: (selectedDate: string) => void,
+  seedState: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void
 };
@@ -72,7 +76,12 @@ class Knots extends Component<Props> {
   };
 
   render() {
-    const { knots, knotError, knotLoaded } = this.props.knotsStore;
+    const {
+      knots,
+      knotError,
+      knotLoaded,
+      tapSeededState
+    } = this.props.knotsStore;
     const { dockerInstalled, dockerRunning, generateUUID } = this.props;
 
     if (knotLoaded && !knotError) {
@@ -124,13 +133,16 @@ class Knots extends Component<Props> {
                 knot={knot}
                 delete={this.delete}
                 download={this.download}
-                loadValues={this.loadValues}
+                loadValues={this.props.loadValues}
                 loadKnot={this.loadKnot}
                 dockerInstalled={dockerInstalled}
                 dockerRunning={dockerRunning}
+                tapSeededState={tapSeededState}
                 toggleDelete={this.props.toggleDelete}
                 toggleDownloadDisclaimer={this.props.toggleDownloadDisclaimer}
                 generateUUID={this.props.generateUUID}
+                submitStateDate={this.props.submitStateDate}
+                seedState={this.props.seedState}
               />
             ))}
           </tbody>

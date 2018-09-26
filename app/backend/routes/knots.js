@@ -30,7 +30,8 @@ const {
   downloadKnot,
   loadValues,
   loadKnot,
-  cancel
+  cancel,
+  seedState
 } = require('../knots');
 
 router.get('/', (req, res) => {
@@ -120,6 +121,17 @@ router.post('/loadknot/', (req, res) => {
 
 router.post('/cancel/', (req, res) => {
   cancel(req.body.knot)
+    .then(() => {
+      res.json({});
+    })
+    .catch((error) => {
+      res.status(500).json({ message: error.message });
+    });
+});
+
+router.post('/seed-state/', (req, res) => {
+  const { stateObject, knotName } = req.body;
+  seedState(stateObject, knotName)
     .then(() => {
       res.json({});
     })

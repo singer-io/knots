@@ -22,6 +22,7 @@
 import {
   UPDATE_DOCKER_VERSION,
   UPDATE_TAP_LOGS,
+  UPDATE_TAP_STATE_VALUE,
   UPDATE_TARGET_LOGS,
   UPDATE_NAME,
   KNOT_SYNCING,
@@ -35,7 +36,8 @@ import {
   DOCKER_RUNNING,
   RESET_STORE,
   RESET_KNOT_ERROR,
-  GENERATED_UUID
+  GENERATED_UUID,
+  SEEDING_STATE
 } from '../actions/knots';
 
 export type knotsStateType = {
@@ -49,6 +51,7 @@ export type knotsStateType = {
   +knots: Array<string>,
 
   +tapLogs: Array<string>,
+  +tapSeededState: { [string]: string },
   +targetLogs: Array<string>,
   +knotName: string,
   +syncing: boolean,
@@ -57,7 +60,8 @@ export type knotsStateType = {
   +knotLoading: boolean,
   +knotLoaded: boolean,
 
-  +uuid: string
+  +uuid: string,
+  +schema: Array<{}>
 };
 
 export const defaultState = () => ({
@@ -70,6 +74,7 @@ export const defaultState = () => ({
   fetchingKnots: false,
   knots: [],
   tapLogs: [],
+  tapSeededState: {},
   targetLogs: [],
   knotName: '',
   knotSyncing: false,
@@ -79,7 +84,8 @@ export const defaultState = () => ({
   knotLoading: false,
   knotLoaded: false,
 
-  uuid: ''
+  uuid: '',
+  schema: []
 });
 
 export default function knots(state = defaultState(), action) {
@@ -116,6 +122,16 @@ export default function knots(state = defaultState(), action) {
       return Object.assign({}, state, {
         tapLogs: action.newLog.split('\n')
       });
+    case UPDATE_TAP_STATE_VALUE: {
+      const selectedDate = action.date;
+      const tapStateObj = {};
+      state.schema.forEach((schemaObj) => {
+        tapStateObj[schemaObj.stream] = selectedDate;
+      });
+      return Object.assign({}, state, {
+        tapSeededState: tapStateObj
+      });
+    }
     case UPDATE_TARGET_LOGS:
       return Object.assign({}, state, {
         targetLogs: action.newLog.split('\n')
@@ -161,6 +177,12 @@ export default function knots(state = defaultState(), action) {
     case GENERATED_UUID:
       return Object.assign({}, state, {
         uuid: action.uuid
+      });
+    case SEEDING_STATE:
+      return Object.assign({}, state, {
+        knotName: action.knotName,
+        knotError: action.error || '',
+        schema: action.schema
       });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions

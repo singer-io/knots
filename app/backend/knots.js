@@ -360,6 +360,21 @@ const cancel = (uuid) =>
     }
   });
 
+const seedState = (stateObject, knotName) =>
+  new Promise((resolve, reject) => {
+    const pathToKnot = path.resolve(
+      getKnotsFolder(),
+      knotName,
+      'tap',
+      'state.json'
+    );
+    writeFile(pathToKnot, JSON.stringify(stateObject))
+      .then(() => {
+        resolve();
+      })
+      .catch(reject);
+  });
+
 module.exports = {
   getKnots,
   saveKnot,
@@ -370,5 +385,6 @@ module.exports = {
   loadValues,
   loadKnot,
   terminateSync,
-  cancel
+  cancel,
+  seedState
 };
