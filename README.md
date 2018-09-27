@@ -10,7 +10,7 @@ you can configure robust data replication processes in minutes, and KNOTS is alw
 
 ### Getting Started
 
-Download and install the latest [release](https://github.com/singer-io/knots/releases). For Windows, you'll want to use the .exe installer. For Mac, you'll want the .dmg installer.
+Download and install the latest [release](https://github.com/singer-io/knots/releases). For Windows, you'll want to use the `.exe` installer. For Mac, you'll want the `.dmg` installer.
 
 _Please note that for Windows, you'll receive a popup that states "Windows protected your PC". Click on `More info`, followed by `Run anyway`. This is an issue that's actively being worked on and won't be around for much longer._
 
