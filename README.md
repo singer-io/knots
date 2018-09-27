@@ -20,9 +20,16 @@ KNOTS depends on Docker being installed and running. Docker is a tool designed t
 and run containers. Containers allow us to package up an application or library with all of its dependencies. Each
 of the individual taps and targets are packaged into containers as they may have widely-different sets of dependencies.
 
-The installers for Docker are available here: [Windows](https://store.docker.com/editions/community/docker-ce-desktop-windows), [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
+The installers and instructions for Docker are available here:
 
-NOTE: For Mac, check Docker [file sharing preferences](https://docs.docker.com/docker-for-mac/osxfs/#namespaces) and
+Windows: [Installer](https://store.docker.com/editions/community/docker-ce-desktop-windows), [Instructions](https://docs.docker.com/docker-for-windows/install/)  
+Mac: [Installer](https://store.docker.com/editions/community/docker-ce-desktop-mac), [Instructions](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac)
+
+#### OS-specific Notes
+
+Windows: The first time that KNOTS attempts to set up a tap, Docker will ask the user to share the `C` drive. Once you accept, you may be asked for your password.
+
+Mac: Check Docker [file sharing preferences](https://docs.docker.com/docker-for-mac/osxfs/#namespaces) and
 make sure that `/Users` is a shared directory.
 
 ### Running the app
