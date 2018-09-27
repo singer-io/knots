@@ -79,7 +79,7 @@ const taps = [
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
-    tapImage: 'dataworld/tap-redshift:1.0.0b8',
+    tapImage: 'dataworld/tap-redshift:1.0.0b9',
     repo: 'https://github.com/datadotworld/tap-redshift'
   },
   {
