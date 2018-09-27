@@ -8,12 +8,11 @@ Using KNOTS, you can import data from a number of datastores on an ad-hoc basis 
 with a job scheduler of your choice to make sure your data is always up to date. With the intuitive interface,
 you can configure robust data replication processes in minutes, and KNOTS is always free.
 
-_KNOTS is currently only available on MacOS._
-
 ### Getting Started
 
-Download and install the latest [release](https://github.com/singer-io/knots/releases). For Mac, you'll
-want to use the DMG installer.
+Download and install the latest [release](https://github.com/singer-io/knots/releases). For Windows, you'll want to use the .exe installer. For Mac, you'll want the .dmg installer.
+
+_Please note that for Windows, you'll receive a popup that states "Windows protected your PC". Click on `More info`, followed by `Run anyway`. This is an issue that's actively being worked on and won't be around for much longer._
 
 ### Prerequisites
 
@@ -21,9 +20,9 @@ KNOTS depends on Docker being installed and running. Docker is a tool designed t
 and run containers. Containers allow us to package up an application or library with all of its dependencies. Each
 of the individual taps and targets are packaged into containers as they may have widely-different sets of dependencies.
 
-The installer for Docker for Mac is available [here](https://store.docker.com/editions/community/docker-ce-desktop-mac).
+The installers for Docker are available here: [Windows](https://store.docker.com/editions/community/docker-ce-desktop-windows), [Mac](https://store.docker.com/editions/community/docker-ce-desktop-mac)
 
-NOTE: Check Docker [file sharing preferences](https://docs.docker.com/docker-for-mac/osxfs/#namespaces) and
+NOTE: For Mac, check Docker [file sharing preferences](https://docs.docker.com/docker-for-mac/osxfs/#namespaces) and
 make sure that `/Users` is a shared directory.
 
 ### Running the app
