@@ -59,7 +59,7 @@ export default class Checkbox extends Component<Props, State> {
             onClick={this.handleChange}
             checked={this.state.checked}
           />
-          Use incremental sync?
+          Use incremental sync
         </Label>
       </FormGroup>
     );
