@@ -78,7 +78,7 @@ class Knot extends Component<Props, State> {
 
   partialSync = () => {
     const { knot } = this.props;
-    const { mustSeedState } = knot.tap.specImplementation || {};
+    const { mustSeedState } = knot.tap.specImplementation;
 
     if (mustSeedState) {
       this.setState({ showModal: true });
