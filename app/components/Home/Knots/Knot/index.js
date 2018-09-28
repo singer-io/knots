@@ -55,7 +55,7 @@ type Props = {
   generateUUID: () => void,
   toggleDelete: (knot: KnotType) => void,
   toggleDownloadDisclaimer: (knot: KnotType) => void,
-  submitStateDate: (selectedDate) => void,
+  submitStateDate: (selectedDate, seedStateType) => void,
   seedState: () => void
 };
 
@@ -101,7 +101,9 @@ class Knot extends Component<Props, State> {
     const { name, value } = e.currentTarget;
     this.setState({ [name]: { valid: true } });
     const selectedDate = toISODateString(new Date(value));
-    this.props.submitStateDate(selectedDate);
+    const { stateType } =
+      this.props.knot.tap.specImplementation.mustSeedState || {};
+    this.props.submitStateDate(selectedDate, stateType);
   };
 
   handleSubmitStateForm = () => {

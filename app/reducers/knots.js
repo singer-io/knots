@@ -123,11 +123,13 @@ export default function knots(state = defaultState(), action) {
         tapLogs: action.newLog.split('\n')
       });
     case UPDATE_TAP_STATE_VALUE: {
-      const selectedDate = action.date;
+      const { date, seedStateType } = action;
       const tapStateObj = {};
-      state.schema.forEach((schemaObj) => {
-        tapStateObj[schemaObj.stream] = selectedDate;
-      });
+      if (seedStateType === 'stream') {
+        state.schema.forEach((schemaObj) => {
+          tapStateObj[schemaObj.stream] = date;
+        });
+      }
       return Object.assign({}, state, {
         tapSeededState: tapStateObj
       });

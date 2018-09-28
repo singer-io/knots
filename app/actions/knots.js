@@ -363,11 +363,12 @@ export function loadKnot(knot: string) {
   };
 }
 
-export function submitStateDate(selectedDate: string) {
+export function submitStateDate(selectedDate: string, seedStateType: string) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
       type: UPDATE_TAP_STATE_VALUE,
-      date: selectedDate
+      date: selectedDate,
+      seedStateType
     });
   };
 }

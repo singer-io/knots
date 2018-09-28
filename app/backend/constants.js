@@ -32,7 +32,7 @@ const taps = [
     specImplementation: {
       usesCatalogArg: false,
       mustSeedState: {
-        usesOther: false
+        stateType: 'stream'
       }
     }
   },
@@ -59,7 +59,7 @@ const taps = [
       },
       usesCatalogArg: false,
       mustSeedState: {
-        usesOther: false
+        stateType: 'stream'
       }
     }
   },
