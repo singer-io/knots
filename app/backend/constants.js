@@ -115,7 +115,7 @@ const commands = {
       tap.name
     }/data" ${dockerParameters} ${tap.image} ${tap.name} -c ${
       tap.name
-    }/data/config.json -d`;
+    }/data/config.json -d > "${path.resolve(folderPath)}/tap/catalog.json"`;
   },
   runSync: (folderPath, tap, target) => {
     const { usesCatalogArg = true, dockerParameters = '' } =
