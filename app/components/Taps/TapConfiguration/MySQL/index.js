@@ -74,6 +74,13 @@ export default class MySQL extends Component<Props, MySQLState> {
     checked: false
   };
 
+  componentWillMount() {
+    const { usesLogBaseRepMethod } = this.props.knotsStore;
+    this.setState({ checked: usesLogBaseRepMethod }, () => {
+      this.props.updateLogBaseRepMethod(this.state.checked);
+    });
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const { fieldValues } = nextProps.tapsStore['tap-mysql'];
     this.setState(validateFields(fieldValues, this.state));

@@ -73,6 +73,13 @@ export default class Postgres extends Component<Props, PostgresState> {
     checked: false
   };
 
+  componentWillMount() {
+    const { usesLogBaseRepMethod } = this.props.knotsStore;
+    this.setState({ checked: usesLogBaseRepMethod }, () => {
+      this.props.updateLogBaseRepMethod(this.state.checked);
+    });
+  }
+
   componentWillReceiveProps(nextProps: Props) {
     const { fieldValues } = nextProps.tapsStore['tap-postgres'];
     this.setState(validateFields(fieldValues, this.state));
