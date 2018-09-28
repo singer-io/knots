@@ -21,7 +21,6 @@
 
 const path = require('path');
 const { exec } = require('child_process');
-const fs = require('fs');
 const shell = require('shelljs');
 
 const {
@@ -80,10 +79,6 @@ const getSchema = (req) =>
 
     shell.rm('-rf', path.resolve(knotPath, 'tap', 'catalog.json'));
     shell.mkdir('-p', path.resolve(knotPath, 'tap'));
-    const stdoutStream = fs.createWriteStream(
-      path.resolve(knotPath, 'tap', 'catalog.json'),
-      { flags: 'a' }
-    );
 
     const discoveryCommand = commands.runDiscovery(knotPath, req.body.tap);
 
@@ -100,8 +95,6 @@ const getSchema = (req) =>
         req.io.emit('schemaLog', data.toString());
       }
     });
-
-    runDiscovery.stdout.pipe(stdoutStream);
 
     runDiscovery.on('exit', (code) => {
       if (code > 0) {
