@@ -63,7 +63,8 @@ type Props = {
     selectedTap: TapPropertiesType,
     fieldValues: {},
     knotName: string,
-    skipDiscovery: ?boolean
+    skipDiscovery: ?boolean,
+    usesLogBaseRepMethod: boolean
   ) => void,
   tapsPageLoaded: () => void,
   loadValues: (knot: string, uuid: string) => void,
@@ -127,11 +128,11 @@ export default class Taps extends Component<Props, State> {
       tapsStore,
       knotsStore: { knotName, knotLoaded, uuid }
     } = this.props;
-    const { selectedTap } = tapsStore;
+    const { selectedTap, usesLogBaseRepMethod } = tapsStore;
     const { fieldValues } = tapsStore[selectedTap.name];
 
     // When editing a knot show confirmation dialog
-    if (knotLoaded && showModal) {
+    if (knotLoaded && !usesLogBaseRepMethod && showModal) {
       this.setState({ showModal: true });
     } else {
       this.props.submitConfig(
@@ -139,7 +140,8 @@ export default class Taps extends Component<Props, State> {
         fieldValues,
         uuid,
         knotName,
-        skipDiscovery
+        skipDiscovery,
+        usesLogBaseRepMethod
       );
       this.props.history.push('/schema');
     }

@@ -79,7 +79,8 @@ export const defaultState = () => ({
   knotLoading: false,
   knotLoaded: false,
 
-  uuid: ''
+  uuid: '',
+  usesLogBaseRepMethod: false
 });
 
 export default function knots(state = defaultState(), action) {
@@ -150,7 +151,8 @@ export default function knots(state = defaultState(), action) {
         knotLoading: false,
         knotLoaded: true,
         knotName: action.knotName,
-        knotError: action.error || ''
+        knotError: action.error || '',
+        usesLogBaseRepMethod: action.usesLogBaseRepMethod
       });
     case RESET_KNOT_ERROR:
       return Object.assign({}, state, {
