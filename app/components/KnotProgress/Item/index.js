@@ -111,11 +111,7 @@ const KnotProgress = (props: Props) => {
         <small style={{ color: 'black' }}>{props.text}</small>
         <Prompt
           when={isBlocking}
-          message={() => {
-            if (isBlocking) {
-              terminateProcess(runningProcess);
-            }
-          }}
+          message={() => terminateProcess(runningProcess)}
         />
       </NavItem>
     );
