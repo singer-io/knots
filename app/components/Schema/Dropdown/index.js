@@ -31,7 +31,8 @@ type Props = {
   streamMetadata?: { index?: number, metadata?: {} },
   index: number,
   handleChange: () => void,
-  field: string
+  field: string,
+  usesLogBaseRepMethod: boolean
 };
 
 const colourStyles = {
@@ -101,7 +102,7 @@ export default class Dropdown extends Component<Props> {
   };
 
   render() {
-    if (this.props.values.length < 1) {
+    if (this.props.values.length < 1 || this.props.usesLogBaseRepMethod) {
       return 'N/A';
     }
 
