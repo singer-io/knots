@@ -26,11 +26,14 @@ import * as TapActions from '../actions/taps';
 import Postgres from '../components/Taps/TapConfiguration/Postgres';
 
 function mapStateToProps(state) {
-  return { tapsStore: state.taps };
+  return { tapsStore: state.taps, knotsStore: state.knots };
 }
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(TapActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Postgres);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Postgres);

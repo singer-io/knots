@@ -28,7 +28,8 @@ import MySQL from '../components/Taps/TapConfiguration/MySQL';
 function mapStateToProps(state) {
   return {
     userStore: state.user,
-    tapsStore: state.taps
+    tapsStore: state.taps,
+    knotsStore: state.knots
   };
 }
 
@@ -36,4 +37,7 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(TapActions, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MySQL);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MySQL);
