@@ -133,31 +133,38 @@ const readSchema = (uuid) =>
 
 const addConfig = (req) =>
   new Promise((resolve, reject) => {
-    const { tapConfig, uuid, skipDiscovery } = req.body;
+    const { tapConfig, uuid, skipDiscovery, usesLogBaseRepMethod } = req.body;
 
-    const configPath = path.resolve(
-      getTemporaryKnotFolder(uuid),
-      'tap',
-      'config.json'
-    );
-
-    writeFile(configPath, JSON.stringify(tapConfig))
+    addKnotAttribute(
+      { field: ['usesLogBaseRepMethod'], value: usesLogBaseRepMethod },
+      path.resolve(getTemporaryKnotFolder(uuid), 'knot.json')
+    )
       .then(() => {
-        if (skipDiscovery) {
-          resolve({});
-        } else if (process.env.NODE_ENV !== 'test') {
-          // Get tap schema by running discovery mode
-          getSchema(req)
-            .then(() => {
-              // Schema now on file, read it and return the result
-              readSchema(req.body.uuid)
-                .then(resolve)
+        const configPath = path.resolve(
+          getTemporaryKnotFolder(uuid),
+          'tap',
+          'config.json'
+        );
+
+        writeFile(configPath, JSON.stringify(tapConfig))
+          .then(() => {
+            if (skipDiscovery) {
+              resolve({});
+            } else if (process.env.NODE_ENV !== 'test') {
+              // Get tap schema by running discovery mode
+              getSchema(req)
+                .then(() => {
+                  // Schema now on file, read it and return the result
+                  readSchema(req.body.uuid)
+                    .then(resolve)
+                    .catch(reject);
+                })
                 .catch(reject);
-            })
-            .catch(reject);
-        } else {
-          resolve();
-        }
+            } else {
+              resolve();
+            }
+          })
+          .catch(reject);
       })
       .catch(reject);
   });
