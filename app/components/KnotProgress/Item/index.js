@@ -48,14 +48,23 @@ const baseUrl = 'http://localhost:4321';
 const socket = socketIOClient(baseUrl);
 
 const makeLink = (page: string, props: Props) => {
-  const tapsConfigured = !!props.tapsStore.selectedTap.name;
-  const schemaConfigured = props.tapsStore.schema.length > 0;
-  const targetsConfigured = !!props.targetsStore.selectedTarget.name;
-  const readyToSync = () => {
-    const selectedTarget = props.targetsStore.selectedTarget.name;
+  const { selectedTap, schema, deactivateNavigation } = props.tapsStore;
+  const { selectedTarget } = props.targetsStore;
 
-    if (selectedTarget) {
-      const targetFieldValues = props.userStore[selectedTarget].fieldValues;
+  const tapsConfigured = !!selectedTap.name;
+  const schemaPageClickable = deactivateNavigation ? false : schema.length > 0;
+  const targetsPageClickable = deactivateNavigation
+    ? false
+    : !!selectedTarget.name;
+  const readyToSync = () => {
+    if (deactivateNavigation) {
+      return false;
+    }
+
+    const selectedTargetName = selectedTarget.name;
+
+    if (selectedTargetName) {
+      const targetFieldValues = props.userStore[selectedTargetName].fieldValues;
 
       let valid = true;
 
@@ -75,9 +84,9 @@ const makeLink = (page: string, props: Props) => {
     case '/taps':
       return tapsConfigured;
     case '/schema':
-      return schemaConfigured;
+      return schemaPageClickable;
     case '/targets':
-      return targetsConfigured;
+      return targetsPageClickable;
     case '/sync':
       return readyToSync();
     default:

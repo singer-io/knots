@@ -35,7 +35,9 @@ import {
   UPDATE_TAPS,
   UPDATE_FORM_VALIDATION,
   MODIFY_SCHEMA,
-  UPDATE_REP_METHOD_OPTION
+  UPDATE_REP_METHOD_OPTION,
+  DEACTIVATE_NAVIGATION,
+  ACTIVATE_NAVIGATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE, LOADED_KNOT_JSON } from '../actions/knots';
 import type {
@@ -60,6 +62,7 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: boolean,
   +error: string,
+  +deactivateNavigation: boolean,
   +'tap-redshift': TapRedshift,
   +'tap-salesforce': TapSalesforce,
   +'tap-postgres': TapPostgres,
@@ -87,6 +90,7 @@ export function defaultState() {
     schemaUpdated: false,
     error: '',
     usesLogBaseRepMethod: false,
+    deactivateNavigation: false,
     'tap-redshift': {
       valid: false,
       fieldValues: {
@@ -439,6 +443,14 @@ export default function taps(state = defaultState(), action) {
         usesLogBaseRepMethod: action.usesLogBaseRepMethod
       });
 
+    case DEACTIVATE_NAVIGATION:
+      return Object.assign({}, state, {
+        deactivateNavigation: true
+      });
+    case ACTIVATE_NAVIGATION:
+      return Object.assign({}, state, {
+        deactivateNavigation: false
+      });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
       return defaultState();

@@ -75,10 +75,16 @@ export default class MySQL extends Component<Props, MySQLState> {
   };
 
   componentWillMount() {
-    const { usesLogBaseRepMethod } = this.props.knotsStore;
-    this.setState({ checked: usesLogBaseRepMethod }, () => {
-      this.props.updateLogBaseRepMethod(this.state.checked);
-    });
+    const { usesLogBaseRepMethod = false } = this.props.knotsStore;
+    this.setState(
+      {
+        checked: usesLogBaseRepMethod,
+        currentLogBasedBool: usesLogBaseRepMethod
+      },
+      () => {
+        this.props.updateLogBaseRepMethod(this.state.checked);
+      }
+    );
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -239,6 +245,10 @@ export default class MySQL extends Component<Props, MySQLState> {
                   checked={this.state.checked}
                   toggleModal={this.toggleModal}
                   updateLogBaseRepMethod={this.props.updateLogBaseRepMethod}
+                  currentValue={this.state.currentLogBasedBool}
+                  knotLoaded={this.props.knotsStore.knotLoaded}
+                  deactivateNavigation={this.props.deactivateNavigation}
+                  activateNavigation={this.props.activateNavigation}
                 />
               </Col>
             </Row>
@@ -251,7 +261,8 @@ export default class MySQL extends Component<Props, MySQLState> {
               To use incremental replication, please ensure that your MySQL
               instance has binary logging enabled. You can certify that{' '}
               <code>log_bin</code> is <code>ON</code> by running the following
-              query:<br />
+              query:
+              <br />
               <code>SHOW VARIABLES LIKE &ldquo;log_bin&rdquo;</code>
               <br />
               If the current value is <code>OFF</code>, ask your administrator

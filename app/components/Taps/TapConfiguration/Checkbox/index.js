@@ -27,7 +27,11 @@ import { FormGroup, Input, Label } from 'reactstrap';
 type Props = {
   checked: boolean,
   toggleModal: (checkBoxState: boolean) => void,
-  updateLogBaseRepMethod: (usesLogBaseRepMethod: boolean) => void
+  updateLogBaseRepMethod: (usesLogBaseRepMethod: boolean) => void,
+  currentValue: boolean,
+  knotLoaded: boolean,
+  deactivateNavigation: () => void,
+  activateNavigation: () => void
 };
 
 type State = {
@@ -43,6 +47,14 @@ export default class Checkbox extends Component<Props, State> {
 
   handleChange = (e) => {
     const checkBoxState = e.target.checked;
+    const { currentValue, knotLoaded } = this.props;
+    if (knotLoaded) {
+      if (currentValue !== checkBoxState) {
+        this.props.deactivateNavigation();
+      } else {
+        this.props.activateNavigation();
+      }
+    }
     if (!checkBoxState) {
       this.props.updateLogBaseRepMethod(false);
     }
