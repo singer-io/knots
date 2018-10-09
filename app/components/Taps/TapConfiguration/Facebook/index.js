@@ -150,7 +150,8 @@ export default class Facebook extends Component<Props, FacebookState> {
               onClick={openLink}
             >
               this guide
-            </a>.
+            </a>
+            .
           </p>
           <p>
             Once your Facebook Ads App is created, add{' '}
@@ -175,8 +176,16 @@ export default class Facebook extends Component<Props, FacebookState> {
               onClick={openLink}
             >
               apply for standard access
-            </a>.
+            </a>
+            .
           </p>
+          <div>
+            <h4>Note:</h4>
+            <p>
+              This tap currently does not work with Facebook Apps created after
+              26th July 2018.
+            </p>
+          </div>
         </Alert>
         <Form>
           <Row>
