@@ -208,3 +208,25 @@ export type FacebookState = {
   app_secret: FieldState,
   start_date: FieldState
 };
+
+/**
+ * TAP CATALOG.JSON
+ */
+
+type Schema = {
+  properties: {},
+  type: string
+};
+
+type Metadata = {
+  breadcrumb: Array<string>,
+  metadata: {}
+};
+
+export type Stream = {
+  tap_stream_id: string,
+  table_name: string,
+  schema: Schema,
+  stream: string,
+  metadata: Array<Metadata>
+};
