@@ -21,17 +21,39 @@
 
 import React, { Component } from 'react';
 import { Input } from 'reactstrap';
+import TagsInput from 'react-tagsinput';
 
 type Props = {
   tableKeys: Array<string>
 };
 
 export default class KeyFields extends Component<Props> {
+  constructor() {
+    super();
+    this.state = { keys: [] };
+  }
+
+  handleChange = (keys) => {
+    this.setState({ keys });
+  };
+
   render() {
     const { tableKeys } = this.props;
-    if (tableKeys.length > 0) {
+    if (!tableKeys.length > 0) {
       return <Input value={tableKeys.join(', ')} disabled />;
     }
-    return <div>{JSON.stringify(this.props.tableKeys)}</div>;
+
+    return (
+      <TagsInput
+        addOnBlur
+        onlyUnique
+        inputProps={{
+          placeholder: 'Add key'
+        }}
+        value={this.state.keys}
+        onChange={this.handleChange}
+        onBlur={this.handleChange}
+      />
+    );
   }
 }

@@ -25,11 +25,12 @@
  */
 
 $theme-colors: (
-  "primary": #5c56a5
+  'primary': #5c56a5
 );
 
 @import '~bootstrap/scss/bootstrap';
 @import '~font-awesome/css/font-awesome.css';
+@import '~react-tagsinput/react-tagsinput.css';
 
 body {
   margin: 0;
@@ -92,4 +93,14 @@ body {
 .knot-wiz .nav-link.completed .oi {
   opacity: 1;
   top: calc(50% + 1px);
+}
+
+.react-tagsinput--focused {
+  border-color: #5c56a5;
+}
+
+.react-tagsinput-tag {
+  background-color: #5c56a5;
+  border: 0;
+  color: #fff;
 }

@@ -424,7 +424,7 @@ export default class Schema extends Component<Props, State> {
                               />
                             </td>
                             <td className="align-middle">{stream.stream}</td>
-                            <td>
+                            <td style={{ width: '35%' }}>
                               <KeyFields
                                 tableKeys={
                                   getMetadata(stream).metadata[
@@ -433,7 +433,7 @@ export default class Schema extends Component<Props, State> {
                                 }
                               />
                             </td>
-                            <td>
+                            <td className="align-middle">
                               <Dropdown
                                 columns={this.validReplicationKeys(stream)}
                                 index={index.toString()}
