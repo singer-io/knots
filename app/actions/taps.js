@@ -49,6 +49,7 @@ export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 
 export const TAP_SELECTED = 'TAP_SELECTED';
 export const UPDATE_FORM_VALIDATION = 'UPDATE_FORM_VALIDATION';
+export const MODIFY_SCHEMA = 'MODIFY_SCHEMA';
 
 type actionType = {
   +type: string
@@ -236,6 +237,17 @@ export function updateFormValidation(tap: string, value: boolean) {
     dispatch({
       type: UPDATE_FORM_VALIDATION,
       tap,
+      value
+    });
+  };
+}
+
+export function modifySchema(streamIndex: number, field: string, value: Array) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: MODIFY_SCHEMA,
+      streamIndex,
+      field,
       value
     });
   };

@@ -22,9 +22,12 @@
 import React, { Component } from 'react';
 import { Input } from 'reactstrap';
 import TagsInput from 'react-tagsinput';
+import type Metadata from '../../../utils/sharedTypes';
 
 type Props = {
-  tableKeys: Array<string>
+  index: number,
+  streamMetadata: Metadata,
+  modifySchema: (index: number, field: string, value: Array) => void
 };
 
 export default class KeyFields extends Component<Props> {
@@ -34,12 +37,20 @@ export default class KeyFields extends Component<Props> {
   }
 
   handleChange = (keys) => {
+    this.props.modifySchema(
+      this.props.index,
+      `metadata[${
+        this.props.streamMetadata.index
+      }].metadata['table-key-properties']`,
+      keys
+    );
     this.setState({ keys });
   };
 
   render() {
-    const { tableKeys } = this.props;
-    if (!tableKeys.length > 0) {
+    const { streamMetadata } = this.props;
+    const tableKeys = streamMetadata.metadata['table-key-properties'];
+    if (tableKeys.length > 0) {
       return <Input value={tableKeys.join(', ')} disabled />;
     }
 

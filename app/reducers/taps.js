@@ -21,6 +21,7 @@
 
 /* eslint-disable no-case-declarations */
 
+import { set } from 'lodash';
 import {
   SCHEMA_LOADING,
   SCHEMA_RECEIVED,
@@ -32,7 +33,8 @@ import {
   UPDATE_TAP_CONFIG,
   UPDATE_TAP_FIELD,
   UPDATE_TAPS,
-  UPDATE_FORM_VALIDATION
+  UPDATE_FORM_VALIDATION,
+  MODIFY_SCHEMA
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE, LOADED_KNOT_JSON } from '../actions/knots';
 import type {
@@ -160,8 +162,6 @@ export function defaultState() {
 }
 
 export default function taps(state = defaultState(), action) {
-  const { schema } = state;
-
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -219,6 +219,7 @@ export default function taps(state = defaultState(), action) {
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {
+      const { schema } = state;
       if (schema[action.index]) {
         const metadataIndexToUpdate = (stream) => {
           let indexToUpdate = -1;
@@ -250,13 +251,11 @@ export default function taps(state = defaultState(), action) {
               if (repKey) {
                 streamClone.metadata[indexToUpdate].metadata[
                   'replication-method'
-                ] =
-                  'INCREMENTAL';
+                ] = 'INCREMENTAL';
               } else if (!forcedRepMethod && !repKey) {
                 streamClone.metadata[indexToUpdate].metadata[
                   'replication-method'
-                ] =
-                  'FULL_TABLE';
+                ] = 'FULL_TABLE';
               }
               return streamClone;
             }
@@ -411,6 +410,19 @@ export default function taps(state = defaultState(), action) {
         [action.tap]: Object.assign({}, state[action.tap], {
           valid: action.value
         })
+      });
+
+    case MODIFY_SCHEMA:
+      const { schema } = state;
+      const modifiedStream = set(
+        schema[action.streamIndex],
+        action.field,
+        action.value
+      );
+
+      schema[action.streamIndex] = modifiedStream;
+      return Object.assign({}, state, {
+        schema
       });
 
     case RESET_STORE:

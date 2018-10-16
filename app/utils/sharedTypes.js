@@ -218,7 +218,7 @@ type Schema = {
   type: string
 };
 
-type Metadata = {
+export type Metadata = {
   breadcrumb: Array<string>,
   metadata: {}
 };

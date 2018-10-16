@@ -68,6 +68,8 @@ type Props = {
     value: boolean | string,
     specImplementation: specImplementationPropType
   ) => void,
+
+  modifySchema: (index: number, field: string, value: Array) => void,
   submitSchema: (schema: Array<Stream>, uuid: string) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
@@ -426,11 +428,9 @@ export default class Schema extends Component<Props, State> {
                             <td className="align-middle">{stream.stream}</td>
                             <td style={{ width: '35%' }}>
                               <KeyFields
-                                tableKeys={
-                                  getMetadata(stream).metadata[
-                                    'table-key-properties'
-                                  ]
-                                }
+                                modifySchema={this.props.modifySchema}
+                                index={index}
+                                streamMetadata={getMetadata(stream)}
                               />
                             </td>
                             <td className="align-middle">
