@@ -18,12 +18,12 @@ Our [issue tracker](https://github.com/datadotworld/knots/issues) can be used to
 
 ### Fork the Project
 
-Fork the project [on Github](https://github.com/datadotworld/knots.git) and check out your copy.
+Fork the project [on Github](https://github.com/singer-io/knots.git) and check out your copy.
 
 ```sh
 $ git clone https://github.com/[YOUR_GITHUB_NAME]/knots.git
 $ cd knots
-$ git remote add upstream https://github.com/datadotworld/knots.git
+$ git remote add upstream https://github.com/singer-io/knots.git
 ```
 
 ### Run the app
