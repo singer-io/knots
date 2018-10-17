@@ -267,4 +267,23 @@ describe('taps actions', () => {
       expect(store.getActions()).toEqual(expectedActions);
     });
   });
+
+  describe('modify shema', () => {
+    it('should dispatch MODIFY_SCHEMA', () => {
+      const store = mockStore({});
+      const streamIndex = 0;
+
+      const expectedActions = [
+        {
+          type: tapActions.MODIFY_SCHEMA,
+          streamIndex,
+          field,
+          value
+        }
+      ];
+
+      store.dispatch(tapActions.modifySchema(streamIndex, field, value));
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
 });
