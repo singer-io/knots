@@ -31,40 +31,52 @@ type Props = {
 };
 
 export default class KeyFields extends Component<Props> {
-  constructor() {
+  constructor(props) {
     super();
-    this.state = { keys: [] };
+
+    const { streamMetadata } = props;
+    const isView = streamMetadata.metadata['is-view'];
+    const keyProperties =
+      streamMetadata.metadata[
+        isView ? 'view-key-properties' : 'table-key-properties'
+      ] || [];
+    const modifyTableKeys = keyProperties.length === 0;
+
+    this.state = { keyProperties, isView, modifyTableKeys };
   }
 
-  handleChange = (keys) => {
+  handleChange = (keyProperties) => {
+    const metadataIndex = this.props.streamMetadata.index;
+    const propertyType = this.state.isView
+      ? 'view-key-properties'
+      : 'table-key-properties';
+
     this.props.modifySchema(
       this.props.index,
-      `metadata[${
-        this.props.streamMetadata.index
-      }].metadata['table-key-properties']`,
-      keys
+      `metadata[${metadataIndex}].metadata[${propertyType}]`,
+      keyProperties
     );
-    this.setState({ keys });
+    this.setState({ keyProperties });
   };
 
   render() {
-    const { streamMetadata } = this.props;
-    const tableKeys = streamMetadata.metadata['table-key-properties'];
-    if (tableKeys.length > 0) {
-      return <Input value={tableKeys.join(', ')} disabled />;
+    const { isView, keyProperties, modifyTableKeys } = this.state;
+
+    if (isView || modifyTableKeys) {
+      return (
+        <TagsInput
+          addOnBlur
+          onlyUnique
+          inputProps={{
+            placeholder: 'Add key'
+          }}
+          value={keyProperties}
+          onChange={this.handleChange}
+          onBlur={this.handleChange}
+        />
+      );
     }
 
-    return (
-      <TagsInput
-        addOnBlur
-        onlyUnique
-        inputProps={{
-          placeholder: 'Add key'
-        }}
-        value={this.state.keys}
-        onChange={this.handleChange}
-        onBlur={this.handleChange}
-      />
-    );
+    return <Input value={keyProperties.join(', ')} disabled />;
   }
 }
