@@ -23,10 +23,11 @@
 import type { Stream } from './sharedTypes';
 
 // Find metadata with empty breadcrumb and return its index and metadata
+// eslint-disable-next-line
 export const getMetadata = (
   stream: Stream
-): { index: number, metadata: {} } => {
-  const { metadata } = stream;
+): { index?: number, metadata?: {} } => {
+  const { metadata = [] } = stream;
 
   let index;
   metadata.forEach((meta, metaIndex) => {
@@ -36,10 +37,8 @@ export const getMetadata = (
   });
 
   if (index === undefined) {
-    return { index: null, metadata: null };
+    return { index };
   }
 
   return { index, metadata: metadata[index].metadata };
 };
-
-export const ab = 'ab';

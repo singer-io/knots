@@ -222,8 +222,8 @@ describe('Schema functions', () => {
 
     it('should return an object containing null as the values when empty breadcrumb is not found', () => {
       const expected = {
-        index: null,
-        metadata: null
+        index: undefined,
+        metadata: undefined
       };
       const actual = getMetadata(sampleStreamNoMetadata);
 

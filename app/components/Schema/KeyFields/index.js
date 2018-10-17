@@ -22,11 +22,10 @@
 import React, { Component } from 'react';
 import { Input } from 'reactstrap';
 import TagsInput from 'react-tagsinput';
-import type Metadata from '../../../utils/sharedTypes';
 
 type Props = {
   index: number,
-  streamMetadata: Metadata,
+  streamMetadata: { index?: number, metadata?: {} },
   modifySchema: (index: number, field: string, value: Array) => void
 };
 
@@ -35,14 +34,16 @@ export default class KeyFields extends Component<Props> {
     super();
 
     const { streamMetadata } = props;
-    const isView = streamMetadata.metadata['is-view'];
-    const keyProperties =
-      streamMetadata.metadata[
-        isView ? 'view-key-properties' : 'table-key-properties'
-      ] || [];
-    const modifyTableKeys = keyProperties.length === 0;
+    if (streamMetadata.index !== undefined) {
+      const isView = streamMetadata.metadata['is-view'];
+      const keyProperties =
+        streamMetadata.metadata[
+          isView ? 'view-key-properties' : 'table-key-properties'
+        ] || [];
+      const modifyTableKeys = keyProperties.length === 0;
 
-    this.state = { keyProperties, isView, modifyTableKeys };
+      this.state = { keyProperties, isView, modifyTableKeys };
+    }
   }
 
   handleChange = (keyProperties) => {
@@ -60,6 +61,10 @@ export default class KeyFields extends Component<Props> {
   };
 
   render() {
+    if (this.props.streamMetadata.index === undefined) {
+      return 'N/A';
+    }
+
     const { isView, keyProperties, modifyTableKeys } = this.state;
 
     if (isView || modifyTableKeys) {

@@ -94,7 +94,7 @@ type Props = {
   cancel: (name: string) => void,
   resetKnotError: () => void,
   loadValues: (name: string, uuid: string) => void,
-  syncComplete: (status: sting, error?: string) => void,
+  syncComplete: (status: string, error?: string) => void,
   generateUUID: () => void
 };
 

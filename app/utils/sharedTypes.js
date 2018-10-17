@@ -215,7 +215,7 @@ export type FacebookState = {
 
 type Schema = {
   properties: {},
-  type: string
+  type: string | Array<string>
 };
 
 export type Metadata = {
@@ -224,9 +224,9 @@ export type Metadata = {
 };
 
 export type Stream = {
-  tap_stream_id: string,
-  table_name: string,
-  schema: Schema,
-  stream: string,
-  metadata: Array<Metadata>
+  tap_stream_id?: string,
+  table_name?: string,
+  schema?: Schema,
+  stream?: string,
+  metadata?: Array<Metadata>
 };
