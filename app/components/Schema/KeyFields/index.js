@@ -20,7 +20,6 @@
  */
 
 import React, { Component } from 'react';
-import { Input } from 'reactstrap';
 import TagsInput from 'react-tagsinput';
 
 type Props = {
@@ -67,21 +66,33 @@ export default class KeyFields extends Component<Props> {
 
     const { isView, keyProperties, modifyTableKeys } = this.state;
 
-    if (isView || modifyTableKeys) {
-      return (
-        <TagsInput
-          addOnBlur
-          onlyUnique
-          inputProps={{
-            placeholder: 'Add key'
-          }}
-          value={keyProperties}
-          onChange={this.handleChange}
-          onBlur={this.handleChange}
-        />
-      );
+    let placeholder = '';
+    let inputClass = 'react-tagsinput-disabled';
+    let tagsClass = 'react-tagsinput-tag-disabled';
+
+    const fieldEditable = isView || modifyTableKeys;
+    if (fieldEditable) {
+      inputClass = 'react-tagsinput';
+      tagsClass = 'react-tagsinput-tag';
+      placeholder = 'Add key';
     }
 
-    return <Input value={keyProperties.join(', ')} disabled />;
+    return (
+      <TagsInput
+        className={inputClass}
+        disabled={!fieldEditable}
+        addOnBlur
+        onlyUnique
+        inputProps={{
+          placeholder
+        }}
+        tagProps={{
+          className: tagsClass
+        }}
+        value={keyProperties}
+        onChange={this.handleChange}
+        onBlur={this.handleChange}
+      />
+    );
   }
 }
