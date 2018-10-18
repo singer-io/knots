@@ -116,7 +116,8 @@ export default class Schema extends Component<Props, State> {
 
     this.state = {
       streamSelected: false,
-      tooltipOpen: false
+      replicationToolTipOpen: false,
+      keyFieldsToolTipOpen: false
     };
   }
 
@@ -248,9 +249,9 @@ export default class Schema extends Component<Props, State> {
     this.props.history.push('/');
   };
 
-  toggleTooltip = () => {
+  toggleTooltip = (field) => {
     this.setState({
-      tooltipOpen: !this.state.tooltipOpen
+      [field]: !this.state[field]
     });
   };
 
@@ -395,7 +396,13 @@ export default class Schema extends Component<Props, State> {
                             Include
                           </th>
                           <th>Table/Stream</th>
-                          <th>Key fields</th>
+                          <th>
+                            Key field(s)
+                            <i
+                              id="KeyFieldsInfo"
+                              className="fa fa-question-circle-o ml-1"
+                            />
+                          </th>
                           <th>
                             Timestamp field
                             <i
@@ -405,13 +412,27 @@ export default class Schema extends Component<Props, State> {
                           </th>
                           <Tooltip
                             placement="right"
-                            isOpen={this.state.tooltipOpen}
+                            isOpen={this.state.replicationToolTipOpen}
                             target="ReplicationInfo"
-                            toggle={this.toggleTooltip}
+                            toggle={() =>
+                              this.toggleTooltip('replicationToolTipOpen')
+                            }
                           >
                             A date/time column or attribute that can be used to
                             limit historical data replication and to enable
                             incremental replication.
+                          </Tooltip>
+                          <Tooltip
+                            placement="right"
+                            isOpen={this.state.keyFieldsToolTipOpen}
+                            target="KeyFieldsInfo"
+                            toggle={() =>
+                              this.toggleTooltip('keyFieldsToolTipOpen')
+                            }
+                          >
+                            One of more fields that uniquely identify each
+                            record. Key field(s) are used to detect and handle
+                            duplicates.
                           </Tooltip>
                         </tr>
                       </thead>
