@@ -42,7 +42,7 @@ import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import KeyFields from './KeyFields';
 import Log from '../Log';
-import { getMetadata } from '../../utils/schema';
+import { getMetadata, getColumns } from '../../utils/schema';
 import type {
   specImplementationPropType,
   tapPropertiesType
@@ -452,6 +452,7 @@ export default class Schema extends Component<Props, State> {
                                 modifySchema={this.props.modifySchema}
                                 index={index}
                                 streamMetadata={getMetadata(stream)}
+                                columns={getColumns(stream)}
                               />
                             </td>
                             <td className="align-middle">

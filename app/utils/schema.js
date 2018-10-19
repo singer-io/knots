@@ -23,7 +23,6 @@
 import type { Stream } from './sharedTypes';
 
 // Find metadata with empty breadcrumb and return its index and metadata
-// eslint-disable-next-line
 export const getMetadata = (
   stream: Stream
 ): { index?: number, metadata?: {} } => {
@@ -41,4 +40,21 @@ export const getMetadata = (
   }
 
   return { index, metadata: metadata[index].metadata };
+};
+
+export const getColumns = (stream: Stream): Array<string> => {
+  const { metadata = [] } = stream;
+
+  const columns = metadata
+    .filter((meta) => {
+      if (meta.breadcrumb.length > 1) {
+        if (meta.breadcrumb[0] === 'properties') {
+          return true;
+        }
+      }
+      return false;
+    })
+    .map((meta) => meta.breadcrumb[1]);
+
+  return columns;
 };

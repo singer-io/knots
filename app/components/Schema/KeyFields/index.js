@@ -20,11 +20,12 @@
  */
 
 import React, { Component } from 'react';
-import TagsInput from 'react-tagsinput';
+import Select from 'react-select';
 
 type Props = {
   index: number,
   streamMetadata: { index?: number, metadata?: {} },
+  columns: Array<string>,
   modifySchema: (index: number, field: string, value: Array) => void
 };
 
@@ -41,11 +42,18 @@ export default class KeyFields extends Component<Props> {
         ] || [];
       const modifyTableKeys = keyProperties.length === 0;
 
-      this.state = { keyProperties, isView, modifyTableKeys };
+      this.state = {
+        isView,
+        modifyTableKeys,
+        selectedOptions: keyProperties.map((option) => ({
+          value: option,
+          label: option
+        }))
+      };
     }
   }
 
-  handleChange = (keyProperties) => {
+  handleChange = (selectedOptions) => {
     const metadataIndex = this.props.streamMetadata.index;
     const propertyType = this.state.isView
       ? 'view-key-properties'
@@ -54,9 +62,20 @@ export default class KeyFields extends Component<Props> {
     this.props.modifySchema(
       this.props.index,
       `metadata[${metadataIndex}].metadata[${propertyType}]`,
-      keyProperties
+      selectedOptions.map((option) => option.value)
     );
-    this.setState({ keyProperties });
+    this.setState({ selectedOptions });
+  };
+
+  getOptions = () => {
+    const { keyProperties, modifyTableKeys } = this.state;
+    const { columns } = this.props;
+    const options = modifyTableKeys ? keyProperties : columns;
+
+    return options.map((option) => ({
+      value: option,
+      label: option
+    }));
   };
 
   render() {
@@ -64,34 +83,17 @@ export default class KeyFields extends Component<Props> {
       return 'N/A';
     }
 
-    const { isView, keyProperties, modifyTableKeys } = this.state;
-
-    let placeholder = '';
-    let inputClass = 'react-tagsinput-disabled';
-    let tagsClass = 'react-tagsinput-tag-disabled';
-
+    const { isView, modifyTableKeys } = this.state;
     const fieldEditable = isView || modifyTableKeys;
-    if (fieldEditable) {
-      inputClass = 'react-tagsinput';
-      tagsClass = 'react-tagsinput-tag';
-      placeholder = 'Add key';
-    }
 
     return (
-      <TagsInput
-        className={inputClass}
-        disabled={!fieldEditable}
-        addOnBlur
-        onlyUnique
-        inputProps={{
-          placeholder
-        }}
-        tagProps={{
-          className: tagsClass
-        }}
-        value={keyProperties}
+      <Select
+        isMulti
+        isDisabled={!fieldEditable}
+        placeholder={fieldEditable ? 'Add key' : ''}
+        value={this.state.selectedOptions}
         onChange={this.handleChange}
-        onBlur={this.handleChange}
+        options={this.getOptions()}
       />
     );
   }
