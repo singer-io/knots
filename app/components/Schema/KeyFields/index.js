@@ -29,6 +29,18 @@ type Props = {
   modifySchema: (index: number, field: string, value: Array) => void
 };
 
+const colourStyles = {
+  multiValue: (styles, { isDisabled }) => ({
+    ...styles,
+    backgroundColor: isDisabled ? 'hsl(0,0%,90%)' : '#5c56a5',
+    color: isDisabled ? '#000' : '#fff'
+  }),
+  multiValueLabel: (styles, { isDisabled }) => ({
+    ...styles,
+    color: isDisabled ? '#000' : '#fff'
+  })
+};
+
 export default class KeyFields extends Component<Props> {
   constructor(props) {
     super();
@@ -68,11 +80,9 @@ export default class KeyFields extends Component<Props> {
   };
 
   getOptions = () => {
-    const { keyProperties, modifyTableKeys } = this.state;
     const { columns } = this.props;
-    const options = modifyTableKeys ? keyProperties : columns;
 
-    return options.map((option) => ({
+    return columns.map((option) => ({
       value: option,
       label: option
     }));
@@ -94,6 +104,7 @@ export default class KeyFields extends Component<Props> {
         value={this.state.selectedOptions}
         onChange={this.handleChange}
         options={this.getOptions()}
+        styles={colourStyles}
       />
     );
   }
