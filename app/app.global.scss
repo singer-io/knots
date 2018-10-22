@@ -25,11 +25,10 @@
  */
 
 $theme-colors: (
-  "primary": #5c56a5
+  'primary': #5c56a5
 );
 
 @import '~bootstrap/scss/bootstrap';
-@import '~font-awesome/css/font-awesome.css';
 
 body {
   margin: 0;

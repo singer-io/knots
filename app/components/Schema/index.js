@@ -35,6 +35,8 @@ import {
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
 import { shell } from 'electron';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
@@ -397,17 +399,17 @@ export default class Schema extends Component<Props, State> {
                           </th>
                           <th>Table/Stream</th>
                           <th>
-                            Key field(s)
-                            <i
+                            Key field(s){' '}
+                            <FontAwesomeIcon
                               id="KeyFieldsInfo"
-                              className="fa fa-question-circle-o ml-1"
+                              icon={faQuestionCircle}
                             />
                           </th>
                           <th>
-                            Timestamp field
-                            <i
+                            Timestamp field{' '}
+                            <FontAwesomeIcon
                               id="ReplicationInfo"
-                              className="fa fa-question-circle-o ml-1"
+                              icon={faQuestionCircle}
                             />
                           </th>
                           <Tooltip
