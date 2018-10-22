@@ -23,7 +23,7 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 
 type Props = {
-  index: number,
+  index: string,
   defaultValue: string,
   replicationKeys: Array<string>,
   handleChange: (field: string, index: string, value: boolean | string) => void

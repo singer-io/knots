@@ -218,9 +218,26 @@ type Schema = {
   type: string | Array<string>
 };
 
+export type SubMetadata = {
+  selected?: boolean,
+  'replication-method'?: string,
+  'replication-key'?: string,
+  'view-key-properties'?: string,
+  inclusion?: string,
+  'selected-by-default'?: boolean,
+  'valid-replication-keys'?: Array<string>,
+  'schema-name'?: string,
+  'forced-replication-method'?: string,
+  'table-key-properties'?: Array<string>,
+  'is-view'?: boolean,
+  'row-count'?: number,
+  'database-name'?: string,
+  'sql-datatype'?: string
+};
+
 export type Metadata = {
   breadcrumb: Array<string>,
-  metadata: {}
+  metadata: SubMetadata
 };
 
 export type Stream = {

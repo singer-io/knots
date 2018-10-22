@@ -19,7 +19,11 @@
  * data.world, Inc.(http://data.world/).
  */
 
-import { getMetadata, getColumns } from '../../app/utils/schema';
+import {
+  getMetadata,
+  getColumns,
+  getReplicationKey
+} from '../../app/utils/schema';
 import {
   sampleStream,
   sampleStream1,
@@ -85,6 +89,53 @@ describe('Schema functions', () => {
       const actual = getColumns(sampleStreamNoMetadata);
 
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe('get repliction key', () => {
+    it('should return a replication key in metadata', () => {
+      const expected = 'category_id';
+      const actual = getReplicationKey(
+        sampleStream,
+        { 'replication-key': 'category_id' },
+        {
+          usesMetadata: {}
+        }
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return a replication key in the stream', () => {
+      const expected = 'order_id';
+      const actual = getReplicationKey(
+        sampleStream,
+        { 'replication-key': 'category_id' },
+        { usesMetadata: { replicationKey: false } }
+      );
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should return an empty string when replicatin key is not specified', () => {
+      const expected = '';
+      const actual = getReplicationKey(
+        sampleStream1,
+        {},
+        {
+          usesMetadata: {}
+        }
+      );
+
+      const expected1 = '';
+      const actual1 = getReplicationKey(
+        sampleStream1,
+        { 'replication-key': 'category_id' },
+        { usesMetadata: { replicationKey: false } }
+      );
+
+      expect(actual).toEqual(expected);
+      expect(actual1).toEqual(expected1);
     });
   });
 });

@@ -20,7 +20,7 @@
  */
 // @flow
 
-import type { Stream } from './sharedTypes';
+import type { Stream, SubMetadata } from './sharedTypes';
 
 // Find metadata with empty breadcrumb and return its index and metadata
 export const getMetadata = (
@@ -64,13 +64,13 @@ export const getColumns = (stream: Stream): Array<string> => {
 
 export const getReplicationKey = (
   stream: { replication_key?: string },
-  metadata: {},
+  metadata: SubMetadata,
   specImplementation: { usesMetadata?: { replicationKey?: boolean } }
-) => {
+): string => {
   const { replicationKey: repKeyMetadata = true } =
     specImplementation.usesMetadata || {};
   if (!repKeyMetadata) {
-    return stream.replication_key;
+    return stream.replication_key || '';
   }
 
   return metadata['replication-key'] || '';

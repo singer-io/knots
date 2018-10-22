@@ -20,6 +20,7 @@
  */
 
 export const sampleStream = {
+  replication_key: 'order_id',
   tap_stream_id: 'northwind-public-categories',
   table_name: 'categories',
   schema: {
