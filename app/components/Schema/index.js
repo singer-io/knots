@@ -432,7 +432,7 @@ export default class Schema extends Component<Props, State> {
                               this.toggleTooltip('keyFieldsToolTipOpen')
                             }
                           >
-                            One of more fields that uniquely identify each
+                            One or more fields that uniquely identify each
                             record. Key field(s) are used to detect and handle
                             duplicates.
                           </Tooltip>
