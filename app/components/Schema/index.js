@@ -43,6 +43,7 @@ import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import KeyFields from './KeyFields';
 import ReplicationKeys from './ReplicationKeys';
+import Dropdown from './Dropdown';
 import Log from '../Log';
 import { getMetadata, getColumns, getReplicationKey } from '../../utils/schema';
 import type {
@@ -444,6 +445,14 @@ export default class Schema extends Component<Props, State> {
                           const replicationKeys =
                             metadata.metadata['valid-replication-keys'] || [];
 
+                          const isView = metadata.metadata['is-view'];
+                          const keyProperties =
+                            metadata.metadata[
+                              isView
+                                ? 'view-key-properties'
+                                : 'table-key-properties'
+                            ] || [];
+
                           return (
                             <tr key={stream.tap_stream_id}>
                               <td className="text-center align-middle">
@@ -461,6 +470,15 @@ export default class Schema extends Component<Props, State> {
                                   streamMetadata={metadata}
                                   columns={getColumns(stream)}
                                 />
+                                <Dropdown
+                                  isMulti
+                                  values={getColumns(stream)}
+                                  defaultValues={keyProperties}
+                                  handleChange={this.props.modifySchema}
+                                  field="keyFields"
+                                  streamMetadata={metadata}
+                                  index={index}
+                                />
                               </td>
                               <td className="align-middle">
                                 <ReplicationKeys
@@ -472,6 +490,18 @@ export default class Schema extends Component<Props, State> {
                                     selectedTap.specImplementation
                                   )}
                                   handleChange={this.handleSelectChange}
+                                />
+                                <Dropdown
+                                  values={['a', 'b', 'c'] || replicationKeys}
+                                  defaultValues={[
+                                    'ab'
+                                    // getReplicationKey(
+                                    //   stream,
+                                    //   metadata.metadata,
+                                    //   selectedTap.specImplementation
+                                    // )
+                                  ]}
+                                  isMulti={false}
                                 />
                               </td>
                             </tr>
