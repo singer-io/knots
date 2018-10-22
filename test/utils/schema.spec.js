@@ -70,12 +70,7 @@ describe('Schema functions', () => {
 
   describe('get columns', () => {
     it('should return an array of column names', () => {
-      const expected = [
-        'category_id',
-        'category_name',
-        'description',
-        'picture'
-      ];
+      const expected = ['category_name', 'description'];
       const actual = getColumns(sampleStream);
 
       const expected1 = ['category_id', 'contact_title'];

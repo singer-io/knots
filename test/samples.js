@@ -51,7 +51,7 @@ export const sampleStream = {
       breadcrumb: ['properties', 'category_id'],
       metadata: {
         'sql-datatype': 'smallint',
-        inclusion: 'automatic',
+        inclusion: 'unsupported',
         'selected-by-default': true
       }
     },

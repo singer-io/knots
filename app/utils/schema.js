@@ -48,7 +48,10 @@ export const getColumns = (stream: Stream): Array<string> => {
   const columns = metadata
     .filter((meta) => {
       if (meta.breadcrumb.length > 1) {
-        if (meta.breadcrumb[0] === 'properties') {
+        if (
+          meta.breadcrumb[0] === 'properties' &&
+          meta.metadata.inclusion !== 'unsupported'
+        ) {
           return true;
         }
       }
