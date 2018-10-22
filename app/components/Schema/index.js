@@ -41,10 +41,10 @@ import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
-import Dropdown from './Dropdown';
 import KeyFields from './KeyFields';
+import ReplicationKeys from './ReplicationKeys';
 import Log from '../Log';
-import { getMetadata, getColumns } from '../../utils/schema';
+import { getMetadata, getColumns, getReplicationKey } from '../../utils/schema';
 import type {
   specImplementationPropType,
   tapPropertiesType
@@ -439,38 +439,44 @@ export default class Schema extends Component<Props, State> {
                         </tr>
                       </thead>
                       <tbody>
-                        {schema.map((stream, index) => (
-                          <tr key={stream.tap_stream_id}>
-                            <td className="text-center align-middle">
-                              <Checkbox
-                                checked={this.fieldSelected(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleCheckBoxChange}
-                              />
-                            </td>
-                            <td className="align-middle">{stream.stream}</td>
-                            <td style={{ width: '35%' }}>
-                              <KeyFields
-                                modifySchema={this.props.modifySchema}
-                                index={index}
-                                streamMetadata={getMetadata(stream)}
-                                columns={getColumns(stream)}
-                              />
-                            </td>
-                            <td className="align-middle">
-                              <Dropdown
-                                columns={this.validReplicationKeys(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleSelectChange}
-                                stream={stream}
-                                isLegacy={selectedTap.isLegacy}
-                                specImplementation={
-                                  selectedTap.specImplementation
-                                }
-                              />
-                            </td>
-                          </tr>
-                        ))}
+                        {schema.map((stream, index) => {
+                          const metadata = getMetadata(stream);
+                          const replicationKeys =
+                            metadata.metadata['valid-replication-keys'] || [];
+
+                          return (
+                            <tr key={stream.tap_stream_id}>
+                              <td className="text-center align-middle">
+                                <Checkbox
+                                  checked={this.fieldSelected(stream)}
+                                  index={index.toString()}
+                                  handleChange={this.handleCheckBoxChange}
+                                />
+                              </td>
+                              <td className="align-middle">{stream.stream}</td>
+                              <td style={{ width: '35%' }}>
+                                <KeyFields
+                                  modifySchema={this.props.modifySchema}
+                                  index={index}
+                                  streamMetadata={metadata}
+                                  columns={getColumns(stream)}
+                                />
+                              </td>
+                              <td className="align-middle">
+                                <ReplicationKeys
+                                  index={index.toString()}
+                                  replicationKeys={replicationKeys}
+                                  defaultValue={getReplicationKey(
+                                    stream,
+                                    metadata.metadata,
+                                    selectedTap.specImplementation
+                                  )}
+                                  handleChange={this.handleSelectChange}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                     {!!streamSelected && (

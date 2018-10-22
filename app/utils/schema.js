@@ -58,3 +58,17 @@ export const getColumns = (stream: Stream): Array<string> => {
 
   return columns;
 };
+
+export const getReplicationKey = (
+  stream: { replication_key?: string },
+  metadata: {},
+  specImplementation: { usesMetadata?: { replicationKey?: boolean } }
+) => {
+  const { replicationKey: repKeyMetadata = true } =
+    specImplementation.usesMetadata || {};
+  if (!repKeyMetadata) {
+    return stream.replication_key;
+  }
+
+  return metadata['replication-key'] || '';
+};
