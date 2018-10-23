@@ -78,7 +78,6 @@ export default class Dropdown extends Component<Props> {
     const { field } = this.props;
 
     if (field === 'keyFields') {
-      console.log('This is the metadata', this.props.streamMetadata);
       const metadata = this.props.streamMetadata;
       const metadataIndex = metadata.index;
       const propertyType = metadata.metadata['is-view']
@@ -93,7 +92,7 @@ export default class Dropdown extends Component<Props> {
     } else if (field === 'timestamp') {
       this.props.handleChange(
         'replication-key',
-        this.props.index,
+        this.props.index.toString(),
         selectedOptions.value
       );
     }

@@ -440,16 +440,20 @@ export default class Schema extends Component<Props, State> {
                       <tbody>
                         {schema.map((stream, index) => {
                           const metadata = getMetadata(stream);
-                          const replicationKeys =
-                            metadata.metadata['valid-replication-keys'] || [];
+                          const replicationKeys = metadata.metadata
+                            ? metadata.metadata['valid-replication-keys'] || []
+                            : '';
 
-                          const isView = metadata.metadata['is-view'];
-                          const keyProperties =
-                            metadata.metadata[
-                              isView
-                                ? 'view-key-properties'
-                                : 'table-key-properties'
-                            ] || [];
+                          const isView = metadata.metadata
+                            ? metadata.metadata['is-view']
+                            : false;
+                          const keyProperties = metadata.metadata
+                            ? metadata.metadata[
+                                isView
+                                  ? 'view-key-properties'
+                                  : 'table-key-properties'
+                              ] || []
+                            : [];
                           const modifyTableKeys = keyProperties.length === 0;
 
                           return (
@@ -484,7 +488,7 @@ export default class Schema extends Component<Props, State> {
                                   defaultValues={[
                                     getReplicationKey(
                                       stream,
-                                      metadata.metadata,
+                                      metadata.metadata || {},
                                       selectedTap.specImplementation
                                     )
                                   ]}

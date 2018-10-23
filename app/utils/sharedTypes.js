@@ -227,7 +227,7 @@ export type SubMetadata = {
   'selected-by-default'?: boolean,
   'valid-replication-keys'?: Array<string>,
   'schema-name'?: string,
-  'forced-replication-method'?: string,
+  'forced-replication-method'?: string | {},
   'table-key-properties'?: Array<string>,
   'is-view'?: boolean,
   'row-count'?: number,
