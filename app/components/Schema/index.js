@@ -35,12 +35,15 @@ import {
 import StayScrolled from 'react-stay-scrolled';
 import socketIOClient from 'socket.io-client';
 import { shell } from 'electron';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
 import Dropdown from './Dropdown';
 import Log from '../Log';
+import { getMetadata, getColumns, getReplicationKey } from '../../utils/schema';
 import type {
   specImplementationPropType,
   tapPropertiesType
@@ -66,6 +69,8 @@ type Props = {
     value: boolean | string,
     specImplementation: specImplementationPropType
   ) => void,
+
+  modifySchema: (index: number, field: string, value: Array) => void,
   submitSchema: (schema: Array<Stream>, uuid: string) => void,
   submitConfig: (
     selectedTap: { name: string, image: string },
@@ -112,7 +117,8 @@ export default class Schema extends Component<Props, State> {
 
     this.state = {
       streamSelected: false,
-      tooltipOpen: false
+      replicationToolTipOpen: false,
+      keyFieldsToolTipOpen: false
     };
   }
 
@@ -244,9 +250,9 @@ export default class Schema extends Component<Props, State> {
     this.props.history.push('/');
   };
 
-  toggleTooltip = () => {
+  toggleTooltip = (field) => {
     this.setState({
-      tooltipOpen: !this.state.tooltipOpen
+      [field]: !this.state[field]
     });
   };
 
@@ -307,8 +313,9 @@ export default class Schema extends Component<Props, State> {
                     className="d-flex justify-content-between mt-3"
                   >
                     <p className="align-self-center mb-0">
-                      <strong>Well, that didn&apos;t work!</strong>&nbsp; Review
-                      logs for additional information.<br />
+                      <strong>Well, that didn&apos;t work!</strong>
+                      &nbsp; Review logs for additional information.
+                      <br />
                       <small>
                         If you need help,&nbsp;
                         {/* eslint-disable */}
@@ -391,49 +398,108 @@ export default class Schema extends Component<Props, State> {
                           </th>
                           <th>Table/Stream</th>
                           <th>
-                            Timestamp field
-                            <i
+                            Key field(s){' '}
+                            <FontAwesomeIcon
+                              id="KeyFieldsInfo"
+                              icon={faQuestionCircle}
+                            />
+                          </th>
+                          <th>
+                            Timestamp field{' '}
+                            <FontAwesomeIcon
                               id="ReplicationInfo"
-                              className="fa fa-question-circle-o ml-1"
+                              icon={faQuestionCircle}
                             />
                           </th>
                           <Tooltip
                             placement="right"
-                            isOpen={this.state.tooltipOpen}
+                            isOpen={this.state.replicationToolTipOpen}
                             target="ReplicationInfo"
-                            toggle={this.toggleTooltip}
+                            toggle={() =>
+                              this.toggleTooltip('replicationToolTipOpen')
+                            }
                           >
                             A date/time column or attribute that can be used to
                             limit historical data replication and to enable
                             incremental replication.
                           </Tooltip>
+                          <Tooltip
+                            placement="right"
+                            isOpen={this.state.keyFieldsToolTipOpen}
+                            target="KeyFieldsInfo"
+                            toggle={() =>
+                              this.toggleTooltip('keyFieldsToolTipOpen')
+                            }
+                          >
+                            One or more fields that uniquely identify each
+                            record. Key field(s) are used to detect and handle
+                            duplicates.
+                          </Tooltip>
                         </tr>
                       </thead>
                       <tbody>
-                        {schema.map((stream, index) => (
-                          <tr key={stream.tap_stream_id}>
-                            <td className="text-center align-middle">
-                              <Checkbox
-                                checked={this.fieldSelected(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleCheckBoxChange}
-                              />
-                            </td>
-                            <td className="align-middle">{stream.stream}</td>
-                            <td>
-                              <Dropdown
-                                columns={this.validReplicationKeys(stream)}
-                                index={index.toString()}
-                                handleChange={this.handleSelectChange}
-                                stream={stream}
-                                isLegacy={selectedTap.isLegacy}
-                                specImplementation={
-                                  selectedTap.specImplementation
-                                }
-                              />
-                            </td>
-                          </tr>
-                        ))}
+                        {schema.map((stream, index) => {
+                          const metadata = getMetadata(stream);
+                          const replicationKeys = metadata.metadata
+                            ? metadata.metadata['valid-replication-keys'] || []
+                            : '';
+
+                          const isView = metadata.metadata
+                            ? metadata.metadata['is-view']
+                            : false;
+                          const keyProperties = metadata.metadata
+                            ? metadata.metadata[
+                                isView
+                                  ? 'view-key-properties'
+                                  : 'table-key-properties'
+                              ] || []
+                            : [];
+                          const modifyTableKeys = keyProperties.length === 0;
+
+                          return (
+                            <tr key={stream.tap_stream_id}>
+                              <td className="text-center align-middle">
+                                <Checkbox
+                                  checked={this.fieldSelected(stream)}
+                                  index={index.toString()}
+                                  handleChange={this.handleCheckBoxChange}
+                                />
+                              </td>
+                              <td className="align-middle">{stream.stream}</td>
+                              <td style={{ width: '35%' }}>
+                                <Dropdown
+                                  isMulti
+                                  placeholder="Add key"
+                                  editField={isView || modifyTableKeys}
+                                  values={getColumns(stream)}
+                                  defaultValues={keyProperties}
+                                  handleChange={this.props.modifySchema}
+                                  field="keyFields"
+                                  streamMetadata={metadata}
+                                  index={index}
+                                />
+                              </td>
+                              <td className="align-middle">
+                                <Dropdown
+                                  isMulti={false}
+                                  placeholder="Please select"
+                                  editField={true}
+                                  values={replicationKeys}
+                                  defaultValues={[
+                                    getReplicationKey(
+                                      stream,
+                                      metadata.metadata || {},
+                                      selectedTap.specImplementation
+                                    )
+                                  ]}
+                                  handleChange={this.handleSelectChange}
+                                  field="timestamp"
+                                  index={index}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                     {!!streamSelected && (

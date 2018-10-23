@@ -193,6 +193,51 @@ describe('taps reducer', () => {
     );
   });
 
+  it('should handle MODIFY_SCHEMA', () => {
+    const sampleCatalog = [
+      {
+        metadata: [
+          {
+            breadcrumb: [],
+            metadata: {
+              'table-key-properties': []
+            }
+          }
+        ]
+      }
+    ];
+
+    expect(
+      tapReducer(
+        { schema: sampleCatalog },
+        {
+          type: tapActions.MODIFY_SCHEMA,
+          streamIndex: 0,
+          field: "metadata[0].metadata['table-key-properties']",
+          value: ['category_id']
+        }
+      )
+    ).toEqual(
+      Object.assign(
+        {},
+        {
+          schema: [
+            {
+              metadata: [
+                {
+                  breadcrumb: [],
+                  metadata: {
+                    'table-key-properties': ['category_id']
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      )
+    );
+  });
+
   it('should handle RESET_STORE', () => {
     expect(
       tapReducer(undefined, {

@@ -20,90 +20,105 @@
  */
 
 import React, { Component } from 'react';
-import { FormGroup, Input } from 'reactstrap';
-import type { specImplementationPropType } from '../../../utils/sharedTypes';
+import Select from 'react-select';
 
 type Props = {
-  index: string,
-  columns: Array<string>,
-  stream: { metadata?: Array<{}>, replication_key?: string },
-  specImplementation: specImplementationPropType,
-  handleChange: (field: string, index: string, value: boolean | string) => void
+  editField: boolean,
+  placeholder: string,
+  values: Array<string>,
+  defaultValues: Array<string>,
+  isMulti: boolean,
+  streamMetadata?: { index?: number, metadata?: {} },
+  index: number,
+  handleChange: () => void,
+  field: string
+};
+
+const colourStyles = {
+  option: (styles, { isFocused }) => ({
+    ...styles,
+    backgroundColor: isFocused ? '#dbd5ff' : null
+  }),
+  multiValue: (styles, { isDisabled }) => ({
+    ...styles,
+    backgroundColor: isDisabled ? 'hsl(0,0%,90%)' : '#5c56a5',
+    color: isDisabled ? '#000' : '#fff'
+  }),
+  multiValueLabel: (styles, { isDisabled }) => ({
+    ...styles,
+    color: isDisabled ? '#000' : '#fff'
+  })
 };
 
 export default class Dropdown extends Component<Props> {
-  handleChange = (e: SyntheticEvent<HTMLButtonElement>) => {
-    const { value } = e.currentTarget;
-    this.props.handleChange('replication-key', this.props.index, value);
+  constructor(props) {
+    super(props);
+
+    const { defaultValues, editField } = props;
+
+    this.state = {
+      selectedOptions: defaultValues.map((value) => ({
+        value,
+        label: value
+      })),
+      editField
+    };
+  }
+
+  getOptions = () => {
+    const { values } = this.props;
+
+    return values.map((value) => ({
+      value,
+      label: value
+    }));
   };
 
-  getReplicationKey(
-    stream: {
-      metadata: Array<{ breadcrumb: ?Array<string> }>,
-      replication_key?: string,
-      breadcrumb?: Array<string>
-    },
-    specImplementation?: {} = {}
-  ) {
-    const { replicationKey: repKeyMetadata = true } =
-      specImplementation.usesMetadata || {};
-    if (!repKeyMetadata) {
-      return stream.replication_key;
+  handleChange = (selectedOptions) => {
+    const { field } = this.props;
+
+    if (field === 'keyFields') {
+      const metadata = this.props.streamMetadata;
+      const metadataIndex = metadata.index;
+      const propertyType = metadata.metadata['is-view']
+        ? 'view-key-properties'
+        : 'table-key-properties';
+
+      this.props.handleChange(
+        this.props.index,
+        `metadata[${metadataIndex}].metadata[${propertyType}]`,
+        selectedOptions.map((option) => option.value)
+      );
+    } else if (field === 'timestamp') {
+      this.props.handleChange(
+        'replication-key',
+        this.props.index.toString(),
+        selectedOptions.value
+      );
     }
 
-    let indexToUpdate;
-
-    // Look for the metadata with the empty breadcrumb
-    stream.metadata.forEach((metadata, index) => {
-      if (metadata.breadcrumb.length === 0) {
-        indexToUpdate = index;
-      }
-    });
-
-    if (indexToUpdate !== undefined) {
-      const replicationKey = this.props.stream.metadata[indexToUpdate].metadata[
-        'replication-key'
-      ];
-
-      return replicationKey;
-    }
-
-    return '';
-  }
-
-  getOptions(columns) {
-    const { stream, specImplementation } = this.props;
-    const replicationKey = this.getReplicationKey(stream, specImplementation);
-
-    return (
-      <Input
-        type="select"
-        name="select"
-        id="replicationKeys"
-        onChange={this.handleChange}
-        defaultValue={replicationKey || ''}
-      >
-        <option value="" hidden>
-          Please select
-        </option>
-        {columns.map((column) => (
-          <option key={column} value={column}>
-            {column}
-          </option>
-        ))}
-      </Input>
-    );
-  }
+    this.setState({ selectedOptions });
+  };
 
   render() {
-    if (this.props.columns.length < 1) {
+    if (this.props.values.length < 1) {
       return 'N/A';
     }
 
     return (
-      <FormGroup style={{ margin: '0' }}>
-        {this.getOptions(this.props.columns)}
-      </FormGroup>
+      <Select
+        isDisabled={!this.state.editField}
+        placeholder={this.props.placeholder}
+        styles={colourStyles}
+        options={this.getOptions()}
+        value={this.state.selectedOptions}
+        isMulti={this.props.isMulti}
+        onChange={this.handleChange}
+      />
     );
   }
 }
+
+Dropdown.defaultProps = {
+  streamMetadata: []
+};
