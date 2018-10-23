@@ -41,7 +41,6 @@ import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
-import ReplicationKeys from './ReplicationKeys';
 import Dropdown from './Dropdown';
 import Log from '../Log';
 import { getMetadata, getColumns, getReplicationKey } from '../../utils/schema';
@@ -477,15 +476,21 @@ export default class Schema extends Component<Props, State> {
                                 />
                               </td>
                               <td className="align-middle">
-                                <ReplicationKeys
-                                  index={index.toString()}
-                                  replicationKeys={replicationKeys}
-                                  defaultValue={getReplicationKey(
-                                    stream,
-                                    metadata.metadata,
-                                    selectedTap.specImplementation
-                                  )}
+                                <Dropdown
+                                  isMulti={false}
+                                  placeholder="Please select"
+                                  editField={true}
+                                  values={replicationKeys}
+                                  defaultValues={[
+                                    getReplicationKey(
+                                      stream,
+                                      metadata.metadata,
+                                      selectedTap.specImplementation
+                                    )
+                                  ]}
                                   handleChange={this.handleSelectChange}
+                                  field="timestamp"
+                                  index={index}
                                 />
                               </td>
                             </tr>

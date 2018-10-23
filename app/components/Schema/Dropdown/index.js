@@ -28,9 +28,9 @@ type Props = {
   values: Array<string>,
   defaultValues: Array<string>,
   isMulti: boolean,
-  streamMetadata: { index?: number, metadata?: {} },
+  streamMetadata?: { index?: number, metadata?: {} },
   index: number,
-  handleChange: (args: {}) => void,
+  handleChange: () => void,
   field: string
 };
 
@@ -50,7 +50,7 @@ const colourStyles = {
   })
 };
 
-export default class KeyFields extends Component<Props> {
+export default class Dropdown extends Component<Props> {
   constructor(props) {
     super(props);
 
@@ -78,9 +78,10 @@ export default class KeyFields extends Component<Props> {
     const { field } = this.props;
 
     if (field === 'keyFields') {
+      console.log('This is the metadata', this.props.streamMetadata);
       const metadata = this.props.streamMetadata;
       const metadataIndex = metadata.index;
-      const propertyType = metadata['is-view']
+      const propertyType = metadata.metadata['is-view']
         ? 'view-key-properties'
         : 'table-key-properties';
 
@@ -88,6 +89,12 @@ export default class KeyFields extends Component<Props> {
         this.props.index,
         `metadata[${metadataIndex}].metadata[${propertyType}]`,
         selectedOptions.map((option) => option.value)
+      );
+    } else if (field === 'timestamp') {
+      this.props.handleChange(
+        'replication-key',
+        this.props.index,
+        selectedOptions.value
       );
     }
 
@@ -112,3 +119,7 @@ export default class KeyFields extends Component<Props> {
     );
   }
 }
+
+Dropdown.defaultProps = {
+  streamMetadata: []
+};
