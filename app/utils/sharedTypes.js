@@ -222,7 +222,7 @@ export type SubMetadata = {
   selected?: boolean,
   'replication-method'?: string,
   'replication-key'?: string,
-  'view-key-properties'?: string,
+  'view-key-properties'?: Array<string>,
   inclusion?: string,
   'selected-by-default'?: boolean,
   'valid-replication-keys'?: Array<string>,

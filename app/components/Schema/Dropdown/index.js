@@ -23,6 +23,8 @@ import React, { Component } from 'react';
 import Select from 'react-select';
 
 type Props = {
+  editField: boolean,
+  placeholder: string,
   values: Array<string>,
   defaultValues: Array<string>,
   isMulti: boolean,
@@ -33,6 +35,10 @@ type Props = {
 };
 
 const colourStyles = {
+  option: (styles, { isFocused }) => ({
+    ...styles,
+    backgroundColor: isFocused ? '#dbd5ff' : null
+  }),
   multiValue: (styles, { isDisabled }) => ({
     ...styles,
     backgroundColor: isDisabled ? 'hsl(0,0%,90%)' : '#5c56a5',
@@ -48,13 +54,14 @@ export default class KeyFields extends Component<Props> {
   constructor(props) {
     super(props);
 
-    const { defaultValues } = props;
+    const { defaultValues, editField } = props;
 
     this.state = {
       selectedOptions: defaultValues.map((value) => ({
         value,
         label: value
-      }))
+      })),
+      editField
     };
   }
 
@@ -94,6 +101,8 @@ export default class KeyFields extends Component<Props> {
 
     return (
       <Select
+        isDisabled={!this.state.editField}
+        placeholder={this.props.placeholder}
         styles={colourStyles}
         options={this.getOptions()}
         value={this.state.selectedOptions}

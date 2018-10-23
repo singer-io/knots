@@ -41,7 +41,6 @@ import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import Header from '../Header';
 import KnotProgress from '../../containers/KnotProgress';
 import Checkbox from './Checkbox';
-import KeyFields from './KeyFields';
 import ReplicationKeys from './ReplicationKeys';
 import Dropdown from './Dropdown';
 import Log from '../Log';
@@ -452,6 +451,7 @@ export default class Schema extends Component<Props, State> {
                                 ? 'view-key-properties'
                                 : 'table-key-properties'
                             ] || [];
+                          const modifyTableKeys = keyProperties.length === 0;
 
                           return (
                             <tr key={stream.tap_stream_id}>
@@ -464,14 +464,10 @@ export default class Schema extends Component<Props, State> {
                               </td>
                               <td className="align-middle">{stream.stream}</td>
                               <td style={{ width: '35%' }}>
-                                <KeyFields
-                                  modifySchema={this.props.modifySchema}
-                                  index={index}
-                                  streamMetadata={metadata}
-                                  columns={getColumns(stream)}
-                                />
                                 <Dropdown
                                   isMulti
+                                  placeholder="Add key"
+                                  editField={isView || modifyTableKeys}
                                   values={getColumns(stream)}
                                   defaultValues={keyProperties}
                                   handleChange={this.props.modifySchema}
@@ -490,18 +486,6 @@ export default class Schema extends Component<Props, State> {
                                     selectedTap.specImplementation
                                   )}
                                   handleChange={this.handleSelectChange}
-                                />
-                                <Dropdown
-                                  values={['a', 'b', 'c'] || replicationKeys}
-                                  defaultValues={[
-                                    'ab'
-                                    // getReplicationKey(
-                                    //   stream,
-                                    //   metadata.metadata,
-                                    //   selectedTap.specImplementation
-                                    // )
-                                  ]}
-                                  isMulti={false}
                                 />
                               </td>
                             </tr>
