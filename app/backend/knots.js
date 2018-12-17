@@ -369,9 +369,7 @@ const seedState = (stateObject, knotName) =>
       'state.json'
     );
     writeFile(pathToKnot, JSON.stringify(stateObject))
-      .then(() => {
-        resolve();
-      })
+      .then(resolve)
       .catch(reject);
   });
 
