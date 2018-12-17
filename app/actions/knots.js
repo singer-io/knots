@@ -276,27 +276,15 @@ export function loadValues(knot: string, uuid: string, seedingState?: boolean) {
     return axios
       .post(`${baseUrl}/knots/load`, { knot, uuid })
       .then((response) => {
-        if (seedingState) {
-          dispatch({
-            type: SEEDING_STATE,
-            tap: response.data.tap,
-            target: response.data.target,
-            tapConfig: response.data.tapConfig,
-            targetConfig: response.data.targetConfig,
-            knotName: response.data.name,
-            schema: response.data.schema
-          });
-        } else {
-          dispatch({
-            type: LOADED_KNOT,
-            tap: response.data.tap,
-            target: response.data.target,
-            tapConfig: response.data.tapConfig,
-            targetConfig: response.data.targetConfig,
-            knotName: response.data.name,
-            schema: response.data.schema
-          });
-        }
+        dispatch({
+          type: seedingState ? SEEDING_STATE : LOADED_KNOT,
+          tap: response.data.tap,
+          target: response.data.target,
+          tapConfig: response.data.tapConfig,
+          targetConfig: response.data.targetConfig,
+          knotName: response.data.name,
+          schema: response.data.schema
+        });
       })
       .catch((error) => {
         dispatch({
