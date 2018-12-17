@@ -51,8 +51,6 @@ export function fetchTapFields(tap, version, knot) {
         knot
       })
       .then((response) => {
-        console.log('THE TAP FIELDS');
-        console.log('The response', response.data);
         dispatch({
           type: UPDATE_TAP_FIELDS,
           dockerVersion: response.data.dockerVersion,
@@ -93,7 +91,6 @@ export function submitConfig(config) {
         config
       })
       .then((response) => {
-        console.log('This sis the schem a response', response);
         dispatch({
           type: SCHEMA_RECEIVED,
           schema: response.data || []
@@ -110,7 +107,6 @@ export function submitConfig(config) {
 
 export function setKnot(knot) {
   return (dispatch: (action: actionType) => void) => {
-    console.log('Called with', knot);
     dispatch({
       type: SET_KNOT,
       knot

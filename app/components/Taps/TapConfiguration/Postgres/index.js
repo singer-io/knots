@@ -232,6 +232,10 @@ export default class Postgres extends Component<Props, PostgresState> {
                   checked={this.state.checked}
                   toggleModal={this.toggleModal}
                   updateLogBaseRepMethod={this.props.updateLogBaseRepMethod}
+                  currentValue={this.state.currentLogBasedBool || false}
+                  knotLoaded={this.props.knotsStore.knotLoaded}
+                  deactivateNavigation={this.props.deactivateNavigation}
+                  activateNavigation={this.props.activateNavigation}
                 />
               </Col>
             </Row>
