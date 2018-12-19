@@ -31,8 +31,7 @@ const taps = [
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
       usesCatalogArg: false,
-      usesReplication: false,
-      usesLogBased: false
+      usesReplication: false
     }
   },
   {
@@ -42,8 +41,7 @@ const taps = [
     repo: 'https://github.com/singer-io/tap-s3-csv',
     specImplementation: {
       usesCatalogArg: false,
-      dockerParameters: `-v ${homePath}/.aws:/root/.aws`,
-      usesLogBased: false
+      dockerParameters: `-v ${homePath}/.aws:/root/.aws`
     }
   },
   {
@@ -58,8 +56,7 @@ const taps = [
         replication_method: false
       },
       usesCatalogArg: false,
-      usesReplication: false,
-      usesLogBased: false
+      usesReplication: false
     }
   },
   {
@@ -70,23 +67,24 @@ const taps = [
     specImplementation: {
       usesMetadata: {
         selected: false
-      }
+      },
+      usesLogBaseRepMethod: true
     }
   },
   {
     name: 'Postgres',
     tapKey: 'tap-postgres',
     tapImage: 'dataworld/tap-postgres:0.0.16',
-    repo: 'https://github.com/singer-io/tap-postgres'
+    repo: 'https://github.com/singer-io/tap-postgres',
+    specImplementation: {
+      usesLogBaseRepMethod: true
+    }
   },
   {
     name: 'Redshift',
     tapKey: 'tap-redshift',
     tapImage: 'dataworld/tap-redshift:1.0.0b9',
-    repo: 'https://github.com/datadotworld/tap-redshift',
-    specImplementation: {
-      usesLogBased: false
-    }
+    repo: 'https://github.com/datadotworld/tap-redshift'
   },
   {
     name: 'Salesforce',
@@ -94,8 +92,7 @@ const taps = [
     tapImage: 'dataworld/tap-salesforce:1.4.14',
     repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
-      usesCatalogArg: false,
-      usesLogBased: false
+      usesCatalogArg: false
     }
   }
 ];

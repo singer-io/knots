@@ -172,8 +172,8 @@ export type PostgresState = {
   dbname: FieldState,
   user: FieldState,
   password: FieldState,
-  showModal: boolean,
-  checked: boolean
+  showLogReplicationModal: boolean,
+  useLogReplication: boolean
 };
 
 export type SalesforceState = {
@@ -201,8 +201,8 @@ export type MySQLState = {
   user: FieldState,
   password: FieldState,
   database: FieldState,
-  showModal: boolean,
-  checked: boolean
+  showLogReplicationModal: boolean,
+  useLogReplication: boolean
 };
 
 export type FacebookState = {

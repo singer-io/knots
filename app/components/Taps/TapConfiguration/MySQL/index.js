@@ -52,7 +52,7 @@ import {
   showValidation,
   openLink
 } from '../../../../utils/handlers';
-import Checkbox from '../Checkbox';
+import IncrementalSyncToggle from '../IncrementalSyncToggle';
 
 type Props = {
   tapsStore: {
@@ -70,21 +70,16 @@ export default class MySQL extends Component<Props, MySQLState> {
     user: { validation: {}, errorMessage: 'Required' },
     password: { validation: {}, errorMessage: 'Required' },
     database: { validation: {}, errorMessage: 'Required' },
-    showModal: false,
-    checked: false
+    showLogReplicationModal: false,
+    useLogReplication: false
   };
 
   componentWillMount() {
     const { usesLogBaseRepMethod = false } = this.props.knotsStore;
-    this.setState(
-      {
-        checked: usesLogBaseRepMethod,
-        currentLogBasedBool: usesLogBaseRepMethod
-      },
-      () => {
-        this.props.updateLogBaseRepMethod(this.state.checked);
-      }
-    );
+    this.setState({
+      useLogReplication: usesLogBaseRepMethod,
+      currentLogBasedBool: usesLogBaseRepMethod
+    });
   }
 
   componentWillReceiveProps(nextProps: Props) {
@@ -118,15 +113,24 @@ export default class MySQL extends Component<Props, MySQLState> {
   };
 
   toggleModal = (checkBoxState) => {
-    this.setState({ showModal: checkBoxState, checked: !this.state.checked });
+    this.setState({
+      showLogReplicationModal: checkBoxState,
+      useLogReplication: !this.state.useLogReplication
+    });
   };
 
   onClickRepOption = (usesDefault: ?boolean) => {
     if (!usesDefault) {
       this.props.updateLogBaseRepMethod(!usesDefault);
-      this.setState({ showModal: false, checked: true });
+      this.setState({
+        showLogReplicationModal: false,
+        useLogReplication: true
+      });
     } else {
-      this.setState({ showModal: false, checked: false });
+      this.setState({
+        showLogReplicationModal: false,
+        useLogReplication: false
+      });
     }
   };
 
@@ -241,8 +245,8 @@ export default class MySQL extends Component<Props, MySQLState> {
             </Row>
             <Row>
               <Col>
-                <Checkbox
-                  checked={this.state.checked}
+                <IncrementalSyncToggle
+                  checked={this.state.useLogReplication}
                   toggleModal={this.toggleModal}
                   updateLogBaseRepMethod={this.props.updateLogBaseRepMethod}
                   currentValue={this.state.currentLogBasedBool}
@@ -254,7 +258,7 @@ export default class MySQL extends Component<Props, MySQLState> {
             </Row>
           </Form>
         </Container>
-        <Modal isOpen={this.state.showModal} size="lg">
+        <Modal isOpen={this.state.showLogReplicationModal} size="lg">
           <ModalHeader>Use incremental sync?</ModalHeader>
           <ModalBody>
             <p>

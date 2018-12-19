@@ -38,7 +38,7 @@ type State = {
   checked: boolean
 };
 
-export default class Checkbox extends Component<Props, State> {
+export default class IncrementalSyncToggle extends Component<Props, State> {
   state = { checked: this.props.checked };
 
   componentWillReceiveProps(nextProps: Props) {
