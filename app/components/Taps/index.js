@@ -63,7 +63,8 @@ type Props = {
     selectedTap: TapPropertiesType,
     fieldValues: {},
     knotName: string,
-    skipDiscovery: ?boolean
+    skipDiscovery: ?boolean,
+    usesLogBaseRepMethod: boolean
   ) => void,
   tapsPageLoaded: () => void,
   loadValues: (knot: string, uuid: string) => void,
@@ -123,20 +124,24 @@ export default class Taps extends Component<Props, State> {
   };
 
   submit = (showModal: boolean, skipDiscovery: ?boolean) => {
-    const { selectedTap } = this.props.tapsStore;
-    const { fieldValues } = this.props.tapsStore[selectedTap.name];
-    const { knotName, knotLoaded } = this.props.knotsStore;
+    const {
+      tapsStore,
+      knotsStore: { knotName, knotLoaded, uuid }
+    } = this.props;
+    const { selectedTap, usesLogBaseRepMethod } = tapsStore;
+    const { fieldValues } = tapsStore[selectedTap.name];
 
     // When editing a knot show confirmation dialog
-    if (knotLoaded && showModal) {
+    if (knotLoaded && !usesLogBaseRepMethod && showModal) {
       this.setState({ showModal: true });
     } else {
       this.props.submitConfig(
         selectedTap,
         fieldValues,
-        this.props.knotsStore.uuid,
+        uuid,
         knotName,
-        skipDiscovery
+        skipDiscovery,
+        usesLogBaseRepMethod
       );
       this.props.history.push('/schema');
     }
@@ -185,9 +190,10 @@ export default class Taps extends Component<Props, State> {
   };
 
   render() {
-    const { taps, selectedTap } = this.props.tapsStore;
-    const { knotName } = this.props.knotsStore;
-    const { showTaps } = this.state;
+    const { tapsStore, knotsStore } = this.props;
+    const { taps, selectedTap } = tapsStore;
+    const { knotName } = knotsStore;
+    const { showTaps, showModal } = this.state;
 
     return (
       <div>
@@ -204,7 +210,7 @@ export default class Taps extends Component<Props, State> {
               </CardHeader>
               <CardBody
                 className={classNames('collapse', {
-                  show: this.state.showTaps
+                  show: showTaps
                 })}
               >
                 <p className="mb-4">
@@ -250,7 +256,7 @@ export default class Taps extends Component<Props, State> {
             </Button>
           </div>
         </Container>
-        <Modal isOpen={this.state.showModal}>
+        <Modal isOpen={showModal}>
           <ModalHeader>Update schema information?</ModalHeader>
           <ModalBody>
             <p>

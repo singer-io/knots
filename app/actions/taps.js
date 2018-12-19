@@ -50,6 +50,9 @@ export const UPDATE_SCHEMA_LOGS = 'UPDATE_SCHEMA_LOGS';
 export const TAP_SELECTED = 'TAP_SELECTED';
 export const UPDATE_FORM_VALIDATION = 'UPDATE_FORM_VALIDATION';
 export const MODIFY_SCHEMA = 'MODIFY_SCHEMA';
+export const UPDATE_REP_METHOD_OPTION = 'UPDATE_REP_METHOD_OPTION';
+export const DEACTIVATE_NAVIGATION = 'DEACTIVATE_NAVIGATION';
+export const ACTIVATE_NAVIGATION = 'ACTIVATE_NAVIGATION';
 
 type actionType = {
   +type: string
@@ -152,7 +155,8 @@ export function submitConfig(
   config: { start_date?: string },
   uuid: string,
   knotName: string,
-  skipDiscovery: ?boolean
+  skipDiscovery: ?boolean,
+  usesLogBaseRepMethod: boolean
 ) {
   return (dispatch: (action: actionType) => void) => {
     dispatch({
@@ -165,7 +169,8 @@ export function submitConfig(
       tapConfig,
       uuid,
       knot: knotName,
-      skipDiscovery
+      skipDiscovery,
+      usesLogBaseRepMethod
     };
 
     return axios
@@ -249,6 +254,31 @@ export function modifySchema(streamIndex: number, field: string, value: Array) {
       streamIndex,
       field,
       value
+    });
+  };
+}
+
+export function updateLogBaseRepMethod(usesLogBaseRepMethod: boolean) {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: UPDATE_REP_METHOD_OPTION,
+      usesLogBaseRepMethod
+    });
+  };
+}
+
+export function deactivateNavigation() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: DEACTIVATE_NAVIGATION
+    });
+  };
+}
+
+export function activateNavigation() {
+  return (dispatch: (action: actionType) => void) => {
+    dispatch({
+      type: ACTIVATE_NAVIGATION
     });
   };
 }

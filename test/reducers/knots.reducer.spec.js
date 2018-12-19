@@ -171,13 +171,15 @@ describe('knots reducer', () => {
     expect(
       knotReducer(undefined, {
         type: knotActions.LOADED_KNOT,
-        knotName: 'knotname'
+        knotName: 'knotname',
+        usesLogBaseRepMethod: false
       })
     ).toEqual(
       Object.assign({}, defaultState(), {
         knotLoading: false,
         knotLoaded: true,
-        knotName: 'knotname'
+        knotName: 'knotname',
+        usesLogBaseRepMethod: false
       })
     );
   });

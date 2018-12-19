@@ -34,7 +34,10 @@ import {
   UPDATE_TAP_FIELD,
   UPDATE_TAPS,
   UPDATE_FORM_VALIDATION,
-  MODIFY_SCHEMA
+  MODIFY_SCHEMA,
+  UPDATE_REP_METHOD_OPTION,
+  DEACTIVATE_NAVIGATION,
+  ACTIVATE_NAVIGATION
 } from '../actions/taps';
 import { LOADED_KNOT, RESET_STORE, LOADED_KNOT_JSON } from '../actions/knots';
 import type {
@@ -59,6 +62,7 @@ export type tapsStateType = {
   +schemaLogs: Array<string>,
   +schemaUpdated: boolean,
   +error: string,
+  +deactivateNavigation: boolean,
   +'tap-redshift': TapRedshift,
   +'tap-salesforce': TapSalesforce,
   +'tap-postgres': TapPostgres,
@@ -85,6 +89,8 @@ export function defaultState() {
     schema: [],
     schemaUpdated: false,
     error: '',
+    usesLogBaseRepMethod: false,
+    deactivateNavigation: false,
     'tap-redshift': {
       valid: false,
       fieldValues: {
@@ -162,6 +168,8 @@ export function defaultState() {
 }
 
 export default function taps(state = defaultState(), action) {
+  const { schema, usesLogBaseRepMethod } = state;
+
   switch (action.type) {
     case TAPS_LOADING:
       return Object.assign({}, state, { tapsLoading: true });
@@ -219,7 +227,6 @@ export default function taps(state = defaultState(), action) {
         error: action.error
       });
     case UPDATE_SCHEMA_FIELD: {
-      const { schema } = state;
       if (schema[action.index]) {
         const metadataIndexToUpdate = (stream) => {
           let indexToUpdate = -1;
@@ -248,7 +255,12 @@ export default function taps(state = defaultState(), action) {
             if (repMethodMetadata) {
               const repKey =
                 streamClone.metadata[indexToUpdate].metadata['replication-key'];
-              if (repKey) {
+
+              if (usesLogBaseRepMethod) {
+                streamClone.metadata[indexToUpdate].metadata[
+                  'replication-method'
+                ] = 'LOG_BASED';
+              } else if (repKey) {
                 streamClone.metadata[indexToUpdate].metadata[
                   'replication-method'
                 ] = 'INCREMENTAL';
@@ -261,7 +273,9 @@ export default function taps(state = defaultState(), action) {
             }
           }
 
-          if (streamClone.replication_key) {
+          if (usesLogBaseRepMethod) {
+            streamClone.replication_method = 'LOG_BASED';
+          } else if (streamClone.replication_key) {
             streamClone.replication_method = 'INCREMENTAL';
           } else {
             streamClone.replication_method = 'FULL_TABLE';
@@ -413,7 +427,6 @@ export default function taps(state = defaultState(), action) {
       });
 
     case MODIFY_SCHEMA:
-      const { schema } = state;
       const modifiedStream = set(
         schema[action.streamIndex],
         action.field,
@@ -425,6 +438,19 @@ export default function taps(state = defaultState(), action) {
         schema
       });
 
+    case UPDATE_REP_METHOD_OPTION:
+      return Object.assign({}, state, {
+        usesLogBaseRepMethod: action.usesLogBaseRepMethod
+      });
+
+    case DEACTIVATE_NAVIGATION:
+      return Object.assign({}, state, {
+        deactivateNavigation: true
+      });
+    case ACTIVATE_NAVIGATION:
+      return Object.assign({}, state, {
+        deactivateNavigation: false
+      });
     case RESET_STORE:
       // Fact that objects are passed by reference makes this necessary, open to other suggestions
       return defaultState();

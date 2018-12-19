@@ -67,14 +67,18 @@ const taps = [
     specImplementation: {
       usesMetadata: {
         selected: false
-      }
+      },
+      usesLogBaseRepMethod: true
     }
   },
   {
     name: 'Postgres',
     tapKey: 'tap-postgres',
     tapImage: 'dataworld/tap-postgres:0.0.16',
-    repo: 'https://github.com/singer-io/tap-postgres'
+    repo: 'https://github.com/singer-io/tap-postgres',
+    specImplementation: {
+      usesLogBaseRepMethod: true
+    }
   },
   {
     name: 'Redshift',

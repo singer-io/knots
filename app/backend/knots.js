@@ -316,6 +316,7 @@ const loadValues = (knot, uuid) =>
           name: knotJson.name,
           tap: knotJson.tap,
           target: knotJson.target,
+          usesLogBaseRepMethod: knotJson.usesLogBaseRepMethod,
           tapConfig,
           targetConfig,
           schema

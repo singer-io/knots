@@ -171,7 +171,9 @@ export type PostgresState = {
   port: FieldState,
   dbname: FieldState,
   user: FieldState,
-  password: FieldState
+  password: FieldState,
+  showLogReplicationModal: boolean,
+  useLogReplication: boolean
 };
 
 export type SalesforceState = {
@@ -198,7 +200,9 @@ export type MySQLState = {
   port: FieldState,
   user: FieldState,
   password: FieldState,
-  database: FieldState
+  database: FieldState,
+  showLogReplicationModal: boolean,
+  useLogReplication: boolean
 };
 
 export type FacebookState = {

@@ -307,7 +307,17 @@ export const seedTapConfig = () =>
       JSON.stringify(sampleTapConfig),
       (error) => {
         if (!error) {
-          resolve();
+          fs.writeFile(
+            path.resolve('tmp', 'configUUID', 'knot', 'knot.json'),
+            JSON.stringify({}),
+            (e) => {
+              if (!e) {
+                resolve();
+              } else {
+                reject(e);
+              }
+            }
+          );
         } else {
           reject(error);
         }

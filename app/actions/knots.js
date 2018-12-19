@@ -280,7 +280,8 @@ export function loadValues(knot: string, uuid: string) {
           tapConfig: response.data.tapConfig,
           targetConfig: response.data.targetConfig,
           knotName: response.data.name,
-          schema: response.data.schema
+          schema: response.data.schema,
+          usesLogBaseRepMethod: response.data.usesLogBaseRepMethod
         });
       })
       .catch((error) => {

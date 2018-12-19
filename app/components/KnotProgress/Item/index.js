@@ -24,8 +24,9 @@
 
 import React from 'react';
 import { NavItem } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Link, Prompt } from 'react-router-dom';
 import classNames from 'classnames';
+import socketIOClient from 'socket.io-client';
 
 type Props = {
   text: string,
@@ -33,21 +34,37 @@ type Props = {
   complete: boolean,
   active: boolean,
   href: string,
-  tapsStore: { selectedTap: { name: string }, schema: Array<{}> },
+  tapsStore: {
+    selectedTap: { name: string },
+    schema: Array<{}>,
+    schemaLoading: boolean
+  },
   targetsStore: { selectedTarget: { name: string } },
-  knotsStore: { knotName: string },
+  knotsStore: { knotName: string, knotSyncing: boolean },
   userStore: {}
 };
 
-const makeLink = (page: string, props: Props) => {
-  const tapsConfigured = !!props.tapsStore.selectedTap.name;
-  const schemaConfigured = props.tapsStore.schema.length > 0;
-  const targetsConfigured = !!props.targetsStore.selectedTarget.name;
-  const readyToSync = () => {
-    const selectedTarget = props.targetsStore.selectedTarget.name;
+const baseUrl = 'http://localhost:4321';
+const socket = socketIOClient(baseUrl);
 
-    if (selectedTarget) {
-      const targetFieldValues = props.userStore[selectedTarget].fieldValues;
+const makeLink = (page: string, props: Props) => {
+  const { selectedTap, schema, deactivateNavigation } = props.tapsStore;
+  const { selectedTarget } = props.targetsStore;
+
+  const tapsConfigured = !!selectedTap.name;
+  const schemaPageClickable = deactivateNavigation ? false : schema.length > 0;
+  const targetsPageClickable = deactivateNavigation
+    ? false
+    : !!selectedTarget.name;
+  const readyToSync = () => {
+    if (deactivateNavigation) {
+      return false;
+    }
+
+    const selectedTargetName = selectedTarget.name;
+
+    if (selectedTargetName) {
+      const targetFieldValues = props.userStore[selectedTargetName].fieldValues;
 
       let valid = true;
 
@@ -67,9 +84,9 @@ const makeLink = (page: string, props: Props) => {
     case '/taps':
       return tapsConfigured;
     case '/schema':
-      return schemaConfigured;
+      return schemaPageClickable;
     case '/targets':
-      return targetsConfigured;
+      return targetsPageClickable;
     case '/sync':
       return readyToSync();
     default:
@@ -77,7 +94,15 @@ const makeLink = (page: string, props: Props) => {
   }
 };
 
+const terminateProcess = (runningProcess) => {
+  socket.emit('terminate', runningProcess);
+  return 'Are you sure you want to leave this page? This will cancel all running processes.';
+};
+
 const KnotProgress = (props: Props) => {
+  const isBlocking =
+    props.tapsStore.schemaLoading || props.knotsStore.knotSyncing;
+  const runningProcess = props.tapsStore.schemaLoading ? 'discovery' : 'sync';
   const clickable = makeLink(props.href, props);
   if (clickable) {
     return (
@@ -93,6 +118,10 @@ const KnotProgress = (props: Props) => {
           <span className="oi oi-check" />
         </Link>
         <small style={{ color: 'black' }}>{props.text}</small>
+        <Prompt
+          when={isBlocking}
+          message={() => terminateProcess(runningProcess)}
+        />
       </NavItem>
     );
   }

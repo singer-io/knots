@@ -184,7 +184,8 @@ describe('taps functions', () => {
         body: {
           tapConfig: sampleTapConfig,
           skipDiscovery: false,
-          uuid: 'configUUID'
+          uuid: 'configUUID',
+          usesLogBaseRepMethod: false
         }
       })
         .then(() => {
