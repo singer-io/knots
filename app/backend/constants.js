@@ -89,7 +89,7 @@ const taps = [
   {
     name: 'Salesforce',
     tapKey: 'tap-salesforce',
-    tapImage: 'dataworld/tap-salesforce:1.4.14',
+    tapImage: 'dataworld/tap-salesforce:1.4.20',
     repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
       usesCatalogArg: false
