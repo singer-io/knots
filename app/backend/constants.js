@@ -74,7 +74,7 @@ const taps = [
   {
     name: 'Postgres',
     tapKey: 'tap-postgres',
-    tapImage: 'dataworld/tap-postgres:0.0.16',
+    tapImage: 'dataworld/tap-postgres:0.0.42',
     repo: 'https://github.com/singer-io/tap-postgres',
     specImplementation: {
       usesLogBaseRepMethod: true
