@@ -35,7 +35,7 @@ jobs:
       STITCH_VERSION: "1.7.4"
       MYSQL_VERSION: "1.9.23"
       POSTGRES_VERSION: "0.0.42"
-      ADWORDS_VERSION: "1.3.3"
+      ADWORDS_VERSION: "1.9.1"
       FACEBOOK_VERSION: "1.5.9"
       S3_CSV_VERSION: "0.0.3"
 

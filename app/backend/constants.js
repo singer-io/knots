@@ -27,7 +27,7 @@ const taps = [
   {
     name: 'Adwords',
     tapKey: 'tap-adwords',
-    tapImage: 'dataworld/tap-adwords:1.3.3',
+    tapImage: 'dataworld/tap-adwords:1.9.1',
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
       usesCatalogArg: false,
