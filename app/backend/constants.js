@@ -62,7 +62,7 @@ const taps = [
   {
     name: 'MySQL',
     tapKey: 'tap-mysql',
-    tapImage: 'dataworld/tap-mysql:1.9.10',
+    tapImage: 'dataworld/tap-mysql:1.9.23',
     repo: 'https://github.com/singer-io/tap-mysql',
     specImplementation: {
       usesMetadata: {

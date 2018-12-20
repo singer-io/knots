@@ -33,7 +33,7 @@ jobs:
     environment:
       SALESFORCE_VERSION: "1.4.14"
       STITCH_VERSION: "1.7.4"
-      MYSQL_VERSION: "1.9.10"
+      MYSQL_VERSION: "1.9.23"
       POSTGRES_VERSION: "0.0.16"
       ADWORDS_VERSION: "1.3.3"
       FACEBOOK_VERSION: "1.5.9"
