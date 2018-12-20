@@ -107,7 +107,7 @@ const targets = [
   {
     name: 'Stitch',
     targetKey: 'target-stitch',
-    targetImage: 'dataworld/target-stitch:1.7.4',
+    targetImage: 'dataworld/target-stitch:1.8.1',
     repo: 'https://github.com/singer-io/target-stitch'
   }
 ];
