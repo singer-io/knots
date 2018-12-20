@@ -47,7 +47,7 @@ const taps = [
   {
     name: 'Facebook',
     tapKey: 'tap-facebook',
-    tapImage: 'dataworld/tap-facebook:1.5.1',
+    tapImage: 'dataworld/tap-facebook:1.5.9',
     repo: 'https://github.com/singer-io/tap-facebook',
     specImplementation: {
       usesMetadata: {
