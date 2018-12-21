@@ -170,6 +170,18 @@ After building and testing the image, push to Docker Hub;
 $ docker push dataworld/{IMAGE_NAME}:{VERSION}
 ```
 
+#### Creating a new release
+
+- Update the version number on both `package.json` files: `./package.json` and `./app/package.json`.
+
+- After merging the changes to `master` click on `Draft a new release` on the GitHub releases page.
+
+- Create a new tag targeting `master`, provide a title and description then click on `Save draft`
+
+- Wait for the CI to finish packaging the assets. After it is done delete unnecessary assets then click on `Publish release`.
+
+- Done
+
 ## Thank you!
 
 Thank you in advance for contributing to this project!
