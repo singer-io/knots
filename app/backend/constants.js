@@ -27,7 +27,7 @@ const taps = [
   {
     name: 'Adwords',
     tapKey: 'tap-adwords',
-    tapImage: 'dataworld/tap-adwords:1.3.3',
+    tapImage: 'dataworld/tap-adwords:1.9.1',
     repo: 'https://github.com/singer-io/tap-adwords',
     specImplementation: {
       usesCatalogArg: false,
@@ -47,7 +47,7 @@ const taps = [
   {
     name: 'Facebook',
     tapKey: 'tap-facebook',
-    tapImage: 'dataworld/tap-facebook:1.5.1',
+    tapImage: 'dataworld/tap-facebook:1.5.9',
     repo: 'https://github.com/singer-io/tap-facebook',
     specImplementation: {
       usesMetadata: {
@@ -62,7 +62,7 @@ const taps = [
   {
     name: 'MySQL',
     tapKey: 'tap-mysql',
-    tapImage: 'dataworld/tap-mysql:1.9.10',
+    tapImage: 'dataworld/tap-mysql:1.9.23',
     repo: 'https://github.com/singer-io/tap-mysql',
     specImplementation: {
       usesMetadata: {
@@ -74,7 +74,7 @@ const taps = [
   {
     name: 'Postgres',
     tapKey: 'tap-postgres',
-    tapImage: 'dataworld/tap-postgres:0.0.16',
+    tapImage: 'dataworld/tap-postgres:0.0.42',
     repo: 'https://github.com/singer-io/tap-postgres',
     specImplementation: {
       usesLogBaseRepMethod: true
@@ -89,7 +89,7 @@ const taps = [
   {
     name: 'Salesforce',
     tapKey: 'tap-salesforce',
-    tapImage: 'dataworld/tap-salesforce:1.4.14',
+    tapImage: 'dataworld/tap-salesforce:1.4.20',
     repo: 'https://github.com/singer-io/tap-salesforce',
     specImplementation: {
       usesCatalogArg: false
@@ -107,7 +107,7 @@ const targets = [
   {
     name: 'Stitch',
     targetKey: 'target-stitch',
-    targetImage: 'dataworld/target-stitch:1.7.4',
+    targetImage: 'dataworld/target-stitch:1.8.1',
     repo: 'https://github.com/singer-io/target-stitch'
   }
 ];
